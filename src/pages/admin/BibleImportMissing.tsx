@@ -1,0 +1,455 @@
+/**
+ * /admin/bible-import-missing — importa os 64 livros faltantes via bolls.life
+ * e revalida o gate automaticamente ao final.
+ */
+import { useEffect, useState } from "react";
+import { Link } from '@/lib/rr-compat';
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cathedra/CathedraCard";
+import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, PlayCircle, Search, CheckCircle2, AlertTriangle, ShieldCheck, FlaskConical, History, ChevronDown, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
+
+interface PreviewDetail { abbrev: string; name: string; chapters: number; chapter_numbers?: number[] }
+interface Preview { translation: string; books_missing: number; chapters_missing: number; detail: PreviewDetail[] }
+interface Job {
+  id: string; status: string; progress: number; total: number;
+  current_book: string | null; message: string | null; error: string | null;
+  verification: any; audit_log: any; started_at: string | null; finished_at: string | null;
+}
+interface Validation {
+  ok: boolean; translation: string; reachable: boolean;
+  bolls_books_total?: number; expected_books?: number; covered_books?: number;
+  issues: Array<{ level: 'error' | 'warning'; code: string; message: string }>;
+}
+interface DryRun {
+  dry_run: true; translation: string; books_missing: number; chapters_missing_total: number;
+  samples: Array<{ abbrev: string; name: string; chapters_missing: number; chapter_numbers?: number[]; sample_chapter: number; sample_verses: number; first_verse: string | null; error?: string }>;
+}
+
+async function invoke(action: string, body: Record<string, unknown> = {}) {
+  const { data, error } = await supabase.functions.invoke("bible-import-missing", {
+    body: { action, ...body },
+  });
+  if (error) {
+    // supabase-js embute o body em `context` quando o status >= 400
+    let detail = "";
+    try {
+      const ctx = (error as any).context;
+      if (ctx?.body) detail = ` — ${typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)}`;
+    } catch { /* noop */ }
+    throw new Error(`${error.message}${detail}`);
+  }
+  return data;
+}
+
+export default function BibleImportMissing() {
+  const [translation, setTranslation] = useState("NVIPT");
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [validation, setValidation] = useState<Validation | null>(null);
+  const [dryRun, setDryRun] = useState<DryRun | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [loadingValidation, setLoadingValidation] = useState(false);
+  const [loadingDryRun, setLoadingDryRun] = useState(false);
+  const [job, setJob] = useState<Job | null>(null);
+  const [starting, setStarting] = useState(false);
+
+  // Seleção manual: Map<abbrev, Set<chapter>|null>. null = livro inteiro.
+  const [selection, setSelection] = useState<Map<string, Set<number> | null>>(new Map());
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [useSelection, setUseSelection] = useState(false);
+
+  function buildSelectionPayload(): Array<{ abbrev: string; chapters?: number[] }> | undefined {
+    if (!useSelection || selection.size === 0) return undefined;
+    return Array.from(selection.entries()).map(([abbrev, chapters]) => ({
+      abbrev,
+      chapters: chapters ? Array.from(chapters).sort((a, b) => a - b) : undefined,
+    }));
+  }
+
+  function toggleBook(abbrev: string, all: number[]) {
+    setSelection((prev) => {
+      const next = new Map(prev);
+      if (next.has(abbrev)) next.delete(abbrev);
+      else next.set(abbrev, null); // livro inteiro por padrão
+      return next;
+    });
+  }
+
+  function toggleChapter(abbrev: string, chapter: number, all: number[]) {
+    setSelection((prev) => {
+      const next = new Map(prev);
+      const cur = next.get(abbrev);
+      const set = new Set<number>(cur ? Array.from(cur) : all); // null vira "todos"
+      if (set.has(chapter)) set.delete(chapter);
+      else set.add(chapter);
+      if (set.size === 0) next.delete(abbrev);
+      else if (set.size === all.length) next.set(abbrev, null);
+      else next.set(abbrev, set);
+      return next;
+    });
+  }
+
+  function toggleExpand(abbrev: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.has(abbrev) ? next.delete(abbrev) : next.add(abbrev);
+      return next;
+    });
+  }
+
+  async function runValidation() {
+    setLoadingValidation(true); setValidation(null);
+    try { setValidation(await invoke("validate", { translation })); }
+    catch (e: any) { toast.error(e.message); }
+    finally { setLoadingValidation(false); }
+  }
+
+  async function runDryRun() {
+    setLoadingDryRun(true); setDryRun(null);
+    try {
+      const sel = buildSelectionPayload();
+      setDryRun(await invoke("dry_run", { translation, selection: sel }));
+      toast.success(sel ? `Dry-run da seleção (${sel.length} livros) — nada gravado.` : "Dry-run concluído — nada foi gravado.");
+    }
+    catch (e: any) { toast.error(e.message); }
+    finally { setLoadingDryRun(false); }
+  }
+
+  async function loadPreview() {
+    setLoadingPreview(true);
+    try {
+      const res = await invoke("preview", { translation });
+      setPreview(res);
+    } catch (e: any) { toast.error(e.message); }
+    finally { setLoadingPreview(false); }
+  }
+
+  async function start() {
+    setStarting(true);
+    try {
+      const sel = buildSelectionPayload();
+      const res = await invoke("start", { translation, selection: sel });
+      if (!res?.job_id) throw new Error("Job não iniciado");
+      toast.success(sel ? `Importação da seleção iniciada (${sel.length} livros)` : "Importação iniciada");
+      pollJob(res.job_id);
+    } catch (e: any) { toast.error(e.message); setStarting(false); }
+  }
+
+  function pollJob(jobId: string) {
+    let stop = false;
+    (async function loop() {
+      while (!stop) {
+        try {
+          const { job: j } = await invoke("status", { job_id: jobId });
+          setJob(j);
+          if (["succeeded", "failed", "cancelled"].includes(j.status)) {
+            setStarting(false);
+            if (j.status === "succeeded") {
+              toast.success("Import concluído e gate revalidado");
+              loadPreview();
+            } else {
+              toast.error(`Import ${j.status}: ${j.error ?? ""}`);
+            }
+            return;
+          }
+        } catch (e: any) { /* continua tentando */ }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+    })();
+    return () => { stop = true; };
+  }
+
+  useEffect(() => { loadPreview(); /* eslint-disable-next-line */ }, []);
+
+  const pct = job && job.total > 0 ? Math.min(100, Math.round((job.progress / job.total) * 100)) : 0;
+  const gateBlocked = job?.verification?.gate?.blocked ?? job?.verification?.gate?.[0]?.blocked;
+
+  return (
+    <div className="container mx-auto max-w-5xl py-8 space-y-6">
+      <header className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-serif">Importar livros faltantes da Bíblia</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Preenche o cânon a partir da API pública bolls.life. Livros deuterocanônicos (Tb, Jdt, Sb, Eclo, Br, 1Mc, 2Mc)
+            e cânones católicos estendidos (Sl 151, Dn 13-14) NÃO são tocados — mantidos pelo import-deutero.
+          </p>
+        </div>
+        <Link
+          to="/admin/bible-import-jobs"
+          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+        >
+          <History className="w-4 h-4" /> Histórico de jobs
+        </Link>
+      </header>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Fonte</CardTitle>
+          <CardDescription>Código da tradução no bolls.life (ex.: NVIPT, NAA, ARA). Valide antes de importar.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-end gap-2">
+          <div className="flex-1 min-w-[180px] max-w-xs">
+            <Label htmlFor="tr">Tradução</Label>
+            <Input id="tr" value={translation} onChange={(e) => setTranslation(e.target.value.toUpperCase())} />
+          </div>
+          <Button variant="outline" onClick={runValidation} disabled={loadingValidation}>
+            {loadingValidation ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+            Validar fonte
+          </Button>
+          <Button variant="outline" onClick={runDryRun} disabled={loadingDryRun}>
+            {loadingDryRun ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FlaskConical className="w-4 h-4 mr-2" />}
+            Dry-run (não grava)
+          </Button>
+          <Button variant="outline" onClick={loadPreview} disabled={loadingPreview}>
+            {loadingPreview ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
+            Recalcular pendências
+          </Button>
+        </CardContent>
+      </Card>
+
+      {validation && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              Validação da fonte
+              <Badge variant={validation.ok ? "default" : "destructive"}>{validation.ok ? "ok" : "falhou"}</Badge>
+            </CardTitle>
+            <CardDescription>
+              {validation.reachable
+                ? `${validation.covered_books}/${validation.expected_books} livros protocanônicos cobertos · ${validation.bolls_books_total} livros totais no bolls`
+                : "Fonte inacessível"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {validation.issues.length === 0 ? (
+              <p className="text-sm text-green-700 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sem problemas.</p>
+            ) : (
+              <ul className="space-y-1 text-sm">
+                {validation.issues.map((i, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <Badge variant={i.level === 'error' ? 'destructive' : 'secondary'} className="text-[10px]">{i.level}</Badge>
+                    <span className="text-muted-foreground text-xs font-mono">{i.code}</span>
+                    <span>{i.message}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {dryRun && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              Dry-run · {dryRun.translation}
+              <Badge variant="outline">simulação</Badge>
+            </CardTitle>
+            <CardDescription>
+              Nenhuma escrita foi feita. Confira o plano antes de confirmar a importação.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div className="border rounded p-3">
+                <div className="text-muted-foreground text-xs">Livros</div>
+                <div className="text-xl font-semibold">{dryRun.books_missing}</div>
+              </div>
+              <div className="border rounded p-3">
+                <div className="text-muted-foreground text-xs">Capítulos</div>
+                <div className="text-xl font-semibold">{dryRun.chapters_missing_total}</div>
+              </div>
+              <div className="border rounded p-3">
+                <div className="text-muted-foreground text-xs">Amostras OK</div>
+                <div className="text-xl font-semibold">{dryRun.samples.filter((s) => !s.error).length}</div>
+              </div>
+              <div className="border rounded p-3">
+                <div className="text-muted-foreground text-xs">Amostras com erro</div>
+                <div className={`text-xl font-semibold ${dryRun.samples.some((s) => s.error) ? "text-destructive" : ""}`}>
+                  {dryRun.samples.filter((s) => s.error).length}
+                </div>
+              </div>
+            </div>
+
+            <div className="max-h-96 overflow-auto text-xs space-y-2">
+              {dryRun.samples.map((s) => (
+                <div key={s.abbrev} className="border rounded p-2 space-y-1">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="font-medium">{s.abbrev} · {s.name}</span>
+                    <span className="text-muted-foreground shrink-0">
+                      {s.chapters_missing} caps · amostra cap {s.sample_chapter} → {s.sample_verses} vv
+                    </span>
+                  </div>
+                  {s.chapter_numbers && s.chapter_numbers.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {s.chapter_numbers.slice(0, 30).map((n) => (
+                        <span key={n} className={`font-mono text-[10px] px-1.5 py-0.5 rounded border ${
+                          n === s.sample_chapter ? "bg-primary/10 border-primary/40 text-primary" : "text-muted-foreground"
+                        }`}>{n}</span>
+                      ))}
+                      {s.chapter_numbers.length > 30 && (
+                        <span className="text-[10px] text-muted-foreground">+{s.chapter_numbers.length - 30}</span>
+                      )}
+                    </div>
+                  )}
+                  {s.error
+                    ? <div className="text-destructive">⚠ {s.error}</div>
+                    : <div className="text-muted-foreground italic line-clamp-2">
+                        <span className="not-italic font-medium text-foreground/70">Amostra v1: </span>
+                        "{s.first_verse ?? '—'}"
+                      </div>}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 flex-wrap pt-2 border-t">
+              <Button onClick={start} disabled={starting || (job?.status === "running") || dryRun.books_missing === 0}>
+                {starting || job?.status === "running"
+                  ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Importando…</>
+                  : <><PlayCircle className="w-4 h-4 mr-2" /> Confirmar e importar</>}
+              </Button>
+              <Button variant="outline" onClick={() => setDryRun(null)}>Descartar prévia</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {preview && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              Pendências detectadas
+              <Badge variant={preview.books_missing === 0 ? "default" : "destructive"}>
+                {preview.books_missing} livros / {preview.chapters_missing} capítulos
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {preview.books_missing === 0 ? (
+              <p className="text-sm flex items-center gap-2 text-green-700">
+                <CheckCircle2 className="w-4 h-4" /> Nada a importar. Todos os livros protocanônicos cobertos por {preview.translation}.
+              </p>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+                  <label className="flex items-center gap-2 text-sm cursor-pointer">
+                    <Checkbox checked={useSelection} onCheckedChange={(v) => setUseSelection(!!v)} />
+                    Importar apenas selecionados
+                    {useSelection && selection.size > 0 && (
+                      <Badge variant="secondary">{selection.size} livros</Badge>
+                    )}
+                  </label>
+                  {useSelection && selection.size > 0 && (
+                    <button type="button" className="text-xs text-muted-foreground hover:text-primary underline"
+                      onClick={() => setSelection(new Map())}>Limpar seleção</button>
+                  )}
+                </div>
+
+                <div className="border rounded divide-y max-h-72 overflow-auto mb-4">
+                  {preview.detail.map((d) => {
+                    const all = d.chapter_numbers ?? Array.from({ length: d.chapters }, (_, i) => i + 1);
+                    const sel = selection.get(d.abbrev);
+                    const isSelected = selection.has(d.abbrev);
+                    const selectedCount = sel ? sel.size : (isSelected ? all.length : 0);
+                    const isOpen = expanded.has(d.abbrev);
+                    return (
+                      <div key={d.abbrev} className="text-sm">
+                        <div className="flex items-center gap-2 px-2 py-1.5">
+                          {useSelection && (
+                            <Checkbox checked={isSelected} onCheckedChange={() => toggleBook(d.abbrev, all)} />
+                          )}
+                          <button type="button" onClick={() => toggleExpand(d.abbrev)} className="flex items-center gap-1 flex-1 text-left">
+                            {isOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                            <span className="font-medium">{d.abbrev}</span>
+                            <span className="text-muted-foreground text-xs">— {d.name}</span>
+                          </button>
+                          <span className="text-xs text-muted-foreground">
+                            {useSelection && isSelected ? `${selectedCount}/${d.chapters}` : `${d.chapters} cap`}
+                          </span>
+                        </div>
+                        {isOpen && (
+                          <div className="px-6 pb-2 pt-1 flex flex-wrap gap-1">
+                            {all.map((n) => {
+                              const chapSelected = useSelection && (sel === null ? isSelected : !!sel?.has(n));
+                              return (
+                                <button
+                                  key={n}
+                                  type="button"
+                                  disabled={!useSelection}
+                                  onClick={() => toggleChapter(d.abbrev, n, all)}
+                                  className={`text-[10px] font-mono border rounded px-1.5 py-0.5 ${
+                                    chapSelected ? "bg-primary text-primary-foreground border-primary" : "hover:bg-muted"
+                                  } ${!useSelection ? "opacity-70 cursor-not-allowed" : ""}`}
+                                >
+                                  {n}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
+                  <Button onClick={start} disabled={starting || (job?.status === "running") || (useSelection && selection.size === 0)}>
+                    {starting || job?.status === "running"
+                      ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Importando…</>
+                      : <><PlayCircle className="w-4 h-4 mr-2" />
+                          {useSelection ? `Importar ${selection.size} livros selecionados` : "Importar tudo faltante"}
+                        </>}
+                  </Button>
+                  {useSelection && (
+                    <Button variant="outline" onClick={runDryRun} disabled={loadingDryRun || selection.size === 0}>
+                      {loadingDryRun ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FlaskConical className="w-4 h-4 mr-2" />}
+                      Dry-run da seleção
+                    </Button>
+                  )}
+                </div>
+                {useSelection && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Ao finalizar, o gate é revalidado imediatamente e novamente 3min depois.
+                  </p>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {job && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Job {job.id.slice(0, 8)} · {job.status}</CardTitle>
+            <CardDescription>{job.message ?? "—"}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Progress value={pct} />
+            <p className="text-sm text-muted-foreground">
+              {job.progress}/{job.total} capítulos {job.current_book ? `· ${job.current_book}` : ""}
+            </p>
+            {job.error && (
+              <p className="text-sm text-destructive flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {job.error}
+              </p>
+            )}
+            {job.status === "succeeded" && job.verification && (
+              <div className="border rounded p-3 bg-muted/30 text-sm space-y-1">
+                <div className="font-medium">Revalidação do gate</div>
+                <div>Diagnose: <Badge>{job.verification.status ?? "?"}</Badge> · {job.verification.total_findings ?? "?"} findings · run <code>{String(job.verification.run_id ?? "-").slice(0,8)}</code></div>
+                <div>Gate <code>/bible</code>: {gateBlocked ? <Badge variant="destructive">bloqueado</Badge> : <Badge>liberado</Badge>}</div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

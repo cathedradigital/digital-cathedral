@@ -1,0 +1,702 @@
+/**
+ * JornadaCompletePage — refino editorial Logos 2030.
+ *
+ * Preserva integralmente lógica de recompensas (XP/badges), reflexões,
+ * próxima jornada e compartilhamento do certificado. Realinha o visual
+ * ao padrão stitch-* usado em /jornadas e no leitor de passo.
+ */
+
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate, Link } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  BookOpen,
+  ChevronRight,
+  Circle,
+  Eye,
+  Quote,
+  Share2,
+  Sparkles,
+  Star,
+  Zap,
+} from 'lucide-react';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { AppRoute } from '@/types';
+import { checkNewBadges, getBadgeById, BadgeContext } from '@/lib/badges';
+import { useNextPath } from '@/hooks/useNextPath';
+import NextPathPanel from '@/components/cathedra/NextPathPanel';
+
+const JornadaCompletePage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const [journey, setJourney] = useState<any>(null);
+  const [reflections, setReflections] = useState<{ title: string; reflection: string; completed_at: string }[]>([]);
+
+  const [loading, setLoading] = useState(true);
+  const [sharing, setSharing] = useState(false);
+  const [xpAwarded, setXpAwarded] = useState(0);
+  const [newBadges, setNewBadges] = useState<string[]>([]);
+  const [rewardsProcessed, setRewardsProcessed] = useState(false);
+  const [totalSteps, setTotalSteps] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState(0);
+  const [pendingSteps, setPendingSteps] = useState<
+    { id: string; title: string; step_order: number }[]
+  >([]);
+  const [showPreview, setShowPreview] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
+
+  const isJourneyComplete = totalSteps > 0 && completedSteps >= totalSteps;
+
+  // Nexus Intelligence: próximo caminho coerente após esta jornada.
+  const nextPath = useNextPath(
+    journey && isJourneyComplete
+      ? {
+          id: journey.id,
+          slug: journey.slug ?? null,
+          title: journey.title,
+          subtitle: journey.subtitle,
+          category: journey.category,
+          tags: journey.tags,
+          difficulty: journey.difficulty,
+          sort_order: journey.sort_order,
+        }
+      : null,
+    user?.id,
+  );
+  const hasCertificateData = !!(journey?.title);
+  const canShareCertificate = hasCertificateData && isJourneyComplete;
+
+  useEffect(() => {
+    if (id && user) loadData();
+     
+  }, [id, user]);
+
+  useEffect(() => {
+    if (!loading && journey) {
+      import('canvas-confetti').then((mod) => {
+        mod.default({
+          particleCount: 180,
+          spread: 110,
+          origin: { y: 0.4 },
+          colors: ['#c9a84c', '#e8c547', '#b8860b', '#0B1F3A'],
+        });
+      });
+    }
+  }, [loading, journey]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [journeyRes, progressRes, totalRes] = await Promise.all([
+        supabase.from('journeys').select('*').eq('id', id!).single(),
+        supabase
+          .from('journey_progress')
+          .select('reflection, completed_at, step_id')
+          .eq('user_id', user!.id)
+          .eq('journey_id', id!)
+          .order('completed_at', { ascending: true }),
+        supabase
+          .from('journey_steps')
+          .select('*', { count: 'exact', head: true })
+          .eq('journey_id', id!),
+      ]);
+
+      if (journeyRes.data) setJourney(journeyRes.data);
+      setTotalSteps(totalRes.count || 0);
+      setCompletedSteps(progressRes.data?.length || 0);
+
+      // Buscar TODAS as etapas para calcular pendentes + títulos das reflexões
+      const { data: allSteps } = await supabase
+        .from('journey_steps')
+        .select('id, title, step_order')
+        .eq('journey_id', id!)
+        .order('step_order', { ascending: true });
+
+      const doneIds = new Set(progressRes.data?.map((p) => p.step_id) || []);
+      if (allSteps) {
+        setPendingSteps(allSteps.filter((s) => !doneIds.has(s.id)));
+      }
+
+      if (progressRes.data) {
+        const stepMap = new Map(allSteps?.map((s) => [s.id, s.title]) || []);
+        setReflections(
+          progressRes.data
+            .filter((p) => p.reflection)
+            .map((p) => ({
+              title: stepMap.get(p.step_id) || 'Etapa',
+              reflection: p.reflection!,
+              completed_at: p.completed_at,
+            })),
+        );
+      }
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!loading && journey && user && !rewardsProcessed) {
+      processRewards();
+    }
+     
+  }, [loading, journey, user, rewardsProcessed]);
+
+  const processRewards = async () => {
+    if (!user) return;
+    setRewardsProcessed(true);
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('xp, badges, streak, completed_books, total_minutes_read')
+        .eq('id', user.id)
+        .single();
+      if (!profile) return;
+
+      const { data: allJourneys } = await supabase.from('journeys').select('id').eq('is_active', true);
+
+      let completedJourneyCount = 0;
+      if (allJourneys) {
+        for (const j of allJourneys) {
+          const { count: totalSteps } = await supabase
+            .from('journey_steps')
+            .select('*', { count: 'exact', head: true })
+            .eq('journey_id', j.id);
+          const { count: doneSteps } = await supabase
+            .from('journey_progress')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .eq('journey_id', j.id);
+          if (totalSteps && doneSteps && doneSteps >= totalSteps) {
+            completedJourneyCount++;
+          }
+        }
+      }
+
+      const xpGain = 100;
+      const newXp = (profile.xp || 0) + xpGain;
+      setXpAwarded(xpGain);
+
+      const ctx: BadgeContext = {
+        completedBooks: new Set(profile.completed_books || []),
+        chaptersRead: {},
+        totalMinutesRead: profile.total_minutes_read || 0,
+        streak: profile.streak || 0,
+        completedJourneys: completedJourneyCount,
+      };
+
+      const earned = checkNewBadges(profile.badges || [], ctx);
+      setNewBadges(earned);
+
+      const updatedBadges = [...(profile.badges || []), ...earned];
+      await supabase.from('profiles').update({ xp: newXp, badges: updatedBadges }).eq('id', user.id);
+
+      earned.forEach((badgeId) => {
+        const badge = getBadgeById(badgeId);
+        if (badge) {
+          toast.success(`${badge.icon} Nova conquista: ${badge.name}!`, {
+            description: badge.description,
+            duration: 5000,
+          });
+        }
+      });
+    } catch (err) {
+      console.error('Rewards error:', err);
+    }
+  };
+
+  const shareCertificate = async () => {
+    if (!certificateRef.current) return;
+    if (!canShareCertificate) {
+      toast.error(
+        !hasCertificateData
+          ? 'Dados da jornada indisponíveis.'
+          : 'Conclua todas as etapas antes de compartilhar o certificado.',
+      );
+      return;
+    }
+    setSharing(true);
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const canvas = await html2canvas(certificateRef.current, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+      });
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('Failed to generate image');
+
+      const file = new File(
+        [blob],
+        `cathedra-certificado-${journey.title.replace(/\s+/g, '-').toLowerCase()}.png`,
+        { type: 'image/png' },
+      );
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: `Certificado: ${journey.title}`,
+          text: `Concluí a jornada "${journey.title}" no Cathedra.`,
+          files: [file],
+        });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Certificado salvo como imagem.');
+      }
+    } catch (err: any) {
+      if (err?.name !== 'AbortError') {
+        toast.error('Erro ao compartilhar certificado');
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-stitch-background">
+        <div className="mx-auto max-w-[900px] px-5 pt-16 md:px-16">
+          <div className="h-4 w-32 animate-pulse bg-stitch-surface-container-high" />
+          <div className="mt-8 h-[280px] w-full animate-pulse border border-stitch-outline-variant/20 bg-stitch-surface-container-lowest" />
+          <div className="mt-8 h-16 w-full animate-pulse bg-stitch-surface-container-high" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!journey) return null;
+
+  const completionDate = new Date().toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
+  return (
+    <div
+      className="min-h-screen w-full bg-stitch-background text-stitch-on-background"
+      style={{
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
+      }}
+    >
+      <Helmet>
+        <title>Jornada concluída — {journey.title} — Cathedra</title>
+      </Helmet>
+
+      <section className="mx-auto w-full max-w-[900px] px-5 pb-24 pt-8 md:px-16 md:pt-12 animate-fade-in">
+        {/* Breadcrumb */}
+        <Link
+          to={AppRoute.JORNADAS}
+          className="inline-flex items-center gap-2 font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] text-stitch-on-surface-variant transition-colors hover:text-stitch-secondary"
+        >
+          <ArrowLeft className="h-3 w-3" /> Formação
+        </Link>
+
+        {/* Kicker de conclusão */}
+        <div className="mt-6 flex items-center gap-2 font-stitch-body text-[12px] font-bold uppercase tracking-[0.32em] text-stitch-secondary">
+          <Sparkles className="h-3 w-3" /> Jornada Concluída
+        </div>
+        <h1 className="mt-2 font-stitch-display text-[32px] italic leading-[40px] text-stitch-primary md:text-[48px] md:leading-[58px] md:tracking-[-0.02em]">
+          Deo gratias.
+        </h1>
+        <p className="mt-3 max-w-[62ch] font-stitch-body text-[16px] leading-[28px] text-stitch-on-surface-variant md:text-[18px] md:leading-[30px]">
+          Você percorreu <span className="italic text-stitch-primary">{journey.title}</span>. Que o
+          que foi lido se torne oração, e o que foi orado se torne vida.
+        </p>
+
+        {/* ─── Barra de progresso final ─────────────── */}
+        <div className="mt-8 max-w-[520px]" role="group" aria-label="Progresso da jornada">
+          <div className="flex items-baseline justify-between font-stitch-body text-[11px] font-bold uppercase tracking-[0.24em] text-stitch-on-surface-variant">
+            <span>Progresso</span>
+            <span className={isJourneyComplete ? 'text-stitch-secondary' : 'text-destructive'}>
+              {totalSteps > 0
+                ? `${Math.round((completedSteps / totalSteps) * 100)}% · ${completedSteps}/${totalSteps}`
+                : '—'}
+              {isJourneyComplete ? ' · Completa' : ''}
+            </span>
+          </div>
+          <div
+            className="mt-2 h-[2px] w-full overflow-hidden bg-stitch-surface-container-high"
+            role="progressbar"
+            aria-valuenow={totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{
+                width: totalSteps > 0 ? `${(completedSteps / totalSteps) * 100}%` : '0%',
+              }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+              className="h-full bg-stitch-secondary"
+            />
+          </div>
+          {!isJourneyComplete && totalSteps > 0 && (
+            <p
+              role="alert"
+              className="mt-3 font-stitch-body text-[12px] italic text-destructive"
+            >
+              Você ainda tem {totalSteps - completedSteps} etapa
+              {totalSteps - completedSteps === 1 ? '' : 's'} pendente
+              {totalSteps - completedSteps === 1 ? '' : 's'}. Conclua-as para liberar o
+              certificado.
+            </p>
+          )}
+        </div>
+
+        {/* ─── Etapas pendentes (só quando incompleta) ─────────────── */}
+        {!isJourneyComplete && pendingSteps.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-10"
+            aria-labelledby="pending-steps-heading"
+          >
+            <h2
+              id="pending-steps-heading"
+              className="mb-4 flex items-center gap-2 font-stitch-display text-[20px] italic text-stitch-primary md:text-[24px]"
+            >
+              <Circle className="h-4 w-4 text-destructive" /> Etapas pendentes
+            </h2>
+            <ul className="space-y-2">
+              {pendingSteps.map((s) => (
+                <li key={s.id}>
+                  <button
+                    onClick={() => navigate(`/jornadas/${id}/step?step=${s.id}`)}
+                    className="group flex w-full items-center gap-4 border border-stitch-outline-variant/25 bg-stitch-surface-container-lowest p-4 text-left transition-colors hover:border-stitch-secondary/50"
+                    aria-label={`Ir para etapa ${s.step_order}: ${s.title}`}
+                  >
+                    <span className="font-stitch-display text-[18px] italic leading-none text-stitch-secondary/60">
+                      {String(s.step_order).padStart(2, '0')}
+                    </span>
+                    <span className="flex-1 font-stitch-body text-[14px] text-stitch-on-surface">
+                      {s.title}
+                    </span>
+                    <ChevronRight className="h-4 w-4 flex-shrink-0 text-stitch-on-surface-variant transition-transform group-hover:translate-x-1 group-hover:text-stitch-secondary" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </motion.section>
+        )}
+
+        {/* ─── Certificado ───────────────────────────── */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mt-10"
+        >
+          <div ref={certificateRef}>
+            <div
+              className="relative overflow-hidden border border-stitch-secondary/30 bg-stitch-surface-container-lowest p-8 text-center md:p-12"
+              style={{
+                backgroundImage:
+                  'url("https://www.transparenttextures.com/patterns/parchment.png")',
+              }}
+            >
+              <div className="pointer-events-none absolute inset-3 border border-stitch-secondary/20" />
+              <div className="relative">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-stitch-secondary/40 bg-stitch-secondary/10">
+                  <Award className="h-7 w-7 text-stitch-secondary" />
+                </div>
+                <p className="mt-6 font-stitch-body text-[11px] font-bold uppercase tracking-[0.32em] text-stitch-secondary">
+                  Certificado de Conclusão
+                </p>
+                <h2 className="mt-3 font-stitch-display text-[26px] italic leading-[34px] text-stitch-primary md:text-[36px] md:leading-[44px]">
+                  {journey.title}
+                </h2>
+                {journey.subtitle && (
+                  <p className="mt-2 font-stitch-body text-[14px] italic text-stitch-on-surface-variant md:text-[15px]">
+                    {journey.subtitle}
+                  </p>
+                )}
+                <div className="mx-auto mt-8 max-w-xs border-t border-b border-stitch-secondary/20 py-4">
+                  <p className="font-stitch-body text-[10px] font-bold uppercase tracking-[0.28em] text-stitch-on-surface-variant">
+                    Concluída em
+                  </p>
+                  <p className="mt-1 font-stitch-display text-[16px] italic text-stitch-primary">
+                    {completionDate}
+                  </p>
+                </div>
+                <p className="mt-6 font-stitch-body text-[10px] font-bold uppercase tracking-[0.4em] text-stitch-secondary">
+                  Cathedra · Digital Sanctuarium
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={() => {
+                if (!canShareCertificate) {
+                  toast.error(
+                    !hasCertificateData
+                      ? 'Dados da jornada indisponíveis.'
+                      : 'Conclua todas as etapas antes de compartilhar o certificado.',
+                  );
+                  return;
+                }
+                setShowPreview(true);
+              }}
+              disabled={sharing || !canShareCertificate}
+              aria-disabled={!canShareCertificate}
+              aria-label={
+                canShareCertificate
+                  ? 'Visualizar e compartilhar certificado'
+                  : 'Conclua todas as etapas para compartilhar o certificado'
+              }
+              title={
+                canShareCertificate
+                  ? 'Visualizar antes de compartilhar'
+                  : 'Conclua todas as etapas para liberar'
+              }
+              className="inline-flex items-center gap-2 border border-stitch-outline-variant/40 px-5 py-2.5 font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] text-stitch-primary transition-colors hover:border-stitch-secondary hover:text-stitch-secondary disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              Visualizar e Compartilhar
+            </button>
+          </div>
+        </motion.section>
+
+        {/* ─── Recompensas ───────────────────────────── */}
+        {(xpAwarded > 0 || newBadges.length > 0) && (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-14"
+          >
+            <div className="mb-4 flex items-baseline justify-between">
+              <h2 className="flex items-center gap-2 font-stitch-display text-[22px] italic text-stitch-primary md:text-[26px]">
+                <Star className="h-4 w-4 text-stitch-secondary" /> Recompensas
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {xpAwarded > 0 && (
+                <div className="flex items-center gap-4 border border-stitch-outline-variant/25 bg-stitch-surface-container-lowest p-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-stitch-secondary/15 text-stitch-secondary">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-stitch-display text-[20px] italic leading-none text-stitch-primary">
+                      +{xpAwarded} XP
+                    </p>
+                    <p className="mt-1 font-stitch-body text-[12px] text-stitch-on-surface-variant">
+                      Por concluir esta jornada
+                    </p>
+                  </div>
+                </div>
+              )}
+              {newBadges.map((badgeId) => {
+                const badge = getBadgeById(badgeId);
+                if (!badge) return null;
+                return (
+                  <div
+                    key={badgeId}
+                    className="flex items-center gap-4 border border-stitch-outline-variant/25 bg-stitch-surface-container-lowest p-4"
+                  >
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-stitch-secondary/10 text-[22px]">
+                      {badge.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-stitch-display text-[17px] italic text-stitch-primary">
+                        {badge.name}
+                      </p>
+                      <p className="mt-0.5 font-stitch-body text-[12px] leading-snug text-stitch-on-surface-variant">
+                        {badge.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.section>
+        )}
+
+        {/* ─── Reflexões ─────────────────────────────── */}
+        {reflections.length > 0 && (
+          <motion.section
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-14"
+          >
+            <div className="mb-6 flex items-baseline justify-between">
+              <h2 className="flex items-center gap-2 font-stitch-display text-[22px] italic text-stitch-primary md:text-[26px]">
+                <BookOpen className="h-4 w-4 text-stitch-secondary" /> Suas Reflexões
+              </h2>
+              <span className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-on-surface-variant">
+                {reflections.length} registro{reflections.length === 1 ? '' : 's'}
+              </span>
+            </div>
+            <div className="space-y-3">
+              {reflections.map((r, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + i * 0.06 }}
+                  className="border border-stitch-outline-variant/25 bg-stitch-surface-container-lowest p-5"
+                >
+                  <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.22em] text-stitch-secondary">
+                    {r.title}
+                  </p>
+                  <div className="mt-3 flex gap-3">
+                    <Quote className="h-4 w-4 flex-shrink-0 text-stitch-secondary/60" />
+                    <p className="font-stitch-body text-[15px] italic leading-[26px] text-stitch-on-surface md:text-[16px] md:leading-[28px]">
+                      {r.reflection}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+        )}
+
+        {/* ─── Nexus Intelligence — próximo caminho coerente ─── */}
+        {nextPath.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65 }}
+          >
+            <NextPathPanel recommendations={nextPath} className="mt-14" />
+          </motion.div>
+        )}
+
+
+        {/* ─── Ações ─────────────────────────────────── */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.85 }}
+          className="mt-14 flex flex-col gap-2 sm:flex-row"
+        >
+          <button
+            onClick={() => navigate(AppRoute.JORNADAS)}
+            className="inline-flex flex-1 items-center justify-center gap-2 bg-stitch-primary px-5 py-3 font-stitch-body text-[12px] font-bold uppercase tracking-[0.22em] text-stitch-primary-foreground transition-colors hover:bg-stitch-primary/90"
+          >
+            Ver todas as jornadas <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => navigate(`/jornadas/${id}`)}
+            className="inline-flex flex-1 items-center justify-center gap-2 border border-stitch-outline-variant/40 px-5 py-3 font-stitch-body text-[12px] font-bold uppercase tracking-[0.22em] text-stitch-primary transition-colors hover:border-stitch-secondary hover:text-stitch-secondary"
+          >
+            Rever etapas
+          </button>
+        </motion.section>
+
+        <p className="mt-16 border-t border-stitch-secondary/10 pt-6 text-center font-stitch-body text-[13px] italic text-stitch-on-surface-variant">
+          "Combati o bom combate, terminei a corrida, guardei a fé." — 2Tm 4,7
+        </p>
+      </section>
+
+      {/* ─── Preview do Certificado ────────────────────────────── */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-stitch-display italic">
+              Pré-visualização do Certificado
+            </DialogTitle>
+            <DialogDescription>
+              Confira o que será compartilhado antes de prosseguir.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div
+              className="relative overflow-hidden border border-stitch-secondary/30 bg-stitch-surface-container-lowest p-6 text-center"
+              style={{
+                backgroundImage:
+                  'url("https://www.transparenttextures.com/patterns/parchment.png")',
+              }}
+            >
+              <div className="pointer-events-none absolute inset-2 border border-stitch-secondary/20" />
+              <div className="relative">
+                <Award className="mx-auto h-6 w-6 text-stitch-secondary" />
+                <p className="mt-3 font-stitch-body text-[9px] font-bold uppercase tracking-[0.3em] text-stitch-secondary">
+                  Certificado de Conclusão
+                </p>
+                <p className="mt-2 font-stitch-display text-[18px] italic text-stitch-primary">
+                  {journey?.title}
+                </p>
+                <p className="mt-3 font-stitch-body text-[11px] italic text-stitch-on-surface-variant">
+                  Concluída em {completionDate}
+                </p>
+              </div>
+            </div>
+
+            <dl className="space-y-2 border border-stitch-outline-variant/20 bg-stitch-surface-container-lowest p-4 font-stitch-body text-[12px]">
+              <div className="flex justify-between gap-3">
+                <dt className="text-stitch-on-surface-variant">Jornada</dt>
+                <dd className="text-right text-stitch-primary">{journey?.title}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-stitch-on-surface-variant">Etapas</dt>
+                <dd className="text-stitch-primary">{completedSteps}/{totalSteps}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-stitch-on-surface-variant">XP conquistado</dt>
+                <dd className="text-stitch-primary">{xpAwarded > 0 ? `+${xpAwarded}` : '—'}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-stitch-on-surface-variant">Distintivos</dt>
+                <dd className="text-stitch-primary">{newBadges.length || '—'}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <button
+              onClick={() => setShowPreview(false)}
+              className="border border-stitch-outline-variant/40 px-4 py-2 font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-on-surface-variant hover:text-stitch-primary"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={async () => {
+                setShowPreview(false);
+                await shareCertificate();
+              }}
+              disabled={sharing}
+              className="inline-flex items-center gap-2 bg-stitch-primary px-4 py-2 font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-primary-foreground hover:bg-stitch-primary/90 disabled:opacity-50"
+            >
+              {sharing ? (
+                <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                <Share2 className="h-3 w-3" />
+              )}
+              {sharing ? 'Gerando…' : 'Compartilhar'}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default JornadaCompletePage;

@@ -1,0 +1,272 @@
+/**
+ * PassageActions — componente oficial de ações para qualquer trecho lido
+ * dentro do Cathedra 2.0. Totalmente agnóstico: não conhece Bíblia,
+ * Catecismo, Magistério, Busca ou Padres. O consumidor passa apenas o
+ * conteúdo (texto + referência + `url` ou `passage`) e callbacks.
+ *
+ * Ações padrão:
+ *  - Copiar trecho           (text)
+ *  - Copiar referência       (reference)
+ *  - Compartilhar            (Web Share API + fallback)
+ *  - Destacar                (delegado via onHighlight — se ausente e
+ *                             `passage` for informado, navega para o
+ *                             Reader com ?highlight=…)
+ *
+ * PA-1 endurece: loading/erro por ação, aria-busy/aria-live, foco
+ * visível e tap targets 44×44 em todos os breakpoints.
+ */
+import React, { useCallback, useState } from 'react';
+import { useNavigate } from '@/lib/rr-compat';
+import { toast } from 'sonner';
+import { Icons } from '@/constants';
+import { cn } from '@/lib/utils';
+import { useShare } from '@/hooks/useShare';
+import { buildPassageUrl, type PassageDescriptor } from '@/lib/passageUrl';
+
+type ActionKey = 'text' | 'reference' | 'share' | 'highlight';
+
+export interface PassageActionsProps {
+  /** Texto do trecho (o que será copiado como "trecho"). */
+  text: string;
+  /** Referência canônica curta (ex.: "Jo 6,53" ou "CIC §142"). */
+  reference: string;
+  /** URL absoluta compartilhável do trecho. Opcional se `passage` for informado. */
+  url?: string;
+  /** Descritor da passagem — usado por `buildPassageUrl` quando `url` não é fornecido. */
+  passage?: PassageDescriptor;
+  /** Título usado no share nativo (ex.: "Cathedra — Jo 6,53"). */
+  title?: string;
+  /** Se fornecido, sobrescreve a navegação padrão do botão Destacar. */
+  onHighlight?: () => void | Promise<void>;
+  /** Observabilidade opcional após ação bem-sucedida. */
+  onCopy?: (kind: 'text' | 'reference') => void;
+  onShare?: () => void;
+  /** Tamanho visual dos botões. */
+  size?: 'sm' | 'md';
+  /** Classes extras aplicadas ao wrapper. */
+  className?: string;
+}
+
+async function writeClipboard(value: string): Promise<boolean> {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+  } catch {
+    /* fallthrough */
+  }
+  return false;
+}
+
+const PassageActions: React.FC<PassageActionsProps> = ({
+  text,
+  reference,
+  url,
+  passage,
+  title,
+  onHighlight,
+  onCopy,
+  onShare,
+  size = 'sm',
+  className,
+}) => {
+  const share = useShare();
+  const navigate = useNavigate();
+  // Estados INDEPENDENTES por ação (loading/success/error) — nunca globais.
+  const [loadingMap, setLoadingMap] = useState<Partial<Record<ActionKey, boolean>>>({});
+  const [successMap, setSuccessMap] = useState<Partial<Record<ActionKey, boolean>>>({});
+  const [errorMap, setErrorMap] = useState<Partial<Record<ActionKey, string>>>({});
+  const [status, setStatus] = useState<string>('');
+
+  // URL efetiva: prop direta ou derivada de `passage`.
+  const effectiveUrl = url ?? (passage ? buildPassageUrl(passage) : '');
+
+  // Destaque efetivo: callback custom OU navegação padrão para o Reader.
+  const canHighlight = Boolean(onHighlight || passage);
+
+  const run = useCallback(
+    async (key: ActionKey, fn: () => Promise<void>, successMsg?: string) => {
+      setLoadingMap((m) => ({ ...m, [key]: true }));
+      setErrorMap((m) => ({ ...m, [key]: undefined }));
+      setSuccessMap((m) => ({ ...m, [key]: false }));
+      try {
+        await fn();
+        if (successMsg) setStatus(successMsg);
+        setSuccessMap((m) => ({ ...m, [key]: true }));
+        // limpa o "success" transiente após 1.6s
+        window.setTimeout(() => {
+          setSuccessMap((m) => ({ ...m, [key]: false }));
+        }, 1600);
+      } catch (err: any) {
+        const message = err?.message ?? 'Ação falhou';
+        setErrorMap((m) => ({ ...m, [key]: message }));
+        setStatus(`Erro: ${message}`);
+        toast.error(message);
+      } finally {
+        setLoadingMap((m) => ({ ...m, [key]: false }));
+      }
+    },
+    [],
+  );
+
+  const handleCopyText = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      return run('text', async () => {
+        const ok = await writeClipboard(
+          effectiveUrl ? `"${text}"\n— ${reference}\n${effectiveUrl}` : `"${text}"\n— ${reference}`,
+        );
+        if (!ok) throw new Error('Não foi possível copiar');
+        toast.success('Trecho copiado');
+        onCopy?.('text');
+      }, 'Trecho copiado');
+    },
+    [run, text, reference, effectiveUrl, onCopy],
+  );
+
+  const handleCopyReference = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      return run('reference', async () => {
+        const ok = await writeClipboard(reference);
+        if (!ok) throw new Error('Não foi possível copiar');
+        toast.success('Referência copiada');
+        onCopy?.('reference');
+      }, 'Referência copiada');
+    },
+    [run, reference, onCopy],
+  );
+
+  const handleShare = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      return run('share', async () => {
+        await share({
+          title: title ?? reference,
+          text: `"${text}" — ${reference}`,
+          url: effectiveUrl || undefined,
+        });
+        onShare?.();
+      }, 'Compartilhado');
+    },
+    [run, share, title, reference, text, effectiveUrl, onShare],
+  );
+
+  const handleHighlight = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      return run('highlight', async () => {
+        if (onHighlight) {
+          await onHighlight();
+        } else if (passage) {
+          const dest = buildPassageUrl({ ...passage, highlight: passage.highlight ?? reference });
+          // Extrai apenas pathname+search para navegação SPA
+          const rel = dest.startsWith('http')
+            ? dest.replace(/^https?:\/\/[^/]+/, '')
+            : dest;
+          navigate(rel);
+        }
+      });
+    },
+    [run, onHighlight, passage, reference, navigate],
+  );
+
+  const btnBase = cn(
+    'inline-flex items-center gap-1.5 rounded-full border border-border/50',
+    'bg-background/60 hover:bg-primary/5 hover:border-primary/40',
+    'text-muted-foreground hover:text-primary',
+    'transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+    'disabled:opacity-60 disabled:cursor-not-allowed',
+    'min-h-[44px] min-w-[44px]',
+    size === 'sm' ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs',
+  );
+  const iconSize = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
+
+  const renderIcon = (key: ActionKey, Icon: React.ComponentType<any>) => {
+    if (loadingMap[key]) {
+      return <Icons.Loader className={cn(iconSize, 'animate-spin')} aria-hidden="true" />;
+    }
+    if (successMap[key]) {
+      return <Icons.Check className={cn(iconSize, 'text-primary')} aria-hidden="true" />;
+    }
+    return <Icon className={iconSize} aria-hidden="true" />;
+  };
+
+  const firstError = (Object.entries(errorMap).find(([, v]) => !!v) ?? []) as [ActionKey?, string?];
+
+  return (
+    <div
+      className={cn('flex flex-wrap items-center gap-1.5', className)}
+      role="group"
+      aria-label={`Ações para ${reference}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Live region para leitores de tela: sucesso/erro por ação. */}
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {status}
+      </span>
+
+      <button
+        type="button"
+        onClick={handleCopyText}
+        className={btnBase}
+        aria-label={`Copiar trecho de ${reference}`}
+        aria-busy={loadingMap.text || undefined}
+        disabled={!!loadingMap.text}
+      >
+        {renderIcon('text', Icons.Quote)}
+        <span>Copiar trecho</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleCopyReference}
+        className={btnBase}
+        aria-label={`Copiar referência ${reference}`}
+        aria-busy={loadingMap.reference || undefined}
+        disabled={!!loadingMap.reference}
+      >
+        {renderIcon('reference', Icons.Link)}
+        <span>Copiar referência</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleShare}
+        className={btnBase}
+        aria-label={`Compartilhar ${reference}`}
+        aria-busy={loadingMap.share || undefined}
+        disabled={!!loadingMap.share}
+      >
+        {renderIcon('share', Icons.Share)}
+        <span>Compartilhar</span>
+      </button>
+
+      {canHighlight && (
+        <button
+          type="button"
+          onClick={handleHighlight}
+          className={btnBase}
+          aria-label={`Destacar ${reference} no leitor`}
+          aria-busy={loadingMap.highlight || undefined}
+          disabled={!!loadingMap.highlight}
+        >
+          {renderIcon('highlight', Icons.Highlighter)}
+          <span>Destacar</span>
+        </button>
+      )}
+
+      {firstError[0] && (
+        <span role="alert" className="sr-only">
+          Erro em {firstError[0]}: {firstError[1]}
+        </span>
+      )}
+    </div>
+  );
+};
+
+PassageActions.displayName = 'PassageActions';
+
+export default PassageActions;

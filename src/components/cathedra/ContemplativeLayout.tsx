@@ -1,0 +1,98 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
+import { useAuth } from '@/hooks/useAuth';
+
+import { useAvatarUrl } from '@/lib/avatar';
+
+interface ContemplativeLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
+  className?: string;
+  containerClassName?: string;
+  maxW?: string;
+  headerActions?: React.ReactNode;
+  icon?: React.ElementType;
+  showPadding?: boolean;
+}
+
+const ContemplativeLayout: React.FC<ContemplativeLayoutProps> = ({ 
+  children, 
+  title, 
+  subtitle, 
+  className,
+  containerClassName,
+  maxW = 'max-w-4xl w-full',
+  headerActions,
+  icon: Icon,
+  showPadding = true
+}) => {
+  const { settings } = useReadingSettings();
+  const { profile } = useAuth();
+  const avatarDisplay = useAvatarUrl(profile?.avatar_url || null, 160);
+  
+  
+  
+  return (
+    <div 
+      data-layout-root="true"
+      className={cn(
+        "min-h-[100dvh] will-change-[transform,opacity] flex flex-col items-center overflow-x-hidden transition-colors duration-1000", 
+        `reading-theme-${settings.theme}`,
+        settings.theme === 'paper' && "bg-[#FDF8F3]",
+        settings.theme === 'sepia' && "bg-[#F3E9D2]",
+        settings.theme === 'dark' && "bg-[#2C2C2C]",
+        settings.theme === 'night' && "bg-[#0D0E10]",
+
+        showPadding && "pt-spacing-xl md:pt-[calc(var(--layout-padding)*2)] pb-[calc(var(--layout-padding)*3)] px-spacing-md md:px-[var(--layout-padding)]",
+        containerClassName
+      )}
+
+    >
+      {(title || subtitle || Icon) && (
+        <header className={cn(
+          "header-margin-rhythm px-spacing-md md:px-spacing-xl text-center flex flex-col items-center w-full", 
+          !settings.reduceAnimations && "animate-in fade-in slide-in-from-top-spacing-md duration-1000 ease-out"
+        )}>
+          {Icon && (
+            <div className="mb-spacing-sm md:mb-spacing-lg">
+              <Icon className="w-spacing-md h-spacing-md md:w-spacing-xl md:h-spacing-xl text-primary/20 mx-auto transition-all duration-1000 group-hover:text-primary/40 group-hover:scale-110" strokeWidth={1.2} size={20} aria-hidden="true" />
+            </div>
+          )}
+          {subtitle && (
+            <p aria-hidden="true" className="text-[8px] md:text-[10px] font-semibold uppercase text-primary/70 mb-spacing-sm md:mb-spacing-lg tracking-premium-widest md:tracking-[1.2em] transition-all duration-1000">
+              {subtitle}
+            </p>
+          )}
+          {title && (
+            <h1 className="mb-spacing-md">
+              {title}
+            </h1>
+          )}
+          {headerActions && (
+            <div className="mt-spacing-md md:mt-spacing-xl w-full flex justify-center">
+              {headerActions}
+            </div>
+          )}
+          
+        </header>
+      )}
+      <motion.section 
+        data-layout-container="true"
+        initial={{ opacity: 0, y: settings.reduceAnimations ? 0 : 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          duration: settings.reduceAnimations ? 0.1 : 1, 
+          ease: settings.reduceAnimations ? "linear" : [0.16, 1, 0.3, 1] 
+        }}
+        className={cn("w-full mx-auto", maxW, className)}
+      >
+        {children}
+      </motion.section>
+    </div>
+  );
+};
+
+export default ContemplativeLayout;

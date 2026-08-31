@@ -1,0 +1,492 @@
+// IndexedDB cache for Bible chapters and Catechism paragraphs
+// Enables offline access to previously read content
+import { supabase } from '@/integrations/supabase/client';
+
+const DB_NAME = 'cathedra_cache';
+const DB_VERSION = 4; // v4: adds liturgy-hours-office store
+
+export interface CacheEntry {
+  key: string;
+  data: any;
+  cachedAt: number;
+  v?: number; // Version for invalidation
+}
+
+function openDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains('bible')) {
+        db.createObjectStore('bible', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('catechism')) {
+        db.createObjectStore('catechism', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('liturgy')) {
+        db.createObjectStore('liturgy', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('liturgical-calendar')) {
+        db.createObjectStore('liturgical-calendar', { keyPath: 'key' });
+      }
+      if (!db.objectStoreNames.contains('liturgy-hours-office')) {
+        db.createObjectStore('liturgy-hours-office', { keyPath: 'key' });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+
+async function getFromStore(storeName: string, key: string): Promise<any | null> {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(storeName, 'readonly');
+      const store = tx.objectStore(storeName);
+      const req = store.get(key);
+      req.onsuccess = () => {
+        const entry = req.result as CacheEntry | undefined;
+        resolve(entry?.data ?? null);
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function putInStore(storeName: string, key: string, data: any): Promise<void> {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    const CACHE_SYNC_VERSION = 7; // Sync with Bible component
+    store.put({ key, data, cachedAt: Date.now(), v: CACHE_SYNC_VERSION } as CacheEntry);
+    localStorage.setItem('cathedra_last_sync', Date.now().toString());
+    window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+  } catch {
+    // Silently fail — cache is best-effort
+  }
+}
+
+// ─── Bible Cache ───
+
+export async function getCachedBibleChapter(book: string, chapter: number): Promise<any | null> {
+  return getFromStore('bible', `${book}:${chapter}`);
+}
+
+export async function cacheBibleChapter(book: string, chapter: number, data: any): Promise<void> {
+  return putInStore('bible', `${book}:${chapter}`, data);
+}
+
+// ─── Catechism Cache ───
+
+export async function getCachedCatechismParagraph(paragraph: number): Promise<any | null> {
+  return getFromStore('catechism', `p:${paragraph}`);
+}
+
+export async function cacheCatechismParagraph(paragraph: number, data: any): Promise<void> {
+  return putInStore('catechism', `p:${paragraph}`, data);
+}
+
+// ─── Liturgy Cache ───
+
+export async function getCachedLiturgy(dateKey: string): Promise<any | null> {
+  return getFromStore('liturgy', dateKey);
+}
+
+export async function cacheLiturgy(dateKey: string, data: any): Promise<void> {
+  return putInStore('liturgy', dateKey, data);
+}
+
+// ─── Liturgy of the Hours (Office) Cache ───
+// Chave: `${isoDate}:${hourSlug}` (ex.: `2026-07-21:laudes`).
+//
+// Versionamento: a entrada armazena o `version` do próprio conteúdo
+// (campo `data.version` vindo do banco). A leitura descarta entradas
+// cujo `version` difira do esperado, forçando refetch. Isso evita
+// exibir conteúdo antigo quando a versão editorial da hora muda.
+
+export const liturgyHoursOfficeKey = (isoDate: string, hourSlug: string) =>
+  `${isoDate}:${hourSlug}`;
+
+export async function getCachedHoursOffice(
+  isoDate: string,
+  hourSlug: string,
+  expectedVersion?: number | null,
+): Promise<any | null> {
+  const data = await getFromStore('liturgy-hours-office', liturgyHoursOfficeKey(isoDate, hourSlug));
+  if (!data) return null;
+  if (expectedVersion != null && data.version != null && data.version !== expectedVersion) {
+    return null;
+  }
+  return data;
+}
+
+export async function cacheHoursOffice(
+  isoDate: string,
+  hourSlug: string,
+  data: any,
+): Promise<void> {
+  return putInStore('liturgy-hours-office', liturgyHoursOfficeKey(isoDate, hourSlug), data);
+}
+
+/**
+ * Remove entradas do cache de Liturgia das Horas cujo `version` seja
+ * inferior ao `minVersion` fornecido. Idempotente. Silencia falhas.
+ */
+export async function pruneStaleHoursOffice(minVersion: number): Promise<number> {
+  let removed = 0;
+  try {
+    const entries = await getAllFromStore('liturgy-hours-office');
+    const db = await openDB();
+    const tx = db.transaction('liturgy-hours-office', 'readwrite');
+    const store = tx.objectStore('liturgy-hours-office');
+    for (const e of entries) {
+      const v = (e.data as { version?: number } | undefined)?.version;
+      if (typeof v === 'number' && v < minVersion) {
+        store.delete(e.key);
+        removed += 1;
+      }
+    }
+  } catch { /* silent */ }
+  return removed;
+}
+
+
+// ─── Liturgical Calendar (month grid) Cache ───
+// Persists the response of the `liturgical-calendar` edge function with a TTL
+// so the calendar page does not hit the function on every reload.
+
+const LITURGICAL_CALENDAR_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+export const liturgicalCalendarKey = (year: number, month: number, calendar = 'general-la', lang = 'la') =>
+  `${calendar}:${lang}:${year}-${String(month).padStart(2, '0')}`;
+
+export interface LiturgicalCalendarEntryInfo {
+  key: string;
+  year: number;
+  month: number;
+  calendar: string;
+  lang: string;
+  cachedAt: number;
+  ageMs: number;
+  ttlMs: number;
+  isStale: boolean;
+}
+
+const LITURGICAL_CALENDAR_TTL_DEFAULT = 1000 * 60 * 60 * 24 * 7;
+
+export async function listLiturgicalCalendarEntries(
+  ttlMs: number = LITURGICAL_CALENDAR_TTL_DEFAULT,
+): Promise<LiturgicalCalendarEntryInfo[]> {
+  const entries = await getAllFromStore('liturgical-calendar');
+  const now = Date.now();
+  return entries
+    .map((e) => {
+      // key formato: `${calendar}:${lang}:${YYYY}-${MM}`
+      const m = /^(.+):([^:]+):(\d{4})-(\d{2})$/.exec(e.key);
+      if (!m) return null;
+      const cachedAt = e.cachedAt ?? 0;
+      const ageMs = now - cachedAt;
+      return {
+        key: e.key,
+        calendar: m[1],
+        lang: m[2],
+        year: Number(m[3]),
+        month: Number(m[4]),
+        cachedAt,
+        ageMs,
+        ttlMs,
+        isStale: ageMs > ttlMs,
+      } satisfies LiturgicalCalendarEntryInfo;
+    })
+    .filter((x): x is LiturgicalCalendarEntryInfo => x !== null)
+    .sort((a, b) => (a.year - b.year) || (a.month - b.month));
+}
+
+
+export async function getCachedLiturgicalMonth(
+  year: number,
+  month: number,
+  opts: { calendar?: string; lang?: string; ttlMs?: number } = {},
+): Promise<{ data: any; cachedAt: number; isStale: boolean } | null> {
+  try {
+    const db = await openDB();
+    const key = liturgicalCalendarKey(year, month, opts.calendar, opts.lang);
+    return new Promise((resolve) => {
+      const tx = db.transaction('liturgical-calendar', 'readonly');
+      const req = tx.objectStore('liturgical-calendar').get(key);
+      req.onsuccess = () => {
+        const entry = req.result as CacheEntry | undefined;
+        if (!entry) return resolve(null);
+        const ttl = opts.ttlMs ?? LITURGICAL_CALENDAR_TTL_MS;
+        const age = Date.now() - (entry.cachedAt ?? 0);
+        resolve({ data: entry.data, cachedAt: entry.cachedAt, isStale: age > ttl });
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+export async function cacheLiturgicalMonth(
+  year: number,
+  month: number,
+  data: any,
+  opts: { calendar?: string; lang?: string } = {},
+): Promise<void> {
+  return putInStore('liturgical-calendar', liturgicalCalendarKey(year, month, opts.calendar, opts.lang), data);
+}
+
+export async function clearLiturgicalCalendarCache(): Promise<void> {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('liturgical-calendar', 'readwrite');
+    tx.objectStore('liturgical-calendar').clear();
+    window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+    window.dispatchEvent(new CustomEvent('cathedra-litcal-cache-updated', { detail: { stat: 'cleared' } }));
+  } catch (e) {
+    console.error('Failed to clear liturgical-calendar cache:', e);
+  }
+}
+
+/** Apaga apenas as entradas cuja idade ultrapassa o TTL. Retorna as chaves removidas. */
+export async function clearExpiredLiturgicalCalendarEntries(
+  ttlMs: number = LITURGICAL_CALENDAR_TTL_DEFAULT,
+): Promise<string[]> {
+  const removed: string[] = [];
+  try {
+    const entries = await listLiturgicalCalendarEntries(ttlMs);
+    const db = await openDB();
+    const tx = db.transaction('liturgical-calendar', 'readwrite');
+    const store = tx.objectStore('liturgical-calendar');
+    for (const e of entries) {
+      if (e.isStale) {
+        store.delete(e.key);
+        removed.push(e.key);
+      }
+    }
+    await new Promise<void>((resolve) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+      tx.onabort = () => resolve();
+    });
+    if (removed.length > 0) {
+      window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+      window.dispatchEvent(new CustomEvent('cathedra-litcal-cache-updated', { detail: { stat: 'expired-cleared', keys: removed } }));
+    }
+  } catch (e) {
+    console.error('Failed to clear expired liturgical-calendar entries:', e);
+  }
+  return removed;
+}
+
+/** Apaga uma única entrada do calendário litúrgico pelo key (`calendar:lang:YYYY-MM`). */
+export async function deleteLiturgicalCalendarEntry(key: string): Promise<void> {
+  try {
+    const db = await openDB();
+    const tx = db.transaction('liturgical-calendar', 'readwrite');
+    tx.objectStore('liturgical-calendar').delete(key);
+    await new Promise<void>((resolve) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+      tx.onabort = () => resolve();
+    });
+    window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+    window.dispatchEvent(new CustomEvent('cathedra-litcal-cache-updated', { detail: { stat: 'entry-deleted', key } }));
+  } catch (e) {
+    console.error('Failed to delete liturgical-calendar entry:', e);
+  }
+}
+
+export interface LiturgicalCalendarStorageEstimate {
+  /** Bytes aproximados ocupados pelas entradas do calendário litúrgico (JSON serializado). */
+  bytes: number;
+  entries: number;
+  /** Quota global do storage (navigator.storage.estimate), quando disponível. */
+  quotaBytes: number | null;
+  /** Uso global do storage (todas as origens / stores), quando disponível. */
+  usageBytes: number | null;
+}
+
+/** Estima o tamanho ocupado pelas entradas de `liturgical-calendar` no IndexedDB. */
+export async function estimateLiturgicalCalendarStorage(): Promise<LiturgicalCalendarStorageEstimate> {
+  const entries = await getAllFromStore('liturgical-calendar');
+  let bytes = 0;
+  for (const e of entries) {
+    try {
+      // Aproximação UTF-16 → bytes via Blob para suportar caracteres não-ASCII.
+      bytes += new Blob([JSON.stringify(e)]).size;
+    } catch {
+      bytes += JSON.stringify(e).length;
+    }
+  }
+  let quotaBytes: number | null = null;
+  let usageBytes: number | null = null;
+  try {
+    if (typeof navigator !== 'undefined' && navigator.storage?.estimate) {
+      const est = await navigator.storage.estimate();
+      quotaBytes = typeof est.quota === 'number' ? est.quota : null;
+      usageBytes = typeof est.usage === 'number' ? est.usage : null;
+    }
+  } catch { /* silent */ }
+  return { bytes, entries: entries.length, quotaBytes, usageBytes };
+}
+
+export async function deleteFromStore(storeName: string, key: string): Promise<void> {
+
+
+  try {
+    const db = await openDB();
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    store.delete(key);
+    window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+  } catch (e) {
+    console.error('Failed to delete from store:', e);
+  }
+}
+
+export async function getAllFromStore(storeName: string): Promise<CacheEntry[]> {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, 'readonly');
+      const store = tx.objectStore(storeName);
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function clearAllCaches(): Promise<void> {
+  try {
+    const db = await openDB();
+    const stores = ['bible', 'catechism', 'liturgy', 'liturgical-calendar', 'liturgy-hours-office'];
+    stores.forEach(s => {
+      const tx = db.transaction(s, 'readwrite');
+      tx.objectStore(s).clear();
+    });
+    localStorage.removeItem('cathedra_last_sync');
+    window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+  } catch (e) {
+    console.error('Failed to clear caches:', e);
+  }
+}
+
+// ─── Import / Export ───
+
+export async function exportCache(): Promise<string> {
+  const data: Record<string, CacheEntry[]> = {};
+  const stores = ['bible', 'catechism', 'liturgy', 'liturgical-calendar', 'liturgy-hours-office'];
+  
+  for (const store of stores) {
+    data[store] = await getAllFromStore(store);
+  }
+  
+  return JSON.stringify({
+    version: DB_VERSION,
+    exportedAt: Date.now(),
+    data
+  });
+}
+
+export async function importCache(jsonString: string): Promise<void> {
+  const parsed = JSON.parse(jsonString);
+  if (parsed.version !== DB_VERSION) throw new Error('Versão do cache incompatível');
+  
+  const db = await openDB();
+  for (const storeName in parsed.data) {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    for (const entry of parsed.data[storeName]) {
+      store.put(entry);
+    }
+  }
+  localStorage.setItem('cathedra_last_sync', Date.now().toString());
+  window.dispatchEvent(new CustomEvent('cathedra_cache_updated'));
+}
+
+// ─── Stats ───
+
+export async function getCacheStats() {
+  const stores = ['bible', 'catechism', 'liturgy', 'liturgical-calendar', 'liturgy-hours-office'];
+  const stats: Record<string, number> = {};
+  let total = 0;
+  
+  for (const store of stores) {
+    const items = await getAllFromStore(store);
+    stats[store] = items.length;
+    total += items.length;
+  }
+  
+  return {
+    ...stats,
+    total,
+    lastSync: localStorage.getItem('cathedra_last_sync')
+  };
+}
+
+// ─── Pre-load logic ───
+
+export async function preloadCatechism(start: number, count: number, onProgress?: (p: number) => void): Promise<void> {
+  for (let i = 0; i < count; i++) {
+    const paragraph = start + i;
+    if (paragraph > 2865) break;
+    
+    const cached = await getCachedCatechismParagraph(paragraph);
+    if (cached) continue;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('catechism-text', { 
+        body: { paragraph } 
+      });
+      if (!error && data) {
+        const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+        if (!parsed.status || parsed.status !== 'not_cached') {
+          await cacheCatechismParagraph(paragraph, {
+            paragraph,
+            content: parsed.content,
+            language: parsed.language || 'pt',
+            status: parsed.status,
+            textoBase: parsed.textoBase,
+          });
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to preload catechism §${paragraph}`, e);
+    }
+    
+    onProgress?.(Math.round(((i + 1) / count) * 100));
+  }
+}
+
+export async function preloadBible(bookAbbr: string, startChapter: number, count: number, onProgress?: (p: number) => void): Promise<void> {
+  for (let i = 0; i < count; i++) {
+    const chapter = startChapter + i;
+    
+    const cached = await getCachedBibleChapter(bookAbbr, chapter);
+    if (cached) continue;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('bible-text', { 
+        body: { book: bookAbbr, chapter } 
+      });
+      if (!error && data) {
+        await cacheBibleChapter(bookAbbr, chapter, data);
+      }
+    } catch (e) {
+      console.error(`Failed to preload bible ${bookAbbr} ${chapter}`, e);
+    }
+    
+    onProgress?.(Math.round(((i + 1) / count) * 100));
+  }
+}
+
