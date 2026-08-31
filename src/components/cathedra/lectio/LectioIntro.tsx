@@ -1,0 +1,145 @@
+import { Icons } from '@/constants';
+import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+
+import { motion } from 'framer-motion';
+import { STEPS, SUGGESTED_PASSAGES, getDailyPassage, Step } from './constants';
+
+interface LectioIntroProps {
+  selectedPassage: string;
+  onPassageChange: (passage: string) => void;
+  onStart: () => void;
+}
+
+const LectioIntro: React.FC<LectioIntroProps> = ({ selectedPassage, onPassageChange, onStart }) => {
+  const dailyPassage = getDailyPassage();
+
+  return (
+    <div className="w-full space-y-spacing-2xl pb-spacing-2xl">
+      {/* Emotional welcome */}
+      <motion.div 
+        className="text-center space-y-spacing-lg pt-spacing-xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="inline-flex items-center gap-spacing-xs px-spacing-md py-spacing-2xs bg-primary/5 border border-primary/10 rounded-premium">
+          <Icons.Feather className="w-spacing-md h-spacing-md text-primary" />
+          <span className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary">Lectio Divina</span>
+        </div>
+        <h1 className="text-premium-4xl md:text-premium-6xl font-serif font-bold text-foreground tracking-tight">Leitura Orante</h1>
+        <p className="text-premium-lg text-muted-foreground font-serif italic leading-relaxed">
+          Que bom ter você aqui. Reserve este momento só para Deus e para você.<br />
+          <span className="text-primary/80">Respire fundo. Silencie o coração. Comece.</span>
+        </p>
+      </motion.div>
+
+      {/* Daily suggestion card */}
+      <motion.button
+        onClick={() => onPassageChange(dailyPassage.ref)}
+        className={`w-full flex items-center gap-spacing-lg p-spacing-lg rounded-[2rem] border transition-all shadow-premium group ${
+          selectedPassage === dailyPassage.ref
+            ? 'bg-primary border-primary text-primary-foreground shadow-primary/20'
+            : 'bg-card border-border hover:border-primary/30 hover:shadow-premium-hover'
+        }`}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+      >
+        <div className={`w-spacing-2xl h-spacing-2xl rounded-premium-full flex items-center justify-center shrink-0 ${
+          selectedPassage === dailyPassage.ref ? 'bg-white/20' : 'bg-primary/10'
+        }`}>
+          <Icons.Heart className={`w-spacing-lg h-spacing-lg ${selectedPassage === dailyPassage.ref ? 'text-white' : 'text-primary'}`} />
+        </div>
+        <div className="text-left flex-1">
+          <p className={`text-premium-xs font-black uppercase tracking-[0.2em] ${
+            selectedPassage === dailyPassage.ref ? 'text-white/70' : 'text-primary/85'
+          }`}>Lectio do Dia</p>
+          <p className={`font-serif font-bold text-premium-lg ${
+            selectedPassage === dailyPassage.ref ? 'text-white' : 'text-foreground'
+          }`}>{dailyPassage.title}</p>
+          <div className="flex items-center gap-spacing-xs mt-spacing-2xs">
+            <Icons.Clock className={`w-spacing-sm h-spacing-sm ${selectedPassage === dailyPassage.ref ? 'text-white/60' : 'text-muted-foreground'}`} />
+            <span className={`text-premium-xs ${selectedPassage === dailyPassage.ref ? 'text-white/60' : 'text-muted-foreground'}`}>~15 min · {dailyPassage.ref}</span>
+          </div>
+        </div>
+        <Icons.ArrowRight className={`w-spacing-md h-spacing-md group-hover:translate-x-1 transition-transform ${
+          selectedPassage === dailyPassage.ref ? 'text-white/80' : 'text-muted-foreground'
+        }`} />
+      </motion.button>
+
+      {/* Steps overview */}
+      <motion.div 
+        className="grid grid-cols-2 md:grid-cols-5 gap-spacing-md px-spacing-xs"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.6 }}
+      >
+        {STEPS.map((step, i) => (
+          <div key={step.id} className="group p-spacing-md rounded-premium bg-card border border-border text-center space-y-spacing-sm hover:border-primary/30 hover:shadow-premium-hover hover:-translate-y-1 transition-all">
+            <div className={`w-spacing-2xl h-spacing-2xl rounded-premium-full mx-auto flex items-center justify-center transition-transform group-hover:scale-110 ${step.color}`}>
+              <step.icon className="w-spacing-lg h-spacing-lg" />
+            </div>
+            <div>
+              <p className="text-premium-xs font-black uppercase tracking-widest text-primary/85">{step.latin}</p>
+              <p className="font-serif font-bold text-premium-sm text-foreground">{step.title}</p>
+            </div>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* Select passage */}
+      <motion.div 
+        className="bg-card border border-border rounded-[2.5rem] p-spacing-xl md:p-spacing-2xl space-y-spacing-xl shadow-premium-hover shadow-black/[0.02]"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.6 }}
+      >
+        <div className="space-y-spacing-lg w-full mx-auto">
+          <div className="text-center space-y-spacing-xs">
+            <h3 className="text-premium-sm font-black uppercase tracking-widest text-primary/85">Ou escolha outra passagem</h3>
+            <p className="text-premium-xs text-muted-foreground font-serif italic">Digite uma referência bíblica ou escolha uma sugestão.</p>
+          </div>
+          <div className="relative">
+            <input
+              value={selectedPassage}
+              onChange={e => onPassageChange(e.target.value)}
+              placeholder="Ex: Jo 1,1-18 ou Sl 23..."
+              className="w-full px-spacing-lg py-spacing-md rounded-premium-full border border-border bg-muted/30 text-foreground text-premium-base text-center font-serif focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all shadow-premium-md"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-spacing-xs justify-center">
+            {SUGGESTED_PASSAGES.map(p => (
+              <button
+                type="button"
+                key={p.ref}
+                onClick={() => onPassageChange(p.ref)}
+                aria-pressed={selectedPassage === p.ref}
+                className={`px-spacing-md py-spacing-xs rounded-premium-full text-premium-xs font-black uppercase tracking-widest transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+                  selectedPassage === p.ref
+                    ? 'bg-primary border-primary text-primary-foreground shadow-premium'
+                    : 'bg-card border-border text-primary hover:border-primary hover:text-primary hover:bg-primary/[0.04]'
+                }`}
+              >
+                {p.ref}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center">
+          <Button
+            disabled={!selectedPassage.trim()}
+            onClick={onStart}
+            className="px-spacing-xl py-spacing-md bg-foreground text-background rounded-premium-full font-black uppercase text-premium-xs tracking-[0.2em] shadow-premium-hover hover:bg-primary hover:text-primary-foreground transition-all disabled:opacity-30 active:scale-95"
+          >
+            Iniciar Lectio Divina
+          </Button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default LectioIntro;

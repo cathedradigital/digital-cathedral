@@ -1,0 +1,54 @@
+/**
+ * AtriumMagisteriumViewer — envoltório editorial do MagisteriumViewer.
+ * Mantém a lógica existente intacta e apenas aplica o chrome sticky.
+ */
+
+import React, { Suspense, lazy, useMemo } from 'react';
+import { useParams } from '@/lib/rr-compat';
+import { ReaderToolbar } from '@/components/reader';
+import { MAGISTERIUM_CATEGORIES } from '@/data/magisterium-urls';
+import { AppRoute } from '@/types';
+import { MobileTopBar } from '@/components/mobile/MobileTopBar';
+import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
+
+const MagisteriumViewer = lazy(
+  () => import('@/components/cathedra/MagisteriumViewer'),
+);
+
+const AtriumMagisteriumViewer: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+
+  const meta = useMemo(() => {
+    if (!id) return null;
+    for (const cat of MAGISTERIUM_CATEGORIES) {
+      const doc = cat.documents.find((d) => d.id === id);
+      if (doc) return doc;
+    }
+    return null;
+  }, [id]);
+
+  const kicker = meta
+    ? `Cathedra · Magistério${meta.type ? ` · ${meta.type}` : ''}`
+    : 'Cathedra · Magistério';
+  const title = meta?.title ?? 'Documento do Magistério';
+  const subtitleParts = [meta?.author, meta?.year ? String(meta.year) : null].filter(Boolean);
+  const subtitle = subtitleParts.length > 0 ? subtitleParts.join(' · ') : undefined;
+
+  return (
+    <>
+      <MobileTopBar kicker={kicker} title={meta?.title ?? 'Magistério'} showBack />
+      <ReaderToolbar
+        kicker={kicker}
+        title={title}
+        subtitle={subtitle}
+        backHref={AppRoute.MAGISTERIUM}
+      />
+      <Suspense fallback={null}>
+        <MagisteriumViewer />
+      </Suspense>
+      <MobileBottomNav />
+    </>
+  );
+};
+
+export default AtriumMagisteriumViewer;

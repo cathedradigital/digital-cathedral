@@ -1,0 +1,61 @@
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { motion, HTMLMotionProps } from "framer-motion";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+
+interface CathedraButtonProps extends HTMLMotionProps<"button"> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'icon';
+  isLoading?: boolean;
+  icon?: React.ReactNode;
+}
+
+const CathedraButton = React.memo(React.forwardRef<HTMLButtonElement, CathedraButtonProps>(
+  ({ className, variant = 'primary', size = 'md', isLoading, icon, children, ...props }, ref) => {
+    const { settings } = useReadingSettings();
+    const sizeMap = {
+      sm: 'px-spacing-md h-[44px] md:h-spacing-xl text-[9px] md:text-[10px] min-w-[44px]',
+      md: 'px-spacing-xl h-spacing-2xl text-[10px] md:text-[11px] min-w-[48px]',
+      lg: 'px-spacing-2xl h-spacing-2xl text-[11px] md:text-[12px] min-w-[48px]',
+      xl: 'px-spacing-3xl h-spacing-3xl text-[12px] md:text-[16px] min-w-[64px]',
+      icon: 'w-11 h-11 p-0 inline-flex items-center justify-center',
+    };
+
+
+    const variantStyles = {
+      primary: 'btn-premium-primary',
+      secondary: 'btn-premium-secondary',
+      outline: 'btn-premium-outline',
+      ghost: 'btn-premium-ghost',
+      destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-premium-full font-medium transition-colors',
+    };
+
+    return (
+      <motion.button
+        ref={ref as any}
+        whileTap={settings.reduceAnimations ? {} : { scale: 0.96 }}
+        whileHover={settings.reduceAnimations ? {} : { y: -1, transition: { duration: 0.2, ease: "easeOut" } }}
+        className={cn(
+          variantStyles[variant],
+          sizeMap[size],
+          isLoading && 'opacity-70 cursor-wait',
+          className
+        )}
+        {...(props as any)}
+      >
+        {isLoading ? (
+          <div className="w-spacing-md h-spacing-md border-2 border-current border-t-transparent rounded-premium-full animate-spin" />
+        ) : (
+          <>
+            {icon && <span className="flex-shrink-0">{icon}</span>}
+            {children}
+          </>
+        )}
+      </motion.button>
+    );
+  }
+));
+
+CathedraButton.displayName = "CathedraButton";
+
+export { CathedraButton };

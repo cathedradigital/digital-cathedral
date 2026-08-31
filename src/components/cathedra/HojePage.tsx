@@ -1,0 +1,304 @@
+import React, { useState, useEffect, useContext, useMemo, useCallback, lazy, Suspense } from 'react';
+import { useNavigate } from '@/lib/rr-compat';
+import { motion } from 'framer-motion';
+import { Icons } from '@/constants';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { AppRoute } from '@/types';
+import { LangContext } from '@/contexts/LangContext';
+import { useSaintsToday, useOfficialSaint } from '@/hooks/useSaints';
+import { CathedraButton } from './CathedraButton';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import SEOHead from '@/components/SEOHead';
+import { useQuery } from '@tanstack/react-query';
+import { DashboardSkeleton } from './DashboardSkeleton';
+import DevDataInspector from './DevDataInspector';
+import { useEnhancedRecommendations } from '@/hooks/useEnhancedRecommendations';
+import { SpiritualContinuity } from './SpiritualContinuity';
+const ContemplativeLayout = lazy(() => import('./ContemplativeLayout'));
+import { useRenderPerf } from '@/hooks/useRenderPerf';
+
+
+const LITURGICAL_QUOTES = [
+  '"Sede misericordiosos como vosso Pai é misericordioso." — Lc 6,36',
+  '"Eu sou o caminho, a verdade e a vida." — Jo 14,6',
+  '"Vinde a mim todos vós que estais cansados." — Mt 11,28',
+  '"Não tenhais medo, eu venci o mundo." — Jo 16,33',
+  '"Amai-vos uns aos outros como eu vos amei." — Jo 15,12',
+];
+
+function useActiveJourney(userId: string | undefined) {
+  return useQuery({
+    queryKey: ['active-journey', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data: progress } = await supabase
+        .from('journey_progress')
+        .select('journey_id')
+        .eq('user_id', userId)
+        .order('completed_at', { ascending: false })
+        .limit(1);
+      if (!progress?.length) return null;
+      const lastJourneyId = progress[0].journey_id;
+      const [journeyRes, completedRes, stepsRes] = await Promise.all([
+        supabase.from('journeys').select('*').eq('id', lastJourneyId).maybeSingle(),
+        supabase.from('journey_progress').select('step_id').eq('user_id', userId).eq('journey_id', lastJourneyId),
+        supabase.from('journey_steps').select('id, step_order, title, subtitle, content').eq('journey_id', lastJourneyId).order('step_order', { ascending: true }),
+      ]);
+      if (!journeyRes.data) return null;
+      const completedIds = (completedRes.data || []).map(s => s.step_id);
+      const allSteps = stepsRes.data || [];
+      const nextStep = allSteps.find(s => !completedIds.includes(s.id)) || null;
+      return {
+        journey: journeyRes.data,
+        progress: { completed: completedIds.length, total: allSteps.length },
+        nextStep,
+      };
+    },
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+function useRecommendedJourney(userId: string | undefined, profile: any, userLevel: string | undefined, hasActiveJourney: boolean) {
+  return useQuery({
+    queryKey: ['recommended-journey', userId, userLevel],
+    queryFn: async () => {
+      if (!userId) return null;
+      const result = profile?._sensitive?.diagnosis_result as Record<string, string> | undefined;
+      const { moment, prayer, knowledge, goal } = result || {};
+      let category = 'fundamentos';
+      if (userLevel === 'iniciante' || moment === 'beginning' || knowledge === 'basic') category = 'fundamentos';
+      else if (userLevel === 'avançado' || prayer === 'contemplative' || goal === 'transformation') category = 'formacao';
+      else if (moment === 'struggling' || goal === 'peace') category = 'mistico';
+      else if (goal === 'routine' || prayer === 'rarely' || prayer === 'sometimes') category = 'rotina';
+      const { data } = await supabase
+        .from('journeys')
+        .select('*')
+        .eq('category', category)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!userId && !hasActiveJourney,
+    staleTime: 1000 * 60 * 30,
+    retry: 1,
+  });
+}
+
+const HojePage: React.FC = () => {
+  const navigate = useNavigate();
+  useRenderPerf('Sanctuarium (Home)', 15);
+
+  const { user, profile, userLevel } = useAuth();
+  const { t, lang } = useContext(LangContext);
+  const [todayQuote] = useState(() => LITURGICAL_QUOTES[new Date().getDate() % LITURGICAL_QUOTES.length]);
+
+  const { data: allSaintsToday = [], isLoading: loadingSaints } = useSaintsToday();
+  const { data: officialSaint } = useOfficialSaint();
+  
+  const { nextUp, isLoading: loadingStats } = useDashboardData(user as any || null);
+
+  const { data: activeJourneyData, isLoading: loadingJourney } = useActiveJourney(user?.id);
+  const activeJourney = activeJourneyData?.journey || null;
+  const journeyStep = activeJourneyData?.nextStep || null;
+  const journeyProgress = activeJourneyData?.progress || { completed: 0, total: 0 };
+  
+  const { data: recommendedJourney } = useRecommendedJourney(user?.id, profile, userLevel, !!activeJourney);
+  const { data: enhancedRec, isLoading: loadingRec } = useEnhancedRecommendations();
+
+  const hour = new Date().getHours();
+  const greeting = useMemo(() => {
+    if (hour < 12) return lang === 'pt' ? 'Bom dia' : 'Good morning';
+    if (hour < 18) return lang === 'pt' ? 'Boa tarde' : 'Good afternoon';
+    return lang === 'pt' ? 'Boa noite' : 'Good evening';
+  }, [hour, lang]);
+
+
+  if (loadingStats || loadingJourney || loadingRec) return <DashboardSkeleton />;
+
+  return (
+    <ContemplativeLayout
+      title="Mosteiro"
+      subtitle={greeting + (profile?.name ? `, ${profile.name.split(' ')[0]}` : ', Anima Fidelis')}
+      icon={Icons.Logo}
+      className="monastic-sanctuary overflow-hidden"
+    >
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/[0.02] rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/[0.01] rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+
+      <SEOHead 
+        title={`Sanctuarium - ${new Date().toLocaleDateString('pt-BR')} | Cathedra`} 
+        description="Refúgio digital contemplativo guiado pela Fé. Liturgia, Ritual e Sabedoria em silêncio visual." 
+        path="/hoje" 
+        image="https://gpwrpmoniglarqwfyryp.supabase.co/storage/v1/object/public/public-assets/og-hoje.png"
+        keywords="mosteiro digital, ritual diário, cathedra digital, silêncio espiritual, contemplação"
+        breadcrumbs={[
+          { name: "Sanctuarium", path: "/hoje" }
+        ]}
+      />
+      
+      {import.meta.env.DEV && <DevDataInspector data={{ officialSaint, allSaintsToday: allSaintsToday || [], activeJourney: activeJourney || null, profile: profile?._sensitive || null }} />}
+      
+      <div className="w-full space-y-spacing-2xl md:space-y-spacing-4xl">
+        {/* CONTINUIDADE ESPIRITUAL - RETOMADA DINÂMICA */}
+        <motion.section 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="w-full"
+        >
+          <SpiritualContinuity data={nextUp} isLoading={loadingStats} profile={profile} />
+        </motion.section>
+
+        {/* CAMADA EDITORIAL — progresso + recomendação em tipografia contemplativa */}
+        <motion.section
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.35 }}
+          className="editorial-column editorial-section"
+          aria-label="Sua jornada em curso"
+        >
+          <p className="editorial-meta text-center mb-spacing-lg">
+            {activeJourney ? 'Jornada em curso' : 'Sugerido para você'}
+          </p>
+          <h2 className="editorial-display text-3xl md:text-5xl text-center text-primary mb-spacing-lg">
+            {activeJourney?.title || recommendedJourney?.title || 'O silêncio prepara o próximo passo.'}
+          </h2>
+          {(activeJourney?.description || recommendedJourney?.description) && (
+            <p className="text-center font-serif italic text-primary/70 text-lg md:text-xl leading-relaxed">
+              {activeJourney?.description || recommendedJourney?.description}
+            </p>
+          )}
+
+          {activeJourney && journeyProgress.total > 0 && (
+            <div className="mt-spacing-2xl">
+              <div className="flex items-baseline justify-between mb-spacing-sm">
+                <span className="editorial-meta">Progresso</span>
+                <span className="editorial-meta text-secondary">
+                  {journeyProgress.completed} / {journeyProgress.total}
+                </span>
+              </div>
+              <div className="h-[2px] bg-primary/10 relative overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.round((journeyProgress.completed / journeyProgress.total) * 100)}%` }}
+                  transition={{ duration: 1.4, ease: 'easeOut' }}
+                  className="absolute inset-y-0 left-0 bg-secondary"
+                />
+              </div>
+              {journeyStep && (
+                <p className="mt-spacing-lg text-center text-primary/60 font-serif italic">
+                  Próximo passo — <span className="text-primary/90">{journeyStep.title}</span>
+                </p>
+              )}
+            </div>
+          )}
+
+          <div className="mt-spacing-2xl flex items-center justify-center gap-spacing-lg">
+            {activeJourney ? (
+              <button
+                type="button"
+                onClick={() => navigate(`/jornadas/${activeJourney.id}`)}
+                className="text-[11px] uppercase tracking-[0.3em] text-primary border-b border-primary pb-[3px] hover:text-secondary hover:border-secondary transition-colors"
+              >
+                Retomar jornada
+              </button>
+            ) : recommendedJourney ? (
+              <button
+                type="button"
+                onClick={() => navigate(`/jornadas/${recommendedJourney.id}`)}
+                className="text-[11px] uppercase tracking-[0.3em] text-primary border-b border-primary pb-[3px] hover:text-secondary hover:border-secondary transition-colors"
+              >
+                Começar esta jornada
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => navigate('/jornadas')}
+
+                className="inline-flex min-h-[44px] items-center text-[11px] uppercase tracking-[0.3em] text-primary/60 border-b border-primary/40 pb-[3px] hover:text-secondary hover:border-secondary transition-colors"
+              >
+                Explorar jornadas
+              </button>
+            )}
+          </div>
+          <hr className="editorial-rule editorial-rule--hair mt-spacing-2xl" />
+        </motion.section>
+
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-spacing-2xl md:gap-spacing-4xl">
+          <div className="lg:col-span-8 space-y-spacing-3xl md:space-y-spacing-4xl">
+            {/* NÚCLEO SAGRADO - PORTAS PRINCIPAIS */}
+            <section className="space-y-spacing-xl md:space-y-spacing-3xl">
+              <div className="flex items-center gap-spacing-lg">
+                <h2 className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.6em] text-primary/40 whitespace-nowrap">
+                  Núcleo Sagrado
+                </h2>
+                <div className="h-[0.5px] flex-1 bg-gradient-to-r from-primary/[0.08] to-transparent" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-xl w-full">
+                 <CathedraButton 
+                    variant="outline" 
+                    className="h-spacing-4xl rounded-[2.5rem] border-primary/[0.03] hover:bg-primary/[0.01] transition-all flex flex-col items-center justify-center gap-spacing-md group"
+                    onClick={() => navigate(AppRoute.BIBLE)}
+                 >
+                    <Icons.Bible className="w-spacing-xl h-spacing-xl text-primary/20 group-hover:text-primary transition-all" strokeWidth={1.2} size={20} aria-hidden="true" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 group-hover:text-primary transition-all">Bíblia</span>
+                 </CathedraButton>
+                 <CathedraButton 
+                    variant="outline" 
+                    className="h-spacing-4xl rounded-[2.5rem] border-primary/[0.03] hover:bg-primary/[0.01] transition-all flex flex-col items-center justify-center gap-spacing-md group"
+                    onClick={() => navigate(AppRoute.CATECHISM)}
+                 >
+                    <Icons.Catechism className="w-spacing-xl h-spacing-xl text-primary/20 group-hover:text-primary transition-all" strokeWidth={1.2} size={20} aria-hidden="true" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/40 group-hover:text-primary transition-all">Catecismo</span>
+                 </CathedraButton>
+              </div>
+            </section>
+          </div>
+
+          <aside className="lg:col-span-4 space-y-spacing-3xl">
+            {/* FRASES DO DIA - CONTEMPLAÇÃO */}
+            <div className="py-spacing-2xl px-spacing-xl text-center bg-primary/[0.01] rounded-[2rem] border border-primary/[0.03] transition-all hover:bg-primary/[0.02] duration-1000">
+               <Icons.Quote className="w-spacing-lg h-spacing-lg text-primary/10 mx-auto mb-spacing-xl" />
+               <p className="text-premium-lg md:text-premium-xl text-primary/40 font-serif italic leading-relaxed selection:bg-primary/5">
+                {todayQuote}
+              </p>
+            </div>
+
+            {/* EM BREVE - DISCRETO */}
+            <section className="pt-spacing-2xl opacity-30 hover:opacity-100 transition-opacity duration-1000">
+              <div className="flex items-center gap-spacing-lg mb-spacing-xl">
+                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/40">Futuro</span>
+                <div className="h-[0.5px] flex-1 bg-gradient-to-r from-primary/[0.08] to-transparent" />
+              </div>
+              <div className="space-y-spacing-lg">
+                {[
+                  { title: 'Jornadas de Fé', icon: <Icons.Journeys className="w-spacing-md h-spacing-md" /> },
+                  { title: 'Comunidade Contemplativa', icon: <Icons.Users className="w-spacing-md h-spacing-md" /> },
+                  { title: 'Dashboard do Peregrino', icon: <Icons.Activity className="w-spacing-md h-spacing-md" /> },
+                ].map((item) => (
+                  <div key={item.title} className="flex items-center gap-spacing-md group cursor-default">
+                    <div className="text-primary/30 group-hover:text-primary/50 transition-colors">
+                      {item.icon}
+                    </div>
+                    <h4 className="text-[10px] font-bold text-primary/30 uppercase tracking-widest group-hover:text-primary/50 transition-colors">{item.title}</h4>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </ContemplativeLayout>
+  );
+};
+
+export default HojePage;
