@@ -18,7 +18,7 @@ export const liturgyAdapter: LibraryAdapter = {
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
-    return (data ?? []).map<LibraryItem>((row) => {
+    return (data ?? []).map((row): LibraryItem => {
       const slug = row.iso_date ?? String(row.id);
       return {
         id: String(row.id),

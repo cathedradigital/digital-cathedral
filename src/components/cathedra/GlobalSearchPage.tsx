@@ -14,7 +14,7 @@ import { useFuzzySearch } from '@/hooks/useFuzzySearch';
 import { AppRoute } from '@/types';
 import { useRovingTabindex } from './TabUtils';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
-import type { Tables } from '@/integrations/supabase/types';
+import type { Tables } from '@/lib/db';
 import ContemplativeLayout from './ContemplativeLayout';
 import { ListSkeleton, SearchResultSkeleton, TagSkeleton } from './SacredSkeleton';
 import { useRenderPerf } from '@/hooks/useRenderPerf';

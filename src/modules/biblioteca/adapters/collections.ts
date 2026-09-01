@@ -18,7 +18,7 @@ export const collectionsAdapter: LibraryAdapter = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data ?? []).map<LibraryItem>((row) => ({
+    return (data ?? []).map((row): LibraryItem => ({
       id: String(row.id),
       module: 'collections',
       title: row.title ?? '',

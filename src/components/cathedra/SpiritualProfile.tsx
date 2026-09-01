@@ -10,7 +10,7 @@ import ContemplativeLayout from './ContemplativeLayout';
 import { getLevelInfo } from '@/lib/levels';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from '@/lib/rr-compat';
-import { Database } from '@/integrations/supabase/types';
+import { Database } from '@/lib/db';
 import { useAvatarUrl } from '@/lib/avatar';
 
 type UserHistory = Database['public']['Tables']['user_history']['Row'];

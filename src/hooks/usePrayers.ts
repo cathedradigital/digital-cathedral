@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { supabase } from '@/lib/db';
-import type { Database } from '@/integrations/supabase/types';
+import type { Database } from '@/lib/db';
 
 export type PrayerCategory = Database['public']['Enums']['prayer_category'];
 

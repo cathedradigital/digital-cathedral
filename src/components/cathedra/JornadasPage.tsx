@@ -25,7 +25,7 @@ import RelevanceBadge from './RelevanceBadge';
 import { SearchResultCard } from './SearchResultCard';
 import { useFuzzySearch } from '@/hooks/useFuzzySearch';
 import { BubbleTag, getTagIcon } from './BubbleTag';
-import type { Tables } from '@/integrations/supabase/types';
+import type { Tables } from '@/lib/db';
 import ContemplativeLayout from './ContemplativeLayout';
 import FormacaoHero from './formacao/FormacaoHero';
 import FormacaoTimeline from './formacao/FormacaoTimeline';
