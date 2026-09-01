@@ -1,7 +1,7 @@
 import { Icons } from '@/constants';
 import React, { useEffect, useState, lazy, Suspense, useMemo } from 'react';
 import { useSearchParams, useNavigate } from '@/lib/rr-compat';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

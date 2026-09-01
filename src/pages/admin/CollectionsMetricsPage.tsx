@@ -8,7 +8,7 @@ import React from 'react';
 import { Helmet } from '@/lib/helmet-compat';
 import { Link } from '@/lib/rr-compat';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { ReaderShell, EditorialHero } from '@/components/reader';
 import { EditorialSurface } from '@/components/editorial';
 import { Loader2, ArrowLeft, Layers, Clock, TrendingUp, CheckCircle2 } from 'lucide-react';

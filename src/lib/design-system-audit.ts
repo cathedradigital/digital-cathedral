@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { getContrastRatio, getWCAGLevel } from './a11y-utils';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';

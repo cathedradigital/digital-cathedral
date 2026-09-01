@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from '@/lib/rr-compat';
 import { Icons } from '../../constants';
 import { AppRoute } from '../../types';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useSearchSaints } from '@/hooks/useSaints';
 import { CATECHISM_LOCAL_DATA } from '@/data/catechism';
 

@@ -11,7 +11,7 @@
 import React from 'react';
 import { useSearchParams } from '@/lib/rr-compat';
 import { Helmet } from '@/lib/helmet-compat';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

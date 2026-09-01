@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import jsPDF from 'jspdf';

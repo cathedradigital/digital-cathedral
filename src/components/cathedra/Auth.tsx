@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from '@/lib/helmet-compat';
 import { Icons } from '../../constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { lovable } from '@/integrations/lovable/index';
 import { useNavigate, useSearchParams } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';

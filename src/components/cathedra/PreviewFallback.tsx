@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/constants';
 import * as Sentry from "@sentry/react";
 import { trackNavigationError } from '@/lib/telemetry';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { RefreshCcw, Home, AlertTriangle } from 'lucide-react';
 
 interface Props {

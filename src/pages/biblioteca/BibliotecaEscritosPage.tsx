@@ -12,7 +12,7 @@ import { listAllPublishedWorks } from '@/services/saintWorksService';
 import type { SaintWork, SaintWorkCategory } from '@/types/saintWorks';
 import { SAINT_WORK_CATEGORY_LABELS } from '@/types/saintWorks';
 import { EditorialHero } from '@/components/editorial';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { Icons } from '../../constants';
 
 const BibliotecaEscritosPage: React.FC = () => {

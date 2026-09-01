@@ -16,7 +16,7 @@ import { getSaintsByDate, getSaintsByDateOrThrow, searchSaints, getSaintsByCateg
 import SaintsFetchError from './SaintsFetchError';
 import SaintsOfflineFallback from './SaintsOfflineFallback';
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useDebounce } from '@/hooks/useDebounce';
 
 import { RelevanceBadge } from './RelevanceBadge';

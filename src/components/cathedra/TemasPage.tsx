@@ -5,7 +5,7 @@ import { normalizeText } from '@/lib/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchNexusTagContent } from '@/lib/nexusContent';
 import { useSearchParams, useNavigate } from '@/lib/rr-compat';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { motion } from 'framer-motion';
 import { AppRoute } from '@/types';
 

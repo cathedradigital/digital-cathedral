@@ -9,7 +9,7 @@
  *  3. URL externa (Google OAuth, Gravatar) → devolve como está.
  */
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 type AvatarSource =
   | { kind: 'external'; url: string }

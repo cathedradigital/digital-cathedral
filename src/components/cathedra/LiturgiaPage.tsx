@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
 import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';

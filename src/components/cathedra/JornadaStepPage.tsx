@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { useReadingMarks } from '@/hooks/useReadingMarks';
 import { saveUserPsychology } from '@/lib/psychologicalProfile';

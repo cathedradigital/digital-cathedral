@@ -5,7 +5,7 @@
  * Regra Reader Architecture: este serviço NÃO renderiza; apenas provê dados.
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type {
   SaintWork,
   SaintWorkChapter,

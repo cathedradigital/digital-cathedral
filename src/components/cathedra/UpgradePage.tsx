@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { toast } from 'sonner';
 import { 
   Table, 

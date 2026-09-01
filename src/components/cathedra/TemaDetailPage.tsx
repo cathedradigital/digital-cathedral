@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { normalizeText } from '@/lib/utils';
 import { getSearchTermsForTag } from '@/lib/tagNormalization';
 import { fetchNexusTagContent } from '@/lib/nexusContent';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Icons } from '@/constants';

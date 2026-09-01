@@ -10,7 +10,7 @@
  * Formato canônico esperado: {"abbr":"Gn","chapter":1,"verse":1,"text":"..."}
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Input } from "@/components/ui/input";

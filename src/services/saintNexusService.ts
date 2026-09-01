@@ -7,7 +7,7 @@
  * heurísticos (`saintAutoNexus`); complementa-os com dados curados.
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type { NexusRelation, SaintNexusRelation } from '@/types/nexus';
 import type { CuratedNexusEdge } from '@/core/knowledge/adapters/nexusGraphMerge';
 import { withCentrality } from './nexusCentrality';
