@@ -68,7 +68,7 @@ export function prefetchCoreModules() {
 
 // Prefetch essential data for offline availability
 export async function prefetchEssentialContent() {
-  const { supabase } = await import('@/integrations/supabase/client');
+  const { supabase } = await import('@/lib/db');
   
   // Check if Supabase is healthy before syncing
   try {

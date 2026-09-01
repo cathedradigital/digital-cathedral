@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
 

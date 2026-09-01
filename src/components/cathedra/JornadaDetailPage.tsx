@@ -35,7 +35,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { EditorialQuote } from '@/components/editorial/primitives';

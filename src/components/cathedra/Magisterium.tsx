@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
 import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import SacredImage from './SacredImage';
 import DeepContentSection from './DeepContentSection';
@@ -43,7 +43,7 @@ const BubbleHint: React.FC<{
   // Fecha ao mover o foco para fora do trigger (Tab / Shift+Tab)
   // sem deixar conteúdo órfão no DOM.
   const childOnBlur = (children.props as { onBlur?: React.FocusEventHandler }).onBlur;
-  const enhancedChild = React.cloneElement(children, {
+  const enhancedChild = React.cloneElement(children as React.ReactElement<{ onBlur?: React.FocusEventHandler }>, {
     onBlur: (e: React.FocusEvent) => {
       childOnBlur?.(e);
       setOpen(false);

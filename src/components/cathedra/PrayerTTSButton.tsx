@@ -6,7 +6,7 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Volume2, Loader2, Pause, Play } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 

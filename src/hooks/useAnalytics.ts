@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from '@/lib/rr-compat';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { AppRoute } from '@/types';
 
 export const useAnalytics = (userId: string | undefined) => {

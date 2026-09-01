@@ -16,7 +16,7 @@ import { type TagContent, fetchNexusTagContent } from '@/lib/nexusContent';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppRoute } from '@/types';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 import { Icons } from '@/constants';
 import { BubbleTag, getTagIcon } from './BubbleTag';

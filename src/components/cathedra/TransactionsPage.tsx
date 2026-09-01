@@ -1,6 +1,6 @@
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -66,7 +66,7 @@ const TransactionsPage: React.FC = () => {
         .not('plan_id', 'is', null);
       
       if (error) throw error;
-      const plans = Array.from(new Set(data.map(t => t.plan_id)));
+      const plans = Array.from(new Set(data.map((t: any) => t.plan_id as string)));
       setAvailablePlans(plans);
     } catch (err) {
       console.error('Error fetching plans:', err);

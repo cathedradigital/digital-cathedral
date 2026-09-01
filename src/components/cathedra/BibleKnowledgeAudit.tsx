@@ -4,7 +4,7 @@ import { useSearchParams } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { BibleAuditDashboard } from './BibleAuditDashboard';
 import { getBibleAuditReport } from '@/data/bible-audit-logic';
 import { Badge } from '@/components/ui/badge';

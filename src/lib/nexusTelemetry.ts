@@ -11,7 +11,7 @@
  * `catechismDiagnostics.ts` e `Bible.tsx` — nenhum backend novo.
  * Silencia erros de gravação para não poluir o console de produção.
  */
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 export type NexusTelemetryEvent =
   | 'nexus.shown'

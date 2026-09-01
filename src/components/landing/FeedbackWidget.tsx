@@ -2,7 +2,7 @@ import { Icons } from '@/constants';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FeedbackWidget = () => {

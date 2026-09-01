@@ -13,7 +13,7 @@ import { type Saint } from '@/data/saints';
 
 import { AppRoute } from '@/types';
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useLang } from '@/hooks/useLang';

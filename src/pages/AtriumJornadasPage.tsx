@@ -24,7 +24,7 @@ import {
   Flame,
 } from 'lucide-react';
 import { EditorialHero } from '@/components/editorial/harmony';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { SpaceLayout, SpaceHeader, SpaceDoors, type SpaceDoor, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';

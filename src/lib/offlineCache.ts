@@ -1,6 +1,6 @@
 // IndexedDB cache for Bible chapters and Catechism paragraphs
 // Enables offline access to previously read content
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 const DB_NAME = 'cathedra_cache';
 const DB_VERSION = 4; // v4: adds liturgy-hours-office store

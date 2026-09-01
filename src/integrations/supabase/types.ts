@@ -23,7 +23,84 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user" | "editor" | "reviewer"
+      bible_import_phase:
+        | "A_pentateuco"
+        | "B_historicos"
+        | "C_sapienciais"
+        | "D_profetas"
+        | "E_novo_testamento"
+      bible_phase_status:
+        | "pending"
+        | "importing"
+        | "imported"
+        | "certified"
+        | "rejected"
+      bible_translation_pipeline_stage:
+        | "draft"
+        | "importing"
+        | "integrity_check"
+        | "editorial_review"
+        | "ice"
+        | "certified"
+        | "primary"
+        | "archived"
+      content_curation_status: "stub" | "partial" | "complete"
+      editorial_status_enum:
+        | "draft"
+        | "doctrinal_review"
+        | "editorial_review"
+        | "ice_pending"
+        | "published"
+        | "archived"
+      library_kind:
+        | "saint_work"
+        | "patristic"
+        | "doctor"
+        | "classic"
+        | "magisterium"
+      prayer_category:
+        | "fundamentais"
+        | "marianas"
+        | "espirito_santo"
+        | "santos"
+        | "antes_depois"
+        | "protecao"
+        | "momentos_do_dia"
+        | "eucaristica"
+        | "confissao_defuntos"
+      saint_content_status: "stub" | "partial" | "complete"
+      saint_work_access_type:
+        | "internal"
+        | "official_external"
+        | "public_domain"
+        | "licensed"
+      saint_work_category:
+        | "patristica"
+        | "escolastica"
+        | "mistica"
+        | "monastica"
+        | "carmelita"
+        | "franciscana"
+        | "dominicana"
+        | "doutor"
+        | "espiritualidade"
+        | "apologetica"
+        | "liturgica"
+        | "classic"
+        | "magisterio"
+      saint_work_ficha_completeness: "stub" | "minimal" | "complete"
+      saint_work_reading_level: "beginner" | "intermediate" | "advanced"
+      saint_work_status: "draft" | "in_review" | "published" | "archived"
+      search_result_type:
+        | "bible"
+        | "catechism"
+        | "saint"
+        | "patristic"
+        | "magisterium"
+        | "prayer"
+        | "journey"
+        | "glossary"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +227,94 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user", "editor", "reviewer"],
+      bible_import_phase: [
+        "A_pentateuco",
+        "B_historicos",
+        "C_sapienciais",
+        "D_profetas",
+        "E_novo_testamento",
+      ],
+      bible_phase_status: [
+        "pending",
+        "importing",
+        "imported",
+        "certified",
+        "rejected",
+      ],
+      bible_translation_pipeline_stage: [
+        "draft",
+        "importing",
+        "integrity_check",
+        "editorial_review",
+        "ice",
+        "certified",
+        "primary",
+        "archived",
+      ],
+      content_curation_status: ["stub", "partial", "complete"],
+      editorial_status_enum: [
+        "draft",
+        "doctrinal_review",
+        "editorial_review",
+        "ice_pending",
+        "published",
+        "archived",
+      ],
+      library_kind: [
+        "saint_work",
+        "patristic",
+        "doctor",
+        "classic",
+        "magisterium",
+      ],
+      prayer_category: [
+        "fundamentais",
+        "marianas",
+        "espirito_santo",
+        "santos",
+        "antes_depois",
+        "protecao",
+        "momentos_do_dia",
+        "eucaristica",
+        "confissao_defuntos",
+      ],
+      saint_content_status: ["stub", "partial", "complete"],
+      saint_work_access_type: [
+        "internal",
+        "official_external",
+        "public_domain",
+        "licensed",
+      ],
+      saint_work_category: [
+        "patristica",
+        "escolastica",
+        "mistica",
+        "monastica",
+        "carmelita",
+        "franciscana",
+        "dominicana",
+        "doutor",
+        "espiritualidade",
+        "apologetica",
+        "liturgica",
+        "classic",
+        "magisterio",
+      ],
+      saint_work_ficha_completeness: ["stub", "minimal", "complete"],
+      saint_work_reading_level: ["beginner", "intermediate", "advanced"],
+      saint_work_status: ["draft", "in_review", "published", "archived"],
+      search_result_type: [
+        "bible",
+        "catechism",
+        "saint",
+        "patristic",
+        "magisterium",
+        "prayer",
+        "journey",
+        "glossary",
+      ],
+    },
   },
 } as const

@@ -1,5 +1,5 @@
 import { onCLS, onLCP, onFCP, onTTFB, onINP, Metric } from 'web-vitals';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 const sendToAnalytics = async (metric: Metric) => {
   const body = {

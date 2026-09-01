@@ -11,7 +11,7 @@
  */
 import { useEffect } from 'react';
 import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';
 import { getCachedHoursOffice, cacheHoursOffice } from '@/lib/offlineCache';
 

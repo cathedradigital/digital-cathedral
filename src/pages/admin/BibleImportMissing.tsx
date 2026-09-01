@@ -4,7 +4,7 @@
  */
 import { useEffect, useState } from "react";
 import { Link } from '@/lib/rr-compat';
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Progress } from "@/components/ui/progress";

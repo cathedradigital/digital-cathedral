@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, ExternalLink, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 export const PausedBanner = () => {
   const [isPaused, setIsPaused] = useState(false);

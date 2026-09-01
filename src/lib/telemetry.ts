@@ -1,6 +1,6 @@
 
 import { trackEvent } from './analytics';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 const redactPII = (text: string) => {
   if (!text) return text;

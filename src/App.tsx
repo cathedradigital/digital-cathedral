@@ -33,7 +33,7 @@ import { resolveRouterBasename } from '@/lib/i18n/locales';
  */
 const ROUTER_BASENAME = resolveRouterBasename();
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 const AuthGuard = lazy(() => import('./components/cathedra/AuthGuard'));
 const AdminGuard = lazy(() => import('./components/cathedra/AdminGuard'));
 const GlossaryAdminGuard = lazy(() => import('./components/cathedra/GlossaryAdminGuard'));

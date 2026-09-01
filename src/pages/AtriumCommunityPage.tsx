@@ -12,7 +12,7 @@ import { Link, useNavigate } from '@/lib/rr-compat';
 import { MessageCircle, Plus, Heart, Sparkles, Users, ArrowRight, User, Calendar, BookOpen } from 'lucide-react';
 import { EditorialHero } from '@/components/editorial/harmony';
 import { SpaceLayout, SpaceHeader, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { toast } from 'sonner';

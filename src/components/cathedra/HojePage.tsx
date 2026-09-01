@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useMemo, useCallback, lazy, Sus
 import { useNavigate } from '@/lib/rr-compat';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { LangContext } from '@/contexts/LangContext';

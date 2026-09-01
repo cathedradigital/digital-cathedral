@@ -2,7 +2,7 @@ import { Icons } from '@/constants';
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { BADGE_DEFINITIONS } from '@/lib/badges';
 import { Progress } from '@/components/ui/progress';
 

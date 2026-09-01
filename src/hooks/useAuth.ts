@@ -1,5 +1,5 @@
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { checkNewBadges, getBadgeById, type BadgeContext } from '@/lib/badges';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';

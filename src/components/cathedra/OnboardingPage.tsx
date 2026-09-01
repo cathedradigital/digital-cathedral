@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { AppRoute } from '@/types';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { BrandConceptOnboarding } from '../onboarding/BrandConceptOnboarding';
 import onboardingBible from '@/assets/onboarding-bible.webp';

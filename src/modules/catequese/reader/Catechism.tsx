@@ -3,7 +3,7 @@ import SacredImage from '@/components/cathedra/SacredImage';
 import { useRenderPerf } from '@/hooks/useRenderPerf';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import Relatio from '@/components/cathedra/Relatio';
 import BibleVersePopover from '@/components/cathedra/BibleVersePopover';
 import MagisteriumPopover from '@/components/cathedra/MagisteriumPopover';

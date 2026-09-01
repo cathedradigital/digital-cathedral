@@ -10,7 +10,7 @@
  * (`CuratedNexusEdge`) para o merge do grafo.
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type { CuratedNexusEdge } from '@/core/knowledge/adapters/nexusGraphMerge';
 import { withCentrality } from './nexusCentrality';
 

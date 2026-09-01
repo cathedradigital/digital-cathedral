@@ -9,7 +9,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from '@/lib/rr-compat';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { ArrowRight, Sparkles, ScrollText } from 'lucide-react';
 import type { Collection } from './types';
 import { trackCollectionEvent } from './collectionAnalytics';

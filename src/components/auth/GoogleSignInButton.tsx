@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
