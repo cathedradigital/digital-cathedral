@@ -1,0 +1,4 @@
+/* Legacy styles from digital-cathedral */
+/* This file is imported separately to avoid Tailwind processing conflicts */
+
+@import "./legacy-index.css";

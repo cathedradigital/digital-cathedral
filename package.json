@@ -11,9 +11,6 @@
     "lint": "eslint .",
     "format": "prettier --write ."
   },
-  "overrides": {
-    "rolldown": "1.2.1"
-  },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
     "@lovable.dev/cloud-auth-js": "^1.2.0",
@@ -78,6 +75,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.87.0",
+    "react-is": "^19.2.8",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.1.9",
     "react-window": "^2.3.0",
