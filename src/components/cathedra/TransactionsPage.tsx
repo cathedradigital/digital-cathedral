@@ -66,7 +66,7 @@ const TransactionsPage: React.FC = () => {
         .not('plan_id', 'is', null);
       
       if (error) throw error;
-      const plans = Array.from(new Set(data.map(t => t.plan_id)));
+      const plans = Array.from(new Set(data.map((t: any) => t.plan_id as string)));
       setAvailablePlans(plans);
     } catch (err) {
       console.error('Error fetching plans:', err);
