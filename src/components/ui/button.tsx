@@ -5,24 +5,22 @@ import { Icons } from "@/constants";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-spacing-xs whitespace-nowrap rounded-premium-full font-ui font-medium uppercase tracking-premium-widest transition-premium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 active:scale-[0.97]",
+  "inline-flex items-center justify-center gap-spacing-xs whitespace-nowrap rounded-premium-full font-ui font-medium uppercase tracking-premium-widest transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/95 shadow-premium hover:shadow-premium-hover hover:-translate-y-0.5",
+          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-premium hover:shadow-premium-hover hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0",
         primary:
-          "bg-primary text-primary-foreground hover:bg-primary/95 shadow-premium hover:shadow-premium-hover hover:-translate-y-0.5",
+          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-premium hover:shadow-premium-hover hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-premium",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-premium active:scale-[0.97]",
         outline:
-          "border border-primary/10 bg-transparent text-primary hover:bg-primary/[0.02] hover:border-primary/20 hover:-translate-y-0.5",
+          "border border-primary/10 bg-transparent text-primary hover:bg-primary/[0.04] hover:border-primary/20 hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/95 shadow-premium-md shadow-secondary/10 hover:-translate-y-0.5",
-        ghost: "hover:bg-primary/[0.02] hover:text-primary text-primary/60",
-        link: "text-primary underline-offset-4 hover:underline",
-        // Pill variants — padrão editorial Stitch dos leitores premium (Rosário, Via Sacra, Orações).
-        // Preservam tipografia stitch-body e cores stitch-secondary; sobrescrevem base uppercase.
+          "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-premium-md shadow-secondary/10 hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0",
+        ghost: "hover:bg-primary/[0.04] hover:text-primary text-primary/60 active:scale-[0.97]",
+        link: "text-primary underline-offset-4 hover:underline active:scale-[0.97]",
         pill: "border border-stitch-outline-variant/40 bg-transparent text-stitch-on-surface-variant font-stitch-body normal-case tracking-widest hover:border-stitch-secondary/50 hover:text-stitch-on-surface shadow-none active:scale-100 hover:-translate-y-0",
         "pill-active": "bg-stitch-secondary text-stitch-secondary-foreground font-stitch-body normal-case tracking-widest border border-transparent hover:bg-stitch-secondary/90 shadow-sm active:scale-100 hover:-translate-y-0",
         "pill-toned": "border border-stitch-secondary/60 bg-stitch-secondary/10 text-stitch-secondary font-stitch-body normal-case tracking-widest hover:bg-stitch-secondary/15 shadow-none active:scale-100 hover:-translate-y-0",
@@ -36,11 +34,8 @@ const buttonVariants = cva(
         icon: "min-h-[44px] min-w-[44px] shrink-0 h-spacing-2xl w-spacing-2xl p-spacing-0 flex items-center justify-center [&_svg]:size-spacing-md",
         "icon-sm": "min-h-[44px] min-w-[44px] shrink-0 h-[44px] w-[44px] p-spacing-0 flex items-center justify-center [&_svg]:size-spacing-md",
         "icon-xs": "min-h-[44px] min-w-[44px] shrink-0 h-[44px] w-[44px] p-spacing-0 flex items-center justify-center [&_svg]:size-spacing-sm",
-
-        // Pill sizes — chips/toggles editoriais (alvo de toque mínimo 44px).
         pill: "min-h-[44px] px-4 py-1.5 text-[11px] uppercase [&_svg]:size-3.5 rounded-full",
         "pill-sm": "min-h-[44px] min-w-[44px] h-[44px] w-[44px] p-0 rounded-full [&_svg]:size-3.5",
-
       },
     },
     defaultVariants: {
@@ -48,7 +43,7 @@ const buttonVariants = cva(
       size: "default",
     },
   }
-)
+);
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -60,8 +55,6 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, isLoading = false, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    
-    // Accessibility: aria-busy and aria-disabled for loading state
     const buttonProps = {
       className: cn(buttonVariants({ variant, size, className })),
       ref,
@@ -83,7 +76,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </Comp>
     );
-  },
+  }
 );
 Button.displayName = "Button";
 
