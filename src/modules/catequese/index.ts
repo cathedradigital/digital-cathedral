@@ -1,26 +1,16 @@
 /**
- * Cathedra · Módulo Catequese — barrel público (Sprint CQ-1.2).
+ * Cathedra · Módulo Catequese — barrel canônico.
  *
- * Superfície única de import para o módulo Catequese. Consumidores externos
- * (App.tsx, prefetch, adapters, testes E2E) devem importar sempre a partir de
- * `@/modules/catequese`, nunca dos paths internos. Isso permite mover arquivos
- * dentro do módulo sem impacto externo (COS §10 · Reader Architecture Rule).
- *
- * Regra ESLint prevista (CQ-1.4): proibir `@/modules/catequese/**` dentro do
- * próprio módulo — o barrel só reexporta.
+ * Usado por App.tsx via feature flag VITE_MODULES_CATEQUESE.
+ * Quando a flag é 0, App.tsx usa o shim legado em
+ * src/components/cathedra/Catechism.tsx (que reexporta daqui).
  */
 
 export { default as Catechism } from './reader/Catechism';
 export { default as AtriumCatechismReader } from './reader/AtriumCatechismReader';
 export { default as CatechismExplorer } from './explorer/CatechismExplorer';
-export { default as CatechismImportQueue } from './admin/CatechismImportQueue';
 
-export { default as CatechismPopover } from './components/CatechismPopover';
-export { default as CatechismPendingPanel } from './components/CatechismPendingPanel';
-export { default as CatechismOfflineFallback } from './components/CatechismOfflineFallback';
-export { default as CatechismDiagnosticPanel } from './components/CatechismDiagnosticPanel';
-export { default as CatechismHealthCheck } from './components/CatechismHealthCheck';
-export { default as CatechismIntegrity } from './components/CatechismIntegrity';
-export { default as CatechismVerification } from './components/CatechismVerification';
-export { default as CatechismDebug } from './components/CatechismDebug';
-export { CatechismNormalizationDiff } from './components/CatechismNormalizationDiff';
+// Admin
+// O import dinâmico em App.tsx usa .then(m => ({ default: m.CatechismImportQueue }))
+// que funciona porque é uma reexport default.
+export { default as CatechismImportQueue } from './admin/CatechismImportQueue';
