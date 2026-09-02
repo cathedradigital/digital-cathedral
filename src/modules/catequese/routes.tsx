@@ -1,38 +1,27 @@
 /**
- * Cathedra · Módulo Catequese — rotas lazy (Sprint CQ-1.2).
+ * Cathedra · Módulo Catequese — rotas (CQ-1.4 stable).
  *
  * Consumido opcionalmente por `src/App.tsx` quando `VITE_MODULES_CATEQUESE=1`.
- * Enquanto a flag está em `0` (default até CQ-1.4), App.tsx continua usando os
- * shims dos paths antigos, que reexportam deste mesmo módulo — comportamento
- * idêntico, sem duplicação de código.
+ * Imports estáticos (não lazy) — chunk dinâmico foi causa de RUNTIME_ERROR em deploy.
  */
 
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { Navigate, Route, Routes } from '@/lib/rr-compat';
 import { CatechismSkeleton } from '@/components/cathedra/RouteSkeletons';
 
-const AtriumCatechismReader = lazy(() =>
-  import('./reader/AtriumCatechismReader'),
-);
-const Catechism = lazy(() => import('./reader/Catechism'));
+// Importações estáticas — evitam chunk dinâmico que falhava no deploy.
+import AtriumCatechismReader from './reader/AtriumCatechismReader';
+import Catechism from './reader/Catechism';
 
 const CatequeseRoutes: React.FC = () => (
   <Routes>
     <Route
       path="catechism"
-      element={
-        <Suspense fallback={<CatechismSkeleton />}>
-          <AtriumCatechismReader />
-        </Suspense>
-      }
+      element={<AtriumCatechismReader />}
     />
     <Route
       path="catechism-legacy"
-      element={
-        <Suspense fallback={<CatechismSkeleton />}>
-          <Catechism />
-        </Suspense>
-      }
+      element={<Catechism />}
     />
     <Route path="catecismo" element={<Navigate to="/catechism" replace />} />
     <Route
