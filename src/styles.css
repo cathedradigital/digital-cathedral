@@ -20,20 +20,29 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Scrollbar refinada */
+  /* Scrollbar refinada para WebKit */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted) / 0.3);
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.25);
+    background: hsl(var(--muted-foreground) / 0.2);
     border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background-color 150ms ease;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.4);
+    background: hsl(var(--muted-foreground) / 0.35);
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
   }
 
   /* Seleção de texto com cor tema */
@@ -47,5 +56,341 @@
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
     border-radius: 4px;
+    box-shadow: 0 0 0 4px hsl(var(--ring) / 0.15);
   }
+
+  /* Tipografia refinada */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif), ui-serif, Georgia, serif;
+    font-weight: 600;
+    line-height: 1.2;
+    color: hsl(var(--foreground));
+    transition: color 150ms ease;
+  }
+
+  h1 { font-size: 2.5rem; line-height: 1.1; letter-spacing: -0.02em; }
+  h2 { font-size: 2rem; line-height: 1.2; letter-spacing: -0.015em; }
+  h3 { font-size: 1.5rem; line-height: 1.25; letter-spacing: -0.01em; }
+  h4 { font-size: 1.25rem; line-height: 1.3; }
+  h5 { font-size: 1.125rem; line-height: 1.4; }
+  h6 { font-size: 1rem; line-height: 1.4; font-weight: 500; }
+
+  p {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    line-height: 1.75;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+    transition: color 150ms ease;
+  }
+
+  /* Botões base refinados */
+  button {
+    font-family: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+    transition: all 150ms ease;
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
+  /* Inputs refinados */
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--input));
+    border-radius: calc(0.375rem + 2px);
+    padding: 0.625rem 0.875rem;
+    width: 100%;
+    transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+    outline: none;
+  }
+
+  input:hover,
+  textarea:hover,
+  select:hover {
+    border-color: hsl(var(--muted-foreground));
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+}
+
+/* =========================================================
+   PREMIUM UI KIT — Seletores Reutilizáveis
+   ========================================================= */
+
+/* Botões primários */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: calc(0.375rem + 2px);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 250ms ease;
+  cursor: pointer;
+  border: none;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  box-shadow: 0 1px 2px 0 hsl(var(--primary) / 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px hsl(var(--primary) / 0.25), 0 2px 4px -2px hsl(var(--primary) / 0.2);
+  filter: brightness(1.05);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px 0 hsl(var(--primary) / 0.2);
+  filter: brightness(0.98);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Botões secundários */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: calc(0.375rem + 2px);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 250ms ease;
+  cursor: pointer;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--foreground));
+}
+
+.btn-secondary:hover {
+  background: hsl(var(--muted));
+  border-color: hsl(var(--muted-foreground));
+}
+
+.btn-secondary:active {
+  background: hsl(var(--secondary));
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Botões fantasma */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: calc(0.375rem + 2px);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.5rem 1rem;
+  transition: all 150ms ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: hsl(var(--foreground));
+}
+
+.btn-ghost:hover {
+  background: hsl(var(--muted));
+}
+
+.btn-ghost:active {
+  background: hsl(var(--secondary));
+}
+
+.btn-ghost:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Inputs reutilizáveis */
+.input-field {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border-radius: calc(0.375rem + 2px);
+  border: 1px solid hsl(var(--input));
+  background: hsl(var(--background));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: hsl(var(--foreground));
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.input-field:hover {
+  border-color: hsl(var(--muted-foreground));
+}
+
+.input-field:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+}
+
+.input-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Cards com hover elegante */
+.card-hover {
+  border-radius: calc(0.375rem + 6px);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  transition: all 250ms ease;
+  overflow: hidden;
+}
+
+.card-hover:hover {
+  border-color: hsl(var(--muted-foreground));
+  box-shadow: 0 10px 40px -10px hsl(var(--foreground) / 0.12), 0 4px 16px -4px hsl(var(--foreground) / 0.08);
+  transform: translateY(-2px);
+}
+
+/* Tags litúrgicas */
+.tag-liturgical {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid currentColor;
+  opacity: 0.8;
+  transition: opacity 150ms ease;
+}
+
+.tag-liturgical:hover {
+  opacity: 1;
+}
+
+/* Estados visuais */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  border-radius: calc(0.375rem + 4px);
+  background: hsl(var(--muted));
+  border: 1px dashed hsl(var(--border));
+  transition: all 250ms ease;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.05);
+  border: 1px solid hsl(var(--destructive) / 0.2);
+  border-radius: calc(0.375rem + 4px);
+}
+
+.success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: hsl(145 50% 40%);
+  background: hsl(145 50% 40% / 0.05);
+  border: 1px solid hsl(145 50% 40% / 0.2);
+  border-radius: calc(0.375rem + 4px);
+}
+
+/* Animações de entrada stagger */
+.stagger-children > * {
+  opacity: 0;
+  animation: slide-up 500ms ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2)  { animation-delay: 100ms; }
+.stagger-children > *:nth-child(3)  { animation-delay: 200ms; }
+.stagger-children > *:nth-child(4)  { animation-delay: 300ms; }
+.stagger-children > *:nth-child(5)  { animation-delay: 400ms; }
+.stagger-children > *:nth-child(6)  { animation-delay: 500ms; }
+.stagger-children > *:nth-child(7)  { animation-delay: 600ms; }
+.stagger-children > *:nth-child(8)  { animation-delay: 700ms; }
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sombras premium */
+.shadow-premium {
+  box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.12), 0 2px 8px -2px hsl(var(--foreground) / 0.08);
+}
+
+.shadow-premium-lg {
+  box-shadow: 0 10px 40px -10px hsl(var(--foreground) / 0.12), 0 4px 16px -4px hsl(var(--foreground) / 0.08), 0 0 0 1px hsl(var(--foreground) / 0.02);
 }
