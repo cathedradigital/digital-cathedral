@@ -1,24 +1,48 @@
-# Cathedral Clone
+# Cathedra — Digital Cathedral
 
-consegue clonar o app inteiro https://github.com/evaldo0510/cathedradigital.git
+**Sua formação católica para todos os dias.**
 
-This project was built with [Lovable](https://lovable.dev).
+Reze. Estude. Aprofunde. Viva a fé.
 
-## Build with Lovable
+Cathedra é uma plataforma digital de formação católica que reúne Bíblia, Evangelho do dia, Catecismo, liturgia, santos, orações, biblioteca, jornadas de formação e recursos de estudo em uma experiência contínua e pessoal.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/e3469c19-539b-4d3d-a625-5b72c0f10979).
+## Visão
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+O centro da experiência é **Hoje**: uma entrada diária simples que ajuda o usuário a transformar intenção em prática — ler, refletir, rezar, aprender e continuar sua jornada.
 
-## Development
+A proposta não é apenas oferecer uma coleção de conteúdos católicos. É ajudar o católico a construir uma **vida espiritual digital consistente**, com conteúdo confiável, contexto, personalização e continuidade.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Princípios
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+- Formação antes de funcionalidades.
+- Hoje é o centro da experiência.
+- Conteúdo com fonte; nunca inventar citações.
+- IA como assistente, não como autoridade.
+- Segurança no backend; guards de frontend não substituem autorização.
+- Privacidade por padrão.
+- Qualidade contínua em mobile, acessibilidade, SEO e testes.
+
+## Documentação
+
+- `docs/product/vision.md` — visão e tese
+- `docs/product/positioning.md` — público e posicionamento
+- `docs/product/user-journeys.md` — jornada principal
+- `docs/product/roadmap.md` — prioridades
+- `docs/commercial/business-model.md` — modelo de negócio
+- `docs/commercial/pricing.md` — planos e preços
+- `docs/commercial/metrics.md` — métricas
+- `docs/architecture/overview.md` — arquitetura
+- `docs/security/security.md` — segurança
+- `docs/quality/testing.md` — qualidade
+- `docs/ai/logos.md` — princípios do Logos
+
+## Desenvolvimento
+
+O projeto é conectado ao Lovable. Não reescreva histórico já publicado. Mantenha o branch conectado em estado funcional.
+
+Antes de considerar uma mudança pronta:
+1. valide tipos, lint e testes relevantes;
+2. teste fluxos críticos em mobile;
+3. verifique acessibilidade em mudanças de interface;
+4. nunca comite segredos;
+5. documente decisões relevantes de produto, arquitetura e segurança.
