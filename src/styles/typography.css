@@ -40,53 +40,41 @@
 
 .type-lead {
   font-family: var(--font-body);
-  font-size: 1.125rem;
-  line-height: 1.65;
+  font-size: 1.125rem;   /* 18px */
+  line-height: 1.6;
   font-weight: 400;
   color: hsl(var(--foreground) / 0.82);
 }
 
 .type-body {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 1rem;       /* 16px */
   line-height: 1.7;
   font-weight: 400;
 }
 
 .type-caption {
   font-family: var(--font-body);
-  font-size: 0.875rem;
+  font-size: 0.875rem;   /* 14px */
   line-height: 1.5;
-  color: hsl(var(--foreground) / 0.65);
+  color: hsl(var(--foreground) / 0.7);
 }
 
 .type-meta {
   font-family: var(--font-body);
-  font-size: 0.8125rem;
+  font-size: 0.8125rem;  /* 13px */
   line-height: 1.4;
-  color: hsl(var(--foreground) / 0.55);
+  color: hsl(var(--foreground) / 0.6);
   letter-spacing: 0.005em;
 }
 
 /* Rubrica: kicker/eyebrow litúrgico — versalete espaçado, dourado no ambiente atual */
 .type-rubrica {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.75rem;    /* 12px */
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: hsl(var(--rule-gold-ink, var(--rule-gold)));
-}
-
-/* Blockquote / citação: recuo lateral, linha âncora, tipografia destacada */
-.type-quote {
-  font-family: var(--font-display);
-  font-size: clamp(1.05rem, 0.4vw + 0.9rem, 1.25rem);
-  line-height: 1.6;
-  font-style: italic;
-  color: hsl(var(--foreground) / 0.8);
-  border-left: 3px solid hsl(var(--rule-gold, var(--primary)));
-  padding-left: 1.25rem;
-  margin: 1.5rem 0;
 }

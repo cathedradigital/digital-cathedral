@@ -18,7 +18,7 @@ export const catechismAdapter: LibraryAdapter = {
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
-    return (data ?? []).map((row): LibraryItem => {
+    return (data ?? []).map((row: any): LibraryItem => {
       const paragraph = row.paragraph;
       const slug = row.slug ?? String(paragraph);
       return {

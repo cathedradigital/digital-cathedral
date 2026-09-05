@@ -8,14 +8,14 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          "flex h-spacing-2xl w-full rounded-premium-full border border-input bg-background px-spacing-lg py-spacing-xs text-premium-base ring-offset-background file:border-0 file:bg-transparent file:text-premium-sm file:font-medium file:text-foreground placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:border-primary/30 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 ease-out",
-          className
+          "flex h-spacing-2xl w-full rounded-premium-full border border-input bg-background px-spacing-lg py-spacing-xs text-premium-base ring-offset-background file:border-0 file:bg-transparent file:text-premium-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all",
+          className,
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
 Input.displayName = "Input";
 

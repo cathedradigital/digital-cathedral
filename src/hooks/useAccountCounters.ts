@@ -5,7 +5,7 @@
  * Sem alteração de schema: apenas count queries nas tabelas existentes.
  */
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 import { useAuth } from "@/hooks/useAuth";
 
 export interface AccountCounters {

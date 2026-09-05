@@ -45,7 +45,7 @@ export default function BibleCoverageAdmin() {
         for (const v of verses ?? []) {
           versesByChapter.set(v.chapter_id, (versesByChapter.get(v.chapter_id) ?? 0) + 1);
         }
-        const booksByAbbr = new Map<string, any>((books ?? []).map((b: any) => [b.abbrev, b]));
+        const booksByAbbr = new Map(((books ?? []) as any[]).map((b) => [b.abbrev, b] as const));
 
         const result: CoverageRow[] = BIBLE_CANON.map((book) => {
           const dbBook = booksByAbbr.get(book.abbr);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from '@/lib/rr-compat';
 import { Helmet } from '@/lib/helmet-compat';
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 
 // Rota /.lovable/oauth/consent — tela de consentimento OAuth 2.1 para clientes MCP
 // externos (ChatGPT, Claude, Cursor, etc.) autorizarem acesso à conta Cathedra.

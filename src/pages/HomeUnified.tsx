@@ -34,7 +34,7 @@ import { useAvatarUrl } from '@/lib/avatar';
 import type { ResumeItem } from '@/modules/atrium/types';
 
 // ─── Ícones dos 5 ambientes ──────────────────────────────────────────────────
-const ENV_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+const ENV_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties; "aria-hidden"?: boolean }>> = {
   BookOpen,
   HandHeart,
   GraduationCap,

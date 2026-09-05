@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Link } from '@/lib/rr-compat';
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 import { toast } from "sonner";
 
 type Status = "connected" | "disconnected" | "partial";

@@ -14,7 +14,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from '@/lib/helmet-compat';
 import { Link } from '@/lib/rr-compat';
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

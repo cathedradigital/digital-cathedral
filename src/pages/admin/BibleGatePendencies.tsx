@@ -4,7 +4,7 @@
  * a cobertura canônica e permite revalidar sem redeploy.
  */
 import { useEffect, useState, useMemo } from "react";
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";

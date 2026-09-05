@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from '@/lib/rr-compat';
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/db";
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Badge } from "@/components/ui/badge";

@@ -19,7 +19,7 @@ export const saintsAdapter: LibraryAdapter = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data ?? []).map((row): LibraryItem => ({
+    return (data ?? []).map((row: any): LibraryItem => ({
       id: String(row.id),
       module: 'saints',
       title: row.name ?? '',
