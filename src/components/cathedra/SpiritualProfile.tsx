@@ -74,7 +74,7 @@ const SpiritualProfile: React.FC = () => {
           .order('completed_at', { ascending: false });
 
         // Group by journey_id and get last completed_at
-        const uniqueJourneys = Array.from(new Set((journeyData || []).map(j => j.journey_id)));
+        const uniqueJourneys = Array.from(new Set(((journeyData || []) as any[]).map((j) => j.journey_id as string)));
         const journeyList: JourneyProgress[] = uniqueJourneys.slice(0, 3).map(id => {
           const matching = (journeyData as any[])?.filter(j => j.journey_id === id) || [];
           return {
