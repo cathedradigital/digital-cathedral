@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import SEOHead from '@/components/SEOHead';
 import { getCacheStats } from '@/lib/offlineCache';
 import { formatDistanceToNow } from 'date-fns';

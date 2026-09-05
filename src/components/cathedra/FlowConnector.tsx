@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { Card, CardContent } from '@/components/ui/card';

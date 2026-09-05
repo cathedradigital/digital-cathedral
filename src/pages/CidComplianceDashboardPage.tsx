@@ -7,8 +7,8 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Navigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { Navigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

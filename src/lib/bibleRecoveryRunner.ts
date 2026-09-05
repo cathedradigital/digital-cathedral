@@ -5,7 +5,7 @@
  * de capítulos vazios e tempo de abertura. Pode ser usado pelo painel
  * de diagnóstico e por um teste automatizado de regressão.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { BIBLE_DATA, type BibleBook } from '@/data/bible-books';
 import { FORBIDDEN_ENGLISH_WORDS } from '@/constants/language-config';
 import { bibleRecoveryStore, inspectChapterResult, reportNavigationError } from './bibleRecoveryStore';

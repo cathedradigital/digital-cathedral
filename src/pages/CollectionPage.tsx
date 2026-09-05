@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { trackCollectionEvent } from '@/features/collections/collectionAnalytics';
-import { Link, useParams, Navigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { Link, useParams, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   BookOpen,
   ChevronRight,

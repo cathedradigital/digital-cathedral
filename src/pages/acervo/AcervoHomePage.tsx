@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { EditorialHero, EditorialCard, EditorialDivider, EditorialKicker } from '@/components/editorial/harmony';
 import { SpaceLayout, SpaceHeader, SpaceEntrance, SpaceSectionTitle, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
 import { Button } from '@/components/ui/button';

@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import type { ReaderAutoNexusOutput, ReaderNexusBucket } from '@/core/knowledge/adapters/ReaderAutoNexus';
 import { BUCKET_LABEL } from '@/core/knowledge/adapters/ReaderAutoNexus';
 import { NexusSourceBadge } from '@/components/nexus/NexusSourceBadge';

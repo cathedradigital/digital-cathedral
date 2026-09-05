@@ -5,8 +5,8 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
  */
 import html2canvas from 'html2canvas';
 import { BIBLE_DATA, BibleBook } from '@/data/bible-books';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useBibleNavigation } from '@/hooks/bible/useBibleNavigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
@@ -15,7 +15,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 
 import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
 import { cn, getElementSelector } from '@/lib/utils';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { describeBibleTextError } from '@/shared/bibleTextSchema';
 import { useRenderPerf } from '@/hooks/useRenderPerf';

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { ExternalLink, BookOpen, ArrowUpDown, Info } from 'lucide-react';
 import type { SaintWritingRef } from '../types';
 import { SaintWritingProvenanceModal } from './SaintWritingProvenanceModal';

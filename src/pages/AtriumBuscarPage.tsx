@@ -9,8 +9,8 @@
  */
 
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Search as SearchIcon,
   BookOpen,

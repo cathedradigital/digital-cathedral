@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { getCachedCatechismParagraph, cacheCatechismParagraph } from '@/lib/offlineCache';
 import { DeepContent } from '@/types';
 import { CATECHISM_LOCAL_DATA } from '@/data/catechism';

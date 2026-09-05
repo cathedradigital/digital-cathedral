@@ -1,12 +1,12 @@
 import { Icons } from '@/constants';
 import React, { useState, useContext } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { LangContext } from '@/contexts/LangContext';

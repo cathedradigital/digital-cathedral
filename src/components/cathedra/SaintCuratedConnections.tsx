@@ -6,7 +6,7 @@
  * `EditorialCard` e ícones Lucide — sem componentes duplicados.
  */
 import * as React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { BookOpen, ScrollText, Sparkles, Users, type LucideIcon } from 'lucide-react';
 
 import type { NexusRelation } from '@/types/nexus';

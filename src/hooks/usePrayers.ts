@@ -5,8 +5,8 @@
  * Não invente dados. Todo conteúdo vive na tabela `prayers`.
  */
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { supabase } from '@/lib/db';
-import type { Database } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 export type PrayerCategory = Database['public']['Enums']['prayer_category'];
 

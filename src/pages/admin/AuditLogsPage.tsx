@@ -11,9 +11,9 @@
  * conjunto filtrado (até 5.000 linhas).
  */
 import React, { useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import {
   Download,
   ChevronLeft,
@@ -23,7 +23,7 @@ import {
   Lock,
   ExternalLink,
 } from 'lucide-react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

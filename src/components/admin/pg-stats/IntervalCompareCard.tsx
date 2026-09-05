@@ -11,7 +11,7 @@ import { GitCompareArrows, Download, Link2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { fingerprintQuery, shortFingerprint } from './queryFingerprint';
 import type { SnapshotHistoryRow } from './useSnapshotHistory';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 const fmtMs = (v: number) =>
   v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(2)} ms`;

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 import { fadeUp } from "./animations";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import videoAsset from "../../assets/institutional-video.mp4.asset.json";
 
 // Standardizing track structure

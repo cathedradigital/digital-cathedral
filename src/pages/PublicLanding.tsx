@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Link, useNavigate } from '@/lib/rr-compat';
+import { Link, useNavigate } from "react-router-dom";
 import {
   BookOpen,
   Heart,

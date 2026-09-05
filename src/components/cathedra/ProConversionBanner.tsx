@@ -1,10 +1,10 @@
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 

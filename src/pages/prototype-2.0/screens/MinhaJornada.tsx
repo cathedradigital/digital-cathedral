@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import PrototypeShell from '../PrototypeShell';
 
 const BASE = '/prototype-2.0';

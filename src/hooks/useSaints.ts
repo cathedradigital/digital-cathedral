@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getSaintsByDate, searchSaints, getAllSaints, formatSaint } from '@/services/saintsService';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { type Saint } from '@/data/saints';
 

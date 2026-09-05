@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
+import { useSearchParams } from 'react-router-dom';
 import TheologicalText from '@/components/cathedra/TheologicalText';
 
 /**

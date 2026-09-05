@@ -5,7 +5,7 @@
  * atual/recorde para exibir "Sua caminhada" no Átrio.
  */
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SpiritualMemory {
   streakDays: number;

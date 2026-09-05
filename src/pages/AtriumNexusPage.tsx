@@ -17,8 +17,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useNavigate } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Network as Hub,
   Search as SearchIcon,
@@ -33,7 +33,7 @@ import {
   Feather,
   ShieldCheck,
 } from 'lucide-react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import {
   NEXUS_HEADER,
   NEXUS_EMPTY,

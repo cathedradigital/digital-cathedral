@@ -1,8 +1,8 @@
 /**
- * Shim legado — reexporta o Catechism do módulo Catequese.
+ * Shim CQ-1.2 · Reexporta o Reader canônico do módulo Catequese.
  *
- * App.tsx importa daqui quando VITE_MODULES_CATEQUESE != '1'.
- * Após CQ-1.4 (feature flag removida), remover este arquivo
- * e atualizar o import em App.tsx para apontar direto ao módulo.
+ * Mantido temporariamente para compatibilidade com consumidores legados
+ * (prefetch, App.tsx, `src/config/reader-modules.ts`). Removido em CQ-1.4
+ * após 48h de observação em produção. Não adicionar lógica aqui.
  */
 export { default } from '@/modules/catequese/reader/Catechism';

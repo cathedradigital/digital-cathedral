@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { normalizeText } from '@/lib/utils';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import SEOHead from '@/components/SEOHead';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { AppRoute } from '@/types';
@@ -25,7 +25,7 @@ import RelevanceBadge from './RelevanceBadge';
 import { SearchResultCard } from './SearchResultCard';
 import { useFuzzySearch } from '@/hooks/useFuzzySearch';
 import { BubbleTag, getTagIcon } from './BubbleTag';
-import type { Tables } from '@/lib/db';
+import type { Tables } from '@/integrations/supabase/types';
 import ContemplativeLayout from './ContemplativeLayout';
 import FormacaoHero from './formacao/FormacaoHero';
 import FormacaoTimeline from './formacao/FormacaoTimeline';

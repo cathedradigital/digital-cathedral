@@ -14,7 +14,7 @@
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useSearchParams } from '@/lib/rr-compat';
+import { useSearchParams } from 'react-router-dom';
 
 import { Icons } from '../../constants';
 import { Cross } from 'lucide-react';

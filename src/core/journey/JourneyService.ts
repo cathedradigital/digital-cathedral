@@ -11,7 +11,7 @@
  * no path legado é bloqueada — admin edita apenas `journeys` reais.
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { JourneyAdapter } from './JourneyAdapter';
 import type {
   Journey,

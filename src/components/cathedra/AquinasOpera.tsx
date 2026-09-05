@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
 import { Icons } from '../../constants';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import AudioButton from './AudioButton';

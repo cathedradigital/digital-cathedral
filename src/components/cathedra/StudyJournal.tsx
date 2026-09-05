@@ -7,7 +7,7 @@ import { useNotes, UserNote } from '@/hooks/useNotes';
 import { useReadingMarks, ReadingMark } from '@/hooks/useReadingMarks';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const StudyJournal: React.FC = () => {

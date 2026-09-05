@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { Icons } from '../../constants';
 import { AppRoute } from '../../types';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useCatechismParagraph } from '@/hooks/useCatechismParagraph';
 
 

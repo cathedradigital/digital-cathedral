@@ -7,7 +7,7 @@
  */
 
 import { AppRoute } from '@/types';
-import type { NavigateFunction } from '@/lib/rr-compat';
+import type { NavigateFunction } from 'react-router-dom';
 
 export const CATECHISM_MIN = 1;
 export const CATECHISM_MAX = 2865;

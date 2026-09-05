@@ -1,6 +1,6 @@
 import { Icons } from '@/constants';
 import React from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 
 
 const PrivacyPage: React.FC = () => {

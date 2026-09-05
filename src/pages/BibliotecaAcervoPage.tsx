@@ -12,8 +12,8 @@
  *  • Acessibilidade: alt, aria-label, focus visíveis, teclado
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams, Navigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { Link, useParams, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   ArrowLeft,
   ArrowRight,

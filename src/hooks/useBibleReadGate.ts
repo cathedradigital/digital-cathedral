@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 export type BibleGateStatus = {
   blocked: boolean;

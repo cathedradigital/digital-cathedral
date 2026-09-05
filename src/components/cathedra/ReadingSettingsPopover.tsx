@@ -9,7 +9,7 @@ import { Icons } from '@/constants';
 import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 
 interface ReadingSettingsPopoverProps {

@@ -1,7 +1,7 @@
 /* Headings structure: h2 used for section titles in HomeMainContent, h3 for card group titles, h4 for individual cards */
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { Icons } from '@/constants';
 import { AppRoute } from '@/types';
 import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
@@ -79,7 +79,7 @@ const HomeMainDoors: React.FC<HomeMainDoorsProps> = ({ t, className }) => {
       {doors.map((door, idx) => (
         <div
           key={idx}
-          ref={el => { doorRefs.current[idx] = el; }}
+          ref={el => doorRefs.current[idx] = el}
           onClick={() => handleNavigate(door.route)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {

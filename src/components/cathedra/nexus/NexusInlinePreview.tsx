@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { fetchCatechismParagraph } from '@/hooks/useCatechismParagraph';
 import { BOOK_NAME_BY_ABBR } from '@/lib/bibleCanon';
 import { type TagContent } from '@/lib/nexusContent';

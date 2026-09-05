@@ -17,7 +17,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
+import { useSearchParams } from 'react-router-dom';
 import { BIBLE_DATA, BibleBook } from '@/data/bible-books';
 
 export type BibleViewMode =

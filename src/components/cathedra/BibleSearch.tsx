@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
 
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface SearchResult {

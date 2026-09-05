@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from '@/lib/rr-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { normalizeText } from '@/lib/utils';
 import { getSearchTermsForTag } from '@/lib/tagNormalization';
 import { fetchNexusTagContent } from '@/lib/nexusContent';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Icons } from '@/constants';

@@ -3,7 +3,7 @@
  * Exibe capa, título, subtítulo, tempo estimado, nível e badge de certificado.
  */
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { Clock, GraduationCap, Award, ScrollText, ArrowRight } from 'lucide-react';
 import type { CollectionSearchHit } from './searchCollections';
 import { trackCollectionEvent } from './collectionAnalytics';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from '@/lib/rr-compat';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminGuardProps {
   children: React.ReactNode;

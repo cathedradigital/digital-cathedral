@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { CathedraCard } from './CathedraCard';
 import { CathedraButton } from './CathedraButton';
 import { Icons } from '@/constants';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar, Cell
 } from 'recharts';

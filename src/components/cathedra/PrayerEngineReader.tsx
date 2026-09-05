@@ -12,7 +12,7 @@
  * - Reinício seguro com confirmação
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   ArrowRight,

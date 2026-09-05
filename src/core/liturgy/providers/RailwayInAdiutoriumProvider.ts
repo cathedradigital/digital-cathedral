@@ -6,7 +6,7 @@
  * apenas isola o contorno para permitir troca futura sem tocar em UI/hooks.
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import {
   type DailyLiturgy,
   type LiturgyProvider,

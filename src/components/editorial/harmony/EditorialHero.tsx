@@ -57,7 +57,7 @@ function collectSlots(nodes: React.ReactNode): Record<SlotKey, React.ReactNode> 
     if (!React.isValidElement(child)) return;
     const type = child.type as SlotComponent | undefined;
     const key = type && type[SLOT_SYMBOL];
-    if (key) slots[key] = (child.props as { children?: React.ReactNode }).children;
+    if (key) slots[key] = child.props.children;
   });
   return slots;
 }

@@ -3,9 +3,9 @@
  * e botão para reexecutar (retry contínuo — recalcula pendências).
  */
 import { useState } from "react";
-import { Link, useParams, useNavigate } from '@/lib/rr-compat';
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Badge } from "@/components/ui/badge";

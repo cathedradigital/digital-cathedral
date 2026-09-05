@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 // Logo import removed
 import { AppRoute } from '@/types';
 

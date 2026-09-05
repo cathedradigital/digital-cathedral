@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { BIBLE_CANON, type BibleBook } from '@/lib/bibleCanon';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,7 +45,7 @@ export default function BibleCoverageAdmin() {
         for (const v of verses ?? []) {
           versesByChapter.set(v.chapter_id, (versesByChapter.get(v.chapter_id) ?? 0) + 1);
         }
-        const booksByAbbr = new Map<string, any>((books ?? []).map((b: any) => [b.abbrev, b]));
+        const booksByAbbr = new Map((books ?? []).map((b) => [b.abbrev, b]));
 
         const result: CoverageRow[] = BIBLE_CANON.map((book) => {
           const dbBook = booksByAbbr.get(book.abbr);

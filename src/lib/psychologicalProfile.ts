@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { detectCategories } from './smartRouter';
 
 export interface EmotionRecord {

@@ -8,8 +8,8 @@
  */
 
 import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link, useSearchParams } from 'react-router-dom';
 import { BookOpen, Search as SearchIcon, ArrowRight, LayoutGrid } from 'lucide-react';
 import { BIBLE_DATA, type BibleBook } from '@/data/bible-books';
 import { buildBibleUrl } from '@/lib/bibleUrl';

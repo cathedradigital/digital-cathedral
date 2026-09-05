@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
-import { useNavigate, useLocation } from '@/lib/rr-compat';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { prefetchRoute } from '@/lib/prefetch';
 import { Icons } from '../../constants';

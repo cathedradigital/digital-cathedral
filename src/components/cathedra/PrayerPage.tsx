@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { toast } from 'sonner';

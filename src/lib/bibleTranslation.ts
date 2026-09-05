@@ -16,7 +16,7 @@
  * Guardrail: `scripts/bible-primary-guardrail.ts` falha no CI se qualquer
  * consumidor usar padrões proibidos.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ActivePrimaryTranslation {
   id: string;

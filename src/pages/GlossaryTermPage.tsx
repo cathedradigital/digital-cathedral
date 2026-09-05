@@ -14,10 +14,10 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { BookmarkPlus, BookmarkCheck } from 'lucide-react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { EditorialShell, EditorialHero, EditorialDivider } from '@/components/editorial';
 import {
   EditorialKicker,

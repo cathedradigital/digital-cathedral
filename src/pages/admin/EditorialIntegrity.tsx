@@ -6,9 +6,9 @@
  * `deep_interpretation` (verbete volta para status='draft' após gerar).
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { supabase } from "@/lib/db";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

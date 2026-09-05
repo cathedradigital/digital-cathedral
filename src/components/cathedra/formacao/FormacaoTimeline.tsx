@@ -9,7 +9,7 @@
  */
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { useAuth } from '@/hooks/useAuth';

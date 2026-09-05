@@ -168,7 +168,7 @@ const { reports, lastBuild, history } = runAudit();
 
 // Schema Validation for compliance-config.yml
 const ThresholdSchema = z
-  .number({ error: "Threshold deve ser um número entre 0 e 100" })
+  .number({ invalid_type_error: "Deve ser um número", required_error: "Threshold é obrigatório" })
   .min(0, "O valor mínimo é 0")
   .max(100, "O valor máximo é 100");
 

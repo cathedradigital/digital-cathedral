@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useNavigate, Link } from '@/lib/rr-compat';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { AppRoute } from '@/types';

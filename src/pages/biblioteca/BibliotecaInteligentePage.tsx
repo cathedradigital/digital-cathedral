@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { EditorialHero } from '@/components/editorial';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/constants';
 import { globalSearchV2, type GlobalSearchHit, type SearchResultType } from '@/services/globalSearchService';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 
 const TYPE_LABEL: Record<SearchResultType, string> = {
   bible: 'Bíblia',

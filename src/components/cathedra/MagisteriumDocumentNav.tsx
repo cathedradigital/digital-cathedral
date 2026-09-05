@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { Icons } from '@/constants';
 import { MAGISTERIUM_DOCUMENTS, type MagisteriumDocument } from '@/data/magisterium-urls';
 

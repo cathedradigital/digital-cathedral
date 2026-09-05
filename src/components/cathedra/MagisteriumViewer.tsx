@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useParams, useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/constants';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { MAGISTERIUM_URLS, MAGISTERIUM_DOCUMENTS } from '@/data/magisterium-urls';
 import MagisteriumDocumentHeader from './MagisteriumDocumentHeader';
 import MagisteriumDocumentNav from './MagisteriumDocumentNav';

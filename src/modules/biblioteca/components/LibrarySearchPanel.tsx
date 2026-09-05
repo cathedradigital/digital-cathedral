@@ -12,7 +12,7 @@
  * Sem cards paralelos, sem tokens de skin — tudo em tokens semânticos.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
+import { useSearchParams } from 'react-router-dom';
 import { Loader2, Search as SearchIcon, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

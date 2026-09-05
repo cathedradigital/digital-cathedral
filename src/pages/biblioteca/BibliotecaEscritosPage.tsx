@@ -6,13 +6,13 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { listAllPublishedWorks } from '@/services/saintWorksService';
 import type { SaintWork, SaintWorkCategory } from '@/types/saintWorks';
 import { SAINT_WORK_CATEGORY_LABELS } from '@/types/saintWorks';
 import { EditorialHero } from '@/components/editorial';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { Icons } from '../../constants';
 
 const BibliotecaEscritosPage: React.FC = () => {

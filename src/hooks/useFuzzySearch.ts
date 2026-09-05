@@ -15,7 +15,7 @@
  *   });
  */
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useDebounce } from './useDebounce';
 import { combinedSimilarity } from '@/lib/similarity';
 

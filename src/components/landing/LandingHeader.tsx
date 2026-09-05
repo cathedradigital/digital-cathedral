@@ -1,10 +1,10 @@
 import { Icons } from '@/constants';
 import { useState, useEffect } from "react";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AppRoute, Language } from "@/types";
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from "react-router-dom";
 
 import { useLang } from "@/hooks/useLang";
 import { HomeButton } from "../cathedra/HomeButton";

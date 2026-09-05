@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { CathedraButton } from '../CathedraButton';
 import TelemetryAuditTab from './TelemetryAuditTab';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const RealTimeTelemetryPanel: React.FC = () => {

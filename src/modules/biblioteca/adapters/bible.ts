@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { LibraryAdapter, LibraryItem } from '../types';
 
 /**
@@ -17,7 +17,7 @@ export const bibleAdapter: LibraryAdapter = {
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
-    return (data ?? []).map((row): LibraryItem => {
+    return (data ?? []).map<LibraryItem>((row) => {
       const abbr = (row as { abbrev?: string }).abbrev ?? '';
       const name = (row as { name?: string }).name ?? abbr;
       const testament = (row as { testament?: string }).testament ?? undefined;

@@ -1,18 +1,26 @@
 /**
- * Cathedra · Módulo Catequese — barrel canônico.
+ * Cathedra · Módulo Catequese — barrel público (Sprint CQ-1.2).
  *
- * Usado por App.tsx via feature flag VITE_MODULES_CATEQUESE.
- * CatequeseExport é o export canônico do módulo — mantém compatibilidade
- * com quem usava o shim AtriumCatechismReader como landing do Catecismo.
+ * Superfície única de import para o módulo Catequese. Consumidores externos
+ * (App.tsx, prefetch, adapters, testes E2E) devem importar sempre a partir de
+ * `@/modules/catequese`, nunca dos paths internos. Isso permite mover arquivos
+ * dentro do módulo sem impacto externo (COS §10 · Reader Architecture Rule).
  *
- * Shim removido em CQ-1.4: AtriumCatechismReader agora é import estático
- * dentro do próprio módulo (a lazy import causava falha de chunk dinâmico).
+ * Regra ESLint prevista (CQ-1.4): proibir `@/modules/catequese/**` dentro do
+ * próprio módulo — o barrel só reexporta.
  */
 
-// Landing + reader do Catecismo (via AtriumCatechismReader)
 export { default as Catechism } from './reader/Catechism';
 export { default as AtriumCatechismReader } from './reader/AtriumCatechismReader';
 export { default as CatechismExplorer } from './explorer/CatechismExplorer';
-
-// Admin
 export { default as CatechismImportQueue } from './admin/CatechismImportQueue';
+
+export { default as CatechismPopover } from './components/CatechismPopover';
+export { default as CatechismPendingPanel } from './components/CatechismPendingPanel';
+export { default as CatechismOfflineFallback } from './components/CatechismOfflineFallback';
+export { default as CatechismDiagnosticPanel } from './components/CatechismDiagnosticPanel';
+export { default as CatechismHealthCheck } from './components/CatechismHealthCheck';
+export { default as CatechismIntegrity } from './components/CatechismIntegrity';
+export { default as CatechismVerification } from './components/CatechismVerification';
+export { default as CatechismDebug } from './components/CatechismDebug';
+export { CatechismNormalizationDiff } from './components/CatechismNormalizationDiff';

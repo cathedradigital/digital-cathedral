@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from '@/lib/rr-compat';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useGlossaryRole } from '@/hooks/useGlossaryRole';
 

@@ -7,7 +7,7 @@
  * ele é resetado; caso contrário, cai em `window`.
  */
 import { useEffect } from 'react';
-import { useLocation, useNavigationType } from '@/lib/rr-compat';
+import { useLocation, useNavigationType } from 'react-router-dom';
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();

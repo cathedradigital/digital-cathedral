@@ -5,7 +5,7 @@
  * intencionalmente estático nesta onda; na B.1.5 será alimentado por
  * `nexus_relations` + histórico do usuário.
  */
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import {
   BookOpen,
   Church,

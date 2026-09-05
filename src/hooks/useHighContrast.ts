@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 const STORAGE_KEY = 'cathedra:nexus-high-contrast';
 const ATTR = 'data-nexus-contrast';

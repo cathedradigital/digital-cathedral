@@ -2,8 +2,8 @@
  * Portal de Documentação — guia individual (`/docs/:slug`), localizado.
  */
 import React, { useEffect, useMemo } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, Navigate, useParams } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useLang } from '@/hooks/useLang';
 import { getDocsBundle, getDocGuide } from '@/content/docs';

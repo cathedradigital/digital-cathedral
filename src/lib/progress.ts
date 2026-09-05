@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 export async function clearAllReadingProgress(userId: string) {
   await Promise.all([

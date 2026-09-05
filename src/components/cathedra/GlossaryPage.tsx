@@ -13,10 +13,10 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from '@/lib/rr-compat';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useFuzzySearch } from '@/hooks/useFuzzySearch';
 import {
   EditorialShell,

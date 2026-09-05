@@ -5,7 +5,7 @@ import { CathedraButton } from './CathedraButton';
 
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 
 interface Violation {
   file: string;

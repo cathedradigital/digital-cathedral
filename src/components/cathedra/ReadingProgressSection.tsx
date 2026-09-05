@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { useReadingMarks } from '@/hooks/useReadingMarks';
 import { CathedraCard } from './CathedraCard';
 import { Icons } from '@/constants';

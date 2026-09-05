@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Navigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { Navigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';

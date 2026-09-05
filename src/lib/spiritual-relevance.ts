@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { TagContent } from './nexusContent';
 import { getUserPsychology, PsychologicalProfile } from './psychologicalProfile';
 

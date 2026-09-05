@@ -10,7 +10,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useParams, useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import {
@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useReadingMarks } from '@/hooks/useReadingMarks';
 import { saveUserPsychology } from '@/lib/psychologicalProfile';

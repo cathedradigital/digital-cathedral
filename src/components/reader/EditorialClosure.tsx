@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Icons } from '@/constants';
 import { resolveNexusHref } from '@/lib/nexusHref';

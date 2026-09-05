@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from "react-router-dom";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import { MobileSheet } from "./MobileSheet";
 import { BIBLE_DATA, type BibleBook } from "@/data/bible-books";

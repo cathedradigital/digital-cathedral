@@ -4,7 +4,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from '@/lib/rr-compat';
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Search, Star, Trash2, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDevotionalFavorites } from "@/hooks/useDevotionalFavorites";

@@ -8,7 +8,7 @@
  * Nenhuma lógica nova é introduzida; apenas orquestração.
  */
 import { useState } from "react";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "react-router-dom";
 import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";

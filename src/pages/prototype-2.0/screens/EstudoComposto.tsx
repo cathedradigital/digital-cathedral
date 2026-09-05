@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useParams } from '@/lib/rr-compat';
+import { Link, useParams } from 'react-router-dom';
 import PrototypeShell from '../PrototypeShell';
 import { Bookmark, PenLine, Share2 } from 'lucide-react';
 

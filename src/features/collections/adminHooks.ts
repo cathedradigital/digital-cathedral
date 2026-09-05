@@ -6,7 +6,7 @@
  * explícita (transição admin, sem bypass).
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   Collection,
   CollectionItem,

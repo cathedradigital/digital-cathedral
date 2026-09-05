@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from '@/lib/rr-compat';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useDragControls, PanInfo } from 'framer-motion';
 import { AppRoute } from '../../types';
 

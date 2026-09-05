@@ -1,5 +1,5 @@
-import { Helmet } from '@/lib/helmet-compat';
-import { useLocation } from '@/lib/rr-compat';
+import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import { SEO_CONFIG } from '@/config/seo';
 import { resolveRouteMeta } from '@/config/routeMeta';
 import { useLang } from '@/hooks/useLang';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Step } from './lectio/constants';
 import LectioIntro from './lectio/LectioIntro';
 import LectioStep from './lectio/LectioStep';

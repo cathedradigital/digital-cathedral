@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { SOCIAL_LINKS } from '@/config/site-config';
 import { trackEvent } from '@/lib/analytics';
 

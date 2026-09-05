@@ -1,4 +1,4 @@
-import { Navigate, useParams } from '@/lib/rr-compat';
+import { Navigate, useParams } from 'react-router-dom';
 
 /**
  * Rota canônica /biblioteca/padres/:slug — redireciona para /santos/:slug.

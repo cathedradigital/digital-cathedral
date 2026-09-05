@@ -6,7 +6,7 @@
  * doutrina, ICE, nexus) é aplicado em `searchLibrary.ts`. Nada de RPCs
  * novos: reaproveita as tabelas já governadas pelo Editorial Engine.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { LibraryIce, LibraryModule } from '../types';
 
 export interface RawHit {

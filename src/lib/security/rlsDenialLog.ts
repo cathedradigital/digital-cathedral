@@ -8,7 +8,7 @@
  *
  * Nunca envie payload da linha ou valores sensíveis no `context`.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 /** Códigos PostgREST/Postgres que indicam bloqueio de acesso. */
 const DENIAL_CODES = new Set([

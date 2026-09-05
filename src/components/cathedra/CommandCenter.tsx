@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { Icons } from '../../constants';
 import { AppRoute } from '../../types';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useSearchSaints } from '@/hooks/useSaints';
 import { CATECHISM_LOCAL_DATA } from '@/data/catechism';
 
@@ -86,7 +86,7 @@ const CommandCenter: React.FC = () => {
   const [globalLoading, setGlobalLoading] = useState(false);
   const [lastBible, setLastBible] = useState<{ book_abbr: string; chapter: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 

@@ -3,7 +3,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Icons } from '../../constants';
 import * as Sentry from "@sentry/react";
 import { trackNavigationError } from '@/lib/telemetry';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 
 

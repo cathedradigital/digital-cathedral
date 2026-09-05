@@ -6,7 +6,7 @@
  * a Biblioteca é uma leitura agregada dos módulos canônicos.
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type {
   LibraryFilter,
   LibraryItem,

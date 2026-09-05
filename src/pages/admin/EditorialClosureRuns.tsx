@@ -9,9 +9,9 @@
  * Cross-refs auditoria em governance_audit_log via correlation_id = run_id.
  */
 import React from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { supabase } from '@/lib/db';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

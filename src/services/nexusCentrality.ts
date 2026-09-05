@@ -7,7 +7,7 @@
  * leitura: sem grau, as arestas voltam com weight 0.
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { CuratedNexusEdge } from '@/core/knowledge/adapters/nexusGraphMerge';
 
 export async function withCentrality(

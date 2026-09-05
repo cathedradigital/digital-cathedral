@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback, lazy, Suspense } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { LangContext } from '@/contexts/LangContext';

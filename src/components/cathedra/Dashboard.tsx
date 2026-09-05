@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AppRoute, User } from '../../types';
 import { useAuth } from '../../hooks/useAuth';

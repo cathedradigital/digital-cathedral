@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/hooks/useFavorites';
 import { toast } from 'sonner';

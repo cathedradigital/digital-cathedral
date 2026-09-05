@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { LibraryAdapter, LibraryItem } from '../types';
 
 /**
@@ -18,7 +18,7 @@ export const catechismAdapter: LibraryAdapter = {
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
-    return (data ?? []).map((row): LibraryItem => {
+    return (data ?? []).map<LibraryItem>((row) => {
       const paragraph = row.paragraph;
       const slug = row.slug ?? String(paragraph);
       return {

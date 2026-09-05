@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { CathedraCard } from './CathedraCard';
 import { Button } from '@/components/ui/button';
 import { Profile, useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SpiritualContinuityProps {
   data?: any;

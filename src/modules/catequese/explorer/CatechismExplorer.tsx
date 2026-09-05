@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import SEOHead from '@/components/SEOHead';
 import { isCatechism } from '@/lib/catechismValidation';
 

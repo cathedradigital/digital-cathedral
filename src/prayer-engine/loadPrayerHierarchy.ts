@@ -9,7 +9,7 @@
  * para o Reader atual. Fase seguinte substitui o Reader por navegação
  * hierárquica nativa sem alterar o schema.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { PrayerBlock } from '@/types/prayer';
 
 export interface DBSection {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { Icons } from '../../constants';
 import { SOCIAL_LINKS } from '@/config/site-config';
 

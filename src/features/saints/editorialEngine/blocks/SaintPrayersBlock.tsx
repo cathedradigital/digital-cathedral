@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import type { SaintPrayerRef } from '../types';
 

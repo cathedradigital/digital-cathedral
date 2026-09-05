@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { CathedraCard } from './CathedraCard';
 import { CathedraButton } from './CathedraButton';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';

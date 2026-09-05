@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useCallback, useRef, useContext, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from '@/lib/rr-compat';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { isRouteActive, isLegitimateClick } from '@/lib/navigation-utils';

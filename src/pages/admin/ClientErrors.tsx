@@ -4,9 +4,9 @@
  * que aparece na tela de manutenção.
  */
 import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from '@/lib/rr-compat';
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/cathedra/CathedraCard";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -14,7 +14,7 @@
  *  - Nunca renderiza para visitantes (AtriumHome decide o gate).
  */
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import {
   Heart,
   BookOpen,

@@ -2,7 +2,7 @@ import { Icons } from '@/constants';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const PWAInstallPrompt = () => {

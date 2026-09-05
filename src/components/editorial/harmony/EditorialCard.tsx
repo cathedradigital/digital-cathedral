@@ -50,7 +50,7 @@ function pickSlots(children: React.ReactNode) {
   React.Children.forEach(children, (c) => {
     if (!React.isValidElement(c)) return;
     const key = (c.type as SlotComponent | undefined)?.[SLOT];
-    if (key) map[key] = (c.props as { children?: React.ReactNode }).children;
+    if (key) map[key] = c.props.children;
   });
   return map;
 }

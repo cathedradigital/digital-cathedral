@@ -13,9 +13,9 @@
  */
 
 import React, { memo, useCallback, useState } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { ReferencePopover } from '@/components/reader';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { Icons } from '../../constants';
 import { buildBibleUrl } from '@/lib/bibleUrl';
 import { BOOK_NAME_BY_ABBR } from '@/lib/bibleCanon';

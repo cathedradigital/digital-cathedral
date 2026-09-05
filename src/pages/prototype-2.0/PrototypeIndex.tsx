@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 
 /**
  * Índice do protótipo navegável do Cathedra 2.0.

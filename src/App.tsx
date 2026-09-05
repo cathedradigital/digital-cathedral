@@ -10,8 +10,8 @@ TEXTO DO USUÁRIO: Otimizar o carregamento de imagens e fontes do site com forma
 */
 // SKILLS ATIVADOS: cathedra-operating-system, cathedra-design-system-guardian, cathedra-architecture-guardian, cathedra-saints-expert
 import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense, useContext } from 'react';
-import { HelmetProvider } from '@/lib/helmet-compat';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, useParams } from '@/lib/rr-compat';
+import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { resolveSpaceForPath } from '@/lib/spaces/resolveSpace';
 
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
@@ -33,13 +33,13 @@ import { resolveRouterBasename } from '@/lib/i18n/locales';
  */
 const ROUTER_BASENAME = resolveRouterBasename();
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 const AuthGuard = lazy(() => import('./components/cathedra/AuthGuard'));
 const AdminGuard = lazy(() => import('./components/cathedra/AdminGuard'));
 const GlossaryAdminGuard = lazy(() => import('./components/cathedra/GlossaryAdminGuard'));
 const AppErrorBoundary = lazy(() => import('./components/cathedra/AppErrorBoundary'));
 const DebugRequestPanel = lazy(() => import('./components/cathedra/DebugRequestPanel'));
-const InfrastructureDiagnostics = lazy(() => import('./legacy-routes/index').then(m => ({ default: m.InfrastructureDiagnostics })));
+const InfrastructureDiagnostics = lazy(() => import('./routes/index').then(m => ({ default: m.InfrastructureDiagnostics })));
 const PreviewFallback = lazy(() => import('./components/cathedra/PreviewFallback').then(m => ({ default: m.PreviewFallback })));
 import * as Sentry from "@sentry/react";
 import { toast } from 'sonner';

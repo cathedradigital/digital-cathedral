@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import type { EntityManifest, EntitySnapshot } from "./types";
 import { iceTier, type IceTier } from "./ice";
 import { computeFreezeCriteria, isFrozen } from "./freeze-manager";

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { useLocation, useNavigate } from '@/lib/rr-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { Icons } from '../../constants';
@@ -7,7 +7,7 @@ import BibleVersePopover from './BibleVersePopover';
 import CatechismPopover from './CatechismPopover';
 import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
 import { AppRoute } from '@/types';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
 import { Badge } from '@/components/ui/badge';

@@ -5,9 +5,9 @@
  * Com ?p=N → delega ao Catechism existente (não duplica lógica).
  */
 
-import React from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
+import React, { lazy, Suspense } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link, useSearchParams } from 'react-router-dom';
 import { BookMarked, ArrowRight, Search as SearchIcon } from 'lucide-react';
 import { CIC_SECTIONS } from '@/data/catechism';
 import { AppRoute } from '@/types';
@@ -15,7 +15,8 @@ import { CatechismSkeleton } from '@/components/cathedra/RouteSkeletons';
 import { MobileTopBar } from '@/components/mobile/MobileTopBar';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
-import Catechism from './Catechism';
+
+const Catechism = lazy(() => import('./Catechism'));
 
 const PART_KICKERS: Record<string, string> = {
   'Introdução': 'Prólogo',
@@ -35,7 +36,7 @@ const AtriumCatechismReader: React.FC = () => {
   // Não envolver com chrome paralelo (EditorialReaderChrome removido).
   if (pParam) {
     return (
-      <>
+      <Suspense fallback={<CatechismSkeleton />}>
         <MobileTopBar
           kicker="Cathedra · Depositum Fidei"
           title={`§${pParam}`}
@@ -43,7 +44,7 @@ const AtriumCatechismReader: React.FC = () => {
         />
         <Catechism />
         <MobileBottomNav />
-      </>
+      </Suspense>
     );
   }
   return <CatechismLanding />;

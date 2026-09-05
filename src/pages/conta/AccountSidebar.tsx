@@ -5,7 +5,7 @@
  * Cada grupo: ícone Lucide + título + descrição + contador (opcional).
  * Nunca mistura opções admin com opções do usuário comum.
  */
-import { NavLink, useLocation } from '@/lib/rr-compat';
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,

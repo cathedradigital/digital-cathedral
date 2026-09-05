@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 
 const useCountUp = (end: number, duration = 2000, startOnView = false) => {
   const [count, setCount] = useState(0);

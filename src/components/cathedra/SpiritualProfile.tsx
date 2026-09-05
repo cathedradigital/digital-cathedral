@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CathedraCard } from './CathedraCard';
 import ContemplativeLayout from './ContemplativeLayout';
 import { getLevelInfo } from '@/lib/levels';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from '@/lib/rr-compat';
-import { Database } from '@/lib/db';
+import { useNavigate } from 'react-router-dom';
+import { Database } from '@/integrations/supabase/types';
 import { useAvatarUrl } from '@/lib/avatar';
 
 type UserHistory = Database['public']['Tables']['user_history']['Row'];
@@ -74,7 +74,7 @@ const SpiritualProfile: React.FC = () => {
           .order('completed_at', { ascending: false });
 
         // Group by journey_id and get last completed_at
-        const uniqueJourneys = Array.from(new Set((journeyData || []).map((j: any) => j.journey_id as string)));
+        const uniqueJourneys = Array.from(new Set((journeyData || []).map(j => j.journey_id)));
         const journeyList: JourneyProgress[] = uniqueJourneys.slice(0, 3).map(id => {
           const matching = (journeyData as any[])?.filter(j => j.journey_id === id) || [];
           return {

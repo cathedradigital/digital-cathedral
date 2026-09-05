@@ -1,8 +1,8 @@
 import { Icons } from '@/constants';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@/types';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

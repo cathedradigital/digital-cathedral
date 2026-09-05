@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/db";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export type AIFallbackReason = 'credits_exhausted' | 'rate_limited' | 'daily_limit' | 'auth' | 'network';

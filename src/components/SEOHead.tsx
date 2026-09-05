@@ -1,4 +1,4 @@
-import { Helmet } from '@/lib/helmet-compat';
+import { Helmet } from 'react-helmet-async';
 import { useSEO } from '@/hooks/useSEO';
 import { useEffect, useMemo } from 'react';
 import { SEO_CONFIG } from '@/config/seo';

@@ -5,9 +5,9 @@
  * Somente admins acessam.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, Navigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { Helmet } from 'react-helmet-async';
+import { Link, Navigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

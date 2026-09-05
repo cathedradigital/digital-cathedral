@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from '@/lib/rr-compat';
+import { NavLink, useLocation } from "react-router-dom";
 import { Icons } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";

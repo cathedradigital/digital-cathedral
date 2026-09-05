@@ -13,7 +13,7 @@
  * de embedding. Quando o backend de embeddings existir, basta trocar a
  * implementação registrada em `getSemanticSearcher()`.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { LibraryModule } from '../../types';
 
 export interface SemanticHit {

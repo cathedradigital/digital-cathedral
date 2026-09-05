@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { getSearchTermsForTag } from './tagNormalization';
 import { getAllLocalCatechism } from '@/data/catechism';
 import { BIBLE_CANON } from './bibleCanon';

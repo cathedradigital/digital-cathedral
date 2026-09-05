@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import SEOHead from '@/components/SEOHead';
 import { Icons } from '../../constants';
 import { AppRoute, DeepContent } from '@/types';

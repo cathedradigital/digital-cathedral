@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
+import { Helmet } from 'react-helmet-async';
 import { Icons } from '../../constants';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppRoute } from '@/types';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '../../constants';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Saint, SaintAIReflection } from '@/data/saints';
 

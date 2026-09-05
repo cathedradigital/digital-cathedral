@@ -17,7 +17,7 @@
  */
 
 import React, { useState } from 'react';
-import { Link } from '@/lib/rr-compat';
+import { Link } from 'react-router-dom';
 import { Icons } from '../../constants';
 import type {
   SaintWork,

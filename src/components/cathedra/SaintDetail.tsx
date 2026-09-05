@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '../../constants';
 import SacredImage from './SacredImage';
@@ -13,7 +13,7 @@ import { type Saint } from '@/data/saints';
 
 import { AppRoute } from '@/types';
 
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useLang } from '@/hooks/useLang';

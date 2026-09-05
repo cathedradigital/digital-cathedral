@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { AppRoute } from '@/types';
 import { Icons } from '@/constants';
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { BrandConceptOnboarding } from '../onboarding/BrandConceptOnboarding';
 import onboardingBible from '@/assets/onboarding-bible.webp';

@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@/types';
 
 const AboutCreatorSection = () => {

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useSearchParams } from '@/lib/rr-compat';
+import { Link, useSearchParams } from 'react-router-dom';
 import PrototypeShell from '../PrototypeShell';
 import { Heart, PenLine, Share2, Link2, Sparkles } from 'lucide-react';
 

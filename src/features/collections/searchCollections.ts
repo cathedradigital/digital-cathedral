@@ -6,7 +6,7 @@
  * Sem RPC dedicada: `.ilike` cobre bem o volume atual de coleções curadas
  * (dezenas). Se ultrapassar centenas, migrar para FTS `tsvector`.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from '@/integrations/supabase/client';
 import type { Collection } from './types';
 
 export interface CollectionSearchHit {
