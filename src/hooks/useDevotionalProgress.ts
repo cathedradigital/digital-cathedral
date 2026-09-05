@@ -8,7 +8,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/lib/db';
 import { useAuth } from "@/hooks/useAuth";
 
 const LS_PREFIX = "cathedra:devotional-progress:";
