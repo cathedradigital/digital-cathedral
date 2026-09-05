@@ -14,7 +14,7 @@ export const prayersAdapter: LibraryAdapter = {
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
-    return (data ?? []).map<LibraryItem>((row) => ({
+    return (data ?? []).map((row: any): LibraryItem => ({
       id: String(row.id),
       module: 'prayers',
       title: row.title ?? '',

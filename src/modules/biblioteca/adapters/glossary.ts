@@ -24,7 +24,7 @@ export const glossaryAdapter: LibraryAdapter = {
     const { data, error } = await query;
     if (error) throw error;
 
-    return (data ?? []).map<LibraryItem>((row) => ({
+    return (data ?? []).map((row: any): LibraryItem => ({
       id: String(row.id),
       module: 'glossary',
       title: row.term ?? '',

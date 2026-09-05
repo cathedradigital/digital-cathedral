@@ -39,7 +39,7 @@ const AdminGuard = lazy(() => import('./components/cathedra/AdminGuard'));
 const GlossaryAdminGuard = lazy(() => import('./components/cathedra/GlossaryAdminGuard'));
 const AppErrorBoundary = lazy(() => import('./components/cathedra/AppErrorBoundary'));
 const DebugRequestPanel = lazy(() => import('./components/cathedra/DebugRequestPanel'));
-const InfrastructureDiagnostics = lazy(() => import('./routes/index').then(m => ({ default: m.InfrastructureDiagnostics })));
+const InfrastructureDiagnostics = lazy(() => import('./legacy-routes/index').then(m => ({ default: m.InfrastructureDiagnostics })));
 const PreviewFallback = lazy(() => import('./components/cathedra/PreviewFallback').then(m => ({ default: m.PreviewFallback })));
 import * as Sentry from "@sentry/react";
 import { toast } from 'sonner';
