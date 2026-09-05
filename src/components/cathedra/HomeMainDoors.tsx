@@ -79,7 +79,7 @@ const HomeMainDoors: React.FC<HomeMainDoorsProps> = ({ t, className }) => {
       {doors.map((door, idx) => (
         <div
           key={idx}
-          ref={el => doorRefs.current[idx] = el}
+          ref={(el) => { doorRefs.current[idx] = el; }}
           onClick={() => handleNavigate(door.route)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {

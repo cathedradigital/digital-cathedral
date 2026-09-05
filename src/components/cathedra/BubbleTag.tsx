@@ -63,7 +63,7 @@ const tagIconMap: Record<string, React.ReactNode> = {
 
 export const getTagIcon = (emoji: string, className = "w-spacing-sm h-spacing-sm") => {
   const icon = tagIconMap[emoji] || <Icons.Hash className="w-inherit h-inherit" />;
-  return React.cloneElement(icon as React.ReactElement, { className });
+  return React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className });
 };
 
 export const bubbleVariants = {

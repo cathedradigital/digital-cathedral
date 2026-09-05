@@ -86,7 +86,7 @@ const CommandCenter: React.FC = () => {
   const [globalLoading, setGlobalLoading] = useState(false);
   const [lastBible, setLastBible] = useState<{ book_abbr: string; chapter: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
