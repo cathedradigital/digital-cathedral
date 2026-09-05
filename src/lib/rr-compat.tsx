@@ -221,6 +221,8 @@ export function BrowserRouter({
 }: {
   children?: React.ReactNode;
   basename?: string;
+  /** Aceito por compatibilidade com MemoryRouter (ignorado). */
+  initialEntries?: string[];
 }) {
   const router = useRouter();
   const routerState = useRouterState({ select: (s) => s.location });
@@ -277,7 +279,9 @@ export function useLocation(): LocationShape {
   return useRouterContext().location;
 }
 
-export function useNavigate(): (to: string | number, options?: NavigateOptions) => void {
+export type NavigateFunction = (to: string | number, options?: NavigateOptions) => void;
+
+export function useNavigate(): NavigateFunction {
   return useRouterContext().navigate;
 }
 
@@ -285,20 +289,36 @@ export function useParams<Params extends Record<string, string> = Record<string,
   return React.useContext(RouteCtx).params as Params;
 }
 
+export type SetURLSearchParams = (
+  init:
+    | URLSearchParams
+    | string
+    | Record<string, string>
+    | ((prev: URLSearchParams) => URLSearchParams | string | Record<string, string>),
+  options?: NavigateOptions
+) => void;
+
 export function useSearchParams(
   defaultInit?: URLSearchParams | string
-): [URLSearchParams, (init: URLSearchParams | string | Record<string, string>, options?: NavigateOptions) => void] {
+): [URLSearchParams, SetURLSearchParams] {
   const { location, navigate } = useRouterContext();
   const params = React.useMemo(
     () => new URLSearchParams(location.search || (defaultInit ? defaultInit.toString() : "")),
     [location.search, defaultInit]
   );
-  const setParams = React.useCallback(
-    (init: URLSearchParams | string | Record<string, string>, options?: NavigateOptions) => {
-      const next = typeof init === "string" ? init : new URLSearchParams(init as Record<string, string>).toString();
+  const setParams = React.useCallback<SetURLSearchParams>(
+    (init, options) => {
+      const resolved =
+        typeof init === "function"
+          ? init(new URLSearchParams(location.search))
+          : init;
+      const next =
+        typeof resolved === "string"
+          ? resolved
+          : new URLSearchParams(resolved as Record<string, string>).toString();
       navigate(`${location.pathname}?${next}`, options);
     },
-    [navigate, location.pathname]
+    [navigate, location.pathname, location.search]
   );
   return [params, setParams];
 }
@@ -465,7 +485,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link
   return <a {...rest} href={href} onClick={handleClick} target={target} ref={ref} />;
 });
 
-export interface NavLinkProps extends LinkProps {
+export interface NavLinkProps extends Omit<LinkProps, "className" | "style" | "children"> {
   caseSensitive?: boolean;
   end?: boolean;
   className?: string | ((opts: { isActive: boolean; isPending: boolean }) => string | undefined);
