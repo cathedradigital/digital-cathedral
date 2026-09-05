@@ -6,8 +6,8 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useParams, Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 import {
   getWorkBySlug,
   getChapter,

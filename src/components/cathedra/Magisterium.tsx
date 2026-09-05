@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
 import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import SacredImage from './SacredImage';
 import DeepContentSection from './DeepContentSection';
@@ -67,7 +67,7 @@ const BubbleHint: React.FC<{
   );
 };
 import AudioButton from './AudioButton';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from '@/lib/rr-compat';
 import { getTabProps, getTabPanelProps, useTabNavigation } from './TabUtils';
 import { useReadingMarks } from '@/hooks/useReadingMarks';
 import ReadingControlPanel from './ReadingControlPanel';

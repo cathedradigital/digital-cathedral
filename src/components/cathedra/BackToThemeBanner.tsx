@@ -1,6 +1,6 @@
 import { Icons } from '@/constants';
 import React from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from '@/lib/rr-compat';
 
 import { Button } from '@/components/ui/button';
 import { AppRoute } from '@/types';

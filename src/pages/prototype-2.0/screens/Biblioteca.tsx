@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import PrototypeShell from '../PrototypeShell';
 import { ChevronRight } from 'lucide-react';
 

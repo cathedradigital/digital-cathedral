@@ -12,7 +12,7 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { resolveNexusHref } from '@/lib/nexusHref';
 import type { CatechismEditorial } from './catechismEditorial';

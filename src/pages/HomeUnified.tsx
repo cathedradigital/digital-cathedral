@@ -4,8 +4,8 @@
  */
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {

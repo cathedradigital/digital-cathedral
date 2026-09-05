@@ -21,7 +21,7 @@
  * plano); o hook não conhece o conteúdo, só a topologia.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 export type PrayerBookmarkKind = 'favorite' | 'reflection' | 'intention' | 'word';
 

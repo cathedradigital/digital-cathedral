@@ -4,7 +4,7 @@
  * Complementa `autoRefreshToken` do Supabase disparando um refresh silencioso
  * ao voltar à aba/tela para prevenir pedidos repetidos de autenticação.
  */
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { trackEvent } from '@/lib/analytics';
 
 const REMEMBER_KEY = 'cathedra_remember_device';

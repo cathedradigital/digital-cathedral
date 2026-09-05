@@ -16,7 +16,7 @@
  * visível e tap targets 44×44 em todos os breakpoints.
  */
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { toast } from 'sonner';
 import { Icons } from '@/constants';
 import { cn } from '@/lib/utils';

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MobileTopBar } from '@/components/mobile/MobileTopBar';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import SEOHead from '@/components/SEOHead';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { cn } from '@/lib/utils';
 
 interface ContemplationStage {

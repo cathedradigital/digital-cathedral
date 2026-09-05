@@ -17,9 +17,9 @@
  * Ver `docs/CATHEDRA-CONSTITUTION.md`, artigos 3, 6, 7, 8, 9.
  */
 import React, { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { useNavigate, useParams } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 
 import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
 import { Button } from '@/components/ui/button';

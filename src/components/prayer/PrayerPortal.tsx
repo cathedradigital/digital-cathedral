@@ -20,7 +20,7 @@
  * sempre em `text-stitch-on-surface`. `-variant` reservado a citações.
  */
 import React, { useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from '@/lib/rr-compat';
 import { Clock, Sparkles, PlayCircle, RotateCcw, BookOpen, Church, Circle, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EditorialHero } from '@/components/editorial/harmony';

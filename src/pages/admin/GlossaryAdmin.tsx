@@ -1,6 +1,6 @@
-import { Helmet } from "react-helmet-async";
+import { Helmet } from '@/lib/helmet-compat';
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/lib/db';
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ import {
   Loader2, Plus, Save, Send, Trash2, ExternalLink, ArrowLeft,
   Eye, EyeOff, Check, AlertCircle, Search, ChevronUp, ChevronDown, X,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/rr-compat';
 import GlossaryTermPreview, { type GlossaryPreviewData } from "@/components/admin/GlossaryTermPreview";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDocumentSearch } from "@/hooks/useDocumentSearch";

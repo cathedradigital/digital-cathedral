@@ -1,5 +1,5 @@
 import { ArrowLeft, Search, Menu } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from '@/lib/rr-compat';
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams, Link, Navigate } from 'react-router-dom';
+import { useParams, useSearchParams, Link, Navigate } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { EditorialHero } from '@/components/editorial/harmony/EditorialHero';
 import { NexusPanel, ReaderShell } from '@/components/reader';

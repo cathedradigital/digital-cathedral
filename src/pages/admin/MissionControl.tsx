@@ -6,8 +6,8 @@
  * como placeholders "Não configurado" até seu manifesto ganhar `ready: true`.
  */
 import { useMemo } from "react";
-import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

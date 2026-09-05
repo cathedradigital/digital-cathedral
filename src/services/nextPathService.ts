@@ -6,7 +6,7 @@
  * histórico de conclusão do usuário).
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type {
   JourneyCandidate,
   JourneyNexusNode,

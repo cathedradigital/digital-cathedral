@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/lib/rr-compat';
 
 const AboveTheFoldTest: React.FC = () => {
   const [report, setReport] = useState<any>(null);

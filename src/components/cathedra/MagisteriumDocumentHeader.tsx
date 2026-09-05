@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import type { MagisteriumDocument } from '@/data/magisterium-urls';
 import PassageActions from '@/components/shared/PassageActions';

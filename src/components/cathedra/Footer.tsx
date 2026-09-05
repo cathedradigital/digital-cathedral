@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { Icons } from '../../constants';
 import { AppRoute } from '../../types';
 import { useLang } from '@/hooks/useLang';

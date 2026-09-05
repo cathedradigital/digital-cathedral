@@ -7,7 +7,7 @@
  * `/oracao/:slug` (ex.: contemplative do Rosário).
  */
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { AlertTriangle, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { reportPrayerError, type PrayerErrorContext } from '@/lib/prayer/telemetry';

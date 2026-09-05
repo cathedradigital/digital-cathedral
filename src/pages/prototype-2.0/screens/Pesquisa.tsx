@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from '@/lib/rr-compat';
 import { X } from 'lucide-react';
 
 const BASE = '/prototype-2.0';

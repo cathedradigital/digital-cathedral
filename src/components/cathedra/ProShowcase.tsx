@@ -1,6 +1,6 @@
 import { Icons } from '@/constants';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';

@@ -6,7 +6,7 @@
  * título/tag, chip de categoria e navegação para /oracao/:slug.
  */
 import React, { useMemo, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Search, Clock, ChevronRight, Loader2 } from 'lucide-react';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import { EditorialHero } from '@/components/editorial/harmony';

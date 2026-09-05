@@ -7,8 +7,8 @@
  * Cada hit devolve um snippet com <mark> já aplicado no server.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 import DOMPurify from 'dompurify';
 import { EditorialHero } from '@/components/editorial';
 import { Button } from '@/components/ui/button';

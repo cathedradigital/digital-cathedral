@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { type Saint } from '@/data/saints';
 import { combinedSimilarity } from '@/lib/similarity';
 

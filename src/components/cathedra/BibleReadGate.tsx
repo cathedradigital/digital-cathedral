@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { ShieldAlert } from 'lucide-react';
 import { useBibleReadGate } from '@/hooks/useBibleReadGate';
 import { useIsAdmin } from '@/hooks/useIsAdmin';

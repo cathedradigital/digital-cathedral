@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { 
@@ -31,7 +31,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/rr-compat';
 import { cn } from '@/lib/utils';
 import { useSavedFilters, SavedFilter } from '@/hooks/useSavedFilters';
 import { SavedFiltersManager } from './SavedFiltersManager';

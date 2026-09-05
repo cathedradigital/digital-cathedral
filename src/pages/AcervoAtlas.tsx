@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@/lib/helmet-compat';
 import { EditorialHero, EditorialDivider } from '@/components/editorial/harmony';
 import { Icons } from '@/constants';
 import { Badge } from '@/components/ui/badge';

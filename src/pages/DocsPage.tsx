@@ -3,8 +3,8 @@
  * O conteúdo vem de `src/content/docs` (pt, en, es, it, la).
  */
 import React, { useMemo, useState, useId } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 import { Search, BookOpen, ArrowRight, Languages } from 'lucide-react';
 import { useLang } from '@/hooks/useLang';
 import { Input } from '@/components/ui/input';

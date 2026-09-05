@@ -6,7 +6,7 @@
  * nunca reaparecer.
  */
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { GraduationCap, Heart, BookOpen, Sun, ScrollText, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { hasSeenFirstAccess, markFirstAccessSeen } from '@/lib/firstAccess';

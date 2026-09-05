@@ -6,8 +6,8 @@
  */
 
 import React, { lazy, Suspense } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useSearchParams } from '@/lib/rr-compat';
 import { BookMarked, ArrowRight, Search as SearchIcon } from 'lucide-react';
 import { CIC_SECTIONS } from '@/data/catechism';
 import { AppRoute } from '@/types';

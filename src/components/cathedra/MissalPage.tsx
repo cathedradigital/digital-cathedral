@@ -14,8 +14,8 @@
  *     ?d=YYYY-MM-DD             (data do Próprio; default: hoje)
  */
 import React, { useMemo, useCallback, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 
 import { usePrayerHierarchy } from '@/prayer-engine/usePrayerHierarchy';
 import { usePrayers } from '@/hooks/usePrayers';

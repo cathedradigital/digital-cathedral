@@ -1,9 +1,9 @@
 import { Icons } from '@/constants';
 import React, { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 

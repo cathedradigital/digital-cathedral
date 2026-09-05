@@ -9,7 +9,7 @@
  *   reagir em tempo real.
  * - Envia eventos para `analytics_events` quando possível (best-effort, silencioso).
  */
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 export type CatechismDiagStep =
   | 'cache_hit'

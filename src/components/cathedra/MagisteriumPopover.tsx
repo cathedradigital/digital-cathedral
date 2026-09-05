@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import React, { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import {
   HoverCard,
   HoverCardContent,
@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/hover-card';
 import { Icons } from '../../constants';
 import { MAGISTERIUM_URLS } from '@/data/magisterium-urls';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 
 
 interface MagisteriumPopoverProps {

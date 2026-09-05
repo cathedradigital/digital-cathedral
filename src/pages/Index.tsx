@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@/lib/rr-compat';
 import { AppRoute } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import HeroSection from "./landing/HeroSection";

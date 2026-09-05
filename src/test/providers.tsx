@@ -8,9 +8,9 @@
  */
 import React from 'react';
 import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from '@/lib/rr-compat';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from '@/lib/helmet-compat';
 import { AuthContext } from '@/hooks/useAuth';
 import { ReadingSettingsProvider } from '@/contexts/ReadingSettingsContext';
 import { TooltipProvider } from '@/components/ui/tooltip';

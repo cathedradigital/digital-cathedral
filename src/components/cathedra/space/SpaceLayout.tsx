@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Compass, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

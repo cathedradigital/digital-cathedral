@@ -7,8 +7,8 @@
  * autônomas com favorito próprio e persistência por Hora+data.
  */
 import React, { useMemo } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useSearchParams } from '@/lib/rr-compat';
 import { Loader2 } from 'lucide-react';
 import type { Prayer } from '@/hooks/usePrayers';
 import { usePrayerHierarchy } from '@/prayer-engine/usePrayerHierarchy';

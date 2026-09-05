@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { EditorialCard } from '@/components/editorial/harmony';
 import { BookOpen, BookMarked, Church, Users, Sparkles, Library, Compass, ScrollText, Feather, Clock3, ArrowRight } from 'lucide-react';
 import IceBadge from './IceBadge';

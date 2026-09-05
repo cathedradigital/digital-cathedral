@@ -4,7 +4,7 @@
  * Isolada. Só renderiza para administradores (server-trusted via `useIsAdmin`).
  * Nunca mistura com opções do usuário comum.
  */
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate } from '@/lib/rr-compat';
 import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
 import { EditorialCard } from "@/components/editorial/harmony/EditorialCard";
 import { Button } from "@/components/ui/button";

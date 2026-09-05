@@ -1,6 +1,6 @@
 import { Icons } from '@/constants';
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from '@/lib/rr-compat';
 import SEOHead from '@/components/SEOHead';
 import { AppRoute } from '@/types';
 import { motion } from 'framer-motion';

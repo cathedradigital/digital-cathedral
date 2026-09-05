@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { fetchCatechismParagraph } from '@/hooks/useCatechismParagraph';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';

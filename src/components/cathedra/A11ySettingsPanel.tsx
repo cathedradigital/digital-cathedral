@@ -8,7 +8,7 @@ import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
 import { ShortcutInput } from './ShortcutInput';
 import { Slider } from '@/components/ui/slider';
 import { runDesignSystemAudit, exportAuditReport, AuditResult } from '@/lib/design-system-audit';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@/lib/rr-compat';
 
 interface A11ySettingsPanelProps {
   isOpen: boolean;

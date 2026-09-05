@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';

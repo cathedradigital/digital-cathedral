@@ -11,7 +11,7 @@
  * roteia dentro do próprio Cathedra pelo `SaintWritingsBlock`.
  */
 import React, { useEffect } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from '@/lib/rr-compat';
 import { useQuery } from '@tanstack/react-query';
 import { getSaintById } from '@/services/saintsService';
 import SEOHead from '@/components/SEOHead';

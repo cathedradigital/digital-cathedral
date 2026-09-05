@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from '@/lib/rr-compat';
 import SEOHead from '@/components/SEOHead';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icons } from '@/constants';
@@ -14,7 +14,7 @@ import { useFuzzySearch } from '@/hooks/useFuzzySearch';
 import { AppRoute } from '@/types';
 import { useRovingTabindex } from './TabUtils';
 import { useAutoFocus } from '@/hooks/useAutoFocus';
-import type { Tables } from '@/integrations/supabase/types';
+import type { Tables } from '@/lib/db';
 import ContemplativeLayout from './ContemplativeLayout';
 import { ListSkeleton, SearchResultSkeleton, TagSkeleton } from './SacredSkeleton';
 import { useRenderPerf } from '@/hooks/useRenderPerf';

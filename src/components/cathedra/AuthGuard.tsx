@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from '@/lib/rr-compat';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 

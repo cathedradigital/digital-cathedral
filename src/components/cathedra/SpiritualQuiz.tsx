@@ -1,10 +1,10 @@
 import { Icons } from '@/constants';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import confetti from 'canvas-confetti';

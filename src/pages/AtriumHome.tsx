@@ -7,8 +7,8 @@
  */
 
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useNavigate } from '@/lib/rr-compat';
 import {
   Network as Hub,
   ArrowRight as ArrowForward,

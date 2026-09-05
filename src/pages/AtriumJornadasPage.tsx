@@ -9,8 +9,8 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 import {
   ArrowRight,
   Sparkles,
@@ -24,7 +24,7 @@ import {
   Flame,
 } from 'lucide-react';
 import { EditorialHero } from '@/components/editorial/harmony';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { SpaceLayout, SpaceHeader, SpaceDoors, type SpaceDoor, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';

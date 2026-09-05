@@ -6,7 +6,7 @@
  * sessão (Continuar/Recomeçar) — que só faz sentido dentro do Engine.
  */
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/rr-compat';
 import type { LucideIcon } from 'lucide-react';
 import PrayerPortal, { type PortalHighlight, type PrayerPortalTheme } from './PrayerPortal';
 import type { Prayer } from '@/hooks/usePrayers';

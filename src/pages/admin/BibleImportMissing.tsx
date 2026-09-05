@@ -3,8 +3,8 @@
  * e revalida o gate automaticamente ao final.
  */
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from '@/lib/rr-compat';
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Progress } from "@/components/ui/progress";

@@ -5,8 +5,8 @@
  * os componentes existentes; rotas antigas (`/profile`, `/diario`, etc.)
  * seguem operando sem quebra.
  */
-import { Outlet } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { Outlet } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AccountSidebar } from "./AccountSidebar";
 

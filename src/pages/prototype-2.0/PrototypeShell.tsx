@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from '@/lib/rr-compat';
 import { Search, RotateCcw, User, Church, BookOpen, Flame, Compass, ArrowLeft, Info } from 'lucide-react';
 
 /**

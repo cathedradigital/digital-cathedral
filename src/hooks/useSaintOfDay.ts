@@ -9,7 +9,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { getSaintsByDate } from '@/services/saintsService';
 import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
 

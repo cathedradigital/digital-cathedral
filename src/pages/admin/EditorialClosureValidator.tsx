@@ -8,7 +8,7 @@
  *   - Preview renderizado idêntico ao ReaderShell
  */
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@/lib/helmet-compat';
 import { validateEditorialClosure } from '@/lib/editorial/closureSchema';
 import { EditorialClosure } from '@/components/reader';
 import { Button } from '@/components/ui/button';

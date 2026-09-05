@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ArrowLeft, Type, Focus, Share2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@/lib/rr-compat';
 import { cn } from "@/lib/utils";
 
 interface MobileReaderChromeProps {

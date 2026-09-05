@@ -8,8 +8,8 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { Link } from '@/lib/rr-compat';
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/constants';

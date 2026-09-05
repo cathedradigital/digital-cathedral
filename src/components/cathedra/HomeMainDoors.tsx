@@ -1,7 +1,7 @@
 /* Headings structure: h2 used for section titles in HomeMainContent, h3 for card group titles, h4 for individual cards */
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { AppRoute } from '@/types';
 import { useReadingSettings } from '@/contexts/ReadingSettingsContext';

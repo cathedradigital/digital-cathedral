@@ -14,7 +14,7 @@
  */
 
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { ArrowLeft, Type, Focus, Share2 } from 'lucide-react';
 import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
 import { cn } from '@/lib/utils';

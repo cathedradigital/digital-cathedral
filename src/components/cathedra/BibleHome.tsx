@@ -4,7 +4,7 @@ import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { BibleBook, BIBLE_DATA } from '@/data/bible-books';
 import { EditorialHero } from '@/components/editorial/harmony';
 

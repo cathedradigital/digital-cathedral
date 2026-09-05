@@ -7,8 +7,8 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useParams, useNavigate, Link } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import {
@@ -34,7 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { checkNewBadges, getBadgeById, BadgeContext } from '@/lib/badges';

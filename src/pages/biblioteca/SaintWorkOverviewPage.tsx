@@ -20,8 +20,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { useParams, Link, useNavigate } from '@/lib/rr-compat';
+import { Helmet } from '@/lib/helmet-compat';
 import {
   getWorkBySlug,
   listChapters,

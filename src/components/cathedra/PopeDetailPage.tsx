@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import SacredImage from './SacredImage';
 import { ReaderShell, EditorialHero, NexusPanel, ReaderContinuation, ReaderToolbar } from '@/components/reader';

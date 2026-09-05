@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from '@/lib/rr-compat';
 
 const RezarPage = () => {
   return <Navigate to="/oracao" replace />;

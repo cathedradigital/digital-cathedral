@@ -5,8 +5,8 @@
  * é uma transição explícita feita no editor. RLS já restringe tudo a admin.
  */
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link } from '@/lib/rr-compat';
 import { toast } from 'sonner';
 import { Plus, ExternalLink, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';

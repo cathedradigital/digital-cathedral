@@ -24,7 +24,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/rr-compat';
 import { Icons } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DAILY_RITUALS } from '@/data/dailyRitual';
 import { CathedraButton } from './CathedraButton';
 import AudioContentPlayer from './AudioContentPlayer';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { jsPDF } from 'jspdf';

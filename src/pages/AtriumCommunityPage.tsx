@@ -7,12 +7,12 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useNavigate } from '@/lib/rr-compat';
 import { MessageCircle, Plus, Heart, Sparkles, Users, ArrowRight, User, Calendar, BookOpen } from 'lucide-react';
 import { EditorialHero } from '@/components/editorial/harmony';
 import { SpaceLayout, SpaceHeader, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { toast } from 'sonner';

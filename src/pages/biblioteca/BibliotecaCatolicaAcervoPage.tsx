@@ -7,8 +7,8 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useSearchParams } from '@/lib/rr-compat';
 import { EditorialHero, EditorialCard } from '@/components/editorial';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

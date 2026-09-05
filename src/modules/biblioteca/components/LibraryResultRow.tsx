@@ -8,7 +8,7 @@
  * Sem cards específicos por módulo. Sem ifs de tipo. Design tokens semânticos
  * apenas — o mesmo componente funciona em qualquer skin (default ou Stitch).
  */
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { ArrowRight, Clock3, Network } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import IceBadge from './IceBadge';

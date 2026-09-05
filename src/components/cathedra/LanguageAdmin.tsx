@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 

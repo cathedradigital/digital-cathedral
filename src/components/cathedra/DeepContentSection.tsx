@@ -4,12 +4,12 @@ import { Icons } from '../../constants';
 import { DeepContent, AppRoute } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 
 import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
 import BibleVersePopover from './BibleVersePopover';
 import CatechismPopover from './CatechismPopover';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { toast } from 'sonner';
 
 interface DeepContentSectionProps {

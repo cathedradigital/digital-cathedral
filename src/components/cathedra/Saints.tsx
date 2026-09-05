@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, lazy, Suspense } from 'react';
 import { SpaceLayout, SpaceHeader, SpaceFooter } from './space/SpaceLayout';
-import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate } from '@/lib/rr-compat';
 import { useOfficialSaint } from '@/hooks/useSaints';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -16,7 +16,7 @@ import { getSaintsByDate, getSaintsByDateOrThrow, searchSaints, getSaintsByCateg
 import SaintsFetchError from './SaintsFetchError';
 import SaintsOfflineFallback from './SaintsOfflineFallback';
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useDebounce } from '@/hooks/useDebounce';
 
 import { RelevanceBadge } from './RelevanceBadge';

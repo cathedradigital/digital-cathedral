@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, lazy, Suspense } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from '@/lib/rr-compat';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Icons } from '@/constants';
 import { Button } from '@/components/ui/button';
 import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';

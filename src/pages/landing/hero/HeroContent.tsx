@@ -1,5 +1,5 @@
 import { motion, MotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@/lib/rr-compat';
 import { HomeButton } from "@/components/cathedra/HomeButton";
 import { trackEvent } from "@/lib/analytics";
 import { Icons } from "@/constants";

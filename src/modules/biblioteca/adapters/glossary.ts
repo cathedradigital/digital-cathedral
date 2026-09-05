@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type { LibraryAdapter, LibraryItem, LibraryIce } from '../types';
 
 const iceFrom = (value: string | null | undefined): LibraryIce | undefined => {

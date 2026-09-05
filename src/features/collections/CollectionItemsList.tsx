@@ -4,7 +4,7 @@
  */
 import { useEffect, useState } from 'react';
 import { GripVertical, Trash2, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { collectionAutoNexus } from './collectionAutoNexus';

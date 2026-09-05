@@ -10,7 +10,7 @@
  * celebração e a cor litúrgica do dia (fonte: LiturgyProvider).
  */
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/constants';
 import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';

@@ -6,7 +6,7 @@
  * Consultamos via operador `->>` em ambas as chaves, bidirecional, em uma
  * única query por direção. Falhas são silenciosas — a busca lexical continua.
  */
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import type { LibraryModule } from '../types';
 import type { RawHit } from './searchers';
 

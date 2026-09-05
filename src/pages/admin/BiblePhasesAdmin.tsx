@@ -6,9 +6,9 @@
  * ação nesta versão: importação e certificação chegam em P0.2.2.2+.
  */
 import { useMemo } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from '@/lib/rr-compat';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

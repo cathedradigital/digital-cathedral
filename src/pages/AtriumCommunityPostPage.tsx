@@ -4,10 +4,10 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useNavigate, useParams } from '@/lib/rr-compat';
 import { ArrowLeft, Heart, MessageCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useAuth } from '@/hooks/useAuth';
 import { AppRoute } from '@/types';
 import { toast } from 'sonner';

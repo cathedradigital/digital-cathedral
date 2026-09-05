@@ -3,7 +3,7 @@ import { HomeButton } from '@/components/cathedra/HomeButton';
 import { trackEvent } from '@/lib/analytics';
 import { useToast } from '@/hooks/use-toast';
 import { Icons } from '@/constants';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 const LeadCaptureForm = () => {
   const [email, setEmail] = useState('');

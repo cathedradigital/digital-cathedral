@@ -5,8 +5,8 @@
  * Publicação exige coleção com ≥1 item — sem bypass.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Link, useParams } from 'react-router-dom';
+import { Helmet } from '@/lib/helmet-compat';
+import { Link, useParams } from '@/lib/rr-compat';
 import { toast } from 'sonner';
 import {
   ArrowLeft, Loader2, Save, Send, Eye, EyeOff, Archive, ExternalLink,

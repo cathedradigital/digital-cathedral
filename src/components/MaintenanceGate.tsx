@@ -1,5 +1,5 @@
 import React from "react";
-import { Helmet, HelmetProvider } from "react-helmet-async";
+import { Helmet, HelmetProvider } from '@/lib/helmet-compat';
 
 /**
  * Gate de manutenção SEO-safe.

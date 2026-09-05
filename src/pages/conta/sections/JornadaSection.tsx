@@ -5,7 +5,7 @@
  * Usa EditorialHero + EditorialCard. Sem lógica nova de domínio: apenas
  * cross-links + contadores do hook `useAccountCounters`.
  */
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/rr-compat';
 import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
 import { EditorialCard } from "@/components/editorial/harmony/EditorialCard";
 import { Button } from "@/components/ui/button";

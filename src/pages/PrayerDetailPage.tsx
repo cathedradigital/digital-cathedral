@@ -13,7 +13,7 @@
  * Zero uso de EditorialReaderChrome; toda leitura passa por ReaderShell.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from '@/lib/rr-compat';
 import { Loader2, Star, Clock, BookOpen, Church, ArrowLeft, Minus, Plus } from 'lucide-react';
 import { ReaderShell, ReaderContinuation } from '@/components/reader';
 import { MobileTopBar } from '@/components/mobile/MobileTopBar';

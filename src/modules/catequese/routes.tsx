@@ -8,7 +8,7 @@
  */
 
 import React, { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from '@/lib/rr-compat';
 import { CatechismSkeleton } from '@/components/cathedra/RouteSkeletons';
 
 const AtriumCatechismReader = lazy(() =>

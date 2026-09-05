@@ -16,7 +16,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { useAuth } from '@/hooks/useAuth';
 import { useReadingMarks } from '@/hooks/useReadingMarks';
 import { useFavorites } from '@/hooks/useFavorites';

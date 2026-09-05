@@ -7,7 +7,7 @@
  */
 
 import React, { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { ReferencePopover } from '@/components/reader';
 import { Icons } from '@/constants';
 import { useCatechismParagraph } from '@/hooks/useCatechismParagraph';

@@ -13,7 +13,7 @@ import {
   type WeekCycle,
 } from '@/core/church/liturgicalCalendar';
 import { getSaintsByDate } from '@/services/saintsService';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 
 /**
  * Church Context Engine — Contexto Eclesial Global (SSoT · KERNEL).

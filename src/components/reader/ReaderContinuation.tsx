@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Book, User, Church, ScrollText, Heart, ArrowRight, Compass, Sparkles, Library } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EditorialKicker } from '@/components/editorial/harmony';

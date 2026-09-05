@@ -10,7 +10,7 @@
  * borda dourada fina), tap targets ≥44px e foco visível.
  */
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { cn } from '@/lib/utils';
 import {

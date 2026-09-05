@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
 import { Icons } from '@/constants';
 import { EditorialHero } from '@/components/editorial/harmony/EditorialHero';
 import { EditorialCard } from '@/components/editorial/harmony/EditorialCard';

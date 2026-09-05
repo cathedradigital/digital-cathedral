@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import {
   AlertTriangle, ArrowDown, ArrowUp, ChevronLeft, ChevronRight,
   CheckCircle2, Download, Flame, Loader2, RefreshCcw, Trash2, Wifi, WifiOff,
 } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from '@/lib/rr-compat';
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, LineChart, Line,
   CartesianGrid, Legend,

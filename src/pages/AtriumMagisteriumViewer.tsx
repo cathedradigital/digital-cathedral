@@ -4,7 +4,7 @@
  */
 
 import React, { Suspense, lazy, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from '@/lib/rr-compat';
 import { ReaderToolbar } from '@/components/reader';
 import { MAGISTERIUM_CATEGORIES } from '@/data/magisterium-urls';
 import { AppRoute } from '@/types';

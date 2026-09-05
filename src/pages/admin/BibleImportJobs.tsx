@@ -3,9 +3,9 @@
  * Lista as últimas execuções e link para o detalhe.
  */
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from '@/lib/rr-compat';
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/lib/db';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/cathedra/CathedraCard";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";

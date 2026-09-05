@@ -1,7 +1,7 @@
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Icons } from '@/constants';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@/lib/helmet-compat';
 import { motion, AnimatePresence } from 'framer-motion';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
@@ -10,10 +10,10 @@ import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { AppRoute } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/db';
 import { toast } from 'sonner';
 import { 
   Table, 

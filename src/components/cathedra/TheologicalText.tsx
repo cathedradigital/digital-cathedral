@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/rr-compat';
 import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
 import BibleVersePopover from './BibleVersePopover';
 import CatechismPopover from './CatechismPopover';
