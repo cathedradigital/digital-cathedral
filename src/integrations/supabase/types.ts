@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_feature_flags: {
+        Row: {
+          description: string | null
+          feature_key: string
+          id: string
+          is_enabled: boolean | null
+          metadata: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          description?: string | null
+          feature_key: string
+          id?: string
+          is_enabled?: boolean | null
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          description?: string | null
+          feature_key?: string
+          id?: string
+          is_enabled?: boolean | null
+          metadata?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       bible_books: {
         Row: {
           abbrev: string
@@ -79,6 +106,30 @@ export type Database = {
           },
         ]
       }
+      bible_chapters_read: {
+        Row: {
+          book_abbr: string
+          chapter: number
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          book_abbr: string
+          chapter: number
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          book_abbr?: string
+          chapter?: number
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bible_verses: {
         Row: {
           chapter_id: string
@@ -132,6 +183,451 @@ export type Database = {
           created_at?: string
           paragraph?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      catechism_paragraphs_read: {
+        Row: {
+          id: string
+          paragraph: number
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          paragraph: number
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          paragraph?: number
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      collection_items: {
+        Row: {
+          collection_id: string
+          created_at: string
+          description_override: string | null
+          id: string
+          is_locked_until_prev: boolean
+          item_slug: string
+          item_type: string
+          metadata: Json
+          order_index: number
+          title_override: string | null
+          updated_at: string
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          description_override?: string | null
+          id?: string
+          is_locked_until_prev?: boolean
+          item_slug: string
+          item_type: string
+          metadata?: Json
+          order_index?: number
+          title_override?: string | null
+          updated_at?: string
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          description_override?: string | null
+          id?: string
+          is_locked_until_prev?: boolean
+          item_slug?: string
+          item_type?: string
+          metadata?: Json
+          order_index?: number
+          title_override?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          category: string
+          certificate_eligible: boolean
+          completion_message: string | null
+          cover: string | null
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          estimated_reading_time_minutes: number | null
+          featured: boolean
+          hero_quote: string | null
+          hero_quote_author: string | null
+          id: string
+          learning_objectives: string[]
+          metadata: Json
+          nexus_refs: Json
+          prerequisites: string[]
+          program_slug: string | null
+          recommended_for: string[]
+          slug: string
+          status: string
+          subtitle: string | null
+          title: string
+          track: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          certificate_eligible?: boolean
+          completion_message?: string | null
+          cover?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          estimated_reading_time_minutes?: number | null
+          featured?: boolean
+          hero_quote?: string | null
+          hero_quote_author?: string | null
+          id?: string
+          learning_objectives?: string[]
+          metadata?: Json
+          nexus_refs?: Json
+          prerequisites?: string[]
+          program_slug?: string | null
+          recommended_for?: string[]
+          slug: string
+          status?: string
+          subtitle?: string | null
+          title: string
+          track?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          certificate_eligible?: boolean
+          completion_message?: string | null
+          cover?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          estimated_reading_time_minutes?: number | null
+          featured?: boolean
+          hero_quote?: string | null
+          hero_quote_author?: string | null
+          id?: string
+          learning_objectives?: string[]
+          metadata?: Json
+          nexus_refs?: Json
+          prerequisites?: string[]
+          program_slug?: string | null
+          recommended_for?: string[]
+          slug?: string
+          status?: string
+          subtitle?: string | null
+          title?: string
+          track?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      glossary: {
+        Row: {
+          bible_verses: string[] | null
+          bibliography: Json | null
+          catechism_references: string[] | null
+          category: string | null
+          created_at: string
+          deep_interpretation: string | null
+          definition: string
+          doctrinal_weight: number
+          editorial_closure: Json | null
+          editorial_completeness: string
+          etymology: string | null
+          faq: Json | null
+          fathers_refs: string[] | null
+          historical_context: string | null
+          id: string
+          interpretation: string | null
+          journey_refs: string[] | null
+          language: string
+          liturgy_refs: string[] | null
+          logos_meditation: string | null
+          magisterium_references: string[] | null
+          next_steps: Json | null
+          nexus_refs: Json | null
+          practical_application: string | null
+          prayer_refs: string[] | null
+          reference: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          saints_refs: string[] | null
+          short_definition: string | null
+          slug: string | null
+          term: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          bible_verses?: string[] | null
+          bibliography?: Json | null
+          catechism_references?: string[] | null
+          category?: string | null
+          created_at?: string
+          deep_interpretation?: string | null
+          definition: string
+          doctrinal_weight?: number
+          editorial_closure?: Json | null
+          editorial_completeness?: string
+          etymology?: string | null
+          faq?: Json | null
+          fathers_refs?: string[] | null
+          historical_context?: string | null
+          id?: string
+          interpretation?: string | null
+          journey_refs?: string[] | null
+          language?: string
+          liturgy_refs?: string[] | null
+          logos_meditation?: string | null
+          magisterium_references?: string[] | null
+          next_steps?: Json | null
+          nexus_refs?: Json | null
+          practical_application?: string | null
+          prayer_refs?: string[] | null
+          reference?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          saints_refs?: string[] | null
+          short_definition?: string | null
+          slug?: string | null
+          term: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          bible_verses?: string[] | null
+          bibliography?: Json | null
+          catechism_references?: string[] | null
+          category?: string | null
+          created_at?: string
+          deep_interpretation?: string | null
+          definition?: string
+          doctrinal_weight?: number
+          editorial_closure?: Json | null
+          editorial_completeness?: string
+          etymology?: string | null
+          faq?: Json | null
+          fathers_refs?: string[] | null
+          historical_context?: string | null
+          id?: string
+          interpretation?: string | null
+          journey_refs?: string[] | null
+          language?: string
+          liturgy_refs?: string[] | null
+          logos_meditation?: string | null
+          magisterium_references?: string[] | null
+          next_steps?: Json | null
+          nexus_refs?: Json | null
+          practical_application?: string | null
+          prayer_refs?: string[] | null
+          reference?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          saints_refs?: string[] | null
+          short_definition?: string | null
+          slug?: string | null
+          term?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      journey_progress: {
+        Row: {
+          completed_at: string
+          id: string
+          journey_id: string
+          reflection: string | null
+          step_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          journey_id: string
+          reflection?: string | null
+          step_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          journey_id?: string
+          reflection?: string | null
+          step_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_progress_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journey_progress_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "journey_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journey_steps: {
+        Row: {
+          content: Json
+          created_at: string
+          duration_minutes: number
+          id: string
+          is_free: boolean
+          journey_id: string
+          step_order: number
+          step_type: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          is_free?: boolean
+          journey_id: string
+          step_order?: number
+          step_type?: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          is_free?: boolean
+          journey_id?: string
+          step_order?: number
+          step_type?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journey_steps_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journeys: {
+        Row: {
+          category: string
+          cover_url: string | null
+          created_at: string
+          description: string
+          difficulty: string
+          estimated_days: number
+          icon: string
+          id: string
+          is_active: boolean
+          is_premium: boolean
+          sort_order: number
+          subtitle: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          difficulty?: string
+          estimated_days?: number
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          sort_order?: number
+          subtitle?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string
+          difficulty?: string
+          estimated_days?: number
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          sort_order?: number
+          subtitle?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          message: string
+          source_user_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          source_user_id?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          message?: string
+          source_user_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -314,6 +810,71 @@ export type Database = {
           },
         ]
       }
+      prayer_sessions: {
+        Row: {
+          bookmarks: Json
+          completed_at: string | null
+          completed_block_ids: string[]
+          completed_mystery_ids: string[]
+          completed_section_ids: string[]
+          created_at: string
+          current_block_id: string | null
+          current_block_index: number
+          current_block_uuid: string | null
+          current_mystery_id: string | null
+          current_section_id: string | null
+          elapsed_seconds: number
+          id: string
+          prayer_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bookmarks?: Json
+          completed_at?: string | null
+          completed_block_ids?: string[]
+          completed_mystery_ids?: string[]
+          completed_section_ids?: string[]
+          created_at?: string
+          current_block_id?: string | null
+          current_block_index?: number
+          current_block_uuid?: string | null
+          current_mystery_id?: string | null
+          current_section_id?: string | null
+          elapsed_seconds?: number
+          id?: string
+          prayer_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bookmarks?: Json
+          completed_at?: string | null
+          completed_block_ids?: string[]
+          completed_mystery_ids?: string[]
+          completed_section_ids?: string[]
+          created_at?: string
+          current_block_id?: string | null
+          current_block_index?: number
+          current_block_uuid?: string | null
+          current_mystery_id?: string | null
+          current_section_id?: string | null
+          elapsed_seconds?: number
+          id?: string
+          prayer_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prayer_sessions_prayer_id_fkey"
+            columns: ["prayer_id"]
+            isOneToOne: false
+            referencedRelation: "prayers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prayers: {
         Row: {
           category: Database["public"]["Enums"]["prayer_category"]
@@ -416,6 +977,548 @@ export type Database = {
           is_premium?: boolean
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      reading_marks: {
+        Row: {
+          chapter: number | null
+          content_id: string
+          content_type: string
+          created_at: string
+          id: string
+          is_last_read: boolean | null
+          label: string | null
+          paragraph: number | null
+          position: number | null
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter?: number | null
+          content_id: string
+          content_type: string
+          created_at?: string
+          id?: string
+          is_last_read?: boolean | null
+          label?: string | null
+          paragraph?: number | null
+          position?: number | null
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter?: number | null
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          is_last_read?: boolean | null
+          label?: string | null
+          paragraph?: number | null
+          position?: number | null
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ritual_progress: {
+        Row: {
+          completed: boolean
+          created_at: string
+          date: string
+          id: string
+          progress_percent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          progress_percent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          date?: string
+          id?: string
+          progress_percent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saints: {
+        Row: {
+          ai_reflection: Json | null
+          alternate_names: string[]
+          bible_refs: Json | null
+          bio: string | null
+          bio_source_url: string | null
+          birthplace: string | null
+          born: string | null
+          catechism_refs: number[] | null
+          category: string | null
+          church_doc_refs: Json | null
+          content_hash: string | null
+          conversion_story: string | null
+          country: string | null
+          created_at: string | null
+          died: string | null
+          editorial_closure: Json | null
+          editorial_score: number
+          feast_day: string | null
+          feast_day_num: number | null
+          feast_month: number | null
+          full_bio: string | null
+          id: string
+          image: string | null
+          image_attribution: string | null
+          image_license: string | null
+          image_source_url: string | null
+          key_events: Json
+          last_scraped_at: string | null
+          legacy: string | null
+          mission: string | null
+          name: string
+          patron_of: string[] | null
+          prayer: string | null
+          prayer_source_url: string | null
+          quotes: string[] | null
+          religious_order: string | null
+          source_metadata: Json
+          source_name: string | null
+          source_url: string | null
+          spirituality_summary: string | null
+          status: string
+          title: string | null
+          updated_at: string | null
+          virtues: string[] | null
+          vocation: string | null
+          works: Json | null
+        }
+        Insert: {
+          ai_reflection?: Json | null
+          alternate_names?: string[]
+          bible_refs?: Json | null
+          bio?: string | null
+          bio_source_url?: string | null
+          birthplace?: string | null
+          born?: string | null
+          catechism_refs?: number[] | null
+          category?: string | null
+          church_doc_refs?: Json | null
+          content_hash?: string | null
+          conversion_story?: string | null
+          country?: string | null
+          created_at?: string | null
+          died?: string | null
+          editorial_closure?: Json | null
+          editorial_score?: number
+          feast_day?: string | null
+          feast_day_num?: number | null
+          feast_month?: number | null
+          full_bio?: string | null
+          id: string
+          image?: string | null
+          image_attribution?: string | null
+          image_license?: string | null
+          image_source_url?: string | null
+          key_events?: Json
+          last_scraped_at?: string | null
+          legacy?: string | null
+          mission?: string | null
+          name: string
+          patron_of?: string[] | null
+          prayer?: string | null
+          prayer_source_url?: string | null
+          quotes?: string[] | null
+          religious_order?: string | null
+          source_metadata?: Json
+          source_name?: string | null
+          source_url?: string | null
+          spirituality_summary?: string | null
+          status?: string
+          title?: string | null
+          updated_at?: string | null
+          virtues?: string[] | null
+          vocation?: string | null
+          works?: Json | null
+        }
+        Update: {
+          ai_reflection?: Json | null
+          alternate_names?: string[]
+          bible_refs?: Json | null
+          bio?: string | null
+          bio_source_url?: string | null
+          birthplace?: string | null
+          born?: string | null
+          catechism_refs?: number[] | null
+          category?: string | null
+          church_doc_refs?: Json | null
+          content_hash?: string | null
+          conversion_story?: string | null
+          country?: string | null
+          created_at?: string | null
+          died?: string | null
+          editorial_closure?: Json | null
+          editorial_score?: number
+          feast_day?: string | null
+          feast_day_num?: number | null
+          feast_month?: number | null
+          full_bio?: string | null
+          id?: string
+          image?: string | null
+          image_attribution?: string | null
+          image_license?: string | null
+          image_source_url?: string | null
+          key_events?: Json
+          last_scraped_at?: string | null
+          legacy?: string | null
+          mission?: string | null
+          name?: string
+          patron_of?: string[] | null
+          prayer?: string | null
+          prayer_source_url?: string | null
+          quotes?: string[] | null
+          religious_order?: string | null
+          source_metadata?: Json
+          source_name?: string | null
+          source_url?: string | null
+          spirituality_summary?: string | null
+          status?: string
+          title?: string | null
+          updated_at?: string | null
+          virtues?: string[] | null
+          vocation?: string | null
+          works?: Json | null
+        }
+        Relationships: []
+      }
+      saved_filters: {
+        Row: {
+          created_at: string | null
+          filter_by: string | null
+          id: string
+          name: string
+          project_id: string | null
+          query: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          filter_by?: string | null
+          id?: string
+          name: string
+          project_id?: string | null
+          query?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          filter_by?: string | null
+          id?: string
+          name?: string
+          project_id?: string | null
+          query?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      spiritual_contents: {
+        Row: {
+          content_text: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          reference_id: string | null
+          tags: string[] | null
+          title: string
+          type: string
+        }
+        Insert: {
+          content_text: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          tags?: string[] | null
+          title: string
+          type: string
+        }
+        Update: {
+          content_text?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      spiritual_journal: {
+        Row: {
+          content: string
+          created_at: string
+          entry_date: string
+          id: string
+          journey_id: string | null
+          mood: string | null
+          step_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          entry_date?: string
+          id?: string
+          journey_id?: string | null
+          mood?: string | null
+          step_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          entry_date?: string
+          id?: string
+          journey_id?: string | null
+          mood?: string | null
+          step_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spiritual_journal_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spiritual_journal_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "journey_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      telemetry_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      theme_contents: {
+        Row: {
+          content_type: string
+          created_at: string
+          id: string
+          reference: string
+          text_content: string | null
+          theme_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          id?: string
+          reference: string
+          text_content?: string | null
+          theme_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          id?: string
+          reference?: string
+          text_content?: string | null
+          theme_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "theme_contents_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      themes: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          emoji: string | null
+          id: string
+          image_url: string | null
+          name: string
+          order_index: number | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          order_index?: number | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          order_index?: number | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_history: {
+        Row: {
+          id: string
+          image_url: string | null
+          route: string
+          title: string
+          user_id: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          image_url?: string | null
+          route: string
+          title: string
+          user_id: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          image_url?: string | null
+          route?: string
+          title?: string
+          user_id?: string
+          visited_at?: string
+        }
+        Relationships: []
+      }
+      user_notes: {
+        Row: {
+          book_abbr: string | null
+          chapter: number | null
+          content_id: string
+          content_type: string
+          created_at: string
+          highlight_color: string | null
+          id: string
+          note_text: string
+          paragraph: number | null
+          updated_at: string
+          user_id: string
+          verse: number | null
+        }
+        Insert: {
+          book_abbr?: string | null
+          chapter?: number | null
+          content_id: string
+          content_type: string
+          created_at?: string
+          highlight_color?: string | null
+          id?: string
+          note_text?: string
+          paragraph?: number | null
+          updated_at?: string
+          user_id: string
+          verse?: number | null
+        }
+        Update: {
+          book_abbr?: string | null
+          chapter?: number | null
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          highlight_color?: string | null
+          id?: string
+          note_text?: string
+          paragraph?: number | null
+          updated_at?: string
+          user_id?: string
+          verse?: number | null
+        }
+        Relationships: []
+      }
+      user_reminder_settings: {
+        Row: {
+          email_enabled: boolean
+          push_enabled: boolean
+          reminder_frequency: string
+          reminder_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          email_enabled?: boolean
+          push_enabled?: boolean
+          reminder_frequency?: string
+          reminder_time?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          email_enabled?: boolean
+          push_enabled?: boolean
+          reminder_frequency?: string
+          reminder_time?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
