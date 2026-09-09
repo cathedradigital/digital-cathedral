@@ -10,6 +10,11 @@ export interface FavoriteItem {
   timestamp: string;
 }
 
+type FavoriteInput = Omit<FavoriteItem, 'id' | 'timestamp'> & {
+  /** Optional stable content identifier supplied by a caller. */
+  contentId?: string;
+};
+
 const STORAGE_KEY = 'cathedra_favorites_v2';
 
 function loadLocalFavorites(projectId: string): FavoriteItem[] {
@@ -34,8 +39,9 @@ function saveLocalFavorites(favorites: FavoriteItem[], projectId: string) {
 }
 
 /**
- * Authenticated favorites use the Supabase `bible_favorites` table. Guests
- * retain the previous localStorage behavior so public reading remains usable.
+ * Favorites are persisted in Supabase for authenticated users and remain
+ * local-only for guests. `projectId` keeps the legacy module-level separation
+ * while the database stores the same scope in metadata.project_id.
  */
 export function useFavorites(projectId: string = 'global') {
   const { user, authenticated } = useAuth();
@@ -52,8 +58,9 @@ export function useFavorites(projectId: string = 'global') {
 
       const { data, error } = await supabase
         .from('bible_favorites')
-        .select('id, content_type, content_id, title, content, created_at')
+        .select('id, content_type, content_id, title, content, created_at, metadata')
         .eq('user_id', user.id)
+        .eq('metadata->>project_id', projectId)
         .order('created_at', { ascending: false });
 
       if (cancelled) return;
@@ -86,7 +93,7 @@ export function useFavorites(projectId: string = 'global') {
   }, [favorites, projectId, authenticated]);
 
   const addFavorite = useCallback(
-    (item: Omit<FavoriteItem, 'id' | 'timestamp'>) => {
+    (item: FavoriteInput) => {
       if (!authenticated || !user) {
         setFavorites((prev) => {
           if (prev.some((f) => f.type === item.type && f.title === item.title)) return prev;
@@ -99,12 +106,13 @@ export function useFavorites(projectId: string = 'global') {
       }
 
       void (async () => {
+        const contentId = item.contentId ?? item.title;
         const { data, error } = await supabase
           .from('bible_favorites')
           .insert({
             user_id: user.id,
             content_type: item.type,
-            content_id: item.id || item.title,
+            content_id: contentId,
             title: item.title,
             content: item.content,
             metadata: { project_id: projectId },
@@ -159,7 +167,7 @@ export function useFavorites(projectId: string = 'global') {
   );
 
   const toggleFavorite = useCallback(
-    (item: Omit<FavoriteItem, 'id' | 'timestamp'>) => {
+    (item: FavoriteInput) => {
       const existing = favorites.find((f) => f.type === item.type && f.title === item.title);
       if (existing) removeFavorite(existing.id);
       else addFavorite(item);
