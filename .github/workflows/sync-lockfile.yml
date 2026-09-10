@@ -3,6 +3,7 @@ name: Sync npm lockfile
 on:
   push:
     branches: ["security/production-hardening-20260910"]
+  workflow_dispatch:
 
 permissions:
   contents: write
