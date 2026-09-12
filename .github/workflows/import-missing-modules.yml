@@ -6,6 +6,10 @@ on:
       - security/production-hardening-20260910
     paths:
       - .github/workflows/import-missing-modules.yml
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize]
   workflow_dispatch:
 
 permissions:
@@ -13,6 +17,7 @@ permissions:
 
 jobs:
   import:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout target repository
