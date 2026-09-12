@@ -82,3 +82,5 @@ jobs:
           git add src supabase/functions supabase/seed supabase/seeds
           git commit -m "feat: import missing runtime modules from source"
           git push origin HEAD:security/production-hardening-20260910
+
+# Source modules are imported only when absent from the hardened target.
