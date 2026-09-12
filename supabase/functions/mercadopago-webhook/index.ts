@@ -8,7 +8,6 @@ const _corsBase = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version, x-correlation-id",
   "Access-Control-Expose-Headers": "x-correlation-id",
 };
-// Alias módulo-level (helpers fora do handler não conhecem o CID do request)
 const corsHeaders = _corsBase;
 
 const json = (body: unknown, status = 200) =>
@@ -35,14 +34,19 @@ function resolveMercadoPagoAccessToken() {
   );
 
   const selectedSecret = secretCandidates.find(({ value }) => Boolean(value?.trim()));
-  if (!selectedSecret) {
-    return { source: null, token: "" };
-  }
+  if (!selectedSecret) return { source: null, token: "" };
 
   return {
     source: selectedSecret.name,
     token: normalizeMercadoPagoAccessToken(selectedSecret.value!),
   };
+}
+
+function hexToBytes(hex: string): Uint8Array | null {
+  if (!/^[0-9a-f]{64}$/i.test(hex)) return null;
+  const bytes = new Uint8Array(32);
+  for (let i = 0; i < 32; i += 1) bytes[i] = Number.parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  return bytes;
 }
 
 async function verifyMercadoPagoSignature(
@@ -69,7 +73,8 @@ async function verifyMercadoPagoSignature(
 
   const ts = parts.ts;
   const v1 = parts.v1;
-  if (!ts || !v1) return false;
+  const expectedBytes = hexToBytes(v1 ?? "");
+  if (!ts || !expectedBytes) return false;
 
   const manifest = `id:${dataId ?? ""};request-id:${requestIdHeader};ts:${ts};`;
   const key = await crypto.subtle.importKey(
@@ -77,30 +82,19 @@ async function verifyMercadoPagoSignature(
     new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"],
+    ["verify"],
   );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(manifest));
-  const expected = Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  return expected === v1;
+  return crypto.subtle.verify("HMAC", key, expectedBytes, new TextEncoder().encode(manifest));
 }
 
 serve(async (req) => {
-  // Sprint A / CAT-001 — correlation_id (ADR-009)
   const _cid = getOrCreateCorrelationId(req);
   const corsHeaders = { ..._corsBase, 'x-correlation-id': _cid };
-  // shadow json (CID) — garante x-correlation-id em toda resposta
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
-  if (req.method !== "POST" && req.method !== "GET") {
-    return json({ error: "Método não permitido." }, 405);
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST" && req.method !== "GET") return json({ error: "Método não permitido." }, 405);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
@@ -113,87 +107,58 @@ serve(async (req) => {
       tokenSource,
     });
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      return json({ error: "Configuração do backend incompleta." }, 500);
-    }
-
-    if (!mercadoPagoAccessToken) {
-      return json({ error: "Mercado Pago ainda não configurado no backend." }, 500);
-    }
+    if (!supabaseUrl || !serviceRoleKey) return json({ error: "Configuração do backend incompleta." }, 500);
+    if (!mercadoPagoAccessToken) return json({ error: "Mercado Pago ainda não configurado no backend." }, 500);
 
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
     const url = new URL(req.url);
     const rawBody = req.method === "POST" ? await req.text() : "";
     const body = rawBody
       ? (() => {
-          try {
-            return JSON.parse(rawBody);
-          } catch {
-            return null;
-          }
+          try { return JSON.parse(rawBody); } catch { return null; }
         })()
       : null;
 
     const eventType =
-      url.searchParams.get("type") ||
-      url.searchParams.get("topic") ||
-      body?.type ||
-      body?.topic ||
-      null;
-
+      url.searchParams.get("type") || url.searchParams.get("topic") || body?.type || body?.topic || null;
     const rawPaymentId =
-      body?.data?.id ||
-      url.searchParams.get("data.id") ||
-      body?.id ||
-      url.searchParams.get("id") ||
+      body?.data?.id || url.searchParams.get("data.id") || body?.id || url.searchParams.get("id") ||
       (typeof body?.resource === "string" ? body.resource.split("/").pop() : null);
 
-    // Verify HMAC signature (required when MERCADO_PAGO_WEBHOOK_SECRET is configured)
-    const signatureValid = await verifyMercadoPagoSignature(
-      req,
-      rawBody,
-      rawPaymentId ? String(rawPaymentId) : null,
-    );
+    const signatureValid = await verifyMercadoPagoSignature(req, rawBody, rawPaymentId ? String(rawPaymentId) : null);
     if (!signatureValid) {
       console.warn("[mercadopago-webhook] invalid signature");
       await logSecurityEvent(
         Deno.env.get('SUPABASE_URL') || '',
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '',
         'invalid_signature',
-        'mercadopago-webhook: Webhook received with invalid signature',
+        'mercadopago-webhook: invalid webhook signature',
         'critical',
-        { body, paymentId: rawPaymentId }
+        {
+          eventType: typeof eventType === 'string' ? eventType : null,
+          paymentId: rawPaymentId ? String(rawPaymentId).slice(0, 64) : null,
+          requestId: req.headers.get('x-request-id'),
+        }
       );
       return json({ error: "Assinatura inválida." }, 401);
     }
 
-    if (eventType && eventType !== "payment") {
-      return json({ ok: true, ignored: true });
-    }
-
-    if (!rawPaymentId) {
-      return json({ ok: true, ignored: true });
-    }
+    if (eventType && eventType !== "payment") return json({ ok: true, ignored: true });
+    if (!rawPaymentId) return json({ ok: true, ignored: true });
 
     const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${rawPaymentId}`, {
-      headers: {
-        Authorization: `Bearer ${mercadoPagoAccessToken}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${mercadoPagoAccessToken}`, "Content-Type": "application/json" },
     });
 
     if (!paymentResponse.ok) {
       const errorText = await paymentResponse.text();
-      console.error("Mercado Pago webhook payment lookup error:", errorText);
+      console.error("Mercado Pago webhook payment lookup error:", errorText.slice(0, 1000));
       return json({ error: "Falha ao consultar o pagamento." }, 502);
     }
 
     const payment = await paymentResponse.json();
     const transactionId = payment.external_reference ?? payment.metadata?.transaction_id;
-
-    if (!transactionId) {
-      return json({ ok: true, ignored: true });
-    }
+    if (!transactionId) return json({ ok: true, ignored: true });
 
     const normalizedStatus = typeof payment.status === "string" ? payment.status : "pending";
     const normalizedAmount = Number(payment.transaction_amount ?? 0) || 19.9;
@@ -202,7 +167,6 @@ serve(async (req) => {
         ? payment.description
         : "Cathedra PRO";
 
-    // Update the transaction record
     const { data: transaction, error: updateError } = await adminClient
       .from("transactions")
       .update({
@@ -218,17 +182,10 @@ serve(async (req) => {
 
     if (updateError) {
       console.error("Mercado Pago webhook transaction update error:", updateError);
-      
-      // Try to log the error in the transaction record if possible
-      await adminClient
-        .from("transactions")
-        .update({ error_message: JSON.stringify(updateError) })
-        .eq("id", transactionId);
-
+      await adminClient.from("transactions").update({ error_message: JSON.stringify(updateError) }).eq("id", transactionId);
       return json({ error: "Falha ao atualizar a transação." }, 500);
     }
 
-    // Activate PRO access when payment is approved
     if (normalizedStatus === "approved" && transaction?.user_id) {
       const { error: profileError } = await adminClient
         .from("profiles")
@@ -239,8 +196,6 @@ serve(async (req) => {
         console.error("Mercado Pago webhook profile update error:", profileError);
       } else {
         console.log(`PRO activated for user ${transaction.user_id}`);
-        
-        // Send success notification
         await adminClient.from("notifications").insert({
           user_id: transaction.user_id,
           title: "Doação Recebida! ❤️",
@@ -250,7 +205,6 @@ serve(async (req) => {
         });
       }
     } else if ((normalizedStatus === "rejected" || normalizedStatus === "cancelled") && transaction?.user_id) {
-      // Send failure notification
       await adminClient.from("notifications").insert({
         user_id: transaction.user_id,
         title: "Problema no Pagamento ⚠️",
@@ -263,9 +217,6 @@ serve(async (req) => {
     return json({ ok: true, transactionId, status: normalizedStatus, premium: normalizedStatus === "approved" });
   } catch (error) {
     console.error("mercadopago-webhook error:", error);
-    return json(
-      { error: "Erro interno. Tente novamente." },
-      500,
-    );
+    return json({ error: "Erro interno. Tente novamente." }, 500);
   }
 });
