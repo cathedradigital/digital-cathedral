@@ -11,10 +11,49 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout target repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          repository: evaldo0510/cathedradigital
+          ref: main
+          path: .source-cathedra
+          fetch-depth: 1
+
+      - name: Import only missing runtime modules
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Source repository is treated as an upstream module source only.
+          # Existing hardened target files are never overwritten.
+          for root in \
+            src/components \
+            src/config \
+            src/constants \
+            src/content \
+            src/contexts \
+            src/core \
+            src/data \
+            src/features \
+            src/hooks \
+            src/integrations \
+            src/pages \
+            supabase/functions \
+            supabase/seed \
+            supabase/seeds; do
+            if [ -d ".source-cathedra/$root" ]; then
+              mkdir -p "$root"
+              rsync -a --ignore-existing ".source-cathedra/$root/" "$root/"
+            fi
+          done
+
+          rm -rf .source-cathedra
+          git status --short
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,14 +63,14 @@ jobs:
       - name: Regenerate lockfile
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
 
-      - name: Commit synchronized lockfile
+      - name: Commit synchronized lockfile and imported modules
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
+          git add package-lock.json src supabase/functions supabase/seed supabase/seeds
           if git diff --cached --quiet; then
-            echo "Lockfile already synchronized"
+            echo "No lockfile or missing modules to commit"
           else
-            git commit -m "fix: synchronize npm lockfile for CI"
+            git commit -m "feat: import missing runtime modules and synchronize lockfile"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           fi
