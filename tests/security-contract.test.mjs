@@ -33,4 +33,14 @@ test('security hardening migration centralizes admin checks on user_roles', () =
   assert.match(source, /auth_internal\.has_role\(auth\.uid\(\), 'admin'/);
   assert.match(source, /user_sensitive_data_select_own/);
   assert.match(source, /REVOKE ALL ON public\.user_sensitive_data FROM anon/);
+  assert.match(source, /REVOKE ALL ON public\.telemetry_settings FROM anon/);
+  assert.match(source, /telemetry_settings_admin_select/);
+});
+
+test('Mercado Pago webhook verifies HMAC and does not log the raw webhook body', () => {
+  const source = read('supabase/functions/mercadopago-webhook/index.ts');
+  assert.match(source, /crypto\.subtle\.verify\(\s*["']HMAC["']/);
+  assert.match(source, /MERCADO_PAGO_WEBHOOK_SECRET/);
+  assert.doesNotMatch(source, /logSecurityEvent[\s\S]*\{\s*body\s*,/);
+  assert.doesNotMatch(source, /console\.(log|error|warn)\([^\n]*body\)/);
 });
