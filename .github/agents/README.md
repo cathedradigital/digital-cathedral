@@ -4,8 +4,19 @@ This directory defines the execution roles coordinated by the **Digital Cathedra
 
 ## Master
 - `master.md` — orchestration contract and acceptance gates.
+- `master-security-orchestrator.agent.md` — Copilot custom agent for end-to-end security/quality orchestration.
 
-## Roles
+## Specialized Copilot agents
+
+| Agent | Scope | Primary gate |
+|---|---|---|
+| `security-auditor.agent.md` | attack surface, secrets, auth, authorization, XSS, injection | security audit |
+| `auth-rls.agent.md` | authentication, tokens, roles, grants, RLS, pgTAP | authorization/RLS |
+| `edge-functions.agent.md` | Edge Functions, validation, CORS, abuse, errors | server boundary |
+| `ci-quality.agent.md` | npm ci, typecheck, lint, tests, build | GitHub Actions |
+| `browser-qa.agent.md` | real routes, console/network, responsive and a11y | browser validation |
+
+## Broader execution roles
 
 | Agent | Scope | Primary gate |
 |---|---|---|
@@ -33,3 +44,7 @@ Every agent handoff must contain:
 8. next recommended owner.
 
 The Master decides whether the handoff is accepted or reopens the task.
+
+## Safety
+
+Custom agents must preserve the repository rules in `AGENTS.md`: no secrets, no force push/history rewrite, small reversible changes, real evidence for PASS, and no masking CI failures.
