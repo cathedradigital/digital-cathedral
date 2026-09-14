@@ -1,0 +1,179 @@
+/**
+ * bible-auto-warm-slow
+ *
+ * Aquecimento seletivo automático:
+ *  1. Sempre re-aquece capítulos prioritários (Lv + Pentateuco completo).
+ *  2. Adiciona livros cuja média de `total_ms` nas últimas 24h supera o limiar.
+ *  3. Chama `bible-text` com `force_revalidate:true` para cada capítulo,
+ *     respeitando concorrência.
+ *
+ * Body opcional: { threshold_ms?: number, concurrency?: number, max_chapters_per_book?: number, dry_run?: boolean }
+ */
+import { createClient } from 'npm:@supabase/supabase-js@2';
+import { runPostRunVerify } from '../_shared/postRunVerify.ts';
+import { getOrCreateCorrelationId, correlationResponseHeader } from '../_shared/correlation.ts';
+import { assertCronOrAdmin } from '../_shared/admin-guard.ts';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-correlation-id',
+  'Access-Control-Expose-Headers': 'x-correlation-id',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+const ALWAYS_PRIORITY: Record<string, number> = {
+  // Lv primeiro, restante do Pentateuco em seguida
+  Lv: 27, Gn: 50, Ex: 40, Nm: 36, Dt: 34, Js: 24,
+};
+
+// Espelha scripts/warm-bible-cache.ts para evitar caps fora do alcance.
+const CHAPTERS: Record<string, number> = {
+  Gn: 50, Ex: 40, Lv: 27, Nm: 36, Dt: 34, Js: 24, Jz: 21, Rt: 4,
+  '1Sm': 31, '2Sm': 24, '1Rs': 22, '2Rs': 25, '1Cr': 29, '2Cr': 36,
+  Ed: 10, Ne: 13, Et: 10, 'Jó': 42, Sl: 150, Pv: 31, Ec: 12, Ct: 8,
+  Is: 66, Jr: 52, Lm: 5, Ez: 48, Dn: 14, Os: 14, Jl: 3, Am: 9, Ab: 1,
+  Jn: 4, Mq: 7, Na: 3, Hc: 3, Sf: 3, Ag: 2, Zc: 14, Ml: 4,
+  Mt: 28, Mc: 16, Lc: 24, Jo: 21, At: 28, Rm: 16, '1Co': 16, '2Co': 13,
+  Gl: 6, Ef: 6, Fp: 4, Cl: 4, '1Ts': 5, '2Ts': 3, '1Tm': 6, '2Tm': 4,
+  Tt: 3, Fm: 1, Hb: 13, Tg: 5, '1Pe': 5, '2Pe': 3, '1Jo': 5, '2Jo': 1, '3Jo': 1, Jd: 1, Ap: 22,
+  Tb: 14, Jdt: 16, Sb: 19, Eclo: 51, Br: 6, '1Mc': 16, '2Mc': 15,
+};
+
+interface Body {
+  threshold_ms?: number;
+  concurrency?: number;
+  max_chapters_per_book?: number;
+  hours?: number;
+  dry_run?: boolean;
+  books?: string[];          // restringe a um subconjunto específico
+  verbose?: boolean;         // retorna log por capítulo
+  skip_verify?: boolean;     // desliga a pós-verificação automática
+  fail_on_blocking?: boolean; // devolve 422 se achados críticos persistirem
+}
+
+Deno.serve(async (req) => {
+  // Sprint A / CAT-001 — correlation_id (ADR-009)
+  const cid = getOrCreateCorrelationId(req);
+  const cidH = correlationResponseHeader(cid);
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: { ...corsHeaders, ...cidH } });
+
+  const guard = await assertCronOrAdmin(req, corsHeaders);
+  if (!guard.ok) return guard.response;
+
+  let body: Body = {};
+  try { body = (await req.json()) as Body; } catch { /* default */ }
+  const threshold = Math.max(100, body.threshold_ms ?? 800);
+  const concurrency = Math.max(1, Math.min(8, body.concurrency ?? 3));
+  const maxPerBook = Math.max(1, Math.min(50, body.max_chapters_per_book ?? 10));
+  const hours = Math.max(1, Math.min(72, body.hours ?? 24));
+  const dry = !!body.dry_run;
+  const verbose = !!body.verbose;
+  const explicitBooks = Array.isArray(body.books)
+    ? body.books.filter((b) => typeof b === 'string' && CHAPTERS[b])
+    : null;
+
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+  const supabase = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+
+  // 1. Detect slow books in last `hours`
+  const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+  const { data: events } = await supabase
+    .from('bible_cache_metric_events')
+    .select('abbrev, total_ms, status_code')
+    .gte('created_at', since)
+    .lt('status_code', 500)
+    .not('total_ms', 'is', null);
+
+  const stats = new Map<string, { sum: number; n: number }>();
+  for (const e of events ?? []) {
+    const s = stats.get(e.abbrev) ?? { sum: 0, n: 0 };
+    s.sum += Number(e.total_ms); s.n++;
+    stats.set(e.abbrev, s);
+  }
+  const slowBooks: string[] = [];
+  for (const [abbr, s] of stats) {
+    if (s.n >= 10 && s.sum / s.n > threshold) slowBooks.push(abbr);
+  }
+
+  // 2. Build task list (priority first, then slow books, dedup)
+  const queue: Array<{ abbrev: string; chapter: number; reason: 'priority' | 'slow' | 'manual' }> = [];
+  const seen = new Set<string>();
+  const enqueue = (abbr: string, reason: 'priority' | 'slow' | 'manual') => {
+    const total = CHAPTERS[abbr] ?? 0;
+    const cap = Math.min(maxPerBook, total);
+    for (let c = 1; c <= cap; c++) {
+      const k = `${abbr}:${c}`;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      queue.push({ abbrev: abbr, chapter: c, reason });
+    }
+  };
+
+  if (explicitBooks && explicitBooks.length > 0) {
+    // modo on-demand: usa apenas os livros pedidos
+    for (const abbr of explicitBooks) enqueue(abbr, 'manual');
+  } else {
+    for (const abbr of Object.keys(ALWAYS_PRIORITY)) enqueue(abbr, 'priority');
+    for (const abbr of slowBooks) enqueue(abbr, 'slow');
+  }
+
+  const summary = {
+    threshold_ms: threshold,
+    hours,
+    concurrency,
+    max_chapters_per_book: maxPerBook,
+    priority_books: explicitBooks ? [] : Object.keys(ALWAYS_PRIORITY),
+    slow_books: slowBooks,
+    explicit_books: explicitBooks ?? [],
+    queued: queue.length,
+    estimated_duration_ms: Math.ceil(queue.length / concurrency) * 450,
+    dry_run: dry,
+  };
+
+  if (dry) {
+    return new Response(JSON.stringify({ ...summary, sample: queue.slice(0, 50), queue: verbose ? queue : undefined }),
+      { headers: { ...corsHeaders, ...cidH, 'Content-Type': 'application/json' } });
+  }
+
+  // 3. Execute warm with concurrency
+  const url = `${SUPABASE_URL}/functions/v1/bible-text`;
+  const apikey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  let ok = 0, fail = 0, idx = 0;
+  const t0 = Date.now();
+  const logs: Array<{ abbrev: string; chapter: number; status: number; ms: number; ok: boolean; reason: string }> = [];
+  await Promise.all(Array.from({ length: concurrency }, async () => {
+    while (idx < queue.length) {
+      const task = queue[idx++];
+      const ts = Date.now();
+      let status = 0;
+      try {
+        const r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey, Authorization: `Bearer ${apikey}` },
+          body: JSON.stringify({ abbrev: task.abbrev, chapter: task.chapter, force_revalidate: true }),
+        });
+        status = r.status;
+        await r.text();
+        if (r.ok) ok++; else fail++;
+      } catch { fail++; }
+      if (verbose) logs.push({ abbrev: task.abbrev, chapter: task.chapter, status, ms: Date.now() - ts, ok: status >= 200 && status < 400, reason: task.reason });
+    }
+  }));
+
+  // Pós-verificação automática (skip em dry_run; opt-out via skip_verify; gate via fail_on_blocking)
+  const skipVerify = (body as { skip_verify?: boolean }).skip_verify === true;
+  const failOnBlocking = (body as { fail_on_blocking?: boolean }).fail_on_blocking === true;
+  const verification = skipVerify
+    ? { ran: false, passed: true, skipped: true as const }
+    : await runPostRunVerify({
+        trigger: 'warmup',
+        metadata: { executed: { ok, fail, ms: Date.now() - t0 }, queued: queue.length },
+      });
+
+  const status = !skipVerify && failOnBlocking && 'passed' in verification && !verification.passed ? 422 : 200;
+  return new Response(JSON.stringify({
+    ...summary, executed: { ok, fail, ms: Date.now() - t0 },
+    logs: verbose ? logs : undefined,
+    verification,
+  }), { status, headers: { ...corsHeaders, ...cidH, 'Content-Type': 'application/json' } });
+});
