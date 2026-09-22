@@ -1,5 +1,5 @@
-import React from 'react';
-import { SectionSkeleton, HeroSkeleton } from './HomeSkeletons';
+import React from "react";
+import { SectionSkeleton, HeroSkeleton } from "./HomeSkeletons";
 
 export const DashboardSkeleton: React.FC = () => {
   return (

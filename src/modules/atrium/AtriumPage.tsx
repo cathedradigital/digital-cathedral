@@ -11,10 +11,10 @@
  * Fundamentação: docs/cathedra-2.0/ATRIUM-CONTRACT.md v1.1
  */
 
-import React from 'react';
-import AtriumShell from './AtriumShell';
-import { AtriumHeader, resolveComposition } from './composition';
-import { useAtriumProfile } from './hooks';
+import React from "react";
+import AtriumShell from "./AtriumShell";
+import { AtriumHeader, resolveComposition } from "./composition";
+import { useAtriumProfile } from "./hooks";
 
 const AtriumPage: React.FC = () => {
   const user = useAtriumProfile();

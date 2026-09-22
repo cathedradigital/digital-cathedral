@@ -7,12 +7,7 @@
  * ou serviços de outros ambientes diretamente.
  */
 
-import type {
-  AtriumSnapshot,
-  LiturgicalContext,
-  ResumeItem,
-  AtriumProfile,
-} from '../types';
+import type { AtriumSnapshot, LiturgicalContext, ResumeItem, AtriumProfile } from "../types";
 
 /** Contrato do provedor litúrgico (Fase 6 conectará ao serviço existente). */
 export interface LiturgyProvider {

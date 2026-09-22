@@ -1,9 +1,9 @@
-import React from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { Card, CardContent } from '@/components/ui/card';
-import { RouteRecommendation } from '@/lib/smartRouter';
+import React from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { Card, CardContent } from "@/components/ui/card";
+import { RouteRecommendation } from "@/lib/smartRouter";
 
 interface FlowConnectorProps {
   recommendations: RouteRecommendation[];
@@ -13,8 +13,8 @@ interface FlowConnectorProps {
 
 const FlowConnector: React.FC<FlowConnectorProps> = ({
   recommendations,
-  title = 'Continue sua experiência',
-  subtitle = 'Com base no que você escreveu, sugerimos:',
+  title = "Continue sua experiência",
+  subtitle = "Com base no que você escreveu, sugerimos:",
 }) => {
   const navigate = useNavigate();
 
@@ -52,7 +52,9 @@ const FlowConnector: React.FC<FlowConnectorProps> = ({
                 <CardContent className="p-spacing-md flex items-center gap-spacing-sm">
                   <Icon className="w-spacing-lg h-spacing-lg text-primary" />
                   <div className="flex-1 min-w-spacing-0">
-                    <p className="text-premium-sm font-semibold text-foreground truncate">{rec.label}</p>
+                    <p className="text-premium-sm font-semibold text-foreground truncate">
+                      {rec.label}
+                    </p>
                     <p className="text-premium-xs text-muted-foreground">{rec.reason}</p>
                   </div>
                   <Icons.ChevronRight className="w-spacing-md h-spacing-md text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />

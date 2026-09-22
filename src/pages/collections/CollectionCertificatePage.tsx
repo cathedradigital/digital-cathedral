@@ -8,30 +8,22 @@
  * Não emite PDF — apenas certifica na tela e registra `certificate_issued_at`
  * em `collection_progress` (linha sintética por item já cobre o resto).
  */
-import React, { useEffect, useMemo, useRef } from 'react';
-import { trackCollectionEvent } from '@/features/collections/collectionAnalytics';
-import { Link, useParams, Navigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import {
-  Award,
-  CheckCircle2,
-  Circle,
-  Loader2,
-  ArrowLeft,
-  Lock,
-  Sparkles,
-} from 'lucide-react';
-import { EditorialHero } from '@/components/reader';
-import { ReaderShell } from '@/components/reader';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useCollection } from '@/features/collections/useCollection';
-import { useCollectionProgress } from '@/features/collections/useCollectionProgress';
-import { CollectionProgressBar } from '@/features/collections/CollectionProgressBar';
+import React, { useEffect, useMemo, useRef } from "react";
+import { trackCollectionEvent } from "@/features/collections/collectionAnalytics";
+import { Link, useParams, Navigate } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { Award, CheckCircle2, Circle, Loader2, ArrowLeft, Lock, Sparkles } from "lucide-react";
+import { EditorialHero } from "@/components/reader";
+import { ReaderShell } from "@/components/reader";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useCollection } from "@/features/collections/useCollection";
+import { useCollectionProgress } from "@/features/collections/useCollectionProgress";
+import { CollectionProgressBar } from "@/features/collections/CollectionProgressBar";
 import {
   computeCertificateStatus,
   type ProgressMap,
-} from '@/features/collections/certificateEligibility';
+} from "@/features/collections/certificateEligibility";
 
 const CollectionCertificatePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -59,7 +51,7 @@ const CollectionCertificatePage: React.FC = () => {
     if (!data.collection.certificate_eligible) return;
     emittedRef.current = true;
     const c = data.collection;
-    trackCollectionEvent('collection_certificate_completed', {
+    trackCollectionEvent("collection_certificate_completed", {
       collection_id: c.id,
       collection_slug: c.slug,
       collection_title: c.title,
@@ -87,7 +79,6 @@ const CollectionCertificatePage: React.FC = () => {
   if (!collection.certificate_eligible) {
     return <Navigate to={`/colecoes/${collection.slug}`} replace />;
   }
-
 
   return (
     <>
@@ -121,17 +112,15 @@ const CollectionCertificatePage: React.FC = () => {
           aria-labelledby="cert-status"
           data-testid="certificate-status"
           className={cn(
-            'rounded-2xl border p-spacing-lg space-y-spacing-md',
-            done
-              ? 'border-primary/40 bg-primary/[0.05]'
-              : 'border-border bg-card/40',
+            "rounded-2xl border p-spacing-lg space-y-spacing-md",
+            done ? "border-primary/40 bg-primary/[0.05]" : "border-border bg-card/40",
           )}
         >
           <div className="flex items-center gap-spacing-md">
             <div
               className={cn(
-                'w-14 h-14 rounded-full flex items-center justify-center',
-                done ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
+                "w-14 h-14 rounded-full flex items-center justify-center",
+                done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
               )}
               aria-hidden
             >
@@ -139,7 +128,7 @@ const CollectionCertificatePage: React.FC = () => {
             </div>
             <div>
               <h2 id="cert-status" className="font-serif text-premium-xl text-foreground">
-                {done ? 'Trilha concluída' : 'Certificado em progresso'}
+                {done ? "Trilha concluída" : "Certificado em progresso"}
               </h2>
               <p className="text-premium-sm text-muted-foreground">
                 {totalCompleted} de {total} conteúdos concluídos · {pct}%
@@ -175,18 +164,27 @@ const CollectionCertificatePage: React.FC = () => {
           aria-labelledby="cert-criteria"
           className="mt-spacing-lg rounded-2xl border border-border/60 bg-card/40 p-spacing-lg"
         >
-          <h2 id="cert-criteria" className="font-serif text-premium-lg text-foreground mb-spacing-sm">
+          <h2
+            id="cert-criteria"
+            className="font-serif text-premium-lg text-foreground mb-spacing-sm"
+          >
             Critérios da certificação
           </h2>
           <ul className="space-y-spacing-xs">
             {criteria.map((c, i) => (
               <li key={i} className="flex items-start gap-spacing-xs text-premium-sm">
                 {c.met ? (
-                  <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-[3px]" aria-hidden />
+                  <CheckCircle2
+                    className="w-4 h-4 text-primary flex-shrink-0 mt-[3px]"
+                    aria-hidden
+                  />
                 ) : (
-                  <Circle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-[3px]" aria-hidden />
+                  <Circle
+                    className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-[3px]"
+                    aria-hidden
+                  />
                 )}
-                <span className={cn(c.met ? 'text-foreground' : 'text-muted-foreground')}>
+                <span className={cn(c.met ? "text-foreground" : "text-muted-foreground")}>
                   {c.label}
                 </span>
               </li>
@@ -205,7 +203,7 @@ const CollectionCertificatePage: React.FC = () => {
           <ol className="space-y-spacing-2xs">
             {itemStates.map((st, i) => {
               const it = st.item;
-              const c = st.status === 'completed';
+              const c = st.status === "completed";
               const locked = st.locked;
               return (
                 <li
@@ -213,7 +211,7 @@ const CollectionCertificatePage: React.FC = () => {
                   className="flex items-center gap-spacing-xs text-premium-sm py-spacing-2xs border-b border-border/40 last:border-b-0"
                 >
                   <span className="text-[10px] font-mono tabular-nums text-muted-foreground w-6">
-                    {String(i + 1).padStart(2, '0')}
+                    {String(i + 1).padStart(2, "0")}
                   </span>
                   {c ? (
                     <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" aria-hidden />
@@ -222,22 +220,25 @@ const CollectionCertificatePage: React.FC = () => {
                   ) : (
                     <Circle className="w-4 h-4 text-muted-foreground flex-shrink-0" aria-hidden />
                   )}
-                  <span className={cn('flex-1', c ? 'text-foreground' : 'text-muted-foreground')}>
-                    {it.title_override ?? it.item_slug.replace(/-/g, ' ')}
+                  <span className={cn("flex-1", c ? "text-foreground" : "text-muted-foreground")}>
+                    {it.title_override ?? it.item_slug.replace(/-/g, " ")}
                   </span>
                   <span
                     className={cn(
-                      'text-[10px] uppercase tracking-widest',
-                      c ? 'text-primary' : locked ? 'text-muted-foreground/50' : 'text-muted-foreground/60',
+                      "text-[10px] uppercase tracking-widest",
+                      c
+                        ? "text-primary"
+                        : locked
+                          ? "text-muted-foreground/50"
+                          : "text-muted-foreground/60",
                     )}
                   >
-                    {c ? 'Concluído' : locked ? 'Bloqueado' : 'Pendente'}
+                    {c ? "Concluído" : locked ? "Bloqueado" : "Pendente"}
                   </span>
                 </li>
               );
             })}
           </ol>
-
         </section>
       </ReaderShell>
     </>

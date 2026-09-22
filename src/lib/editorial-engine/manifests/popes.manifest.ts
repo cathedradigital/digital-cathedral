@@ -17,7 +17,7 @@ export const popesManifest: EntityManifest = {
     minIce: 95,
     minEditorial: 100,
     minNexus: 100,
-    requiredFields: ["title", "content", "historical_context"]
+    requiredFields: ["title", "content", "historical_context"],
   },
   lifecycle: {
     version: "0.0",

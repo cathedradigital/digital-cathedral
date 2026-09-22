@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { RefreshCw, RotateCcw, Play, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
@@ -117,7 +121,10 @@ export default function CatechismImportQueuePage() {
   }, [rows]);
 
   const errorGroups = useMemo(() => {
-    const groups = new Map<string, { key: string; count: number; paragraphs: number[]; sample: string }>();
+    const groups = new Map<
+      string,
+      { key: string; count: number; paragraphs: number[]; sample: string }
+    >();
     for (const r of rows) {
       if (r.status !== "error") continue;
       const key = normalizeErrorKey(r.last_error);
@@ -130,27 +137,43 @@ export default function CatechismImportQueuePage() {
   }, [rows]);
 
   const rangeCounts = useMemo(() => {
-    const map = new Map<string, { label: string; part: string; total: number; error: number; completed: number; pending: number }>();
+    const map = new Map<
+      string,
+      {
+        label: string;
+        part: string;
+        total: number;
+        error: number;
+        completed: number;
+        pending: number;
+      }
+    >();
     for (const r of rows) {
       const range = rangeForParagraph(r.paragraph);
       if (!range) continue;
-      const cur = map.get(range.label) ?? { label: range.label, part: range.part, total: 0, error: 0, completed: 0, pending: 0 };
+      const cur = map.get(range.label) ?? {
+        label: range.label,
+        part: range.part,
+        total: 0,
+        error: 0,
+        completed: 0,
+        pending: 0,
+      };
       cur.total += 1;
       if (r.status === "error") cur.error += 1;
       else if (r.status === "completed") cur.completed += 1;
       else cur.pending += 1;
       map.set(range.label, cur);
     }
-    return CATECHISM_RANGES
-      .map((r) => map.get(r.label))
-      .filter((x): x is NonNullable<typeof x> => Boolean(x));
+    return CATECHISM_RANGES.map((r) => map.get(r.label)).filter((x): x is NonNullable<typeof x> =>
+      Boolean(x),
+    );
   }, [rows]);
 
   const filtered = useMemo(
     () => (statusFilter === "all" ? rows : rows.filter((r) => r.status === statusFilter)),
     [rows, statusFilter],
   );
-
 
   const toggleSelect = (id: string) =>
     setSelected((prev) => {
@@ -289,7 +312,10 @@ export default function CatechismImportQueuePage() {
                     onClick={() =>
                       requeueIds(
                         rows
-                          .filter((r) => r.status === "error" && normalizeErrorKey(r.last_error) === g.key)
+                          .filter(
+                            (r) =>
+                              r.status === "error" && normalizeErrorKey(r.last_error) === g.key,
+                          )
                           .map((r) => r.id),
                       )
                     }
@@ -322,7 +348,10 @@ export default function CatechismImportQueuePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {rangeCounts.map((r) => (
-                <div key={r.label} className="flex items-center justify-between rounded border px-3 py-2 text-sm">
+                <div
+                  key={r.label}
+                  className="flex items-center justify-between rounded border px-3 py-2 text-sm"
+                >
                   <div className="min-w-0">
                     <div className="truncate font-medium">{r.label}</div>
                     <div className="text-[10px] uppercase text-muted-foreground">{r.part}</div>
@@ -330,13 +359,19 @@ export default function CatechismImportQueuePage() {
                   <div className="flex items-center gap-2 text-xs shrink-0">
                     <span title="Total">{r.total}</span>
                     {r.completed > 0 && (
-                      <Badge variant="default" className="h-5">{r.completed} ok</Badge>
+                      <Badge variant="default" className="h-5">
+                        {r.completed} ok
+                      </Badge>
                     )}
                     {r.pending > 0 && (
-                      <Badge variant="secondary" className="h-5">{r.pending} pend</Badge>
+                      <Badge variant="secondary" className="h-5">
+                        {r.pending} pend
+                      </Badge>
                     )}
                     {r.error > 0 && (
-                      <Badge variant="destructive" className="h-5">{r.error} err</Badge>
+                      <Badge variant="destructive" className="h-5">
+                        {r.error} err
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -347,7 +382,6 @@ export default function CatechismImportQueuePage() {
       </Card>
 
       <Card>
-
         <CardHeader className="flex flex-row items-center justify-between gap-3 flex-wrap">
           <CardTitle className="text-base">Solicitações</CardTitle>
           <div className="flex items-center gap-2">
@@ -411,9 +445,7 @@ export default function CatechismImportQueuePage() {
                       <span className="font-mono text-sm w-16">§{r.paragraph}</span>
                       <Badge variant={statusVariant[r.status]}>{STATUS_LABEL[r.status]}</Badge>
                       {r.attempts > 0 && (
-                        <span className="text-xs text-muted-foreground">
-                          {r.attempts} tent.
-                        </span>
+                        <span className="text-xs text-muted-foreground">{r.attempts} tent.</span>
                       )}
                       {r.next_attempt_at && r.status === "error" && (
                         <span className="text-[10px] text-muted-foreground">

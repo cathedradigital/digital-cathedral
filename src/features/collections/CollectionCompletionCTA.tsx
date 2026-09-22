@@ -6,13 +6,13 @@
  * Lê `collection.metadata.related_slugs: string[]` para sugerir próximas
  * trilhas. Se ausente, cai em `collections.featured = true` (exceto a atual).
  */
-import React, { useEffect, useRef } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { ArrowRight, Sparkles, ScrollText } from 'lucide-react';
-import type { Collection } from './types';
-import { trackCollectionEvent } from './collectionAnalytics';
+import React, { useEffect, useRef } from "react";
+import { Link } from "@/lib/rr-compat";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { ArrowRight, Sparkles, ScrollText } from "lucide-react";
+import type { Collection } from "./types";
+import { trackCollectionEvent } from "./collectionAnalytics";
 
 interface Props {
   collection: Collection;
@@ -32,34 +32,31 @@ async function fetchSuggestions(
 ): Promise<Suggestion[]> {
   if (relatedSlugs.length > 0) {
     const { data } = await supabase
-      .from('collections')
-      .select('slug,title,subtitle,cover')
-      .eq('status', 'published')
-      .in('slug', relatedSlugs)
+      .from("collections")
+      .select("slug,title,subtitle,cover")
+      .eq("status", "published")
+      .in("slug", relatedSlugs)
       .limit(3);
     return (data ?? []) as Suggestion[];
   }
   // Fallback: coleções em destaque (excluindo a atual).
   const { data } = await supabase
-    .from('collections')
-    .select('slug,title,subtitle,cover')
-    .eq('status', 'published')
-    .eq('featured', true)
-    .neq('slug', currentSlug)
+    .from("collections")
+    .select("slug,title,subtitle,cover")
+    .eq("status", "published")
+    .eq("featured", true)
+    .neq("slug", currentSlug)
     .limit(3);
   return (data ?? []) as Suggestion[];
 }
 
-export const CollectionCompletionCTA: React.FC<Props> = ({
-  collection,
-  reflection,
-}) => {
+export const CollectionCompletionCTA: React.FC<Props> = ({ collection, reflection }) => {
   const relatedSlugs = Array.isArray(collection.metadata?.related_slugs)
     ? (collection.metadata.related_slugs as string[]).filter(Boolean)
     : [];
 
   const { data: suggestions = [] } = useQuery({
-    queryKey: ['collection-suggestions', collection.slug, relatedSlugs.join(',')],
+    queryKey: ["collection-suggestions", collection.slug, relatedSlugs.join(",")],
     queryFn: () => fetchSuggestions(collection.slug, relatedSlugs),
     staleTime: 5 * 60 * 1000,
   });
@@ -70,14 +67,13 @@ export const CollectionCompletionCTA: React.FC<Props> = ({
   useEffect(() => {
     if (emittedRef.current) return;
     emittedRef.current = true;
-    trackCollectionEvent('collection_completed', {
+    trackCollectionEvent("collection_completed", {
       collection_id: collection.id,
       collection_slug: collection.slug,
       collection_title: collection.title,
       category: collection.category,
       difficulty_level: collection.difficulty_level ?? null,
-      estimated_reading_time_minutes:
-        collection.estimated_reading_time_minutes ?? null,
+      estimated_reading_time_minutes: collection.estimated_reading_time_minutes ?? null,
       has_certificate: Boolean(collection.certificate_eligible),
       extra: { recommendations_count: suggestions.length },
     });
@@ -124,13 +120,9 @@ export const CollectionCompletionCTA: React.FC<Props> = ({
                     <ScrollText className="w-5 h-5" aria-hidden />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-serif text-premium-md text-foreground truncate">
-                      {s.title}
-                    </p>
+                    <p className="font-serif text-premium-md text-foreground truncate">{s.title}</p>
                     {s.subtitle && (
-                      <p className="text-premium-xs text-muted-foreground truncate">
-                        {s.subtitle}
-                      </p>
+                      <p className="text-premium-xs text-muted-foreground truncate">{s.subtitle}</p>
                     )}
                   </div>
                   <ArrowRight

@@ -1,8 +1,8 @@
-import React from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
-import BibleVersePopover from './BibleVersePopover';
-import CatechismPopover from './CatechismPopover';
+import React from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { parseTheologicalReferences } from "@/lib/theologicalRefParser";
+import BibleVersePopover from "./BibleVersePopover";
+import CatechismPopover from "./CatechismPopover";
 
 interface TheologicalTextProps {
   text: string;
@@ -22,22 +22,26 @@ const TheologicalText: React.FC<TheologicalTextProps> = ({ text, className }) =>
   try {
     segments = parseTheologicalReferences(text);
   } catch (err) {
-    if (typeof console !== 'undefined') {
-      console.warn('[TheologicalText] parser failed, fallback to plain text:', err);
+    if (typeof console !== "undefined") {
+      console.warn("[TheologicalText] parser failed, fallback to plain text:", err);
     }
-    return <span className={className} data-fallback="parser-error">{text}</span>;
+    return (
+      <span className={className} data-fallback="parser-error">
+        {text}
+      </span>
+    );
   }
 
   const handleNavigateToBible = (abbr: string, chapter: number, verse?: number) => {
     const params = new URLSearchParams({ book: abbr, chapter: String(chapter) });
-    if (verse) params.set('verse', String(verse));
+    if (verse) params.set("verse", String(verse));
     navigate(`/bible?${params.toString()}`);
   };
 
   return (
     <span className={className}>
       {segments.map((seg, i) => {
-        if (seg.type === 'bibleRef' && seg.abbr && seg.chapter) {
+        if (seg.type === "bibleRef" && seg.abbr && seg.chapter) {
           return (
             <BibleVersePopover
               key={i}
@@ -49,7 +53,7 @@ const TheologicalText: React.FC<TheologicalTextProps> = ({ text, className }) =>
             />
           );
         }
-        if (seg.type === 'catechismRef' && seg.paragraph) {
+        if (seg.type === "catechismRef" && seg.paragraph) {
           return <CatechismPopover key={i} paragraph={seg.paragraph} />;
         }
         return <React.Fragment key={i}>{seg.value}</React.Fragment>;

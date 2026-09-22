@@ -1,5 +1,5 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect } from 'react';
+import { Icons } from "@/constants";
+import React, { useState, useEffect } from "react";
 
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 
@@ -9,17 +9,18 @@ export const SpacingDebugger: React.FC = () => {
 
   useEffect(() => {
     // Only show the toggle in development or if explicitly enabled
-    const isDev = window.location.hostname === 'localhost' || window.location.hostname.includes('lovable');
+    const isDev =
+      window.location.hostname === "localhost" || window.location.hostname.includes("lovable");
     setIsVisible(isDev);
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey && e.key.toLowerCase() === 'd') {
-        setIsEnabled(prev => !prev);
+      if (e.altKey && e.key.toLowerCase() === "d") {
+        setIsEnabled((prev) => !prev);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
@@ -34,13 +35,19 @@ export const SpacingDebugger: React.FC = () => {
             className="rounded-premium-full shadow-premium border border-white/20 backdrop-blur-sm"
             title="Alternar Debug de Espaçamentos (Alt+D)"
           >
-            {isEnabled ? <Icons.EyeOff className="h-spacing-md w-spacing-md" /> : <Icons.Layout className="h-spacing-md w-spacing-md" />}
+            {isEnabled ? (
+              <Icons.EyeOff className="h-spacing-md w-spacing-md" />
+            ) : (
+              <Icons.Layout className="h-spacing-md w-spacing-md" />
+            )}
           </Button>
         </div>
       )}
 
       {isEnabled && (
-        <style dangerouslySetInnerHTML={{ __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           /* Highlighting Spacing Tokens */
           .section-rhythm {
             outline: 1px dashed rgba(255, 0, 0, 0.5) !important;
@@ -145,9 +152,13 @@ export const SpacingDebugger: React.FC = () => {
             z-index: 9999;
             opacity: 0.5;
           }
-        `}} />
+        `,
+          }}
+        />
       )}
-      <script dangerouslySetInnerHTML={{ __html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
         (function() {
           if (!window.__spacingDebuggerSet) {
             window.__spacingDebuggerSet = true;
@@ -165,7 +176,9 @@ export const SpacingDebugger: React.FC = () => {
             updateTooltips();
           }
         })();
-      `}} />
+      `,
+        }}
+      />
     </>
   );
 };

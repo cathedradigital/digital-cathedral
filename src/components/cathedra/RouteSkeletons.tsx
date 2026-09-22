@@ -1,5 +1,5 @@
-import React from 'react';
-import { ContentSkeleton } from './primitives';
+import React from "react";
+import { ContentSkeleton } from "./primitives";
 
 /**
  * RouteSkeletons — consolidados no Sprint P2 (Logos 2030).
@@ -8,14 +8,13 @@ import { ContentSkeleton } from './primitives';
  */
 
 const RouteSkeletons = ({ Component, ...props }: { Component: string }) => {
-  if (Component === 'BibleSkeleton') return <BibleSkeleton {...props} />;
-  if (Component === 'CatechismSkeleton') return <CatechismSkeleton {...props} />;
-  if (Component === 'LogosSkeleton') return <LogosSkeleton {...props} />;
+  if (Component === "BibleSkeleton") return <BibleSkeleton {...props} />;
+  if (Component === "CatechismSkeleton") return <CatechismSkeleton {...props} />;
+  if (Component === "LogosSkeleton") return <LogosSkeleton {...props} />;
   return null;
 };
 
 export default RouteSkeletons;
-
 
 export const BibleSkeleton = () => (
   <div
@@ -28,9 +27,7 @@ export const BibleSkeleton = () => (
     <p className="text-[11px] font-black uppercase tracking-[0.3em] text-secondary/60">
       Abrindo Cânone Sagrado
     </p>
-    <p className="text-xs font-serif italic text-muted-foreground">
-      um instante…
-    </p>
+    <p className="text-xs font-serif italic text-muted-foreground">um instante…</p>
   </div>
 );
 

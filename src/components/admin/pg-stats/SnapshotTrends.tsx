@@ -1,12 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import {
-  ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
-} from 'recharts';
-import { fingerprintQuery, shortFingerprint } from './queryFingerprint';
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
+import { fingerprintQuery, shortFingerprint } from "./queryFingerprint";
 
 export interface SnapshotForTrend {
   id: string;
@@ -23,7 +33,7 @@ export interface SnapshotForTrend {
   }>;
 }
 
-const OVERALL = '__overall__';
+const OVERALL = "__overall__";
 
 function p95(values: number[]): number {
   if (!values.length) return 0;
@@ -32,8 +42,7 @@ function p95(values: number[]): number {
   return sorted[idx];
 }
 
-const fmtMs = (v: number) =>
-  v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(2)} ms`;
+const fmtMs = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(2)} ms`);
 
 export function SnapshotTrends({ snapshots }: { snapshots: SnapshotForTrend[] }) {
   const [selected, setSelected] = useState<string>(OVERALL);
@@ -61,7 +70,7 @@ export function SnapshotTrends({ snapshots }: { snapshots: SnapshotForTrend[] })
     );
     return sorted.map((s) => {
       const when = new Date(s.taken_at);
-      const label = `${when.toLocaleDateString('pt-BR')} ${when.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+      const label = `${when.toLocaleDateString("pt-BR")} ${when.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
       if (selected === OVERALL) {
         const means = (s.rows || []).map((r) => r.mean_exec_time || 0);
         const mean = means.length ? means.reduce((a, b) => a + b, 0) / means.length : 0;
@@ -96,7 +105,9 @@ export function SnapshotTrends({ snapshots }: { snapshots: SnapshotForTrend[] })
       <div>
         <Label>Query normalizada</Label>
         <Select value={selected} onValueChange={setSelected}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent className="max-w-[720px]">
             <SelectItem value={OVERALL}>— Geral (agregado do snapshot) —</SelectItem>
             {topFingerprints.map(({ fp }) => (
@@ -111,17 +122,25 @@ export function SnapshotTrends({ snapshots }: { snapshots: SnapshotForTrend[] })
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <TrendChart data={data} dataKey="mean" title="Tempo médio (ms)" formatY={fmtMs} />
         <TrendChart data={data} dataKey="p95" title="p95 (ms)" formatY={fmtMs} />
-        <TrendChart data={data} dataKey="calls" title="Chamadas" formatY={(v) => v.toLocaleString('pt-BR')} />
+        <TrendChart
+          data={data}
+          dataKey="calls"
+          title="Chamadas"
+          formatY={(v) => v.toLocaleString("pt-BR")}
+        />
       </div>
     </div>
   );
 }
 
 function TrendChart({
-  data, dataKey, title, formatY,
+  data,
+  dataKey,
+  title,
+  formatY,
 }: {
   data: Array<Record<string, string | number>>;
-  dataKey: 'mean' | 'p95' | 'calls' | 'total';
+  dataKey: "mean" | "p95" | "calls" | "total";
   title: string;
   formatY: (v: number) => string;
 }) {
@@ -132,18 +151,35 @@ function TrendChart({
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 4, right: 10, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.15)" />
-            <XAxis dataKey="when" fontSize={10} stroke="hsl(var(--muted-foreground))" tickLine={false} />
-            <YAxis fontSize={10} stroke="hsl(var(--muted-foreground))" tickLine={false} width={60}
-              tickFormatter={(v) => formatY(Number(v))} />
+            <XAxis
+              dataKey="when"
+              fontSize={10}
+              stroke="hsl(var(--muted-foreground))"
+              tickLine={false}
+            />
+            <YAxis
+              fontSize={10}
+              stroke="hsl(var(--muted-foreground))"
+              tickLine={false}
+              width={60}
+              tickFormatter={(v) => formatY(Number(v))}
+            />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
-                borderColor: 'hsl(var(--border))',
-                borderRadius: 8, fontSize: 12,
+                backgroundColor: "hsl(var(--background))",
+                borderColor: "hsl(var(--border))",
+                borderRadius: 8,
+                fontSize: 12,
               }}
               formatter={(v: number) => formatY(v)}
             />
-            <Line type="monotone" dataKey={dataKey} stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+            <Line
+              type="monotone"
+              dataKey={dataKey}
+              stroke="hsl(var(--primary))"
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

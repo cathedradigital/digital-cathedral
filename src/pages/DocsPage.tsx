@@ -2,21 +2,26 @@
  * Portal de Documentação — índice com busca, localizado por idioma da URL.
  * O conteúdo vem de `src/content/docs` (pt, en, es, it, la).
  */
-import React, { useMemo, useState, useId } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { Search, BookOpen, ArrowRight, Languages } from 'lucide-react';
-import { useLang } from '@/hooks/useLang';
-import { Input } from '@/components/ui/input';
-import { getDocsBundle, searchDocsDetailed, type DocCategory, type DocSearchResult } from '@/content/docs';
-import { highlightText } from '@/lib/highlightText';
+import React, { useMemo, useState, useId } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { Search, BookOpen, ArrowRight, Languages } from "lucide-react";
+import { useLang } from "@/hooks/useLang";
+import { Input } from "@/components/ui/input";
+import {
+  getDocsBundle,
+  searchDocsDetailed,
+  type DocCategory,
+  type DocSearchResult,
+} from "@/content/docs";
+import { highlightText } from "@/lib/highlightText";
 
-const CATEGORY_ORDER: DocCategory[] = ['inicio', 'leitura', 'oracao', 'estudo'];
+const CATEGORY_ORDER: DocCategory[] = ["inicio", "leitura", "oracao", "estudo"];
 
 export default function DocsPage() {
   const { lang } = useLang();
   const bundle = useMemo(() => getDocsBundle(lang), [lang]);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const searchId = useId();
 
   const results = useMemo(() => searchDocsDetailed(lang, query), [lang, query]);
@@ -27,7 +32,6 @@ export default function DocsPage() {
     }
     return map;
   }, [results]);
-
 
   return (
     <>
@@ -109,7 +113,6 @@ export default function DocsPage() {
                       </Link>
                     </li>
                   ))}
-
                 </ul>
               </section>
             ))}

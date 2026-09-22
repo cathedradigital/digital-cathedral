@@ -1,14 +1,7 @@
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 
-export type SearchResultType = 
-  | 'bible' 
-  | 'catechism' 
-  | 'saint' 
-  | 'patristic' 
-  | 'magisterium' 
-  | 'prayer' 
-  | 'journey' 
-  | 'glossary';
+export type SearchResultType =
+  "bible" | "catechism" | "saint" | "patristic" | "magisterium" | "prayer" | "journey" | "glossary";
 
 export interface GlobalSearchHit {
   id: string;
@@ -24,14 +17,17 @@ export interface GlobalSearchHit {
  * Biblioteca Inteligente (Global Search V2)
  * Busca unificada em todos os módulos do Cathedra.
  */
-export async function globalSearchV2(query: string, limit: number = 20): Promise<GlobalSearchHit[]> {
-  const { data, error } = await supabase.rpc('global_search_v2', {
+export async function globalSearchV2(
+  query: string,
+  limit: number = 20,
+): Promise<GlobalSearchHit[]> {
+  const { data, error } = await supabase.rpc("global_search_v2", {
     p_query: query,
-    p_limit: limit
+    p_limit: limit,
   });
 
   if (error) {
-    console.error('Error in globalSearchV2:', error);
+    console.error("Error in globalSearchV2:", error);
     return [];
   }
 

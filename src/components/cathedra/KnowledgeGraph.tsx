@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Icons } from '@/constants';
-import { cn } from '@/lib/utils';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icons } from "@/constants";
+import { cn } from "@/lib/utils";
 
 export interface KnowledgeNode {
   id: string;
   label: string;
-  type: 'bible' | 'catechism' | 'document' | 'theme';
+  type: "bible" | "catechism" | "document" | "theme";
   summary?: string;
   connections: string[]; // IDs of connected nodes
   nexusExplanation?: string;
@@ -18,37 +18,79 @@ interface KnowledgeGraphProps {
   onNavigateToContent?: (bookAbbr: string, chapter: number, verse: number) => void;
 }
 
-
-export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initialNodeId, onNavigateToContent }) => {
-  const [selectedNode, setSelectedNode] = useState<string | null>(initialNodeId || 'Jo-6-35');
-  const [filter, setFilter] = useState<'all' | 'bible' | 'catechism' | 'document' | 'theme'>('all');
-
+export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({
+  onClose,
+  initialNodeId,
+  onNavigateToContent,
+}) => {
+  const [selectedNode, setSelectedNode] = useState<string | null>(initialNodeId || "Jo-6-35");
+  const [filter, setFilter] = useState<"all" | "bible" | "catechism" | "document" | "theme">("all");
 
   // Mock Graph Data
   const nodes: Record<string, KnowledgeNode> = {
-    'Jo-6-35': { id: 'Jo-6-35', label: 'João 6:35', type: 'bible', summary: 'Eu sou o pão da vida...', connections: ['1324', 'Ex-16', 'ede'] },
-    '1324': { id: '1324', label: 'CIC 1324', type: 'catechism', summary: 'Fonte e ápice da vida cristã.', connections: ['Jo-6-35', 'ede'] },
-    'Ex-16': { id: 'Ex-16', label: 'Êxodo 16', type: 'bible', summary: 'O maná do céu.', connections: ['Jo-6-35'] },
-    'ede': { id: 'ede', label: 'Ecclesia de Eucharistia', type: 'document', summary: 'Encíclica de João Paulo II.', connections: ['Jo-6-35', '1324'] },
-    'creatio': { id: 'creatio', label: 'Criação', type: 'theme', summary: 'A origem de todas as coisas.', connections: ['Gn-1-1', '279'] },
-    'Gn-1-1': { id: 'Gn-1-1', label: 'Gênesis 1:1', type: 'bible', summary: 'No princípio...', connections: ['creatio', '279'] },
-    '279': { id: '279', label: 'CIC 279', type: 'catechism', summary: 'A criação do mundo.', connections: ['Gn-1-1', 'creatio'] },
+    "Jo-6-35": {
+      id: "Jo-6-35",
+      label: "João 6:35",
+      type: "bible",
+      summary: "Eu sou o pão da vida...",
+      connections: ["1324", "Ex-16", "ede"],
+    },
+    "1324": {
+      id: "1324",
+      label: "CIC 1324",
+      type: "catechism",
+      summary: "Fonte e ápice da vida cristã.",
+      connections: ["Jo-6-35", "ede"],
+    },
+    "Ex-16": {
+      id: "Ex-16",
+      label: "Êxodo 16",
+      type: "bible",
+      summary: "O maná do céu.",
+      connections: ["Jo-6-35"],
+    },
+    ede: {
+      id: "ede",
+      label: "Ecclesia de Eucharistia",
+      type: "document",
+      summary: "Encíclica de João Paulo II.",
+      connections: ["Jo-6-35", "1324"],
+    },
+    creatio: {
+      id: "creatio",
+      label: "Criação",
+      type: "theme",
+      summary: "A origem de todas as coisas.",
+      connections: ["Gn-1-1", "279"],
+    },
+    "Gn-1-1": {
+      id: "Gn-1-1",
+      label: "Gênesis 1:1",
+      type: "bible",
+      summary: "No princípio...",
+      connections: ["creatio", "279"],
+    },
+    "279": {
+      id: "279",
+      label: "CIC 279",
+      type: "catechism",
+      summary: "A criação do mundo.",
+      connections: ["Gn-1-1", "creatio"],
+    },
   };
 
   const PATH_SUGGESTIONS = [
-    { label: 'Caminho da Eucaristia', nodes: ['Jo-6-35', '1324', 'ede'] },
-    { label: 'Mistério da Criação', nodes: ['Gn-1-1', 'creatio', '279'] },
+    { label: "Caminho da Eucaristia", nodes: ["Jo-6-35", "1324", "ede"] },
+    { label: "Mistério da Criação", nodes: ["Gn-1-1", "creatio", "279"] },
   ];
 
-
   const currentNode = selectedNode ? nodes[selectedNode] : null;
-  const connectedNodes = currentNode 
+  const connectedNodes = currentNode
     ? currentNode.connections
-        .map(id => nodes[id])
+        .map((id) => nodes[id])
         .filter(Boolean)
-        .filter(node => filter === 'all' || node.type === filter)
+        .filter((node) => filter === "all" || node.type === filter)
     : [];
-
 
   return (
     <div className="fixed inset-0 z-[250] bg-[#0A0B0D] text-stone-300 flex flex-col">
@@ -57,35 +99,34 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
           <Icons.X className="w-6 h-6" />
         </button>
         <div className="text-center">
-          <h1 className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary/60">Knowledge Graph</h1>
+          <h1 className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary/60">
+            Knowledge Graph
+          </h1>
           <span className="text-[8px] font-medium uppercase text-stone-600">Cathedra Phase 3</span>
         </div>
         <div className="w-10" />
       </header>
 
       <div className="px-6 py-4 flex gap-2 border-b border-white/5 bg-white/5 overflow-x-auto no-scrollbar">
-        {(['all', 'bible', 'catechism', 'document', 'theme'] as const).map((f) => (
+        {(["all", "bible", "catechism", "document", "theme"] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={cn(
               "whitespace-nowrap px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all",
-              filter === f 
-                ? "bg-secondary text-black shadow-sm" 
-                : "bg-white/5 text-stone-500"
+              filter === f ? "bg-secondary text-black shadow-sm" : "bg-white/5 text-stone-500",
             )}
           >
-            {f === 'all' && 'Tudo'}
-            {f === 'bible' && 'Bíblia'}
-            {f === 'catechism' && 'CIC'}
-            {f === 'document' && 'Magistério'}
-            {f === 'theme' && 'Temas'}
+            {f === "all" && "Tudo"}
+            {f === "bible" && "Bíblia"}
+            {f === "catechism" && "CIC"}
+            {f === "document" && "Magistério"}
+            {f === "theme" && "Temas"}
           </button>
         ))}
       </div>
 
       <div className="flex-1 relative overflow-hidden flex flex-col items-center justify-center p-6">
-
         <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
           <div className="absolute inset-0 opacity-20">
             <svg className="w-full h-full">
@@ -103,8 +144,12 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
                 animate={{ scale: 1, opacity: 1 }}
                 className="relative z-10 p-6 rounded-full bg-secondary/10 border border-secondary/30 shadow-[0_0_50px_rgba(212,175,55,0.1)] text-center w-40 h-40 flex flex-col items-center justify-center"
               >
-                <span className="text-[8px] font-black uppercase tracking-widest text-secondary mb-1">{currentNode.type}</span>
-                <span className="font-display font-bold text-white uppercase tracking-tight">{currentNode.label}</span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-secondary mb-1">
+                  {currentNode.type}
+                </span>
+                <span className="font-display font-bold text-white uppercase tracking-tight">
+                  {currentNode.label}
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -123,14 +168,18 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
                 className="absolute p-3 rounded-full bg-white/5 border border-white/10 hover:bg-secondary/20 hover:border-secondary/40 transition-colors group"
               >
                 <div className="text-center">
-                   <div className={cn(
-                     "w-1.5 h-1.5 rounded-full mx-auto mb-1",
-                     node.type === 'bible' && "bg-green-500",
-                     node.type === 'catechism' && "bg-blue-500",
-                     node.type === 'document' && "bg-purple-500",
-                     node.type === 'theme' && "bg-orange-500",
-                   )} />
-                   <span className="text-[7px] font-black text-stone-500 uppercase tracking-tighter group-hover:text-white transition-colors">{node.label}</span>
+                  <div
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full mx-auto mb-1",
+                      node.type === "bible" && "bg-green-500",
+                      node.type === "catechism" && "bg-blue-500",
+                      node.type === "document" && "bg-purple-500",
+                      node.type === "theme" && "bg-orange-500",
+                    )}
+                  />
+                  <span className="text-[7px] font-black text-stone-500 uppercase tracking-tighter group-hover:text-white transition-colors">
+                    {node.label}
+                  </span>
                 </div>
               </motion.button>
             );
@@ -145,16 +194,18 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
               className="mt-12 w-full max-w-md bg-white/5 border border-white/10 rounded-3xl p-6 space-y-4"
             >
               <div className="space-y-1">
-                <h2 className="text-lg font-display font-bold text-white uppercase">{currentNode.label}</h2>
+                <h2 className="text-lg font-display font-bold text-white uppercase">
+                  {currentNode.label}
+                </h2>
                 <p className="text-sm font-serif italic text-stone-400 line-clamp-3">
                   {currentNode.summary || "Explorando as conexões de fé e tradição."}
                 </p>
               </div>
               <div className="flex gap-2">
-                <button 
+                <button
                   onClick={() => {
-                    if (onNavigateToContent && currentNode.type === 'bible') {
-                      const [b, c, v] = currentNode.id.split('-');
+                    if (onNavigateToContent && currentNode.type === "bible") {
+                      const [b, c, v] = currentNode.id.split("-");
                       onNavigateToContent(b, parseInt(c), parseInt(v));
                     }
                   }}
@@ -165,7 +216,6 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
                 <button className="flex-1 h-10 rounded-xl bg-white/10 text-white text-[9px] font-black uppercase tracking-widest">
                   Ir para Origem
                 </button>
-
               </div>
             </motion.div>
           )}
@@ -174,10 +224,12 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
 
       <footer className="p-8 border-t border-white/5 space-y-4">
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[8px] font-black uppercase text-stone-600 tracking-[0.2em]">Caminhos Sugeridos</span>
+          <span className="text-[8px] font-black uppercase text-stone-600 tracking-[0.2em]">
+            Caminhos Sugeridos
+          </span>
           <div className="flex gap-2">
             {PATH_SUGGESTIONS.map((path, i) => (
-              <button 
+              <button
                 key={i}
                 onClick={() => setSelectedNode(path.nodes[0])}
                 className="px-3 py-1.5 rounded-lg bg-secondary/5 border border-secondary/10 text-[9px] font-bold text-secondary hover:bg-secondary/10 transition-all"
@@ -191,7 +243,6 @@ export const KnowledgeGraph: React.FC<KnowledgeGraphProps> = ({ onClose, initial
           Aperte em um nó para explorar a rede de conhecimento.
         </p>
       </footer>
-
     </div>
   );
 };

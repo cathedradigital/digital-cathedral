@@ -10,26 +10,30 @@ Sprint R1 (reskin Stitch → Cathedra). Fonte da verdade da linguagem visual do 
 
 ## Componentes
 
-| Nome | Uso |
-|---|---|
-| `EditorialShell` | Canvas base editorial com container centrado e padding responsivo. `parchment` opcional. |
-| `EditorialHero` | Abertura: kicker + título display + subtítulo + filete dourado + ação. |
-| `EditorialSection` | Bloco `<section>` com header interno + slot. Espaçamento vertical padrão. |
-| `EditorialHeader` | Cabeçalho compacto (kicker + título + ação) para grids/listas. |
-| `EditorialDivider` | Filete horizontal. Variantes: `hair`, `gold`, `gold-fade`. |
+| Nome               | Uso                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `EditorialShell`   | Canvas base editorial com container centrado e padding responsivo. `parchment` opcional.   |
+| `EditorialHero`    | Abertura: kicker + título display + subtítulo + filete dourado + ação.                     |
+| `EditorialSection` | Bloco `<section>` com header interno + slot. Espaçamento vertical padrão.                  |
+| `EditorialHeader`  | Cabeçalho compacto (kicker + título + ação) para grids/listas.                             |
+| `EditorialDivider` | Filete horizontal. Variantes: `hair`, `gold`, `gold-fade`.                                 |
 | `EditorialSurface` | Cartão base. `tier`: `lowest`\|`low`\|`base`\|`high`\|`highest`. `interactive` para hover. |
-| `EditorialCard` | Cartão de conteúdo. `variant`: `plain` \| `book` (capa 2:3) \| `wide` (2 colunas). |
-| `EditorialGrid` | Grid responsivo neutro. `cols`: 1..4. |
-| `EditorialShelf` | Carrossel horizontal snap-scroll (estante). |
-| `EditorialFooter` | Rodapé minimalista de uma linha. |
+| `EditorialCard`    | Cartão de conteúdo. `variant`: `plain` \| `book` (capa 2:3) \| `wide` (2 colunas).         |
+| `EditorialGrid`    | Grid responsivo neutro. `cols`: 1..4.                                                      |
+| `EditorialShelf`   | Carrossel horizontal snap-scroll (estante).                                                |
+| `EditorialFooter`  | Rodapé minimalista de uma linha.                                                           |
 
 ## Consumo
 
 ```tsx
 import {
-  EditorialShell, EditorialHero, EditorialSection,
-  EditorialGrid, EditorialCard, EditorialFooter,
-} from '@/components/editorial';
+  EditorialShell,
+  EditorialHero,
+  EditorialSection,
+  EditorialGrid,
+  EditorialCard,
+  EditorialFooter,
+} from "@/components/editorial";
 
 <EditorialShell parchment>
   <EditorialHero
@@ -41,7 +45,7 @@ import {
     <EditorialGrid cols={3}>{/* cards */}</EditorialGrid>
   </EditorialSection>
   <EditorialFooter kicker="Cathedra · Biblioteca Viva" />
-</EditorialShell>
+</EditorialShell>;
 ```
 
 ## `EditorialHero` — prop `topSpacing`
@@ -49,11 +53,11 @@ import {
 Controla o padding vertical do hero. Substitui overrides manuais (`!pt-*`, `!py-*`)
 que causavam heros "colados no topo" no mobile.
 
-| Valor | Padding | Quando usar |
-|---|---|---|
-| `default` | `HERO_SIZE_PAD[size]` (escala editorial completa) | Heros de páginas novas em `variant="editorial"` (Biblioteca, Home). |
-| `safe` | `pt-10 pb-0 md:pt-6 md:pb-0` | Heros logo abaixo do header global. **Default para `variant="legacy"`.** |
-| `flush` | `py-0` | Quando o container pai já controla o ritmo vertical (raro). |
+| Valor     | Padding                                           | Quando usar                                                              |
+| --------- | ------------------------------------------------- | ------------------------------------------------------------------------ |
+| `default` | `HERO_SIZE_PAD[size]` (escala editorial completa) | Heros de páginas novas em `variant="editorial"` (Biblioteca, Home).      |
+| `safe`    | `pt-10 pb-0 md:pt-6 md:pb-0`                      | Heros logo abaixo do header global. **Default para `variant="legacy"`.** |
+| `flush`   | `py-0`                                            | Quando o container pai já controla o ritmo vertical (raro).              |
 
 O componente expõe `data-top-spacing` para asserts em testes de regressão.
 
@@ -61,7 +65,7 @@ O componente expõe `data-top-spacing` para asserts em testes de regressão.
 
 ```tsx
 <EditorialHero
-  variant="legacy"          // aplica topSpacing="safe" automaticamente
+  variant="legacy" // aplica topSpacing="safe" automaticamente
   align="center"
   size="sm"
   rule={false}
@@ -118,4 +122,3 @@ bun run test:editorial-hero:update
 No CI (`.github/workflows/editorial-hero.yml`), quando não há baseline
 salva o workflow gera automaticamente e sobe como artefato
 `editorial-hero-baselines-seed-*` para você commitar no PR.
-

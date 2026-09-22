@@ -1,21 +1,17 @@
 export type CollectionItemType =
-  | 'glossary'
-  | 'prayer'
-  | 'saint'
-  | 'saint_work'
-  | 'bible'
-  | 'liturgy'
-  | 'catechism'
-  | 'magisterium'
-  | 'journey';
+  | "glossary"
+  | "prayer"
+  | "saint"
+  | "saint_work"
+  | "bible"
+  | "liturgy"
+  | "catechism"
+  | "magisterium"
+  | "journey";
 
-export type CollectionLevel = 'iniciante' | 'intermediario' | 'avancado';
+export type CollectionLevel = "iniciante" | "intermediario" | "avancado";
 
-export type CollectionProgressStatus =
-  | 'not_started'
-  | 'reading'
-  | 'meditating'
-  | 'completed';
+export type CollectionProgressStatus = "not_started" | "reading" | "meditating" | "completed";
 
 export interface CollectionItemMetadata {
   symbol?: string;
@@ -56,12 +52,8 @@ export interface CollectionMetadata {
   [k: string]: unknown;
 }
 
-
 export type OfficialTrack =
-  | 'formacao-fundamental'
-  | 'santos-espiritualidade'
-  | 'liturgia'
-  | 'vida-crista';
+  "formacao-fundamental" | "santos-espiritualidade" | "liturgia" | "vida-crista";
 
 export interface Collection {
   id: string;
@@ -71,7 +63,7 @@ export interface Collection {
   description: string | null;
   cover: string | null;
   category: string;
-  status: 'draft' | 'review' | 'published' | 'archived';
+  status: "draft" | "review" | "published" | "archived";
   featured: boolean;
   nexus_refs: unknown[];
   metadata: CollectionMetadata;

@@ -40,9 +40,8 @@ const MobileShowcase = () => {
             Primitivas M1
           </h2>
           <p className="font-[var(--font-stitch-body)] text-[15px] text-stitch-on-surface-variant">
-            Componentes de fundação para as próximas etapas mobile.
-            Consumem apenas tokens <code>stitch-*</code> e respeitam
-            safe-area.
+            Componentes de fundação para as próximas etapas mobile. Consumem apenas tokens{" "}
+            <code>stitch-*</code> e respeitam safe-area.
           </p>
         </section>
 
@@ -83,8 +82,7 @@ const MobileShowcase = () => {
             />
             <div className="bg-stitch-surface p-6">
               <p className="font-[var(--font-stitch-body)] text-[17px] leading-relaxed text-stitch-on-surface">
-                No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo
-                era Deus.
+                No princípio era o Verbo, e o Verbo estava com Deus, e o Verbo era Deus.
               </p>
             </div>
           </div>
@@ -110,11 +108,7 @@ const MobileShowcase = () => {
         size="auto"
         footer={
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => setSheetOpen(false)}
-            >
+            <Button variant="outline" className="flex-1" onClick={() => setSheetOpen(false)}>
               Cancelar
             </Button>
             <Button

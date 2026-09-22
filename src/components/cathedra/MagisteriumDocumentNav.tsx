@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { MAGISTERIUM_DOCUMENTS, type MagisteriumDocument } from '@/data/magisterium-urls';
+import React, { useMemo } from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { MAGISTERIUM_DOCUMENTS, type MagisteriumDocument } from "@/data/magisterium-urls";
 
 interface MagisteriumDocumentNavProps {
   currentId: string;
@@ -24,7 +24,7 @@ const DocLink: React.FC<{ doc: MagisteriumDocument; hint?: string }> = ({ doc, h
     </p>
     <p className="text-[10px] uppercase tracking-widest text-muted-foreground/80 mt-spacing-2xs">
       {doc.author}
-      {doc.year ? ` · ${doc.year}` : ''}
+      {doc.year ? ` · ${doc.year}` : ""}
     </p>
   </Link>
 );
@@ -51,16 +51,17 @@ const MagisteriumDocumentNav: React.FC<MagisteriumDocumentNavProps> = ({ current
     const nextDoc = idx < MAGISTERIUM_DOCUMENTS.length - 1 ? MAGISTERIUM_DOCUMENTS[idx + 1] : null;
 
     const samePopeList = MAGISTERIUM_DOCUMENTS.filter(
-      (d) => d.id !== cur.id && d.author === cur.author
+      (d) => d.id !== cur.id && d.author === cur.author,
     ).slice(0, MAX_RELATED);
 
     const sameCategoryList = MAGISTERIUM_DOCUMENTS.filter(
-      (d) => d.id !== cur.id && d.category === cur.category
+      (d) => d.id !== cur.id && d.category === cur.category,
     ).slice(0, MAX_RELATED);
 
     const themeSet = new Set(cur.themes || []);
-    const relatedList = MAGISTERIUM_DOCUMENTS
-      .filter((d) => d.id !== cur.id && d.author !== cur.author && d.category !== cur.category)
+    const relatedList = MAGISTERIUM_DOCUMENTS.filter(
+      (d) => d.id !== cur.id && d.author !== cur.author && d.category !== cur.category,
+    )
       .map((d) => ({
         doc: d,
         overlap: (d.themes || []).filter((t) => themeSet.has(t)).length,
@@ -95,7 +96,10 @@ const MagisteriumDocumentNav: React.FC<MagisteriumDocumentNavProps> = ({ current
               to={`/magisterium/${prev.id}`}
               className="group flex items-start gap-spacing-sm rounded-premium border border-primary/10 bg-primary/[0.02] p-spacing-md hover:border-primary/30 hover:bg-primary/[0.04] transition-colors"
             >
-              <Icons.ArrowLeft className="w-spacing-md h-spacing-md text-primary/60 mt-spacing-3xs shrink-0" aria-hidden="true" />
+              <Icons.ArrowLeft
+                className="w-spacing-md h-spacing-md text-primary/60 mt-spacing-3xs shrink-0"
+                aria-hidden="true"
+              />
               <div className="min-w-0">
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-spacing-2xs">
                   Documento anterior
@@ -121,7 +125,10 @@ const MagisteriumDocumentNav: React.FC<MagisteriumDocumentNavProps> = ({ current
                   {next.title}
                 </p>
               </div>
-              <Icons.ArrowRight className="w-spacing-md h-spacing-md text-primary/60 mt-spacing-3xs shrink-0" aria-hidden="true" />
+              <Icons.ArrowRight
+                className="w-spacing-md h-spacing-md text-primary/60 mt-spacing-3xs shrink-0"
+                aria-hidden="true"
+              />
             </Link>
           )}
         </div>
@@ -129,19 +136,25 @@ const MagisteriumDocumentNav: React.FC<MagisteriumDocumentNavProps> = ({ current
 
       {samePope.length > 0 && (
         <Section title={`Outros documentos de ${current.author}`}>
-          {samePope.map((d) => <DocLink key={d.id} doc={d} />)}
+          {samePope.map((d) => (
+            <DocLink key={d.id} doc={d} />
+          ))}
         </Section>
       )}
 
       {sameCategory.length > 0 && (
         <Section title={`Outros documentos em ${current.category}`}>
-          {sameCategory.map((d) => <DocLink key={d.id} doc={d} />)}
+          {sameCategory.map((d) => (
+            <DocLink key={d.id} doc={d} />
+          ))}
         </Section>
       )}
 
       {related.length > 0 && (
         <Section title="Documentos relacionados">
-          {related.map((d) => <DocLink key={d.id} doc={d} />)}
+          {related.map((d) => (
+            <DocLink key={d.id} doc={d} />
+          ))}
         </Section>
       )}
     </nav>

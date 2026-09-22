@@ -12,13 +12,7 @@
  */
 
 export type NexusChannel =
-  | 'bible'
-  | 'catechism'
-  | 'magisterium'
-  | 'saint'
-  | 'father'
-  | 'journey'
-  | 'theme';
+  "bible" | "catechism" | "magisterium" | "saint" | "father" | "journey" | "theme";
 
 /** @deprecated Use `NexusChannel`. Alias mantido para transição. */
 export type NexusKind = NexusChannel;
@@ -42,67 +36,65 @@ export interface NexusKindPreset {
  * Banidos: "Relacionados", "Ver mais", "Links", "Recursos".
  */
 export const NEXUS_KIND_PRESETS: Record<NexusChannel, NexusKindPreset> = {
-
   bible: {
-    eyebrow: 'A Palavra que abre este caminho',
-    whisper: 'A mesma verdade, mais antiga que a Igreja.',
-    cta: 'Ler a passagem',
+    eyebrow: "A Palavra que abre este caminho",
+    whisper: "A mesma verdade, mais antiga que a Igreja.",
+    cta: "Ler a passagem",
     order: 1,
   },
   catechism: {
-    eyebrow: 'Como a Igreja o formulou',
-    whisper: 'A doutrina que dá nome a esta experiência.',
-    cta: 'Ler no Catecismo',
+    eyebrow: "Como a Igreja o formulou",
+    whisper: "A doutrina que dá nome a esta experiência.",
+    cta: "Ler no Catecismo",
     order: 2,
   },
   magisterium: {
-    eyebrow: 'Aprofundado pelo Magistério',
-    whisper: 'Pastores da Igreja meditaram sobre isto.',
-    cta: 'Ler o documento',
+    eyebrow: "Aprofundado pelo Magistério",
+    whisper: "Pastores da Igreja meditaram sobre isto.",
+    cta: "Ler o documento",
     order: 3,
   },
   father: {
-    eyebrow: 'Contemplado pelos Padres',
-    whisper: 'Os primeiros séculos já o guardavam.',
-    cta: 'Ler o Padre',
+    eyebrow: "Contemplado pelos Padres",
+    whisper: "Os primeiros séculos já o guardavam.",
+    cta: "Ler o Padre",
     order: 4,
   },
   saint: {
-    eyebrow: 'Vivido na carne de um santo',
-    whisper: 'Alguém tornou este mistério visível.',
-    cta: 'Conhecer o santo',
+    eyebrow: "Vivido na carne de um santo",
+    whisper: "Alguém tornou este mistério visível.",
+    cta: "Conhecer o santo",
     order: 5,
   },
   journey: {
-    eyebrow: 'Percorra passo a passo',
-    whisper: 'Um caminho editorial para aprofundar.',
-    cta: 'Entrar no percurso',
+    eyebrow: "Percorra passo a passo",
+    whisper: "Um caminho editorial para aprofundar.",
+    cta: "Entrar no percurso",
     order: 6,
   },
   theme: {
-    eyebrow: 'A mesma luz em outros textos',
-    whisper: 'Continue puxando este fio pela Tradição.',
-    cta: 'Entrar no tema',
+    eyebrow: "A mesma luz em outros textos",
+    whisper: "Continue puxando este fio pela Tradição.",
+    cta: "Entrar no tema",
     order: 7,
   },
 };
 
-
 /** Cabeçalho contemplativo do painel. */
 export const NEXUS_HEADER = {
-  eyebrow: 'Nexus',
-  subtitle: 'Esta passagem conversa com a Tradição',
+  eyebrow: "Nexus",
+  subtitle: "Esta passagem conversa com a Tradição",
 };
 
 /** Copy contemplativa para o estado vazio — nunca esconder o painel. */
 export const NEXUS_EMPTY = {
-  title: 'Silêncio na margem',
-  body: 'Este trecho ainda repousa em silêncio. O Nexus continua a tecer as conexões — volte em breve.',
-  cta: 'Explorar temas próximos',
+  title: "Silêncio na margem",
+  body: "Este trecho ainda repousa em silêncio. O Nexus continua a tecer as conexões — volte em breve.",
+  cta: "Explorar temas próximos",
 };
 
 export const NEXUS_ERROR = {
-  title: 'A linha se rompeu',
-  body: 'Não foi possível reunir as referências agora.',
-  cta: 'Tentar novamente',
+  title: "A linha se rompeu",
+  body: "Não foi possível reunir as referências agora.",
+  cta: "Tentar novamente",
 };

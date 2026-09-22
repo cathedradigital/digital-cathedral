@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate, useLocation } from '@/lib/rr-compat';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
+import React from "react";
+import { Navigate, useLocation } from "@/lib/rr-compat";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -27,6 +27,6 @@ const AuthGuard = React.forwardRef<HTMLDivElement, AuthGuardProps>(({ children }
   return <div ref={ref}>{children}</div>;
 });
 
-AuthGuard.displayName = 'AuthGuard';
+AuthGuard.displayName = "AuthGuard";
 
 export default AuthGuard;

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Icons } from '@/constants';
-import { UserNote } from '@/hooks/useNotes';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Icons } from "@/constants";
+import { UserNote } from "@/hooks/useNotes";
+import { Button } from "@/components/ui/button";
 
 interface ChapterNotesListProps {
   notes: UserNote[];
@@ -11,11 +11,11 @@ interface ChapterNotesListProps {
   title?: string;
 }
 
-const ChapterNotesList: React.FC<ChapterNotesListProps> = ({ 
-  notes, 
-  onNoteClick, 
+const ChapterNotesList: React.FC<ChapterNotesListProps> = ({
+  notes,
+  onNoteClick,
   onDeleteNote,
-  title = "Minhas Reflexões no Capítulo" 
+  title = "Minhas Reflexões no Capítulo",
 }) => {
   if (notes.length === 0) return null;
 
@@ -24,7 +24,9 @@ const ChapterNotesList: React.FC<ChapterNotesListProps> = ({
       <div className="p-spacing-lg md:p-spacing-xl space-y-spacing-lg">
         <div className="flex items-center gap-spacing-sm">
           <Icons.BookOpen className="w-spacing-md h-spacing-md text-primary/40" />
-          <h3 className="text-premium-sm font-black uppercase tracking-widest text-primary/60">{title}</h3>
+          <h3 className="text-premium-sm font-black uppercase tracking-widest text-primary/60">
+            {title}
+          </h3>
           <span className="ml-auto bg-primary/10 text-primary text-[10px] font-black px-spacing-xs py-spacing-3xs rounded-premium-full">
             {notes.length}
           </span>
@@ -32,17 +34,23 @@ const ChapterNotesList: React.FC<ChapterNotesListProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-md">
           {notes.map((note) => (
-            <button 
-              key={note.id} 
+            <button
+              key={note.id}
               className="group p-spacing-md bg-card border border-border/40 rounded-premium hover:border-primary/20 transition-all text-left relative focus:outline-none focus:ring-2 focus:ring-primary/20"
               onClick={() => onNoteClick?.(note)}
             >
               <div className="flex items-start gap-spacing-sm">
-                <div className={`w-spacing-2xs h-spacing-2xl rounded-premium-full flex-shrink-0 bg-primary/10`} />
+                <div
+                  className={`w-spacing-2xs h-spacing-2xl rounded-premium-full flex-shrink-0 bg-primary/10`}
+                />
                 <div className="space-y-spacing-2xs pr-spacing-xl">
                   <div className="flex items-center gap-spacing-xs">
                     <span className="text-[9px] font-black uppercase tracking-widest text-primary/40">
-                      {note.verse ? `Versículo ${note.verse}` : note.paragraph ? `§${note.paragraph}` : 'Geral'}
+                      {note.verse
+                        ? `Versículo ${note.verse}`
+                        : note.paragraph
+                          ? `§${note.paragraph}`
+                          : "Geral"}
                     </span>
                     <span className="text-[8px] text-muted-foreground/40 font-bold tracking-widest">
                       {new Date(note.created_at).toLocaleDateString()}
@@ -53,7 +61,7 @@ const ChapterNotesList: React.FC<ChapterNotesListProps> = ({
                   </p>
                 </div>
               </div>
-              
+
               {onDeleteNote && (
                 <Button
                   variant="ghost"

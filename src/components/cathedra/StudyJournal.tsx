@@ -1,72 +1,83 @@
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useNotes, UserNote } from '@/hooks/useNotes';
-import { useReadingMarks, ReadingMark } from '@/hooks/useReadingMarks';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { useNavigate } from '@/lib/rr-compat';
-import { toast } from 'sonner';
+import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useNotes, UserNote } from "@/hooks/useNotes";
+import { useReadingMarks, ReadingMark } from "@/hooks/useReadingMarks";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useNavigate } from "@/lib/rr-compat";
+import { toast } from "sonner";
 
 const StudyJournal: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'notes' | 'marks'>('notes');
-  const [searchQuery, setSearchQuery] = useState('');
-  
+  const [activeTab, setActiveTab] = useState<"notes" | "marks">("notes");
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Fetching all notes (passing empty contentId but valid contentType logic needs to be checked)
-  // useNotes expects contentType and optionally contentId. 
+  // useNotes expects contentType and optionally contentId.
   // To fetch ALL notes for a user, we might need a modified hook or call fetch with different params.
   // Actually, let's look at useNotes.ts again.
   // It takes contentType and contentId. If contentId is null, it filters by user and contentType.
   // We want ALL notes across all contentTypes.
-  
-  const { notes: bibleNotes, updateNote: updateBibleNote, deleteNote: deleteBibleNote } = useNotes('bible');
-  const { notes: catechismNotes, updateNote: updateCatechismNote, deleteNote: deleteCatechismNote } = useNotes('catechism');
-  const { notes: magisteriumNotes, updateNote: updateMagisteriumNote, deleteNote: deleteMagisteriumNote } = useNotes('magisterium');
-  
-  const allNotes = useMemo(() => [
-    ...bibleNotes,
-    ...catechismNotes,
-    ...magisteriumNotes
-  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()), 
-  [bibleNotes, catechismNotes, magisteriumNotes]);
+
+  const {
+    notes: bibleNotes,
+    updateNote: updateBibleNote,
+    deleteNote: deleteBibleNote,
+  } = useNotes("bible");
+  const {
+    notes: catechismNotes,
+    updateNote: updateCatechismNote,
+    deleteNote: deleteCatechismNote,
+  } = useNotes("catechism");
+  const {
+    notes: magisteriumNotes,
+    updateNote: updateMagisteriumNote,
+    deleteNote: deleteMagisteriumNote,
+  } = useNotes("magisterium");
+
+  const allNotes = useMemo(
+    () =>
+      [...bibleNotes, ...catechismNotes, ...magisteriumNotes].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      ),
+    [bibleNotes, catechismNotes, magisteriumNotes],
+  );
 
   const { marks, deleteMark, updateMark } = useReadingMarks();
-  
+
   const filteredNotes = useMemo(() => {
     if (!searchQuery) return allNotes;
     const q = searchQuery.toLowerCase();
-    return allNotes.filter(n => 
-      n.note_text.toLowerCase().includes(q) || 
-      n.content_id.toLowerCase().includes(q)
+    return allNotes.filter(
+      (n) => n.note_text.toLowerCase().includes(q) || n.content_id.toLowerCase().includes(q),
     );
   }, [allNotes, searchQuery]);
 
   const filteredMarks = useMemo(() => {
     // Exclude last_read marks from the general list as they are "system" marks
-    const regularMarks = marks.filter(m => !m.is_last_read);
+    const regularMarks = marks.filter((m) => !m.is_last_read);
     if (!searchQuery) return regularMarks;
     const q = searchQuery.toLowerCase();
-    return regularMarks.filter(m => 
-      m.label?.toLowerCase().includes(q) || 
-      m.content_id.toLowerCase().includes(q)
+    return regularMarks.filter(
+      (m) => m.label?.toLowerCase().includes(q) || m.content_id.toLowerCase().includes(q),
     );
   }, [marks, searchQuery]);
 
   const handleUpdateNote = async (note: UserNote, newText: string) => {
-    if (note.content_type === 'bible') await updateBibleNote(note.id, newText);
-    else if (note.content_type === 'catechism') await updateCatechismNote(note.id, newText);
-    else if (note.content_type === 'magisterium') await updateMagisteriumNote(note.id, newText);
-    toast.success('Anotação atualizada');
+    if (note.content_type === "bible") await updateBibleNote(note.id, newText);
+    else if (note.content_type === "catechism") await updateCatechismNote(note.id, newText);
+    else if (note.content_type === "magisterium") await updateMagisteriumNote(note.id, newText);
+    toast.success("Anotação atualizada");
   };
 
   const handleDeleteNote = async (note: UserNote) => {
-    if (note.content_type === 'bible') await deleteBibleNote(note.id);
-    else if (note.content_type === 'catechism') await deleteCatechismNote(note.id);
-    else if (note.content_type === 'magisterium') await deleteMagisteriumNote(note.id);
-    toast.info('Anotação removida');
+    if (note.content_type === "bible") await deleteBibleNote(note.id);
+    else if (note.content_type === "catechism") await deleteCatechismNote(note.id);
+    else if (note.content_type === "magisterium") await deleteMagisteriumNote(note.id);
+    toast.info("Anotação removida");
   };
 
   return (
@@ -74,18 +85,18 @@ const StudyJournal: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-spacing-md">
         <div className="flex bg-muted/30 p-spacing-2xs rounded-premium-full border border-border/10">
           <Button
-            variant={activeTab === 'notes' ? 'primary' : 'ghost'}
-            onClick={() => setActiveTab('notes')}
-            className={`rounded-premium-full px-spacing-lg h-spacing-xl ${activeTab === 'notes' ? 'shadow-premium' : ''}`}
+            variant={activeTab === "notes" ? "primary" : "ghost"}
+            onClick={() => setActiveTab("notes")}
+            className={`rounded-premium-full px-spacing-lg h-spacing-xl ${activeTab === "notes" ? "shadow-premium" : ""}`}
           >
             Anotações ({allNotes.length})
           </Button>
           <Button
-            variant={activeTab === 'marks' ? 'primary' : 'ghost'}
-            onClick={() => setActiveTab('marks')}
-            className={`rounded-premium-full px-spacing-lg h-spacing-xl ${activeTab === 'marks' ? 'shadow-premium' : ''}`}
+            variant={activeTab === "marks" ? "primary" : "ghost"}
+            onClick={() => setActiveTab("marks")}
+            className={`rounded-premium-full px-spacing-lg h-spacing-xl ${activeTab === "marks" ? "shadow-premium" : ""}`}
           >
-            Marcas ({marks.filter(m => !m.is_last_read).length})
+            Marcas ({marks.filter((m) => !m.is_last_read).length})
           </Button>
         </div>
 
@@ -101,7 +112,7 @@ const StudyJournal: React.FC = () => {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTab === 'notes' ? (
+        {activeTab === "notes" ? (
           <motion.div
             key="notes"
             initial={{ opacity: 0, y: 10 }}
@@ -111,12 +122,20 @@ const StudyJournal: React.FC = () => {
           >
             {filteredNotes.length > 0 ? (
               filteredNotes.map((note) => (
-                <NoteCard 
-                  key={note.id} 
-                  note={note} 
-                  onUpdate={handleUpdateNote} 
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onUpdate={handleUpdateNote}
                   onDelete={handleDeleteNote}
-                  onNavigate={() => navigate(note.content_type === 'bible' ? `/bible?ref=${note.content_id}` : (note.content_type === 'catechism' ? `/catechism?p=${note.content_id}` : `/magisterium?doc=${note.content_id}`))}
+                  onNavigate={() =>
+                    navigate(
+                      note.content_type === "bible"
+                        ? `/bible?ref=${note.content_id}`
+                        : note.content_type === "catechism"
+                          ? `/catechism?p=${note.content_id}`
+                          : `/magisterium?doc=${note.content_id}`,
+                    )
+                  }
                 />
               ))
             ) : (
@@ -133,11 +152,11 @@ const StudyJournal: React.FC = () => {
           >
             {filteredMarks.length > 0 ? (
               filteredMarks.map((mark) => (
-                <MarkCard 
-                  key={mark.id} 
-                  mark={mark} 
+                <MarkCard
+                  key={mark.id}
+                  mark={mark}
                   onDelete={() => deleteMark(mark.id)}
-                  onNavigate={() => navigate(mark.url || '#')}
+                  onNavigate={() => navigate(mark.url || "#")}
                 />
               ))
             ) : (
@@ -150,9 +169,14 @@ const StudyJournal: React.FC = () => {
   );
 };
 
-const NoteCard = ({ note, onUpdate, onDelete, onNavigate }: { 
-  note: UserNote; 
-  onUpdate: (note: UserNote, text: string) => void; 
+const NoteCard = ({
+  note,
+  onUpdate,
+  onDelete,
+  onNavigate,
+}: {
+  note: UserNote;
+  onUpdate: (note: UserNote, text: string) => void;
   onDelete: (note: UserNote) => void;
   onNavigate: () => void;
 }) => {
@@ -172,10 +196,20 @@ const NoteCard = ({ note, onUpdate, onDelete, onNavigate }: {
           <span className="text-premium-xs font-bold text-muted-foreground">{note.content_id}</span>
         </div>
         <div className="flex gap-spacing-2xs opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="icon" className="h-spacing-xl w-spacing-xl rounded-premium-full" onClick={() => setIsEditing(!isEditing)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-spacing-xl w-spacing-xl rounded-premium-full"
+            onClick={() => setIsEditing(!isEditing)}
+          >
             <Icons.PenLine className="w-spacing-sm h-spacing-sm" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-spacing-xl w-spacing-xl rounded-premium-full text-destructive" onClick={() => onDelete(note)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-spacing-xl w-spacing-xl rounded-premium-full text-destructive"
+            onClick={() => onDelete(note)}
+          >
             <Icons.Trash className="w-spacing-sm h-spacing-sm" />
           </Button>
         </div>
@@ -190,8 +224,18 @@ const NoteCard = ({ note, onUpdate, onDelete, onNavigate }: {
             rows={4}
           />
           <div className="flex justify-end gap-spacing-xs">
-            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)}>Cancelar</Button>
-            <Button size="sm" onClick={() => { onUpdate(note, editText); setIsEditing(false); }}>Salvar</Button>
+            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
+              Cancelar
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                onUpdate(note, editText);
+                setIsEditing(false);
+              }}
+            >
+              Salvar
+            </Button>
           </div>
         </div>
       ) : (
@@ -204,7 +248,12 @@ const NoteCard = ({ note, onUpdate, onDelete, onNavigate }: {
         <span className="text-[10px] text-muted-foreground uppercase tracking-widest">
           {format(new Date(note.created_at), "d 'de' MMM, yy", { locale: ptBR })}
         </span>
-        <Button variant="ghost" size="sm" className="h-spacing-lg text-[10px] font-bold uppercase tracking-widest" onClick={onNavigate}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-spacing-lg text-[10px] font-bold uppercase tracking-widest"
+          onClick={onNavigate}
+        >
           Ver Contexto <Icons.ArrowRight className="ml-spacing-2xs w-spacing-sm h-spacing-sm" />
         </Button>
       </div>
@@ -212,8 +261,12 @@ const NoteCard = ({ note, onUpdate, onDelete, onNavigate }: {
   );
 };
 
-const MarkCard = ({ mark, onDelete, onNavigate }: { 
-  mark: ReadingMark; 
+const MarkCard = ({
+  mark,
+  onDelete,
+  onNavigate,
+}: {
+  mark: ReadingMark;
   onDelete: () => void;
   onNavigate: () => void;
 }) => (
@@ -226,7 +279,9 @@ const MarkCard = ({ mark, onDelete, onNavigate }: {
         <Icons.Bookmark className="w-spacing-md h-spacing-md" />
       </div>
       <div className="min-w-spacing-0">
-        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-spacing-3xs">{mark.content_type}</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-primary/40 mb-spacing-3xs">
+          {mark.content_type}
+        </p>
         <h4 className="text-premium-sm font-bold truncate">{mark.label || mark.content_id}</h4>
       </div>
     </div>
@@ -236,10 +291,19 @@ const MarkCard = ({ mark, onDelete, onNavigate }: {
         {format(new Date(mark.created_at), "dd/MM/yyyy")}
       </span>
       <div className="flex gap-spacing-xs">
-        <Button variant="ghost" size="icon" className="h-spacing-xl w-spacing-xl rounded-premium-full text-destructive opacity-0 group-hover:opacity-100 transition-opacity" onClick={onDelete}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-spacing-xl w-spacing-xl rounded-premium-full text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={onDelete}
+        >
           <Icons.Trash className="w-spacing-sm h-spacing-sm" />
         </Button>
-        <Button size="sm" className="h-spacing-xl rounded-premium-full text-[10px] font-bold uppercase tracking-widest" onClick={onNavigate}>
+        <Button
+          size="sm"
+          className="h-spacing-xl rounded-premium-full text-[10px] font-bold uppercase tracking-widest"
+          onClick={onNavigate}
+        >
           Continuar
         </Button>
       </div>

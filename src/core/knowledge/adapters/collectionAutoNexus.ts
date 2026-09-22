@@ -6,15 +6,15 @@
  * coleção é uma trilha de leitura). Sem UI, sem fetch — apenas grafo.
  */
 
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 import {
   BUCKET_LABEL,
   buildBucketedSuggestions,
   type ReaderAutoNexus,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
+} from "./ReaderAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
 
 export interface CollectionNexusInput {
   slug: string;
@@ -23,14 +23,19 @@ export interface CollectionNexusInput {
 }
 
 const BUCKETS: readonly ReaderNexusBucket[] = [
-  'bible', 'catechism', 'saint', 'glossary', 'prayer', 'journey',
+  "bible",
+  "catechism",
+  "saint",
+  "glossary",
+  "prayer",
+  "journey",
 ];
 
 const CACHE_MAX = 32;
 const cache = new Map<string, ReaderAutoNexusOutput>();
 
 export function _fingerprintCollection(i: CollectionNexusInput): string {
-  return [i.slug, (i.themes ?? []).join('|')].join('#');
+  return [i.slug, (i.themes ?? []).join("|")].join("#");
 }
 
 export function clearCollectionAutoNexusCache(): void {
@@ -38,19 +43,17 @@ export function clearCollectionAutoNexusCache(): void {
 }
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
-export function resolveCollectionAutoNexus(
-  input: CollectionNexusInput,
-): ReaderAutoNexusOutput {
+export function resolveCollectionAutoNexus(input: CollectionNexusInput): ReaderAutoNexusOutput {
   const key = _fingerprintCollection(input);
   const started = nowMs();
   const hit = cache.get(key);
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'collection', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "collection", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -79,12 +82,12 @@ export function resolveCollectionAutoNexus(
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'collection', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "collection", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
 export const collectionReaderAutoNexus: ReaderAutoNexus<CollectionNexusInput> = {
-  kind: 'collection',
-  label: 'Coleção',
+  kind: "collection",
+  label: "Coleção",
   buildSuggestions: resolveCollectionAutoNexus,
 };

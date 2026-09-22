@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { trackCollectionEvent } from '@/features/collections/collectionAnalytics';
-import { Link, useParams, Navigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import React, { useEffect, useMemo, useRef } from "react";
+import { trackCollectionEvent } from "@/features/collections/collectionAnalytics";
+import { Link, useParams, Navigate } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
 import {
   BookOpen,
   ChevronRight,
@@ -22,29 +22,24 @@ import {
   Map as MapIcon,
   Lock,
   Award,
-} from 'lucide-react';
-import { EditorialSurface } from '@/components/editorial';
-import {
-  ReaderShell,
-  EditorialHero,
-  NexusPanel,
-  StudyContext,
-} from '@/components/reader';
-import { ReaderContinuation } from '@/components/shared/ReaderContinuation';
-import { resolveCollectionAutoNexus } from '@/core/knowledge/adapters/collectionAutoNexus';
-import { useCollection } from '@/features/collections/useCollection';
-import { useCollectionProgress } from '@/features/collections/useCollectionProgress';
-import { collectionAutoNexus } from '@/features/collections/collectionAutoNexus';
-import { CollectionProgressBar } from '@/features/collections/CollectionProgressBar';
-import { CollectionCompletionCTA } from '@/features/collections/CollectionCompletionCTA';
+} from "lucide-react";
+import { EditorialSurface } from "@/components/editorial";
+import { ReaderShell, EditorialHero, NexusPanel, StudyContext } from "@/components/reader";
+import { ReaderContinuation } from "@/components/shared/ReaderContinuation";
+import { resolveCollectionAutoNexus } from "@/core/knowledge/adapters/collectionAutoNexus";
+import { useCollection } from "@/features/collections/useCollection";
+import { useCollectionProgress } from "@/features/collections/useCollectionProgress";
+import { collectionAutoNexus } from "@/features/collections/collectionAutoNexus";
+import { CollectionProgressBar } from "@/features/collections/CollectionProgressBar";
+import { CollectionCompletionCTA } from "@/features/collections/CollectionCompletionCTA";
 import type {
   CollectionItem,
   CollectionItemType,
   CollectionLevel,
   CollectionProgressStatus,
-} from '@/features/collections/types';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+} from "@/features/collections/types";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const TYPE_ICON: Record<CollectionItemType, React.ComponentType<{ className?: string }>> = {
   bible: BookMarked,
@@ -59,28 +54,28 @@ const TYPE_ICON: Record<CollectionItemType, React.ComponentType<{ className?: st
 };
 
 const TYPE_LABEL: Record<CollectionItemType, string> = {
-  bible: 'Escritura',
-  catechism: 'Catecismo',
-  saint: 'Santo',
-  saint_work: 'Escrito',
-  magisterium: 'Magistério',
-  prayer: 'Oração',
-  liturgy: 'Liturgia',
-  glossary: 'Glossário',
-  journey: 'Jornada',
+  bible: "Escritura",
+  catechism: "Catecismo",
+  saint: "Santo",
+  saint_work: "Escrito",
+  magisterium: "Magistério",
+  prayer: "Oração",
+  liturgy: "Liturgia",
+  glossary: "Glossário",
+  journey: "Jornada",
 };
 
 const STATUS_LABEL: Record<CollectionProgressStatus, string> = {
-  not_started: 'Não iniciado',
-  reading: 'Em leitura',
-  meditating: 'Em meditação',
-  completed: 'Concluído',
+  not_started: "Não iniciado",
+  reading: "Em leitura",
+  meditating: "Em meditação",
+  completed: "Concluído",
 };
 
 const LEVEL_LABEL: Record<CollectionLevel, string> = {
-  iniciante: 'Iniciante',
-  intermediario: 'Intermediário',
-  avancado: 'Avançado',
+  iniciante: "Iniciante",
+  intermediario: "Intermediário",
+  avancado: "Avançado",
 };
 
 function formatDuration(minutes?: number): string | null {
@@ -88,7 +83,7 @@ function formatDuration(minutes?: number): string | null {
   if (minutes < 60) return `${minutes} min`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, '0')}`;
+  return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, "0")}`;
 }
 
 interface ItemRowProps {
@@ -114,18 +109,18 @@ const ItemRow: React.FC<ItemRowProps> = ({
   onToggleComplete,
 }) => {
   const Icon = TYPE_ICON[item.item_type] ?? BookOpen;
-  const done = status === 'completed';
-  const started = status === 'reading' || status === 'meditating';
-  const short = (item.metadata?.short as string) ?? item.description_override ?? '';
+  const done = status === "completed";
+  const started = status === "reading" || status === "meditating";
+  const short = (item.metadata?.short as string) ?? item.description_override ?? "";
 
   return (
     <EditorialSurface
       tier="lowest"
       as="article"
       className={cn(
-        'flex items-start gap-spacing-md p-spacing-md transition-colors',
-        done && 'bg-primary/5',
-        locked && 'opacity-70',
+        "flex items-start gap-spacing-md p-spacing-md transition-colors",
+        done && "bg-primary/5",
+        locked && "opacity-70",
       )}
       aria-disabled={locked || undefined}
       data-locked={locked || undefined}
@@ -134,16 +129,16 @@ const ItemRow: React.FC<ItemRowProps> = ({
       {/* Número + ícone */}
       <div className="flex flex-col items-center gap-spacing-2xs flex-shrink-0 pt-1">
         <span className="text-[10px] font-mono tabular-nums text-muted-foreground">
-          {String(index + 1).padStart(2, '0')}
+          {String(index + 1).padStart(2, "0")}
         </span>
         <div
           className={cn(
-            'w-10 h-10 rounded-full flex items-center justify-center',
+            "w-10 h-10 rounded-full flex items-center justify-center",
             done
-              ? 'bg-primary text-primary-foreground'
+              ? "bg-primary text-primary-foreground"
               : locked
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-primary/10 text-primary',
+                ? "bg-muted text-muted-foreground"
+                : "bg-primary/10 text-primary",
           )}
           aria-hidden
         >
@@ -159,10 +154,10 @@ const ItemRow: React.FC<ItemRowProps> = ({
           </span>
           <span
             className={cn(
-              'inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest',
-              done && 'text-primary',
-              started && 'text-muted-foreground',
-              !done && !started && 'text-muted-foreground/60',
+              "inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest",
+              done && "text-primary",
+              started && "text-muted-foreground",
+              !done && !started && "text-muted-foreground/60",
             )}
           >
             {done ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
@@ -179,7 +174,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
           )}
         </div>
         <h3 className="font-serif text-premium-md md:text-premium-lg text-foreground leading-tight">
-          {item.title_override ?? item.item_slug.replace(/-/g, ' ')}
+          {item.title_override ?? item.item_slug.replace(/-/g, " ")}
         </h3>
         {short && (
           <p className="text-premium-sm text-muted-foreground leading-relaxed line-clamp-2">
@@ -194,7 +189,8 @@ const ItemRow: React.FC<ItemRowProps> = ({
           >
             <Lock className="w-3 h-3 mt-[2px] flex-shrink-0" aria-hidden />
             <span>
-              Conclua <strong className="font-semibold">{blockingItemLabel}</strong> para desbloquear este conteúdo.
+              Conclua <strong className="font-semibold">{blockingItemLabel}</strong> para
+              desbloquear este conteúdo.
             </span>
           </p>
         )}
@@ -210,7 +206,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
               onClick={onOpen}
               className="inline-flex items-center gap-1 text-premium-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
             >
-              {done ? 'Reler' : started ? 'Continuar' : 'Abrir'}
+              {done ? "Reler" : started ? "Continuar" : "Abrir"}
               <ChevronRight className="w-4 h-4" />
             </Link>
           ) : (
@@ -225,7 +221,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
               className="text-premium-xs text-muted-foreground hover:text-primary underline underline-offset-4"
               aria-pressed={done}
             >
-              {done ? 'Desmarcar' : 'Marcar como concluído'}
+              {done ? "Desmarcar" : "Marcar como concluído"}
             </button>
           )}
         </div>
@@ -248,17 +244,9 @@ export default function CollectionPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading, error } = useCollection(slug);
   const collectionId = data?.collection.id;
-  const {
-    progress,
-    startItem,
-    completeItem,
-    getStatus,
-  } = useCollectionProgress(collectionId);
+  const { progress, startItem, completeItem, getStatus } = useCollectionProgress(collectionId);
 
-  const nexus = useMemo(
-    () => (data ? collectionAutoNexus(data.items) : []),
-    [data],
-  );
+  const nexus = useMemo(() => (data ? collectionAutoNexus(data.items) : []), [data]);
   const hrefBySlug = useMemo(() => {
     const m = new Map<string, string>();
     for (const n of nexus) m.set(`${n.kind}:${n.id}`, n.href);
@@ -279,7 +267,7 @@ export default function CollectionPage() {
 
   const { collection, items } = data;
   const meta = collection.metadata ?? {};
-  const eyebrow = meta.eyebrow ?? 'COLEÇÃO';
+  const eyebrow = meta.eyebrow ?? "COLEÇÃO";
   const level =
     (collection.difficulty_level as CollectionLevel | undefined) ??
     (meta.level as CollectionLevel | undefined);
@@ -292,12 +280,8 @@ export default function CollectionPage() {
   const learningObjectives = collection.learning_objectives ?? [];
   const completionMessage = collection.completion_message ?? null;
 
-  const totalCompleted = Object.values(progress).filter(
-    (p) => p.status === 'completed',
-  ).length;
-  const totalStarted = Object.values(progress).filter(
-    (p) => p.status !== 'not_started',
-  ).length;
+  const totalCompleted = Object.values(progress).filter((p) => p.status === "completed").length;
+  const totalStarted = Object.values(progress).filter((p) => p.status !== "not_started").length;
 
   // Bloqueios por is_locked_until_prev — mapeia também qual item anterior está barrando.
   const lockedItemIds = new Set<string>();
@@ -305,12 +289,9 @@ export default function CollectionPage() {
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     const prev = items[i - 1];
-    if (it.is_locked_until_prev && prev && getStatus(prev.id) !== 'completed') {
+    if (it.is_locked_until_prev && prev && getStatus(prev.id) !== "completed") {
       lockedItemIds.add(it.id);
-      blockingLabelById.set(
-        it.id,
-        prev.title_override ?? prev.item_slug.replace(/-/g, ' '),
-      );
+      blockingLabelById.set(it.id, prev.title_override ?? prev.item_slug.replace(/-/g, " "));
     }
   }
 
@@ -318,21 +299,19 @@ export default function CollectionPage() {
 
   // Próximo item pendente (ignora bloqueados) para o CTA principal
   const nextItem =
-    items.find(
-      (i) => getStatus(i.id) !== 'completed' && !lockedItemIds.has(i.id),
-    ) ?? items[0];
+    items.find((i) => getStatus(i.id) !== "completed" && !lockedItemIds.has(i.id)) ?? items[0];
   const nextHref = nextItem
-    ? hrefBySlug.get(`${nextItem.item_type}:${nextItem.item_slug}`) ?? null
+    ? (hrefBySlug.get(`${nextItem.item_type}:${nextItem.item_slug}`) ?? null)
     : null;
   const ctaLabel =
     totalCompleted === items.length && items.length > 0
-      ? 'Reler coleção'
+      ? "Reler coleção"
       : totalStarted > 0
-        ? 'Continuar coleção'
-        : 'Começar coleção';
+        ? "Continuar coleção"
+        : "Começar coleção";
 
   const handleStartCta = () => {
-    if (nextItem && getStatus(nextItem.id) === 'not_started') {
+    if (nextItem && getStatus(nextItem.id) === "not_started") {
       void startItem(nextItem.id).catch(() => undefined);
     }
   };
@@ -353,7 +332,7 @@ export default function CollectionPage() {
         <meta property="og:title" content={collection.title} />
         <meta
           property="og:description"
-          content={editorialGoal ?? collection.subtitle ?? collection.description ?? ''}
+          content={editorialGoal ?? collection.subtitle ?? collection.description ?? ""}
         />
         <meta property="og:type" content="article" />
         {collection.cover && <meta property="og:image" content={collection.cover} />}
@@ -377,8 +356,8 @@ export default function CollectionPage() {
             output={resolveCollectionAutoNexus({
               slug: collection.slug,
               title: collection.title,
-              themes: [collection.subtitle, collection.description].filter(
-                (t): t is string => Boolean(t),
+              themes: [collection.subtitle, collection.description].filter((t): t is string =>
+                Boolean(t),
               ),
             })}
             kicker={`Conexões · ${collection.title}`}
@@ -387,7 +366,7 @@ export default function CollectionPage() {
         continuation={
           <ReaderContinuation
             context={{
-              kind: 'journey-step',
+              kind: "journey-step",
               id: collection.slug,
               meta: { theme: collection.title },
             }}
@@ -420,7 +399,7 @@ export default function CollectionPage() {
             <span className="inline-flex items-center gap-spacing-2xs text-premium-xs text-foreground">
               <Layers className="w-4 h-4 text-primary/70" aria-hidden />
               <span className="font-medium">
-                {items.length} {items.length === 1 ? 'conteúdo' : 'conteúdos'}
+                {items.length} {items.length === 1 ? "conteúdo" : "conteúdos"}
               </span>
             </span>
           </div>
@@ -494,14 +473,17 @@ export default function CollectionPage() {
                   <Button asChild variant="outline" size="lg">
                     <Link to={`/colecoes/${collection.slug}/certificado`}>
                       <Award className="w-4 h-4 mr-2" aria-hidden />
-                      {totalCompleted === items.length ? 'Ver certificado' : 'Status do certificado'}
+                      {totalCompleted === items.length
+                        ? "Ver certificado"
+                        : "Status do certificado"}
                     </Link>
                   </Button>
                 )}
                 {totalStarted > 0 && nextItem && (
                   <span className="text-premium-xs text-muted-foreground">
-                    Próximo: <span className="font-medium text-foreground">
-                      {nextItem.title_override ?? nextItem.item_slug.replace(/-/g, ' ')}
+                    Próximo:{" "}
+                    <span className="font-medium text-foreground">
+                      {nextItem.title_override ?? nextItem.item_slug.replace(/-/g, " ")}
                     </span>
                   </span>
                 )}
@@ -526,12 +508,12 @@ export default function CollectionPage() {
                   locked={locked}
                   blockingItemLabel={blockingLabelById.get(item.id) ?? null}
                   onOpen={() => {
-                    if (status === 'not_started') {
+                    if (status === "not_started") {
                       void startItem(item.id).catch(() => undefined);
                     }
                   }}
                   onToggleComplete={() => {
-                    if (status === 'completed') {
+                    if (status === "completed") {
                       void startItem(item.id).catch(() => undefined);
                     } else {
                       void completeItem(item.id).catch(() => undefined);
@@ -554,7 +536,6 @@ export default function CollectionPage() {
     </>
   );
 }
-
 
 // ─────────────────────────────────────────────────────────────────────
 // PrerequisitesBlock — Lista de pré-requisitos + telemetria de visualização.
@@ -584,14 +565,13 @@ const PrerequisitesBlock: React.FC<PrerequisitesBlockProps> = ({
     const emit = () => {
       if (emittedRef.current) return;
       emittedRef.current = true;
-      trackCollectionEvent('collection_prerequisites_viewed', {
+      trackCollectionEvent("collection_prerequisites_viewed", {
         collection_id: collection.id,
         collection_slug: collection.slug,
         collection_title: collection.title,
         category: collection.category,
         difficulty_level: collection.difficulty_level ?? null,
-        estimated_reading_time_minutes:
-          collection.estimated_reading_time_minutes ?? null,
+        estimated_reading_time_minutes: collection.estimated_reading_time_minutes ?? null,
         items_total: itemsTotal,
         items_completed: itemsCompleted,
         has_certificate: Boolean(collection.certificate_eligible),
@@ -599,7 +579,7 @@ const PrerequisitesBlock: React.FC<PrerequisitesBlockProps> = ({
       });
     };
 
-    if (typeof IntersectionObserver === 'undefined' || !ref.current) {
+    if (typeof IntersectionObserver === "undefined" || !ref.current) {
       emit();
       return;
     }
@@ -621,11 +601,7 @@ const PrerequisitesBlock: React.FC<PrerequisitesBlockProps> = ({
   }, [collection, itemsTotal, itemsCompleted, prerequisites.length]);
 
   return (
-    <div
-      ref={ref}
-      className="space-y-spacing-2xs"
-      data-testid="collection-prerequisites"
-    >
+    <div ref={ref} className="space-y-spacing-2xs" data-testid="collection-prerequisites">
       <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-700 dark:text-amber-400">
         Pré-requisitos recomendados
       </h2>

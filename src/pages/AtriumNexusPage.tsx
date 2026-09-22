@@ -16,9 +16,9 @@
  *  - Sem novas dependências.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useNavigate } from '@/lib/rr-compat';
+import React, { useEffect, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useNavigate } from "@/lib/rr-compat";
 import {
   Network as Hub,
   Search as SearchIcon,
@@ -32,14 +32,14 @@ import {
   Sparkles,
   Feather,
   ShieldCheck,
-} from 'lucide-react';
-import { supabase } from '@/lib/db';
+} from "lucide-react";
+import { supabase } from "@/lib/db";
 import {
   NEXUS_HEADER,
   NEXUS_EMPTY,
   NEXUS_KIND_PRESETS,
   type NexusKind,
-} from '@/components/cathedra/nexus/nexusPresets';
+} from "@/components/cathedra/nexus/nexusPresets";
 
 // ─── Ícones canônicos por Kind ───────────────────────────────────────────────
 const KIND_ICON: Record<NexusKind, React.ComponentType<{ className?: string }>> = {
@@ -54,13 +54,13 @@ const KIND_ICON: Record<NexusKind, React.ComponentType<{ className?: string }>> 
 
 // Rota canônica de destino ao clicar num Kind (leva à busca filtrada).
 const KIND_HREF: Record<NexusKind, string> = {
-  bible: '/bible',
-  catechism: '/catechism',
-  magisterium: '/magisterium',
-  father: '/patristica',
-  saint: '/santos',
-  journey: '/jornadas',
-  theme: '/buscar',
+  bible: "/bible",
+  catechism: "/catechism",
+  magisterium: "/magisterium",
+  father: "/patristica",
+  saint: "/santos",
+  journey: "/jornadas",
+  theme: "/buscar",
 };
 
 interface NexusRelationRow {
@@ -85,28 +85,28 @@ interface NexusContributionRow {
   created_at: string;
 }
 
-const HERO_KICKER = 'Nexus Theologicus';
-const HERO_TITLE = 'A Sinfonia da Verdade';
+const HERO_KICKER = "Nexus Theologicus";
+const HERO_TITLE = "A Sinfonia da Verdade";
 const HERO_SUBTITLE =
-  'Fio a fio, os textos da Tradição respondem uns aos outros. Aqui você percorre a mesma luz que atravessa Escritura, Catecismo, Padres e santos.';
+  "Fio a fio, os textos da Tradição respondem uns aos outros. Aqui você percorre a mesma luz que atravessa Escritura, Catecismo, Padres e santos.";
 
 const refLabel = (kind: string, ref: any): string => {
-  if (!ref) return '—';
-  if (typeof ref === 'string') return ref;
+  if (!ref) return "—";
+  if (typeof ref === "string") return ref;
   const r = ref as Record<string, any>;
-  if (kind === 'bible') {
-    const b = r.book_abbr ?? r.book ?? '';
-    const c = r.chapter ?? '';
-    const v = r.verse ?? r.verse_start ?? '';
-    return [b, c && `${c}${v ? `:${v}` : ''}`].filter(Boolean).join(' ');
+  if (kind === "bible") {
+    const b = r.book_abbr ?? r.book ?? "";
+    const c = r.chapter ?? "";
+    const v = r.verse ?? r.verse_start ?? "";
+    return [b, c && `${c}${v ? `:${v}` : ""}`].filter(Boolean).join(" ");
   }
-  if (kind === 'catechism') return `CIC §${r.paragraph ?? r.p ?? '?'}`;
-  return r.title ?? r.slug ?? r.id ?? '—';
+  if (kind === "catechism") return `CIC §${r.paragraph ?? r.p ?? "?"}`;
+  return r.title ?? r.slug ?? r.id ?? "—";
 };
 
 const AtriumNexusPage: React.FC = () => {
   const navigate = useNavigate();
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState("");
   const [relations, setRelations] = useState<NexusRelationRow[]>([]);
   const [contribs, setContribs] = useState<NexusContributionRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,15 +118,19 @@ const AtriumNexusPage: React.FC = () => {
       try {
         const [{ data: rels }, { data: cs }] = await Promise.all([
           (supabase as any)
-            .from('nexus_relations')
-            .select('id, relation_type, source_kind, target_kind, source_ref, target_ref, note, created_at')
-            .order('created_at', { ascending: false })
+            .from("nexus_relations")
+            .select(
+              "id, relation_type, source_kind, target_kind, source_ref, target_ref, note, created_at",
+            )
+            .order("created_at", { ascending: false })
             .limit(8),
           supabase
-            .from('nexus_contributions')
-            .select('id, book_abbr, chapter, verse, connection_type, reference_title, summary, created_at')
-            .eq('status', 'approved')
-            .order('created_at', { ascending: false })
+            .from("nexus_contributions")
+            .select(
+              "id, book_abbr, chapter, verse, connection_type, reference_title, summary, created_at",
+            )
+            .eq("status", "approved")
+            .order("created_at", { ascending: false })
             .limit(6),
         ]);
         if (cancelled) return;
@@ -155,8 +159,7 @@ const AtriumNexusPage: React.FC = () => {
     <div
       className="min-h-screen w-full bg-stitch-background text-stitch-on-background"
       style={{
-        backgroundImage:
-          'url("https://www.transparenttextures.com/patterns/p6.png")',
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
       }}
     >
       <Helmet>
@@ -230,9 +233,8 @@ const AtriumNexusPage: React.FC = () => {
                 {NEXUS_HEADER.subtitle}
               </h2>
               <p className="max-w-md font-stitch-body text-[18px] leading-[28px] text-stitch-on-surface-variant">
-                Cada passagem da Escritura, cada parágrafo do Catecismo e cada
-                vida de santo é uma janela para o mesmo mistério. O Nexus tece
-                essas janelas em uma única sala.
+                Cada passagem da Escritura, cada parágrafo do Catecismo e cada vida de santo é uma
+                janela para o mesmo mistério. O Nexus tece essas janelas em uma única sala.
               </p>
             </div>
             <div className="relative z-10 flex justify-end">
@@ -240,8 +242,7 @@ const AtriumNexusPage: React.FC = () => {
                 to="/buscar"
                 className="inline-flex items-center gap-3 rounded-lg bg-stitch-secondary-container px-8 py-3 font-stitch-body text-[14px] font-medium uppercase tracking-[0.05em] text-stitch-secondary-on-container transition-transform hover:scale-105 active:scale-95"
                 style={{
-                  boxShadow:
-                    '0 0 25px -5px hsl(var(--stitch-secondary-fixed-dim) / 0.4)',
+                  boxShadow: "0 0 25px -5px hsl(var(--stitch-secondary-fixed-dim) / 0.4)",
                 }}
               >
                 <Hub className="h-5 w-5" />
@@ -260,8 +261,8 @@ const AtriumNexusPage: React.FC = () => {
                 Contribua com um fio
               </h3>
               <p className="mt-3 font-stitch-body text-[15px] leading-relaxed text-stitch-primary-foreground/80">
-                Você percebeu uma conexão nova entre um versículo e a Tradição?
-                Envie sua sugestão à curadoria.
+                Você percebeu uma conexão nova entre um versículo e a Tradição? Envie sua sugestão à
+                curadoria.
               </p>
             </div>
             <div className="relative z-10">
@@ -395,7 +396,7 @@ const AtriumNexusPage: React.FC = () => {
                 >
                   <span className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-secondary">
                     {c.book_abbr} {c.chapter}
-                    {c.verse ? `:${c.verse}` : ''} · {c.connection_type}
+                    {c.verse ? `:${c.verse}` : ""} · {c.connection_type}
                   </span>
                   <h3 className="font-stitch-display text-[20px] leading-[26px] text-stitch-primary">
                     {c.reference_title}

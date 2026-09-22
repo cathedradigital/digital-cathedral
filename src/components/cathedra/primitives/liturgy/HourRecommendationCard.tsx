@@ -9,23 +9,23 @@
  * Contexto litúrgico opcional: quando `liturgy` é fornecida, exibe a
  * celebração e a cor litúrgica do dia (fonte: LiturgyProvider).
  */
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';
-import type { RecommendedHour } from '@/hooks/useRecommendedHour';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import type { DailyLiturgy } from "@/core/liturgy/LiturgyProvider";
+import type { RecommendedHour } from "@/hooks/useRecommendedHour";
 
 const COLOR_DOT: Record<string, string> = {
-  'liturgical-green': 'bg-emerald-600',
-  'liturgical-white': 'bg-zinc-100 border border-zinc-400',
-  'liturgical-red': 'bg-red-700',
-  'liturgical-violet': 'bg-violet-700',
-  'liturgical-rose': 'bg-pink-400',
-  'liturgical-black': 'bg-neutral-900',
+  "liturgical-green": "bg-emerald-600",
+  "liturgical-white": "bg-zinc-100 border border-zinc-400",
+  "liturgical-red": "bg-red-700",
+  "liturgical-violet": "bg-violet-700",
+  "liturgical-rose": "bg-pink-400",
+  "liturgical-black": "bg-neutral-900",
 };
 
-export type LiturgyStatus = 'ready' | 'loading' | 'unavailable' | 'offline';
+export type LiturgyStatus = "ready" | "loading" | "unavailable" | "offline";
 
 interface Props {
   recommendation: RecommendedHour | null;
@@ -38,31 +38,32 @@ interface Props {
 }
 
 function formatUntil(minutes: number): string {
-  if (minutes <= 0) return 'agora';
+  if (minutes <= 0) return "agora";
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   if (h === 0) return `em ${m} min`;
   if (m === 0) return `em ${h}h`;
-  return `em ${h}h${String(m).padStart(2, '0')}`;
+  return `em ${h}h${String(m).padStart(2, "0")}`;
 }
 
 export const HourRecommendationCard: React.FC<Props> = ({
   recommendation,
   liturgy,
-  liturgyStatus = 'ready',
+  liturgyStatus = "ready",
   onRetryLiturgy,
 }) => {
   if (!recommendation) return null;
-  const { prayer, reason, minutesUntilOpen, windowLabel, isoDate, isToday, timeZone } = recommendation;
+  const { prayer, reason, minutesUntilOpen, windowLabel, isoDate, isToday, timeZone } =
+    recommendation;
   const href = isToday ? `/oracao/${prayer.slug}` : `/oracao/${prayer.slug}?d=${isoDate}`;
-  const isNow = reason === 'in-window' && isToday;
+  const isNow = reason === "in-window" && isToday;
 
   const colorClass = liturgy?.colorToken ? COLOR_DOT[liturgy.colorToken] : undefined;
   const celebration = liturgy?.liturgia?.trim() || liturgy?.dia?.trim() || null;
-  const hasLiturgy = liturgyStatus === 'ready' && !!celebration;
+  const hasLiturgy = liturgyStatus === "ready" && !!celebration;
 
   const eyebrow = isNow
-    ? 'Hora recomendada · agora'
+    ? "Hora recomendada · agora"
     : isToday
       ? `Próxima hora · ${formatUntil(minutesUntilOpen)}`
       : `Hora sugerida para ${isoDate}`;
@@ -73,24 +74,26 @@ export const HourRecommendationCard: React.FC<Props> = ({
   const fallbackNode = !hasLiturgy ? (
     <p
       className="mt-spacing-2xs flex flex-wrap items-center gap-spacing-2xs font-stitch-body text-premium-xs italic text-muted-foreground"
-      role={liturgyStatus === 'unavailable' ? 'alert' : undefined}
+      role={liturgyStatus === "unavailable" ? "alert" : undefined}
     >
-      {liturgyStatus === 'loading' && (
+      {liturgyStatus === "loading" && (
         <>
           <Icons.Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
           <span>Carregando liturgia do dia…</span>
         </>
       )}
-      {liturgyStatus === 'offline' && (
+      {liturgyStatus === "offline" && (
         <>
           <Icons.WifiOff className="h-3 w-3" aria-hidden="true" />
           <span>Sem conexão · Próprio do Dia indisponível para {isoDate}.</span>
         </>
       )}
-      {liturgyStatus === 'unavailable' && (
+      {liturgyStatus === "unavailable" && (
         <>
           <Icons.AlertCircle className="h-3 w-3" aria-hidden="true" />
-          <span>Sem Próprio do Dia para {isoDate} ({timeZone}). O Ordinário permanece disponível.</span>
+          <span>
+            Sem Próprio do Dia para {isoDate} ({timeZone}). O Ordinário permanece disponível.
+          </span>
           {onRetryLiturgy && (
             <button
               type="button"
@@ -102,7 +105,7 @@ export const HourRecommendationCard: React.FC<Props> = ({
           )}
         </>
       )}
-      {liturgyStatus === 'ready' && !celebration && (
+      {liturgyStatus === "ready" && !celebration && (
         <>
           <Icons.AlertCircle className="h-3 w-3" aria-hidden="true" />
           <span>Liturgia sem celebração informada para {isoDate}.</span>
@@ -148,9 +151,17 @@ export const HourRecommendationCard: React.FC<Props> = ({
             Janela · {windowLabel}
           </p>
         </div>
-        <Button asChild variant={isNow ? 'default' : 'outline'} size="sm" className="rounded-full shrink-0">
-          <Link to={href} aria-label={`Rezar ${prayer.title}${isToday ? ' agora' : ` em ${isoDate}`}`}>
-            {isNow ? 'Rezar agora' : 'Abrir'}
+        <Button
+          asChild
+          variant={isNow ? "default" : "outline"}
+          size="sm"
+          className="rounded-full shrink-0"
+        >
+          <Link
+            to={href}
+            aria-label={`Rezar ${prayer.title}${isToday ? " agora" : ` em ${isoDate}`}`}
+          >
+            {isNow ? "Rezar agora" : "Abrir"}
             <Icons.ChevronRight className="ml-spacing-2xs h-spacing-sm w-spacing-sm" />
           </Link>
         </Button>
@@ -160,4 +171,3 @@ export const HourRecommendationCard: React.FC<Props> = ({
 };
 
 export default HourRecommendationCard;
-

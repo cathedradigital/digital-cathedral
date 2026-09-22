@@ -7,7 +7,7 @@
  * Fase 2 — Layout base. Sem estilo definitivo (isso é do Design System v2, Fase 7).
  */
 
-import React from 'react';
+import React from "react";
 
 interface Props {
   children: React.ReactNode;
@@ -19,9 +19,7 @@ const AtriumShell: React.FC<Props> = ({ children }) => {
       data-shell="atrium"
       className="min-h-dvh bg-background text-foreground pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="max-w-2xl mx-auto w-full px-4 flex flex-col gap-4 pb-16">
-        {children}
-      </div>
+      <div className="max-w-2xl mx-auto w-full px-4 flex flex-col gap-4 pb-16">{children}</div>
     </div>
   );
 };

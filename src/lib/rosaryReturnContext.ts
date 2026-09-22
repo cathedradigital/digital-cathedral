@@ -16,14 +16,14 @@ const TTL_MS = 4 * 60 * 60 * 1000;
 export type RosaryReturnMode = "contemplativo" | "guiado" | "automatico";
 
 export interface RosaryReturnContext {
-  setName: string;           // ex.: "Mistérios Gozosos"
-  mysteryLabel: string;      // ex.: "3º mistério"
-  mysteryIndex: number;      // 0..4
-  stepIndex: number;         // passo dentro da sessão
-  mode: RosaryReturnMode;    // modo escolhido para a sessão
-  elapsedMs: number;         // tempo já rezado
-  startedAt: string;         // ISO
-  updatedAt: string;         // ISO — usado para TTL
+  setName: string; // ex.: "Mistérios Gozosos"
+  mysteryLabel: string; // ex.: "3º mistério"
+  mysteryIndex: number; // 0..4
+  stepIndex: number; // passo dentro da sessão
+  mode: RosaryReturnMode; // modo escolhido para a sessão
+  elapsedMs: number; // tempo já rezado
+  startedAt: string; // ISO
+  updatedAt: string; // ISO — usado para TTL
 }
 
 export const ROSARY_MODE_LABEL: Record<RosaryReturnMode, string> = {
@@ -41,7 +41,9 @@ export function markRosaryReturn(ctx: Omit<RosaryReturnContext, "updatedAt">): v
   try {
     const payload: RosaryReturnContext = { ...ctx, updatedAt: new Date().toISOString() };
     window.sessionStorage.setItem(KEY, JSON.stringify(payload));
-  } catch { /* storage indisponível */ }
+  } catch {
+    /* storage indisponível */
+  }
 }
 
 export function getRosaryReturn(): RosaryReturnContext | null {
@@ -66,7 +68,9 @@ export function clearRosaryReturn(): void {
   if (!isBrowser()) return;
   try {
     window.sessionStorage.removeItem(KEY);
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }
 
 export function formatElapsedShort(ms: number): string {

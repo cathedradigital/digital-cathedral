@@ -10,9 +10,9 @@
  * agrupamento estático; uma relação é uma aresta semântica.
  */
 
-import { KnowledgeRegistry } from './KnowledgeRegistry';
-import type { KnowledgeNode, KnowledgeNodeId } from './types';
-import { SEED_COLLECTIONS } from './seed';
+import { KnowledgeRegistry } from "./KnowledgeRegistry";
+import type { KnowledgeNode, KnowledgeNodeId } from "./types";
+import { SEED_COLLECTIONS } from "./seed";
 
 export type KnowledgeCollectionId = string; // convenção: `collection:<slug>`
 

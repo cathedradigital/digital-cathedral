@@ -7,15 +7,17 @@
  * Orações, Jornadas, Coleções, Magistério.
  */
 
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import type { ReaderAutoNexusOutput, ReaderNexusBucket } from '@/core/knowledge/adapters/ReaderAutoNexus';
-import { BUCKET_LABEL } from '@/core/knowledge/adapters/ReaderAutoNexus';
-import { NexusSourceBadge } from '@/components/nexus/NexusSourceBadge';
-import type { ResolvedNode } from '@/core/knowledge/types';
-import { cn } from '@/lib/utils';
-import { Icons } from '@/constants';
-
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import type {
+  ReaderAutoNexusOutput,
+  ReaderNexusBucket,
+} from "@/core/knowledge/adapters/ReaderAutoNexus";
+import { BUCKET_LABEL } from "@/core/knowledge/adapters/ReaderAutoNexus";
+import { NexusSourceBadge } from "@/components/nexus/NexusSourceBadge";
+import type { ResolvedNode } from "@/core/knowledge/types";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/constants";
 
 export interface NexusPanelProps {
   /** Saída de qualquer `ReaderAutoNexus` (bible, catechism, glossary…). */
@@ -37,8 +39,8 @@ const DEFAULT_LIMIT = 4;
 export const NexusPanel: React.FC<NexusPanelProps> = ({
   output,
   order,
-  title = 'Nexus Theologicus',
-  kicker = 'Conexões desta passagem',
+  title = "Nexus Theologicus",
+  kicker = "Conexões desta passagem",
   className,
   limitPerBucket = DEFAULT_LIMIT,
 }) => {
@@ -46,40 +48,45 @@ export const NexusPanel: React.FC<NexusPanelProps> = ({
 
   React.useEffect(() => {
     const handleUnreachable = () => setIsOffline(true);
-    window.addEventListener('supabase-unreachable' as any, handleUnreachable);
-    return () => window.removeEventListener('supabase-unreachable' as any, handleUnreachable);
+    window.addEventListener("supabase-unreachable" as any, handleUnreachable);
+    return () => window.removeEventListener("supabase-unreachable" as any, handleUnreachable);
   }, []);
 
-  const buckets = (order ?? (Object.keys(output.byBucket) as ReaderNexusBucket[]))
-    .filter((b) => (output.byBucket[b]?.length ?? 0) > 0);
+  const buckets = (order ?? (Object.keys(output.byBucket) as ReaderNexusBucket[])).filter(
+    (b) => (output.byBucket[b]?.length ?? 0) > 0,
+  );
 
   if (buckets.length === 0) {
     return (
-      <aside className={cn(
-        'w-full max-w-[68ch] mx-auto',
-        'rounded-premium border border-primary/10 bg-muted/5',
-        'p-spacing-lg space-y-spacing-sm opacity-60',
-        className
-      )}>
+      <aside
+        className={cn(
+          "w-full max-w-[68ch] mx-auto",
+          "rounded-premium border border-primary/10 bg-muted/5",
+          "p-spacing-lg space-y-spacing-sm opacity-60",
+          className,
+        )}
+      >
         <header className="flex items-center gap-spacing-sm text-muted-foreground">
           <Icons.Info className="w-5 h-5" />
-          <h2 className="font-serif text-premium-base italic">Nexus Theologicus em Processamento</h2>
+          <h2 className="font-serif text-premium-base italic">
+            Nexus Theologicus em Processamento
+          </h2>
         </header>
         <p className="text-premium-xs text-muted-foreground/70 font-serif italic">
-          O motor do Nexus está mapeando as conexões teológicas desta passagem. As referências aparecerão assim que a indexação for concluída.
+          O motor do Nexus está mapeando as conexões teológicas desta passagem. As referências
+          aparecerão assim que a indexação for concluída.
         </p>
       </aside>
     );
   }
 
-
   const rootClass = [
-    'w-full max-w-[68ch] mx-auto',
-    'rounded-premium border border-primary/15 bg-card/60 backdrop-blur-sm',
-    'p-spacing-lg space-y-spacing-md',
-    'shadow-premium/10',
-    className ?? '',
-  ].join(' ');
+    "w-full max-w-[68ch] mx-auto",
+    "rounded-premium border border-primary/15 bg-card/60 backdrop-blur-sm",
+    "p-spacing-lg space-y-spacing-md",
+    "shadow-premium/10",
+    className ?? "",
+  ].join(" ");
 
   return (
     <aside className={rootClass} aria-label={title} data-nexus-panel>
@@ -102,11 +109,7 @@ export const NexusPanel: React.FC<NexusPanelProps> = ({
           const nodes = (output.byBucket[bucket] ?? []).slice(0, limitPerBucket);
           const label = output.labels[bucket] ?? BUCKET_LABEL[bucket] ?? bucket;
           return (
-            <section
-              key={bucket}
-              data-nexus-bucket={bucket}
-              className="space-y-spacing-xs"
-            >
+            <section key={bucket} data-nexus-bucket={bucket} className="space-y-spacing-xs">
               <h3 className="font-stitch-label text-stitch-label-sm uppercase tracking-[0.24em] text-secondary">
                 CONEXÕES RELACIONADAS
               </h3>
@@ -156,10 +159,7 @@ const NexusItem: React.FC<NexusItemProps> = ({ node, bucket }) => {
   );
 
   return (
-    <li
-      className="flex gap-spacing-xs items-baseline"
-      data-nexus-type={bucket}
-    >
+    <li className="flex gap-spacing-xs items-baseline" data-nexus-type={bucket}>
       <span
         aria-hidden
         className="mt-spacing-3xs inline-block w-spacing-2xs h-spacing-2xs rounded-premium-full bg-secondary/70"

@@ -6,18 +6,18 @@
  * /jornadas e na conclusão — nenhum token novo, nenhuma cor literal.
  */
 
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { ArrowRight, ChevronRight, Sparkles } from "lucide-react";
 
-import type { NextPathRecommendation } from '@/core/knowledge/intelligence/nextPathEngine';
+import type { NextPathRecommendation } from "@/core/knowledge/intelligence/nextPathEngine";
 
-const SIGNAL_EYEBROW: Record<NextPathRecommendation['signal'], string> = {
-  nexus: 'Conexão no Nexus',
-  category: 'Mesmo eixo formativo',
-  tags: 'Temas em continuidade',
-  progression: 'Próximo grau',
-  catalog: 'Sugestão do catálogo',
+const SIGNAL_EYEBROW: Record<NextPathRecommendation["signal"], string> = {
+  nexus: "Conexão no Nexus",
+  category: "Mesmo eixo formativo",
+  tags: "Temas em continuidade",
+  progression: "Próximo grau",
+  catalog: "Sugestão do catálogo",
 };
 
 export interface NextPathPanelProps {
@@ -28,7 +28,7 @@ export interface NextPathPanelProps {
 
 export const NextPathPanel: React.FC<NextPathPanelProps> = ({
   recommendations,
-  title = 'Continue sua caminhada',
+  title = "Continue sua caminhada",
   className,
 }) => {
   if (recommendations.length === 0) return null;
@@ -57,7 +57,7 @@ export const NextPathPanel: React.FC<NextPathPanelProps> = ({
 
               <div className="min-w-0 flex-1">
                 <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-secondary">
-                  {index === 0 ? 'Próxima Jornada' : SIGNAL_EYEBROW[rec.signal]}
+                  {index === 0 ? "Próxima Jornada" : SIGNAL_EYEBROW[rec.signal]}
                 </p>
                 <h3 className="mt-1 font-stitch-display text-[20px] italic text-stitch-primary md:text-[22px]">
                   {rec.journey.title}

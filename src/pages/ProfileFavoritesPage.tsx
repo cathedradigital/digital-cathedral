@@ -4,7 +4,7 @@
  */
 
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from '@/lib/rr-compat';
+import { Link, useNavigate } from "@/lib/rr-compat";
 import { ArrowLeft, Search, Star, Trash2, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDevotionalFavorites } from "@/hooks/useDevotionalFavorites";
@@ -101,7 +101,8 @@ export default function ProfileFavoritesPage() {
         <div className="rounded-2xl border border-dashed border-border p-10 text-center">
           <Star className="mx-auto mb-3 h-8 w-8 text-muted-foreground" aria-hidden />
           <p className="text-muted-foreground">
-            Você ainda não favoritou nada. Toque na estrela em uma oração ou versículo para salvar aqui.
+            Você ainda não favoritou nada. Toque na estrela em uma oração ou versículo para salvar
+            aqui.
           </p>
         </div>
       )}
@@ -146,9 +147,10 @@ export default function ProfileFavoritesPage() {
             aria-label="Filtrar por categoria"
             className="mb-6 flex flex-wrap gap-2"
           >
-            {[["all", "Todos"] as const, ...availableTypes.map(
-              (t) => [t, TYPE_LABEL[t] ?? t] as const,
-            )].map(([value, label]) => {
+            {[
+              ["all", "Todos"] as const,
+              ...availableTypes.map((t) => [t, TYPE_LABEL[t] ?? t] as const),
+            ].map(([value, label]) => {
               const active = typeFilter === value;
               return (
                 <button
@@ -197,9 +199,7 @@ export default function ProfileFavoritesPage() {
 
           {filtered.length === 0 && (
             <div className="rounded-2xl border border-dashed border-border p-10 text-center">
-              <p className="text-muted-foreground">
-                Nenhum favorito corresponde à busca.
-              </p>
+              <p className="text-muted-foreground">Nenhum favorito corresponde à busca.</p>
             </div>
           )}
         </>
@@ -228,9 +228,7 @@ export default function ProfileFavoritesPage() {
                       </p>
                     </Link>
                   ) : (
-                    <p className="font-serif text-lg font-semibold">
-                      {it.title ?? "(sem título)"}
-                    </p>
+                    <p className="font-serif text-lg font-semibold">{it.title ?? "(sem título)"}</p>
                   )}
                   {it.content && (
                     <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{it.content}</p>

@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { RefreshCw, ShieldAlert, ShieldCheck, Clock } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { RefreshCw, ShieldAlert, ShieldCheck, Clock } from "lucide-react";
+import { toast } from "sonner";
 
 interface ChannelMetrics {
   succeeded: number;
@@ -35,10 +35,14 @@ interface Overview {
 
 const fmtPct = (v: number) => `${(v * 100).toFixed(1)}%`;
 const fmtDateTime = (v: string | null) => {
-  if (!v) return '—';
+  if (!v) return "—";
   try {
-    return new Date(v).toLocaleString('pt-BR', {
-      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',
+    return new Date(v).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   } catch {
     return v;
@@ -46,15 +50,15 @@ const fmtDateTime = (v: string | null) => {
 };
 
 function etaRelative(iso: string | null): string {
-  if (!iso) return '—';
+  if (!iso) return "—";
   const target = new Date(iso).getTime();
   const diffMs = target - Date.now();
-  if (diffMs <= 0) return 'a qualquer momento';
+  if (diffMs <= 0) return "a qualquer momento";
   const mins = Math.round(diffMs / 60000);
   if (mins < 60) return `em ~${mins} min`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return `em ~${h}h${m ? ` ${m}min` : ''}`;
+  return `em ~${h}h${m ? ` ${m}min` : ""}`;
 }
 
 export function ChannelGatesPanel() {
@@ -64,7 +68,7 @@ export function ChannelGatesPanel() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data: res, error } = await supabase.rpc('admin_notif_channel_gates_overview');
+      const { data: res, error } = await supabase.rpc("admin_notif_channel_gates_overview");
       if (error) throw error;
       setData(res as unknown as Overview);
     } catch (err) {
@@ -99,18 +103,24 @@ export function ChannelGatesPanel() {
           <p className="text-xs text-muted-foreground mt-1">
             {blockedCount > 0
               ? `${blockedCount} canal(is) bloqueado(s) por excesso de falhas na janela.`
-              : 'Todos os canais operacionais.'}
+              : "Todos os canais operacionais."}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading} aria-label="Recarregar gates">
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={load}
+          disabled={loading}
+          aria-label="Recarregar gates"
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
           Atualizar
         </Button>
       </CardHeader>
       <CardContent>
         {channels.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            {loading ? 'Carregando…' : 'Nenhum canal configurado.'}
+            {loading ? "Carregando…" : "Nenhum canal configurado."}
           </p>
         ) : (
           <div className="space-y-3">
@@ -118,7 +128,7 @@ export function ChannelGatesPanel() {
               <div
                 key={c.channel}
                 className={`rounded-md border p-3 ${
-                  c.blocked ? 'border-destructive/40 bg-destructive/5' : 'border-border'
+                  c.blocked ? "border-destructive/40 bg-destructive/5" : "border-border"
                 }`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -148,7 +158,7 @@ export function ChannelGatesPanel() {
                 <dl className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-xs">
                   <div>
                     <dt className="text-muted-foreground">Fail rate atual</dt>
-                    <dd className={c.blocked ? 'font-semibold text-destructive' : 'font-medium'}>
+                    <dd className={c.blocked ? "font-semibold text-destructive" : "font-medium"}>
                       {fmtPct(c.metrics.fail_rate)}
                     </dd>
                   </div>
@@ -159,7 +169,8 @@ export function ChannelGatesPanel() {
                   <div>
                     <dt className="text-muted-foreground">Amostras (janela)</dt>
                     <dd className="font-medium">
-                      {c.metrics.total} <span className="text-muted-foreground">/ min {c.min_samples}</span>
+                      {c.metrics.total}{" "}
+                      <span className="text-muted-foreground">/ min {c.min_samples}</span>
                     </dd>
                   </div>
                   <div>

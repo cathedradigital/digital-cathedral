@@ -6,15 +6,15 @@
  * Consome uma `LiturgyMeditationRow` (vinda de `useLiturgyMeditation`).
  * Cada bloco degrada silenciosamente: se o campo estiver vazio, não renderiza.
  */
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
+import React from "react";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
 import type {
   LiturgyMeditationRow,
   FatherCitation,
   CatechismCitation,
   MagisteriumCitation,
-} from '@/hooks/useLiturgyMeditation';
+} from "@/hooks/useLiturgyMeditation";
 
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -22,10 +22,8 @@ const fade = (delay = 0) => ({
   transition: { delay, duration: 0.4 },
 });
 
-const KICKER =
-  'text-premium-xs font-black uppercase tracking-[0.3em] text-secondary/70';
-const SECTION =
-  'premium-card p-spacing-xl space-y-spacing-md relative overflow-hidden';
+const KICKER = "text-premium-xs font-black uppercase tracking-[0.3em] text-secondary/70";
+const SECTION = "premium-card p-spacing-xl space-y-spacing-md relative overflow-hidden";
 
 // ── Loading (usado enquanto a edge function gera) ────────────────
 export const LiturgyMeditationSkeleton: React.FC = () => (
@@ -40,7 +38,7 @@ export const LiturgyMeditationSkeleton: React.FC = () => (
 interface FallbackNoticeProps {
   message?: string | null;
   code?: string;
-  source?: 'local-cache' | 'local-builder' | 'previous-day';
+  source?: "local-cache" | "local-builder" | "previous-day";
   retryAt?: string;
   onRetry?: () => void | Promise<void>;
   isRetrying?: boolean;
@@ -50,9 +48,9 @@ function formatRelative(iso?: string): string | null {
   if (!iso) return null;
   const diffMs = new Date(iso).getTime() - Date.now();
   if (Number.isNaN(diffMs)) return null;
-  if (diffMs <= 0) return 'a qualquer momento';
+  if (diffMs <= 0) return "a qualquer momento";
   const minutes = Math.round(diffMs / 60_000);
-  if (minutes < 1) return 'em menos de 1 min';
+  if (minutes < 1) return "em menos de 1 min";
   if (minutes < 60) return `em ~${minutes} min`;
   const hours = Math.round(minutes / 60);
   return `em ~${hours}h`;
@@ -66,16 +64,16 @@ export const LiturgyMeditationFallbackNotice: React.FC<FallbackNoticeProps> = ({
   onRetry,
   isRetrying,
 }) => {
-  const isCreditsExhausted = code === 'ai_credits_exhausted';
+  const isCreditsExhausted = code === "ai_credits_exhausted";
   const relative = formatRelative(retryAt);
   const sourceLabel =
-    source === 'local-cache'
-      ? 'Exibindo a meditação editorial anterior deste dia (cache local).'
-      : source === 'previous-day'
-      ? 'Exibindo a meditação editorial mais recente disponível offline.'
-      : source === 'local-builder'
-      ? 'Roteiro orante essencial construído a partir das leituras do dia.'
-      : null;
+    source === "local-cache"
+      ? "Exibindo a meditação editorial anterior deste dia (cache local)."
+      : source === "previous-day"
+        ? "Exibindo a meditação editorial mais recente disponível offline."
+        : source === "local-builder"
+          ? "Roteiro orante essencial construído a partir das leituras do dia."
+          : null;
 
   return (
     <motion.div
@@ -83,15 +81,16 @@ export const LiturgyMeditationFallbackNotice: React.FC<FallbackNoticeProps> = ({
       className="border border-secondary/30 bg-secondary/5 rounded-[2rem] p-spacing-md flex items-start gap-spacing-sm"
       role="status"
       aria-live="polite"
-      data-fallback-code={code ?? 'ai_unavailable'}
+      data-fallback-code={code ?? "ai_unavailable"}
     >
       <Icons.Info className="w-spacing-md h-spacing-md text-secondary shrink-0 mt-spacing-3xs" />
       <div className="space-y-spacing-xs flex-1 min-w-0">
         <p className={KICKER}>
-          {isCreditsExhausted ? 'Créditos de IA esgotados' : 'Meditação em modo essencial'}
+          {isCreditsExhausted ? "Créditos de IA esgotados" : "Meditação em modo essencial"}
         </p>
         <p className="text-premium-sm leading-relaxed text-muted-foreground">
-          {message || 'O conteúdo editorial automático está temporariamente indisponível; mantivemos uma leitura orante local para não interromper a liturgia.'}
+          {message ||
+            "O conteúdo editorial automático está temporariamente indisponível; mantivemos uma leitura orante local para não interromper a liturgia."}
         </p>
         {sourceLabel && (
           <p className="text-premium-xs text-muted-foreground/80 italic">{sourceLabel}</p>
@@ -105,7 +104,9 @@ export const LiturgyMeditationFallbackNotice: React.FC<FallbackNoticeProps> = ({
           {onRetry && (
             <button
               type="button"
-              onClick={() => { void onRetry(); }}
+              onClick={() => {
+                void onRetry();
+              }}
               disabled={isRetrying}
               className="inline-flex items-center gap-spacing-2xs px-spacing-md py-spacing-2xs rounded-premium-full bg-primary text-white text-premium-xs font-black uppercase tracking-widest hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               aria-label="Tentar gerar novamente a meditação editorial"
@@ -115,7 +116,7 @@ export const LiturgyMeditationFallbackNotice: React.FC<FallbackNoticeProps> = ({
               ) : (
                 <Icons.RefreshCw className="w-spacing-sm h-spacing-sm" />
               )}
-              <span>{isRetrying ? 'Tentando…' : 'Tentar novamente'}</span>
+              <span>{isRetrying ? "Tentando…" : "Tentar novamente"}</span>
             </button>
           )}
           {isCreditsExhausted && (
@@ -159,9 +160,7 @@ export const LiturgyReadingKeyCard: React.FC<{ text: string }> = ({ text }) => (
       </div>
       <p className={KICKER}>Chave de Leitura</p>
     </div>
-    <p className="text-premium-md leading-relaxed text-foreground/90 font-serif">
-      {text}
-    </p>
+    <p className="text-premium-md leading-relaxed text-foreground/90 font-serif">{text}</p>
   </motion.div>
 );
 
@@ -191,9 +190,7 @@ export const LiturgyTraditionCard: React.FC<{
               key={`f-${i}`}
               className="border-l-2 border-secondary/60 pl-spacing-md py-spacing-2xs"
             >
-              <p className="font-serif italic text-foreground/90 leading-relaxed">
-                “{f.quote}”
-              </p>
+              <p className="font-serif italic text-foreground/90 leading-relaxed">“{f.quote}”</p>
               <cite className="not-italic text-premium-xs text-muted-foreground mt-spacing-2xs block">
                 — <strong>{f.author}</strong>, {f.work} ({f.reference})
               </cite>
@@ -212,9 +209,7 @@ export const LiturgyTraditionCard: React.FC<{
               key={`c-${i}`}
               className="border-l-2 border-primary/40 pl-spacing-md py-spacing-2xs"
             >
-              <p className="font-serif italic text-foreground/90 leading-relaxed">
-                “{c.quote}”
-              </p>
+              <p className="font-serif italic text-foreground/90 leading-relaxed">“{c.quote}”</p>
               <cite className="not-italic text-premium-xs text-muted-foreground mt-spacing-2xs block">
                 — CIC {c.paragraph}
               </cite>
@@ -233,9 +228,7 @@ export const LiturgyTraditionCard: React.FC<{
               key={`m-${i}`}
               className="border-l-2 border-muted-foreground/40 pl-spacing-md py-spacing-2xs"
             >
-              <p className="font-serif italic text-foreground/90 leading-relaxed">
-                “{m.quote}”
-              </p>
+              <p className="font-serif italic text-foreground/90 leading-relaxed">“{m.quote}”</p>
               <cite className="not-italic text-premium-xs text-muted-foreground mt-spacing-2xs block">
                 — <strong>{m.document}</strong>, {m.section} · {m.pope}
               </cite>
@@ -252,10 +245,10 @@ export const LiturgyLogosCard: React.FC<{
   logos: { observe: string; reflect: string; pray: string; live: string };
 }> = ({ logos }) => {
   const steps: Array<[string, string, keyof typeof Icons]> = [
-    ['Observe', logos.observe, 'Eye'],
-    ['Reflita', logos.reflect, 'BookOpen'],
-    ['Reze', logos.pray, 'Church'],
-    ['Viva', logos.live, 'Zap'],
+    ["Observe", logos.observe, "Eye"],
+    ["Reflita", logos.reflect, "BookOpen"],
+    ["Reze", logos.pray, "Church"],
+    ["Viva", logos.live, "Zap"],
   ];
   return (
     <motion.div
@@ -304,13 +297,13 @@ export const LiturgyFinalPrayerCard: React.FC<{ text: string }> = ({ text }) => 
 
 // ── 6. Na História da Igreja ─────────────────────────────────────
 export const LiturgyChurchHistoryCard: React.FC<{
-  history: NonNullable<LiturgyMeditationRow['church_history']>;
+  history: NonNullable<LiturgyMeditationRow["church_history"]>;
 }> = ({ history }) => {
   const items = [
-    { label: 'Santo', value: history.saint, icon: Icons.Star },
-    { label: 'Concílio', value: history.council, icon: Icons.Church },
-    { label: 'Papa', value: history.pope, icon: Icons.Crown },
-    { label: 'Documento', value: history.document, icon: Icons.BookOpen },
+    { label: "Santo", value: history.saint, icon: Icons.Star },
+    { label: "Concílio", value: history.council, icon: Icons.Church },
+    { label: "Papa", value: history.pope, icon: Icons.Crown },
+    { label: "Documento", value: history.document, icon: Icons.BookOpen },
   ].filter((i) => i.value);
   if (!items.length) return null;
   return (
@@ -336,9 +329,7 @@ export const LiturgyChurchHistoryCard: React.FC<{
                 <p className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">
                   {label}
                 </p>
-                <p className="text-premium-sm font-serif text-primary leading-snug">
-                  {value}
-                </p>
+                <p className="text-premium-sm font-serif text-primary leading-snug">{value}</p>
               </div>
             </div>
           );

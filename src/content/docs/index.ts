@@ -5,17 +5,17 @@
  * Guias ainda não traduzidos aparecem no idioma ativo marcados com
  * `fallbackFrom`, para que a UI possa avisar o leitor.
  */
-import type { Language } from '@/types';
-import { DEFAULT_LOCALE } from '@/lib/i18n/locales';
-import { getDocPopularity, popularityBoost } from '@/lib/docsPopularity';
-import type { DocGuide, DocsBundle } from './types';
-import { docsPt } from './pt';
-import { docsEn } from './en';
-import { docsEs } from './es';
-import { docsIt } from './it';
-import { docsLa } from './la';
+import type { Language } from "@/types";
+import { DEFAULT_LOCALE } from "@/lib/i18n/locales";
+import { getDocPopularity, popularityBoost } from "@/lib/docsPopularity";
+import type { DocGuide, DocsBundle } from "./types";
+import { docsPt } from "./pt";
+import { docsEn } from "./en";
+import { docsEs } from "./es";
+import { docsIt } from "./it";
+import { docsLa } from "./la";
 
-export * from './types';
+export * from "./types";
 
 const CATALOG: Partial<Record<Language, DocsBundle>> = {
   pt: docsPt,
@@ -66,8 +66,8 @@ export function getAllDocSlugs(): string[] {
 
 export function normalizeQuery(value: string): string {
   return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim();
 }
@@ -86,7 +86,7 @@ function extractSnippet(guide: DocGuide, term: string): string | undefined {
       if (idx === -1) continue;
       const start = Math.max(0, idx - 60);
       const end = Math.min(paragraph.length, idx + term.length + 120);
-      return `${start > 0 ? '…' : ''}${paragraph.slice(start, end).trim()}${end < paragraph.length ? '…' : ''}`;
+      return `${start > 0 ? "…" : ""}${paragraph.slice(start, end).trim()}${end < paragraph.length ? "…" : ""}`;
     }
   }
   return undefined;
@@ -120,9 +120,9 @@ export function searchDocsDetailed(lang: Language, query: string): DocSearchResu
   for (const guide of guides) {
     const title = normalizeQuery(guide.title);
     const summary = normalizeQuery(guide.summary);
-    const keywords = normalizeQuery(guide.keywords.join(' '));
+    const keywords = normalizeQuery(guide.keywords.join(" "));
     const body = normalizeQuery(
-      guide.sections.map((s) => `${s.heading} ${s.body.join(' ')}`).join(' '),
+      guide.sections.map((s) => `${s.heading} ${s.body.join(" ")}`).join(" "),
     );
 
     let score = 0;
@@ -156,7 +156,6 @@ export function searchDocsDetailed(lang: Language, query: string): DocSearchResu
 
   return results.sort((a, b) => b.score - a.score || a.guide.title.localeCompare(b.guide.title));
 }
-
 
 /** Compatibilidade: apenas os guias, na ordem de relevância. */
 export function searchDocs(lang: Language, query: string): DocGuide[] {

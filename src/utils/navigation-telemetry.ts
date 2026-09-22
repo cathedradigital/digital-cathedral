@@ -1,4 +1,4 @@
-type LogLevel = 'info' | 'warn' | 'error';
+type LogLevel = "info" | "warn" | "error";
 
 interface TelemetryEvent {
   type: string;
@@ -14,12 +14,12 @@ class NavigationTelemetry {
 
   private constructor() {
     // Escuta eventos customizados de navegação bloqueada
-    if (typeof window !== 'undefined') {
-      window.addEventListener('nav-blocked', (e: any) => {
-        this.log('Navegação Bloqueada', 'warn', e.detail);
+    if (typeof window !== "undefined") {
+      window.addEventListener("nav-blocked", (e: any) => {
+        this.log("Navegação Bloqueada", "warn", e.detail);
       });
-      window.addEventListener('swipe-detected', (e: any) => {
-        this.log('Gesto de Swipe Detectado', 'info', e.detail);
+      window.addEventListener("swipe-detected", (e: any) => {
+        this.log("Gesto de Swipe Detectado", "info", e.detail);
       });
     }
   }
@@ -31,11 +31,11 @@ class NavigationTelemetry {
     return NavigationTelemetry.instance;
   }
 
-  log(type: string, level: LogLevel = 'info', details?: Record<string, any>) {
+  log(type: string, level: LogLevel = "info", details?: Record<string, any>) {
     const event: TelemetryEvent = {
       type,
       timestamp: new Date().toISOString(),
-      route: typeof window !== 'undefined' ? window.location.pathname : 'unknown',
+      route: typeof window !== "undefined" ? window.location.pathname : "unknown",
       details,
     };
 
@@ -44,12 +44,12 @@ class NavigationTelemetry {
       this.logs.pop();
     }
 
-    const color = level === 'error' ? 'red' : level === 'warn' ? 'orange' : 'cyan';
+    const color = level === "error" ? "red" : level === "warn" ? "orange" : "cyan";
     console.log(
       `%c[Telemetry] ${type}%c at ${event.route}`,
       `color: ${color}; font-weight: bold;`,
-      'color: inherit;',
-      details || ''
+      "color: inherit;",
+      details || "",
     );
   }
 

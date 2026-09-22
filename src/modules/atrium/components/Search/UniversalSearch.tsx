@@ -1,13 +1,15 @@
-import React from 'react';
-import { Search } from 'lucide-react';
-import { useSearchSuggestions } from '../../hooks';
+import React from "react";
+import { Search } from "lucide-react";
+import { useSearchSuggestions } from "../../hooks";
 
 const UniversalSearch: React.FC = () => {
   const suggestions = useSearchSuggestions();
 
   return (
     <section data-atrium-block="P1" aria-labelledby="atrium-search">
-      <h2 id="atrium-search" className="sr-only">Pesquisa Universal</h2>
+      <h2 id="atrium-search" className="sr-only">
+        Pesquisa Universal
+      </h2>
       <div className="flex items-center gap-2 border border-border rounded-md px-3 py-3 bg-card">
         <Search className="w-4 h-4 text-muted-foreground shrink-0" />
         <input

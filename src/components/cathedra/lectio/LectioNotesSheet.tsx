@@ -1,9 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import { STEPS, type Step } from './constants';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import { STEPS, type Step } from "./constants";
+import { cn } from "@/lib/utils";
 
 interface LectioNotesSheetProps {
   passage: string;
@@ -40,7 +47,7 @@ const LectioNotesSheet: React.FC<LectioNotesSheetProps> = ({
   }, [open, notes]);
 
   const filledCount = useMemo(
-    () => STEPS.filter((s) => (draft[s.id] || '').trim().length > 0).length,
+    () => STEPS.filter((s) => (draft[s.id] || "").trim().length > 0).length,
     [draft],
   );
 
@@ -57,7 +64,7 @@ const LectioNotesSheet: React.FC<LectioNotesSheetProps> = ({
             type="button"
             variant="outline"
             size="sm"
-            className={cn('rounded-premium-full gap-spacing-2xs', triggerClassName)}
+            className={cn("rounded-premium-full gap-spacing-2xs", triggerClassName)}
             aria-label={`Abrir anotações (${filledCount} de ${STEPS.length})`}
           >
             <Icons.PenTool className="w-4 h-4" />
@@ -69,34 +76,44 @@ const LectioNotesSheet: React.FC<LectioNotesSheetProps> = ({
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-xl flex flex-col p-0">
         <SheetHeader className="px-spacing-lg pt-spacing-lg pb-spacing-md border-b border-border">
-          <SheetTitle className="font-serif text-premium-2xl text-foreground">Minhas Anotações</SheetTitle>
+          <SheetTitle className="font-serif text-premium-2xl text-foreground">
+            Minhas Anotações
+          </SheetTitle>
           <SheetDescription className="text-premium-xs text-muted-foreground">
-            {passage ? `Passagem: ${passage}` : 'Sem passagem selecionada'} · salvo automaticamente neste dispositivo.
+            {passage ? `Passagem: ${passage}` : "Sem passagem selecionada"} · salvo automaticamente
+            neste dispositivo.
           </SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-spacing-lg py-spacing-lg space-y-spacing-lg">
           {STEPS.map((step) => {
             const isCurrent = step.id === currentStep;
-            const value = draft[step.id] || '';
+            const value = draft[step.id] || "";
             return (
               <div
                 key={step.id}
                 className={cn(
-                  'rounded-[1.5rem] border p-spacing-md space-y-spacing-sm transition-colors',
-                  isCurrent ? 'border-primary/40 bg-primary/[0.04]' : 'border-border bg-card',
+                  "rounded-[1.5rem] border p-spacing-md space-y-spacing-sm transition-colors",
+                  isCurrent ? "border-primary/40 bg-primary/[0.04]" : "border-border bg-card",
                 )}
               >
                 <div className="flex items-center justify-between gap-spacing-sm">
                   <div className="flex items-center gap-spacing-sm min-w-0">
-                    <div className={cn('w-8 h-8 rounded-full flex items-center justify-center shrink-0', step.color)}>
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                        step.color,
+                      )}
+                    >
                       <step.icon className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-premium-xs font-black uppercase tracking-widest text-primary/70">
                         {step.latin}
                       </p>
-                      <p className="font-serif text-premium-sm text-foreground truncate">{step.title}</p>
+                      <p className="font-serif text-premium-sm text-foreground truncate">
+                        {step.title}
+                      </p>
                     </div>
                   </div>
                   {onGoToStep && (
@@ -111,7 +128,7 @@ const LectioNotesSheet: React.FC<LectioNotesSheetProps> = ({
                       }}
                       disabled={isCurrent}
                     >
-                      {isCurrent ? 'Atual' : 'Ir'}
+                      {isCurrent ? "Atual" : "Ir"}
                     </Button>
                   )}
                 </div>
@@ -133,7 +150,7 @@ const LectioNotesSheet: React.FC<LectioNotesSheetProps> = ({
                       variant="ghost"
                       size="sm"
                       className="h-auto py-0 text-premium-xs text-muted-foreground hover:text-destructive"
-                      onClick={() => commit({ ...draft, [step.id]: '' })}
+                      onClick={() => commit({ ...draft, [step.id]: "" })}
                     >
                       Limpar
                     </Button>

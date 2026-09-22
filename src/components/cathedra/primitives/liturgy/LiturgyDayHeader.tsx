@@ -1,14 +1,14 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import type { LiturgicalColorToken } from '@/core/liturgy/LiturgyProvider';
+import React from "react";
+import { motion } from "framer-motion";
+import type { LiturgicalColorToken } from "@/core/liturgy/LiturgyProvider";
 
 const COLOR_STYLE: Record<LiturgicalColorToken, { bg: string; ring: string; label: string }> = {
-  'liturgical-green':  { bg: 'bg-emerald-500',  ring: 'ring-emerald-200',  label: 'Verde' },
-  'liturgical-white':  { bg: 'bg-neutral-100',  ring: 'ring-neutral-300',  label: 'Branco' },
-  'liturgical-red':    { bg: 'bg-red-600',      ring: 'ring-red-200',      label: 'Vermelho' },
-  'liturgical-violet': { bg: 'bg-violet-600',   ring: 'ring-violet-200',   label: 'Roxo' },
-  'liturgical-rose':   { bg: 'bg-pink-400',     ring: 'ring-pink-200',     label: 'Rosa' },
-  'liturgical-black':  { bg: 'bg-neutral-900',  ring: 'ring-neutral-400',  label: 'Preto' },
+  "liturgical-green": { bg: "bg-emerald-500", ring: "ring-emerald-200", label: "Verde" },
+  "liturgical-white": { bg: "bg-neutral-100", ring: "ring-neutral-300", label: "Branco" },
+  "liturgical-red": { bg: "bg-red-600", ring: "ring-red-200", label: "Vermelho" },
+  "liturgical-violet": { bg: "bg-violet-600", ring: "ring-violet-200", label: "Roxo" },
+  "liturgical-rose": { bg: "bg-pink-400", ring: "ring-pink-200", label: "Rosa" },
+  "liturgical-black": { bg: "bg-neutral-900", ring: "ring-neutral-400", label: "Preto" },
 };
 
 export interface LiturgyDayHeaderProps {
@@ -29,7 +29,7 @@ export const LiturgyDayHeader: React.FC<LiturgyDayHeaderProps> = ({
   season,
   colorToken,
 }) => {
-  const style = COLOR_STYLE[colorToken] ?? COLOR_STYLE['liturgical-green'];
+  const style = COLOR_STYLE[colorToken] ?? COLOR_STYLE["liturgical-green"];
   return (
     <motion.header
       initial={{ opacity: 0, y: -8 }}

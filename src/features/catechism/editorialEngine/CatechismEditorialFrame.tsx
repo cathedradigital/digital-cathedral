@@ -11,12 +11,12 @@
  *  - nenhum primitivo do Design System é duplicado.
  */
 
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { resolveNexusHref } from '@/lib/nexusHref';
-import type { CatechismEditorial } from './catechismEditorial';
-import type { CatechismLocation } from './catechismStructure';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { resolveNexusHref } from "@/lib/nexusHref";
+import type { CatechismEditorial } from "./catechismEditorial";
+import type { CatechismLocation } from "./catechismStructure";
 
 interface FrameProps {
   location: CatechismLocation;
@@ -86,7 +86,10 @@ export const CatechismFurtherReading: React.FC<{ editorial: CatechismEditorial }
               to={r.href}
               className="flex min-h-[44px] items-center gap-spacing-xs rounded-premium px-spacing-xs -mx-spacing-xs text-premium-sm text-foreground/85 transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <Icons.ChevronRight className="w-spacing-sm h-spacing-sm shrink-0 text-secondary/60" aria-hidden="true" />
+              <Icons.ChevronRight
+                className="w-spacing-sm h-spacing-sm shrink-0 text-secondary/60"
+                aria-hidden="true"
+              />
               <span>
                 {r.label}
                 {r.note && <span className="text-muted-foreground italic"> — {r.note}</span>}

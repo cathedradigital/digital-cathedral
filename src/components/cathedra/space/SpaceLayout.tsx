@@ -14,10 +14,10 @@
  * semânticos do Design System — nada de cores hardcoded.
  */
 
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Compass, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Compass, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /* ── Container do espaço ────────────────────────────────────────────────── */
 
@@ -30,7 +30,7 @@ export const SpaceLayout: React.FC<SpaceLayoutProps> = ({ children, className })
   <section
     data-space-layout="true"
     className={cn(
-      'mx-auto w-full max-w-[1120px] px-5 pt-6 pb-24 md:px-16 md:pt-14 md:pb-16 animate-fade-in',
+      "mx-auto w-full max-w-[1120px] px-5 pt-6 pb-24 md:px-16 md:pt-14 md:pb-16 animate-fade-in",
       className,
     )}
   >
@@ -44,7 +44,7 @@ interface SpaceHeaderProps {
   kicker: string;
   title: string;
   description?: string;
-  align?: 'left' | 'center';
+  align?: "left" | "center";
   className?: string;
 }
 
@@ -52,17 +52,17 @@ export const SpaceHeader: React.FC<SpaceHeaderProps> = ({
   kicker,
   title,
   description,
-  align = 'left',
+  align = "left",
   className,
 }) => (
   <header
     className={cn(
-      'border-b border-secondary/15 pb-8',
-      align === 'center' && 'text-center',
+      "border-b border-secondary/15 pb-8",
+      align === "center" && "text-center",
       className,
     )}
   >
-    <div className={cn('max-w-2xl', align === 'center' && 'mx-auto')}>
+    <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
       <p className="mb-2 font-reader text-[12px] font-bold uppercase tracking-[0.32em] text-secondary">
         {kicker}
       </p>
@@ -83,7 +83,7 @@ export const SpaceHeader: React.FC<SpaceHeaderProps> = ({
 export const SpaceEntrance: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className,
-}) => <section className={cn('pt-8', className)}>{children}</section>;
+}) => <section className={cn("pt-8", className)}>{children}</section>;
 
 /* ── Cabeçalho de seção (mesma régua do Átrio) ──────────────────────────── */
 
@@ -125,10 +125,10 @@ interface SpaceDoorsProps {
 }
 
 const COLS: Record<number, string> = {
-  2: 'md:grid-cols-2',
-  3: 'md:grid-cols-3',
-  4: 'md:grid-cols-4',
-  5: 'md:grid-cols-5',
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+  4: "md:grid-cols-4",
+  5: "md:grid-cols-5",
 };
 
 export const SpaceDoors: React.FC<SpaceDoorsProps> = ({
@@ -138,9 +138,9 @@ export const SpaceDoors: React.FC<SpaceDoorsProps> = ({
   columns = 4,
   className,
 }) => (
-  <section className={cn('pt-16', className)}>
+  <section className={cn("pt-16", className)}>
     {title && <SpaceSectionTitle title={title} aside={aside} />}
-    <div className={cn('grid grid-cols-2 gap-4 md:gap-6', COLS[columns])}>
+    <div className={cn("grid grid-cols-2 gap-4 md:gap-6", COLS[columns])}>
       {doors.map((door, i) => (
         <Link
           key={door.key}
@@ -156,7 +156,7 @@ export const SpaceDoors: React.FC<SpaceDoorsProps> = ({
               <span className="h-6 w-6" />
             )}
             <span className="font-display text-[24px] italic text-secondary/70">
-              {String(i + 1).padStart(2, '0')}
+              {String(i + 1).padStart(2, "0")}
             </span>
           </div>
           {door.overline && (
@@ -190,11 +190,11 @@ interface SpaceFooterProps {
 
 export const SpaceFooter: React.FC<SpaceFooterProps> = ({
   note,
-  title = 'Para onde continuar',
+  title = "Para onde continuar",
   links,
   className,
 }) => (
-  <footer className={cn('mt-16 border-t border-secondary/20 pt-8', className)}>
+  <footer className={cn("mt-16 border-t border-secondary/20 pt-8", className)}>
     <h2 className="font-reader text-[12px] font-bold uppercase tracking-[0.2em] text-secondary">
       {title}
     </h2>

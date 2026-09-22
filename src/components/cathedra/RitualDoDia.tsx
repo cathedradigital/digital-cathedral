@@ -1,15 +1,15 @@
-import { Icons } from '@/constants';
-import React, { useMemo, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import React, { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { DAILY_RITUALS } from '@/data/dailyRitual';
-import { CathedraButton } from './CathedraButton';
-import AudioContentPlayer from './AudioContentPlayer';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
-import { jsPDF } from 'jspdf';
-import { cn } from '@/lib/utils';
+import { DAILY_RITUALS } from "@/data/dailyRitual";
+import { CathedraButton } from "./CathedraButton";
+import AudioContentPlayer from "./AudioContentPlayer";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { jsPDF } from "jspdf";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 
 const RitualDoDia: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const [progress, setProgress] = useState(0);
   const [isSilent, setIsSilent] = useState(false);
   const [reminderTime, setReminderTime] = useState("");
@@ -32,12 +32,12 @@ const RitualDoDia: React.FC = () => {
   const loadProgress = React.useCallback(async () => {
     if (user) {
       const { data, error } = await supabase
-        .from('ritual_progress')
-        .select('progress_percent')
-        .eq('user_id', user.id)
-        .eq('date', today)
+        .from("ritual_progress")
+        .select("progress_percent")
+        .eq("user_id", user.id)
+        .eq("date", today)
         .maybeSingle();
-      
+
       if (data) {
         setProgress(data.progress_percent);
       } else {
@@ -67,23 +67,23 @@ const RitualDoDia: React.FC = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel('ritual_progress_sync')
+      .channel("ritual_progress_sync")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'ritual_progress',
-          filter: `user_id=eq.${user.id}`
+          event: "*",
+          schema: "public",
+          table: "ritual_progress",
+          filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
           const newData = payload.new as any;
           if (newData && newData.date === today) {
             setProgress(newData.progress_percent);
-          } else if (payload.eventType === 'DELETE') {
+          } else if (payload.eventType === "DELETE") {
             setProgress(0);
           }
-        }
+        },
       )
       .subscribe();
 
@@ -95,18 +95,19 @@ const RitualDoDia: React.FC = () => {
   const handleProgress = async (val: number) => {
     const newVal = Math.max(progress, val);
     setProgress(newVal);
-    
+
     if (user) {
-      const { error } = await supabase
-        .from('ritual_progress')
-        .upsert({
+      const { error } = await supabase.from("ritual_progress").upsert(
+        {
           user_id: user.id,
           date: today,
           progress_percent: newVal,
-          completed: newVal === 100
-        }, { onConflict: 'user_id, date' });
-      
-      if (error) console.error('Error saving progress:', error);
+          completed: newVal === 100,
+        },
+        { onConflict: "user_id, date" },
+      );
+
+      if (error) console.error("Error saving progress:", error);
     } else {
       localStorage.setItem(`cathedra_daily_progress_${today}`, newVal.toString());
     }
@@ -121,12 +122,12 @@ const RitualDoDia: React.FC = () => {
     }
 
     const { error } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update({
         ritual_silent_mode: silent,
-        ritual_reminder_time: time
+        ritual_reminder_time: time,
       })
-      .eq('id', user.id);
+      .eq("id", user.id);
 
     if (!error) {
       setIsSilent(silent);
@@ -151,7 +152,16 @@ const RitualDoDia: React.FC = () => {
 
     doc.setFontSize(12);
     doc.setFont("times", "italic");
-    doc.text(new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), margin, y);
+    doc.text(
+      new Date().toLocaleDateString("pt-BR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      margin,
+      y,
+    );
     y += 20;
 
     // 1. Bible
@@ -162,7 +172,7 @@ const RitualDoDia: React.FC = () => {
     doc.setFontSize(14);
     const verseLines = doc.splitTextToSize(`"${ritual.verse.text}"`, 170);
     doc.text(verseLines, margin, y);
-    y += (verseLines.length * 7) + 5;
+    y += verseLines.length * 7 + 5;
     doc.setFontSize(10);
     doc.setFont("times", "bold");
     doc.text(`— ${ritual.verse.ref}`, margin, y);
@@ -176,7 +186,7 @@ const RitualDoDia: React.FC = () => {
     doc.setFontSize(13);
     const reflectionLines = doc.splitTextToSize(ritual.reflection, 170);
     doc.text(reflectionLines, margin, y);
-    y += (reflectionLines.length * 7) + 20;
+    y += reflectionLines.length * 7 + 20;
 
     // 3. Catechism
     doc.setFontSize(12);
@@ -187,7 +197,7 @@ const RitualDoDia: React.FC = () => {
     doc.setFontSize(12);
     const catechismLines = doc.splitTextToSize(ritual.catechism.text, 170);
     doc.text(catechismLines, margin, y);
-    y += (catechismLines.length * 6) + 5;
+    y += catechismLines.length * 6 + 5;
     doc.setFontSize(10);
     doc.text(`CIC §${ritual.catechism.number}`, margin, y);
     y += 20;
@@ -214,64 +224,79 @@ const RitualDoDia: React.FC = () => {
 
   const ritual = DAILY_RITUALS[dayOfYear % DAILY_RITUALS.length] || DAILY_RITUALS[0];
 
-  const audioText = ritual ? `Versículo: ${ritual.verse?.text || ''} (${ritual.verse?.ref || ''}). Reflexão: ${ritual.reflection || ''}. Catecismo: ${ritual.catechism?.text || ''}. Oração: ${ritual.prayer || ''}` : '';
+  const audioText = ritual
+    ? `Versículo: ${ritual.verse?.text || ""} (${ritual.verse?.ref || ""}). Reflexão: ${ritual.reflection || ""}. Catecismo: ${ritual.catechism?.text || ""}. Oração: ${ritual.prayer || ""}`
+    : "";
 
   return (
     <div
       id="ritual-do-dia"
       className={cn(
         "relative overflow-hidden transition-all duration-1000",
-        isSilent ? 'font-serif' : ''
+        isSilent ? "font-serif" : "",
       )}
     >
-      
       <div className="relative z-10 p-spacing-2xs md:padding-rhythm stack-rhythm-sm w-full pt-spacing-2xs md:pt-spacing-0">
         {/* Header Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-spacing-xs md:gap-spacing-2xl pb-spacing-xs md:pb-spacing-2xl">
           <div className="flex flex-col gap-spacing-xs md:gap-spacing-md">
             <span className="text-[7.5px] md:text-[9px] font-bold uppercase tracking-[0.4em] md:tracking-[0.5em] text-primary/30 leading-none">
-              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+              {new Date().toLocaleDateString("pt-BR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </span>
             <div className="flex items-center gap-spacing-lg md:gap-spacing-xl">
               {progress > 0 && (
                 <div className="flex items-center gap-spacing-md md:gap-spacing-md">
                   <div className="h-spacing-2xs w-spacing-4xl md:w-spacing-4xl bg-primary/[0.03] rounded-premium-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
                       className="h-full bg-primary/20"
                     />
                   </div>
-                  <span className="text-[7px] md:text-[8px] font-black text-primary/80 uppercase tracking-[0.5em]">{progress}%</span>
+                  <span className="text-[7px] md:text-[8px] font-black text-primary/80 uppercase tracking-[0.5em]">
+                    {progress}%
+                  </span>
                 </div>
               )}
             </div>
           </div>
-          
+
           <div className="flex items-center gap-spacing-md">
-            <CathedraButton 
-              variant="ghost" 
-              size="sm" 
-              className={cn("w-spacing-xl h-spacing-xl p-spacing-0 rounded-premium-full transition-colors", isSilent ? 'text-primary' : 'text-primary/60 hover:text-primary')}
+            <CathedraButton
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "w-spacing-xl h-spacing-xl p-spacing-0 rounded-premium-full transition-colors",
+                isSilent ? "text-primary" : "text-primary/60 hover:text-primary",
+              )}
               onClick={() => updateSettings(!isSilent, reminderTime)}
             >
-              {isSilent ? <Icons.VolumeX className="w-spacing-md h-spacing-md" strokeWidth={1.2} /> : <Icons.Sparkles className="w-spacing-md h-spacing-md" strokeWidth={1} />}
+              {isSilent ? (
+                <Icons.VolumeX className="w-spacing-md h-spacing-md" strokeWidth={1.2} />
+              ) : (
+                <Icons.Sparkles className="w-spacing-md h-spacing-md" strokeWidth={1} />
+              )}
             </CathedraButton>
 
-            <CathedraButton 
-              variant="ghost" 
-              size="sm" 
+            <CathedraButton
+              variant="ghost"
+              size="sm"
               className="w-spacing-xl h-spacing-xl p-spacing-0 rounded-premium-full text-primary/60 hover:text-primary transition-colors"
               onClick={exportPDF}
             >
               <Icons.Download className="w-spacing-md h-spacing-md" strokeWidth={1.2} />
             </CathedraButton>
-            
+
             <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
               <DialogTrigger asChild>
-                <CathedraButton 
-                  variant="ghost" 
-                  size="sm" 
+                <CathedraButton
+                  variant="ghost"
+                  size="sm"
                   className="w-spacing-xl h-spacing-xl p-spacing-0 rounded-premium-full text-primary/60 hover:text-primary transition-colors"
                 >
                   <Icons.Settings2 className="w-spacing-md h-spacing-md" strokeWidth={1.2} />
@@ -279,32 +304,40 @@ const RitualDoDia: React.FC = () => {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px] border-primary/5 bg-card/95 backdrop-blur-xl shadow-premium rounded-[2.5rem] dark:border-primary/20">
                 <DialogHeader>
-                  <DialogTitle className="font-display text-premium-3xl text-primary">Configurações</DialogTitle>
+                  <DialogTitle className="font-display text-premium-3xl text-primary">
+                    Configurações
+                  </DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-spacing-xl py-spacing-xl">
                   <div className="flex items-center justify-between">
                     <div className="space-y-spacing-2xs">
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Modo Silencioso</Label>
-                      <p className="text-premium-xs text-muted-foreground/40 font-serif italic">Foco absoluto na leitura.</p>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+                        Modo Silencioso
+                      </Label>
+                      <p className="text-premium-xs text-muted-foreground/40 font-serif italic">
+                        Foco absoluto na leitura.
+                      </p>
                     </div>
-                    <Switch 
-                      checked={isSilent} 
+                    <Switch
+                      checked={isSilent}
                       onCheckedChange={(val) => updateSettings(val, reminderTime)}
                     />
                   </div>
                   <div className="space-y-spacing-md">
                     <div className="flex items-center gap-spacing-sm">
                       <Icons.Clock className="w-spacing-md h-spacing-md text-primary/40" />
-                      <Label className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Lembrete</Label>
+                      <Label className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+                        Lembrete
+                      </Label>
                     </div>
                     <div className="flex gap-spacing-sm">
-                      <Input 
-                        type="time" 
+                      <Input
+                        type="time"
                         value={reminderTime}
                         onChange={(e) => setReminderTime(e.target.value)}
                         className="font-mono text-premium-sm border-primary/10 bg-background/50 rounded-premium-full h-spacing-2xl px-spacing-lg focus:ring-1 focus:ring-primary/20"
                       />
-                      <CathedraButton 
+                      <CathedraButton
                         onClick={() => updateSettings(isSilent, reminderTime)}
                         variant="primary"
                         size="sm"
@@ -322,34 +355,49 @@ const RitualDoDia: React.FC = () => {
 
         {/* Content Sections */}
         <div className="grid grid-cols-1 gap-spacing-md md:gap-spacing-2xl lg:gap-spacing-3xl">
-          
           {/* 1. Bible Reading */}
-          <section className="space-y-spacing-xs md:space-y-spacing-md w-full text-center" aria-labelledby="lectio-heading">
-            <h4 id="lectio-heading" className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] md:tracking-[0.6em] text-primary/15 md:text-primary/60">I. Lectio</h4>
-            <button 
+          <section
+            className="space-y-spacing-xs md:space-y-spacing-md w-full text-center"
+            aria-labelledby="lectio-heading"
+          >
+            <h4
+              id="lectio-heading"
+              className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] md:tracking-[0.6em] text-primary/15 md:text-primary/60"
+            >
+              I. Lectio
+            </h4>
+            <button
               className={cn(
                 "w-full text-center group transition-all duration-1000 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-8 rounded-premium outline-none",
-                progress >= 25 ? 'opacity-30 grayscale scale-[0.98]' : 'opacity-100'
+                progress >= 25 ? "opacity-30 grayscale scale-[0.98]" : "opacity-100",
               )}
               onClick={() => handleProgress(25)}
               aria-label={`Ler versículo: ${ritual?.verse?.text}. Clique para marcar como lido.`}
             >
               <blockquote className="text-[16px] md:text-premium-4xl lg:text-premium-5xl font-serif italic leading-[1.3] text-primary/80 dark:text-foreground/90 selection:bg-primary/5 tracking-tight px-spacing-md md:px-spacing-xs transition-all duration-2000 group-hover:text-primary">
-                "{ritual?.verse?.text || ''}"
+                "{ritual?.verse?.text || ""}"
               </blockquote>
               <p className="mt-spacing-md md:mt-spacing-lg text-[7.5px] md:text-[10px] font-bold text-primary/20 uppercase tracking-[0.4em]">
-                — {ritual?.verse?.ref || ''}
+                — {ritual?.verse?.ref || ""}
               </p>
             </button>
           </section>
 
           {/* 2. Reflection */}
-          <section className="space-y-spacing-xs md:space-y-spacing-lg w-full text-center" aria-labelledby="meditatio-heading">
-            <h4 id="meditatio-heading" className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60">II. Meditatio</h4>
-            <button 
+          <section
+            className="space-y-spacing-xs md:space-y-spacing-lg w-full text-center"
+            aria-labelledby="meditatio-heading"
+          >
+            <h4
+              id="meditatio-heading"
+              className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60"
+            >
+              II. Meditatio
+            </h4>
+            <button
               className={cn(
                 "w-full text-center group transition-all duration-1000 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-8 rounded-premium outline-none",
-                progress >= 50 ? 'opacity-30 scale-[0.98]' : 'opacity-100'
+                progress >= 50 ? "opacity-30 scale-[0.98]" : "opacity-100",
               )}
               onClick={() => handleProgress(50)}
               aria-label={`Reflexão do dia. Clique para marcar como lido.`}
@@ -362,38 +410,54 @@ const RitualDoDia: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-md md:gap-spacing-2xl lg:gap-spacing-3xl items-stretch">
             {/* 3. Catechism */}
-            <section className="space-y-spacing-sm md:space-y-spacing-xl text-center p-spacing-sm md:p-spacing-xl lg:p-spacing-3xl bg-transparent border-none rounded-[1.5rem] lg:rounded-[5rem] transition-all duration-1000 hover:bg-primary/[0.005]" aria-labelledby="traditio-heading">
-              <h4 id="traditio-heading" className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60">III. Traditio</h4>
-              <button 
+            <section
+              className="space-y-spacing-sm md:space-y-spacing-xl text-center p-spacing-sm md:p-spacing-xl lg:p-spacing-3xl bg-transparent border-none rounded-[1.5rem] lg:rounded-[5rem] transition-all duration-1000 hover:bg-primary/[0.005]"
+              aria-labelledby="traditio-heading"
+            >
+              <h4
+                id="traditio-heading"
+                className="text-[6.5px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60"
+              >
+                III. Traditio
+              </h4>
+              <button
                 className={cn(
                   "w-full text-center group transition-all duration-1000 h-full flex flex-col justify-center focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-8 rounded-premium outline-none",
-                  progress >= 75 ? 'opacity-30' : 'opacity-100'
+                  progress >= 75 ? "opacity-30" : "opacity-100",
                 )}
                 onClick={() => handleProgress(75)}
                 aria-label={`Trecho do Catecismo. Clique para marcar como lido.`}
               >
                 <p className="text-[12px] md:text-premium-xl lg:text-premium-2xl leading-relaxed text-foreground/70 font-serif tracking-tight selection:bg-primary/5 px-spacing-xs">
-                  {ritual?.catechism?.text || ''}
+                  {ritual?.catechism?.text || ""}
                 </p>
                 <p className="mt-spacing-xl md:mt-spacing-xl text-[8px] md:text-[9px] font-bold text-primary/40 uppercase tracking-[0.6em]">
-                  §{ritual?.catechism?.number || ''}
+                  §{ritual?.catechism?.number || ""}
                 </p>
               </button>
             </section>
 
             {/* 4. Prayer */}
-            <section className="space-y-spacing-sm md:space-y-spacing-xl text-center p-spacing-sm md:p-spacing-xl lg:p-spacing-3xl bg-transparent border-none rounded-[1.5rem] lg:rounded-[5rem] transition-all duration-1000 hover:bg-primary/[0.005]" aria-labelledby="oratio-heading">
-              <h4 id="oratio-heading" className="text-[6.5px] md:text-[9px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60">IV. Oratio</h4>
-              <button 
+            <section
+              className="space-y-spacing-sm md:space-y-spacing-xl text-center p-spacing-sm md:p-spacing-xl lg:p-spacing-3xl bg-transparent border-none rounded-[1.5rem] lg:rounded-[5rem] transition-all duration-1000 hover:bg-primary/[0.005]"
+              aria-labelledby="oratio-heading"
+            >
+              <h4
+                id="oratio-heading"
+                className="text-[6.5px] md:text-[9px] font-bold uppercase tracking-[0.4em] text-primary/10 md:text-primary/60"
+              >
+                IV. Oratio
+              </h4>
+              <button
                 className={cn(
                   "w-full text-center group transition-all duration-1000 px-spacing-xs md:px-spacing-md h-full flex flex-col justify-center focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-8 rounded-premium outline-none",
-                  progress >= 100 ? 'opacity-30' : 'opacity-100'
+                  progress >= 100 ? "opacity-30" : "opacity-100",
                 )}
                 onClick={() => handleProgress(100)}
                 aria-label={`Oração do dia. Clique para marcar como concluída.`}
               >
                 <p className="text-[16px] md:text-premium-3xl lg:text-premium-4xl leading-tight text-primary/80 font-serif italic selection:bg-primary/5">
-                  {ritual?.prayer || ''}
+                  {ritual?.prayer || ""}
                 </p>
               </button>
             </section>
@@ -408,19 +472,24 @@ const RitualDoDia: React.FC = () => {
             variant="ghost"
             className="text-primary/40 hover:text-primary transition-colors"
           />
-          
+
           <div className="flex gap-spacing-lg">
             {progress > 0 && (
-              <CathedraButton 
-                variant="ghost" 
+              <CathedraButton
+                variant="ghost"
                 size="sm"
                 className="text-[10px] font-bold uppercase tracking-[0.5em] text-muted-foreground/60 hover:text-primary transition-all"
                 onClick={() => {
                   setProgress(0);
                   if (user) {
-                    supabase.from('ritual_progress').delete().eq('user_id', user.id).eq('date', today).then(() => {
-                      toast.info("Ritual reiniciado.");
-                    });
+                    supabase
+                      .from("ritual_progress")
+                      .delete()
+                      .eq("user_id", user.id)
+                      .eq("date", today)
+                      .then(() => {
+                        toast.info("Ritual reiniciado.");
+                      });
                   } else {
                     localStorage.removeItem(`cathedra_daily_progress_${today}`);
                   }
@@ -430,17 +499,17 @@ const RitualDoDia: React.FC = () => {
               </CathedraButton>
             )}
             {progress < 100 && (
-              <CathedraButton 
+              <CathedraButton
                 variant="primary"
                 size="md"
                 className="px-spacing-2xl"
                 onClick={() => {
                   const sections = [25, 50, 75, 100];
-                  const nextProgress = sections.find(s => s > progress) || 100;
+                  const nextProgress = sections.find((s) => s > progress) || 100;
                   handleProgress(nextProgress);
                 }}
               >
-                {progress === 0 ? 'Iniciar' : 'Continuar'}
+                {progress === 0 ? "Iniciar" : "Continuar"}
                 <Icons.ArrowRight className="ml-spacing-sm w-spacing-md h-spacing-md" />
               </CathedraButton>
             )}

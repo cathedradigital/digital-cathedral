@@ -1,5 +1,5 @@
 import { ArrowLeft, Search, Menu } from "lucide-react";
-import { useNavigate, Link } from '@/lib/rr-compat';
+import { useNavigate, Link } from "@/lib/rr-compat";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -107,7 +107,6 @@ export function MobileTopBar({
           <Menu className="h-5 w-5" />
         </button>
       </div>
-
     </header>
   );
 }

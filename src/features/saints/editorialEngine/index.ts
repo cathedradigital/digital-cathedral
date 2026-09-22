@@ -10,12 +10,12 @@
  *
  * Blocos exportados individualmente para testes/reuso avulso.
  */
-export * from './types';
-export { buildSaintPage } from './buildSaintPage';
-export { SaintAutoPage } from './SaintAutoPage';
-export { SaintBioBlock } from './blocks/SaintBioBlock';
-export { SaintTimelineBlock } from './blocks/SaintTimelineBlock';
-export { SaintVirtuesBlock } from './blocks/SaintVirtuesBlock';
-export { SaintWritingsBlock } from './blocks/SaintWritingsBlock';
-export { SaintPrayersBlock } from './blocks/SaintPrayersBlock';
-export { SaintSourcesBlock } from './blocks/SaintSourcesBlock';
+export * from "./types";
+export { buildSaintPage } from "./buildSaintPage";
+export { SaintAutoPage } from "./SaintAutoPage";
+export { SaintBioBlock } from "./blocks/SaintBioBlock";
+export { SaintTimelineBlock } from "./blocks/SaintTimelineBlock";
+export { SaintVirtuesBlock } from "./blocks/SaintVirtuesBlock";
+export { SaintWritingsBlock } from "./blocks/SaintWritingsBlock";
+export { SaintPrayersBlock } from "./blocks/SaintPrayersBlock";
+export { SaintSourcesBlock } from "./blocks/SaintSourcesBlock";

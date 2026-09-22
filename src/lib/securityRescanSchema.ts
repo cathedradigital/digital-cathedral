@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const RescanFindingSchema = z.object({
   internal_id: z.string(),
@@ -45,7 +45,7 @@ export const RescanHistoryEntrySchema = z.object({
   trigger: z.string(),
   summary: RescanSummarySchema,
   gate: z.object({
-    status: z.enum(['ok', 'blocked', 'unknown']),
+    status: z.enum(["ok", "blocked", "unknown"]),
     blocked: z.boolean(),
     blocking: z.array(z.string()).default([]),
   }),

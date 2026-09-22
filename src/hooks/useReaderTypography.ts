@@ -3,24 +3,26 @@
  * Três presets (compact | normal | large) combinando fator de zoom + line-height.
  * Persistência: localStorage (funciona offline, cross-session).
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
-export type ReaderDensity = 'compact' | 'normal' | 'large';
+export type ReaderDensity = "compact" | "normal" | "large";
 
-const STORAGE_KEY = 'cathedra:reader-density';
+const STORAGE_KEY = "cathedra:reader-density";
 
 const PRESETS: Record<ReaderDensity, { zoom: number; lineHeight: number; label: string }> = {
-  compact: { zoom: 0.92, lineHeight: 1.45, label: 'Compacto' },
-  normal:  { zoom: 1.0,  lineHeight: 1.65, label: 'Normal'   },
-  large:   { zoom: 1.15, lineHeight: 1.85, label: 'Amplo'    },
+  compact: { zoom: 0.92, lineHeight: 1.45, label: "Compacto" },
+  normal: { zoom: 1.0, lineHeight: 1.65, label: "Normal" },
+  large: { zoom: 1.15, lineHeight: 1.85, label: "Amplo" },
 };
 
 function readStored(): ReaderDensity {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    if (v === 'compact' || v === 'normal' || v === 'large') return v;
-  } catch { /* silent */ }
-  return 'normal';
+    if (v === "compact" || v === "normal" || v === "large") return v;
+  } catch {
+    /* silent */
+  }
+  return "normal";
 }
 
 export function useReaderTypography() {
@@ -28,7 +30,11 @@ export function useReaderTypography() {
 
   const setDensity = useCallback((d: ReaderDensity) => {
     setDensityState(d);
-    try { localStorage.setItem(STORAGE_KEY, d); } catch { /* silent */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, d);
+    } catch {
+      /* silent */
+    }
   }, []);
 
   // Sincroniza entre abas.
@@ -36,8 +42,8 @@ export function useReaderTypography() {
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY && e.newValue) setDensityState(readStored());
     };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const preset = PRESETS[density];
@@ -46,7 +52,7 @@ export function useReaderTypography() {
     // gaps e imagens. Suportado em todos os navegadores modernos.
     zoom: preset.zoom,
     // Custom property consumida por seletores escopados dentro do wrapper.
-    ['--reader-line-height' as any]: String(preset.lineHeight),
+    ["--reader-line-height" as any]: String(preset.lineHeight),
   };
 
   return { density, setDensity, wrapperStyle, presets: PRESETS };

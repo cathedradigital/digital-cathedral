@@ -1,22 +1,22 @@
-import React, { useMemo, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { ExternalLink, BookOpen, ArrowUpDown, Info } from 'lucide-react';
-import type { SaintWritingRef } from '../types';
-import { SaintWritingProvenanceModal } from './SaintWritingProvenanceModal';
+import React, { useMemo, useState } from "react";
+import { Link } from "@/lib/rr-compat";
+import { ExternalLink, BookOpen, ArrowUpDown, Info } from "lucide-react";
+import type { SaintWritingRef } from "../types";
+import { SaintWritingProvenanceModal } from "./SaintWritingProvenanceModal";
 
 interface Props {
   writings: SaintWritingRef[];
 }
 
-type OriginFilter = 'all' | 'hosted' | 'linked';
-type SortMode = 'origin' | 'title-asc' | 'title-desc';
+type OriginFilter = "all" | "hosted" | "linked";
+type SortMode = "origin" | "title-asc" | "title-desc";
 
 const isHosted = (w: SaintWritingRef) => Boolean(w.slug);
 
 /** Escritos: hospedados (`slug`) preferem link interno; senão externo com atribuição. */
 export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
-  const [filter, setFilter] = useState<OriginFilter>('all');
-  const [sort, setSort] = useState<SortMode>('origin');
+  const [filter, setFilter] = useState<OriginFilter>("all");
+  const [sort, setSort] = useState<SortMode>("origin");
   const [modalWriting, setModalWriting] = useState<SaintWritingRef | null>(null);
 
   const counts = useMemo(() => {
@@ -26,15 +26,15 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
 
   const visible = useMemo(() => {
     const filtered = writings.filter((w) => {
-      if (filter === 'hosted') return isHosted(w);
-      if (filter === 'linked') return !isHosted(w);
+      if (filter === "hosted") return isHosted(w);
+      if (filter === "linked") return !isHosted(w);
       return true;
     });
     const sorted = [...filtered];
     const byTitle = (a: SaintWritingRef, b: SaintWritingRef) =>
-      a.title.localeCompare(b.title, 'pt-BR', { sensitivity: 'base' });
-    if (sort === 'title-asc') sorted.sort(byTitle);
-    else if (sort === 'title-desc') sorted.sort((a, b) => byTitle(b, a));
+      a.title.localeCompare(b.title, "pt-BR", { sensitivity: "base" });
+    if (sort === "title-asc") sorted.sort(byTitle);
+    else if (sort === "title-desc") sorted.sort((a, b) => byTitle(b, a));
     else
       sorted.sort((a, b) => {
         const oa = isHosted(a) ? 0 : 1;
@@ -45,9 +45,9 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
   }, [writings, filter, sort]);
 
   const filterOptions: { id: OriginFilter; label: string; count: number }[] = [
-    { id: 'all', label: 'Todos', count: counts.all },
-    { id: 'hosted', label: 'Hospedado no Cathedra', count: counts.hosted },
-    { id: 'linked', label: 'Conteúdo linkado', count: counts.linked },
+    { id: "all", label: "Todos", count: counts.all },
+    { id: "hosted", label: "Hospedado no Cathedra", count: counts.hosted },
+    { id: "linked", label: "Conteúdo linkado", count: counts.linked },
   ];
 
   return (
@@ -91,14 +91,14 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
               onClick={() => setFilter(opt.id)}
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-premium-xs transition-colors ${
                 active
-                  ? 'bg-primary/10 text-primary border-primary/40'
-                  : 'bg-transparent text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground'
+                  ? "bg-primary/10 text-primary border-primary/40"
+                  : "bg-transparent text-muted-foreground border-border/60 hover:border-primary/40 hover:text-foreground"
               }`}
             >
               <span>{opt.label}</span>
               <span
                 className={`inline-flex items-center justify-center min-w-[1.25rem] h-4 px-1 rounded-full text-[10px] font-semibold ${
-                  active ? 'bg-primary/20' : 'bg-muted'
+                  active ? "bg-primary/20" : "bg-muted"
                 }`}
               >
                 {opt.count}
@@ -117,10 +117,10 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
           {visible.map((w) => {
             const hosted = isHosted(w);
             const internal = hosted ? `/biblioteca/escritos/${w.slug}` : null;
-            const Wrapper: React.ElementType = internal ? Link : 'a';
+            const Wrapper: React.ElementType = internal ? Link : "a";
             const wrapperProps = internal
               ? { to: internal }
-              : { href: w.externalUrl ?? '#', target: '_blank', rel: 'noopener nofollow' };
+              : { href: w.externalUrl ?? "#", target: "_blank", rel: "noopener nofollow" };
             const hasProvenance = Boolean(
               w.attribution || w.license || w.isPublicDomain || w.canonicalUrl || w.externalUrl,
             );
@@ -128,10 +128,7 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
               <li key={w.id} className="rounded-xl border border-border/50 p-spacing-md">
                 <Wrapper {...wrapperProps} className="flex items-start gap-spacing-xs group">
                   {hosted ? (
-                    <BookOpen
-                      className="w-4 h-4 mt-1 text-primary flex-shrink-0"
-                      aria-hidden
-                    />
+                    <BookOpen className="w-4 h-4 mt-1 text-primary flex-shrink-0" aria-hidden />
                   ) : (
                     <ExternalLink
                       className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0"
@@ -156,12 +153,9 @@ export const SaintWritingsBlock: React.FC<Props> = ({ writings }) => {
                   >
                     <Info className="w-3 h-3" aria-hidden />
                     <span>
-                      {[
-                        w.attribution,
-                        w.isPublicDomain ? 'Domínio público' : w.license,
-                      ]
+                      {[w.attribution, w.isPublicDomain ? "Domínio público" : w.license]
                         .filter(Boolean)
-                        .join(' · ') || 'Ver fonte e licença'}
+                        .join(" · ") || "Ver fonte e licença"}
                     </span>
                   </button>
                 )}

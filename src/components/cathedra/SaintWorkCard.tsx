@@ -16,19 +16,15 @@
  * Compatível com obras legadas (campos opcionais renderizam vazio).
  */
 
-import React, { useState } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '../../constants';
-import type {
-  SaintWork,
-  SaintWorkAccessType,
-  SaintWorkReadingLevel,
-} from '@/types/saintWorks';
+import React, { useState } from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "../../constants";
+import type { SaintWork, SaintWorkAccessType, SaintWorkReadingLevel } from "@/types/saintWorks";
 import {
   SAINT_WORK_ACCESS_LABELS,
   SAINT_WORK_CATEGORY_LABELS,
   SAINT_WORK_READING_LEVEL_LABELS,
-} from '@/types/saintWorks';
+} from "@/types/saintWorks";
 
 interface Props {
   work: SaintWork;
@@ -36,23 +32,22 @@ interface Props {
 }
 
 const ACCESS_BADGE_STYLE: Record<SaintWorkAccessType, string> = {
-  internal: 'bg-primary/10 text-primary',
-  official_external: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
-  public_domain: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  licensed: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
+  internal: "bg-primary/10 text-primary",
+  official_external: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  public_domain: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  licensed: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
 };
 
 const LEVEL_BADGE_STYLE: Record<SaintWorkReadingLevel, string> = {
-  beginner: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  intermediate: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
-  advanced: 'bg-rose-500/10 text-rose-700 dark:text-rose-400',
+  beginner: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  intermediate: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  advanced: "bg-rose-500/10 text-rose-700 dark:text-rose-400",
 };
 
 const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
   const [showContext, setShowContext] = useState(false);
-  const isInternal = work.access_type === 'internal';
-  const accessLabel =
-    work.external_source_label ?? SAINT_WORK_ACCESS_LABELS[work.access_type];
+  const isInternal = work.access_type === "internal";
+  const accessLabel = work.external_source_label ?? SAINT_WORK_ACCESS_LABELS[work.access_type];
   const accessBadgeClass = ACCESS_BADGE_STYLE[work.access_type];
   const themes = (work.main_themes ?? []).filter((t) => t && t.trim().length > 0);
 
@@ -68,7 +63,7 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
         <div className="flex-1 min-w-0">
           <p className="text-[10px] uppercase tracking-widest text-primary/70 font-bold mb-1">
             {SAINT_WORK_CATEGORY_LABELS[work.category]}
-            {work.year_written ? ` · ${work.year_written}` : ''}
+            {work.year_written ? ` · ${work.year_written}` : ""}
           </p>
           <h4 className="text-premium-md font-serif font-bold text-foreground leading-tight">
             {work.title}
@@ -99,13 +94,12 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
         {isInternal && work.chapter_count > 0 && (
           <span className="inline-flex items-center gap-1 text-muted-foreground">
             <Icons.Book className="w-3 h-3" aria-hidden />
-            {work.chapter_count} {work.chapter_count === 1 ? 'capítulo' : 'capítulos'}
+            {work.chapter_count} {work.chapter_count === 1 ? "capítulo" : "capítulos"}
           </span>
         )}
         {isInternal && work.total_reading_minutes > 0 && (
           <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <Icons.Clock className="w-3 h-3" aria-hidden />
-            ~{work.total_reading_minutes} min
+            <Icons.Clock className="w-3 h-3" aria-hidden />~{work.total_reading_minutes} min
           </span>
         )}
       </div>
@@ -151,7 +145,7 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
             aria-expanded={showContext}
           >
             <Icons.ChevronDown
-              className={`w-3 h-3 transition-transform ${showContext ? 'rotate-180' : ''}`}
+              className={`w-3 h-3 transition-transform ${showContext ? "rotate-180" : ""}`}
               aria-hidden
             />
             Contexto histórico
@@ -185,11 +179,14 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
             </>
           ) : (
             <>
-              <Icons.ExternalLink className="w-3 h-3 text-amber-600 dark:text-amber-400" aria-hidden />
+              <Icons.ExternalLink
+                className="w-3 h-3 text-amber-600 dark:text-amber-400"
+                aria-hidden
+              />
               Conteúdo linkado
               {work.external_source_label && (
                 <span className="font-normal text-muted-foreground">
-                  {' · '}
+                  {" · "}
                   {work.external_source_label}
                 </span>
               )}
@@ -205,8 +202,8 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
         {(work.is_public_domain || work.license) && (
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground/70">Licença: </span>
-            {work.is_public_domain ? 'Domínio público' : work.license}
-            {work.is_public_domain && work.license ? ` · ${work.license}` : ''}
+            {work.is_public_domain ? "Domínio público" : work.license}
+            {work.is_public_domain && work.license ? ` · ${work.license}` : ""}
           </p>
         )}
         {work.source_url && (
@@ -231,7 +228,7 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
           aria-label={`Abrir ficha editorial de ${work.title} no Cathedra`}
         >
           <Icons.BookOpen className="w-4 h-4" aria-hidden />
-          {isInternal ? 'Ler no Cathedra' : 'Ficha editorial'}
+          {isInternal ? "Ler no Cathedra" : "Ficha editorial"}
         </Link>
         {!isInternal && work.external_url && (
           <a
@@ -246,7 +243,6 @@ const SaintWorkCard: React.FC<Props> = ({ work, authorRef }) => {
           </a>
         )}
       </footer>
-
     </article>
   );
 };

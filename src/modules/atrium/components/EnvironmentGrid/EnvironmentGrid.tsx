@@ -1,20 +1,27 @@
-import React from 'react';
-import { BookOpen, HandHeart, GraduationCap, SearchCode, Compass } from 'lucide-react';
-import { ENVIRONMENT_ROUTES } from '../../constants';
-import type { AtriumExit } from '../../types';
+import React from "react";
+import { BookOpen, HandHeart, GraduationCap, SearchCode, Compass } from "lucide-react";
+import { ENVIRONMENT_ROUTES } from "../../constants";
+import type { AtriumExit } from "../../types";
 
-const ITEMS: { key: AtriumExit; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'estudar',       label: 'Estudar',        Icon: BookOpen },
-  { key: 'rezar',         label: 'Rezar',          Icon: HandHeart },
-  { key: 'formar-se',     label: 'Formar-se',      Icon: GraduationCap },
-  { key: 'pesquisar',     label: 'Pesquisar',      Icon: SearchCode },
-  { key: 'minha-jornada', label: 'Minha Jornada',  Icon: Compass },
+const ITEMS: {
+  key: AtriumExit;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { key: "estudar", label: "Estudar", Icon: BookOpen },
+  { key: "rezar", label: "Rezar", Icon: HandHeart },
+  { key: "formar-se", label: "Formar-se", Icon: GraduationCap },
+  { key: "pesquisar", label: "Pesquisar", Icon: SearchCode },
+  { key: "minha-jornada", label: "Minha Jornada", Icon: Compass },
 ];
 
 const EnvironmentGrid: React.FC = () => {
   return (
     <section data-atrium-block="P4" aria-labelledby="atrium-envs">
-      <h2 id="atrium-envs" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-envs"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Ambientes
       </h2>
       <ul className="grid grid-cols-3 gap-2">

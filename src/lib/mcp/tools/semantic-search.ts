@@ -20,16 +20,35 @@ export default defineTool({
     const like = `%${query}%`;
 
     const [g, s, p, c, j] = await Promise.all([
-      sb.from("glossary").select("slug,term,short_definition,category").eq("status", "published")
-        .or(`term.ilike.${like},short_definition.ilike.${like},definition.ilike.${like}`).limit(n),
-      sb.from("saints").select("id,name,title,feast_day,bio")
-        .or(`name.ilike.${like},bio.ilike.${like},title.ilike.${like}`).limit(n),
-      sb.from("prayers").select("slug,title,subtitle,category").eq("is_published", true)
-        .or(`title.ilike.${like},subtitle.ilike.${like},kicker.ilike.${like}`).limit(n),
-      sb.from("collections").select("slug,title,subtitle,category").eq("status", "published")
-        .or(`title.ilike.${like},subtitle.ilike.${like},description.ilike.${like}`).limit(n),
-      sb.from("journeys").select("slug,title,subtitle,category").eq("status", "published")
-        .or(`title.ilike.${like},subtitle.ilike.${like},description.ilike.${like}`).limit(n),
+      sb
+        .from("glossary")
+        .select("slug,term,short_definition,category")
+        .eq("status", "published")
+        .or(`term.ilike.${like},short_definition.ilike.${like},definition.ilike.${like}`)
+        .limit(n),
+      sb
+        .from("saints")
+        .select("id,name,title,feast_day,bio")
+        .or(`name.ilike.${like},bio.ilike.${like},title.ilike.${like}`)
+        .limit(n),
+      sb
+        .from("prayers")
+        .select("slug,title,subtitle,category")
+        .eq("is_published", true)
+        .or(`title.ilike.${like},subtitle.ilike.${like},kicker.ilike.${like}`)
+        .limit(n),
+      sb
+        .from("collections")
+        .select("slug,title,subtitle,category")
+        .eq("status", "published")
+        .or(`title.ilike.${like},subtitle.ilike.${like},description.ilike.${like}`)
+        .limit(n),
+      sb
+        .from("journeys")
+        .select("slug,title,subtitle,category")
+        .eq("status", "published")
+        .or(`title.ilike.${like},subtitle.ilike.${like},description.ilike.${like}`)
+        .limit(n),
     ]);
 
     const payload = {
@@ -39,7 +58,12 @@ export default defineTool({
       prayers: p.data ?? [],
       collections: c.data ?? [],
       journeys: j.data ?? [],
-      total: (g.data?.length ?? 0) + (s.data?.length ?? 0) + (p.data?.length ?? 0) + (c.data?.length ?? 0) + (j.data?.length ?? 0),
+      total:
+        (g.data?.length ?? 0) +
+        (s.data?.length ?? 0) +
+        (p.data?.length ?? 0) +
+        (c.data?.length ?? 0) +
+        (j.data?.length ?? 0),
     };
     return {
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],

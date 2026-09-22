@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShortcutInputProps {
   label: string;
@@ -9,9 +9,14 @@ interface ShortcutInputProps {
   reservedKeys?: string[];
 }
 
-const RESERVED_KEYS = ['t', 'w', 'n', 'r', 's', 'f', 'l', 'b', 'h', 'd'];
+const RESERVED_KEYS = ["t", "w", "n", "r", "s", "f", "l", "b", "h", "d"];
 
-export const ShortcutInput: React.FC<ShortcutInputProps> = ({ label, value, onChange, reservedKeys = RESERVED_KEYS }) => {
+export const ShortcutInput: React.FC<ShortcutInputProps> = ({
+  label,
+  value,
+  onChange,
+  reservedKeys = RESERVED_KEYS,
+}) => {
   const [currentValue, setCurrentValue] = useState(value);
   const { toast } = useToast();
 
@@ -21,11 +26,11 @@ export const ShortcutInput: React.FC<ShortcutInputProps> = ({ label, value, onCh
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    
+
     // Only allow single characters/letters
     if (e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
       const newKey = e.key.toLowerCase();
-      
+
       if (reservedKeys.includes(newKey)) {
         toast({
           title: "Conflito de Atalho",

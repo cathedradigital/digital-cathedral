@@ -2,13 +2,13 @@
  * MysteryHero — Hero contemplativo fullscreen exibido antes de cada dezena.
  * Não interfere no progresso: aparecer/desaparecer é decisão de UI apenas.
  */
-import React, { useEffect, useRef, useState } from 'react';
-import { PlayCircle, BookOpen } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta, readMysteryImageSlug } from './mysteryMeta';
-import { resolveMysteryImage } from './mysteryImages';
+import React, { useEffect, useRef, useState } from "react";
+import { PlayCircle, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta, readMysteryImageSlug } from "./mysteryMeta";
+import { resolveMysteryImage } from "./mysteryImages";
 
 interface Props {
   mystery: DBMystery;
@@ -29,7 +29,7 @@ const MysteryHero: React.FC<Props> = ({ mystery, onStart, estimatedMinutes = 4 }
   // Prioriza o download apenas quando o hero entra em viewport.
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') {
+    if (!el || typeof IntersectionObserver === "undefined") {
       setIsVisible(true);
       return;
     }
@@ -43,7 +43,7 @@ const MysteryHero: React.FC<Props> = ({ mystery, onStart, estimatedMinutes = 4 }
           }
         }
       },
-      { rootMargin: '200px' },
+      { rootMargin: "200px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -55,7 +55,7 @@ const MysteryHero: React.FC<Props> = ({ mystery, onStart, estimatedMinutes = 4 }
     window.setTimeout(onStart, 220);
   };
 
-  const gradient = meta.hero_gradient ?? 'from-amber-50/30 via-white/10 to-transparent';
+  const gradient = meta.hero_gradient ?? "from-amber-50/30 via-white/10 to-transparent";
   const contemplativeTitle = meta.contemplative_title ?? mystery.title;
   const subtitle = mystery.subtitle;
   const passageRef = meta.primary_passage?.ref ?? mystery.gospel_ref;
@@ -67,8 +67,8 @@ const MysteryHero: React.FC<Props> = ({ mystery, onStart, estimatedMinutes = 4 }
       ref={sectionRef}
       aria-label={`Introdução contemplativa: ${mystery.title}`}
       className={cn(
-        'relative isolate flex min-h-[70vh] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-stitch-outline-variant/30 px-6 py-16 transition-opacity duration-200 md:min-h-[80vh] md:px-12',
-        fading ? 'opacity-0' : 'opacity-100',
+        "relative isolate flex min-h-[70vh] w-full flex-col items-center justify-center overflow-hidden rounded-3xl border border-stitch-outline-variant/30 px-6 py-16 transition-opacity duration-200 md:min-h-[80vh] md:px-12",
+        fading ? "opacity-0" : "opacity-100",
       )}
     >
       {hasImage && isVisible ? (
@@ -93,16 +93,13 @@ const MysteryHero: React.FC<Props> = ({ mystery, onStart, estimatedMinutes = 4 }
       ) : (
         <div
           aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b',
-            gradient,
-          )}
+          className={cn("pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b", gradient)}
         />
       )}
       <div
         className={cn(
-          'mx-auto w-full max-w-2xl text-center',
-          hasImage && '[&_h1]:text-white [&_p]:text-white/80',
+          "mx-auto w-full max-w-2xl text-center",
+          hasImage && "[&_h1]:text-white [&_p]:text-white/80",
         )}
       >
         <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.32em] text-stitch-secondary">

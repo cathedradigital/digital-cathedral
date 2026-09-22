@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Icons } from '../../constants';
-import { supabase } from '@/lib/db';
-import { lovable } from '@/integrations/lovable/index';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { AppRoute } from '@/types';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Icons } from "../../constants";
+import { supabase } from "@/lib/db";
+import { lovable } from "@/integrations/lovable/index";
+import { useNavigate, useSearchParams } from "@/lib/rr-compat";
+import { AppRoute } from "@/types";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 // Preserva ?next= (rota interna) através de login, signup e OAuth.
 // Usado sobretudo pela rota /.lovable/oauth/consent para retornar à autorização MCP.
 function safeNextPath(raw: string | null): string | null {
   if (!raw) return null;
-  if (!raw.startsWith('/') || raw.startsWith('//')) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
   return raw;
 }
 
@@ -27,8 +27,8 @@ interface AuthProps {
 const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const nextPath = safeNextPath(searchParams.get('next'));
-  const nextQuery = nextPath ? `?next=${encodeURIComponent(nextPath)}` : '';
+  const nextPath = safeNextPath(searchParams.get("next"));
+  const nextQuery = nextPath ? `?next=${encodeURIComponent(nextPath)}` : "";
   const handleSuccess = () => {
     if (nextPath) navigate(nextPath, { replace: true });
     else onSuccess();
@@ -38,50 +38,52 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
     else if (onSignupSuccess) onSignupSuccess();
     else onSuccess();
   };
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
-    if (mode === 'forgot') {
+    if (mode === "forgot") {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (resetError) {
         setError(resetError.message);
       } else {
-        setSuccess('Se este email estiver cadastrado, você receberá um link para redefinir sua senha.');
+        setSuccess(
+          "Se este email estiver cadastrado, você receberá um link para redefinir sua senha.",
+        );
       }
       setLoading(false);
       return;
     }
 
-    if (mode === 'signup') {
+    if (mode === "signup") {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: { name },
-          emailRedirectTo: `${window.location.origin}${nextPath ?? ''}`,
+          emailRedirectTo: `${window.location.origin}${nextPath ?? ""}`,
         },
       });
       if (signUpError) {
         setError(signUpError.message);
       } else {
-        setSuccess('Conta criada! Fazendo login...');
+        setSuccess("Conta criada! Fazendo login...");
         const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
         if (loginError) {
-          setSuccess('Conta criada com sucesso! Você já pode fazer login.');
-          setMode('login');
+          setSuccess("Conta criada com sucesso! Você já pode fazer login.");
+          setMode("login");
         } else {
           handleSignupSuccess();
         }
@@ -89,7 +91,11 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) {
-        setError(signInError.message === 'Invalid login credentials' ? 'Email ou senha incorretos.' : signInError.message);
+        setError(
+          signInError.message === "Invalid login credentials"
+            ? "Email ou senha incorretos."
+            : signInError.message,
+        );
       } else {
         handleSuccess();
       }
@@ -97,25 +103,25 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
     setLoading(false);
   };
 
-  const switchMode = (newMode: 'login' | 'signup' | 'forgot') => {
+  const switchMode = (newMode: "login" | "signup" | "forgot") => {
     setMode(newMode);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
-  const title = mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Criar Conta' : 'Redefinir Senha';
+  const title = mode === "login" ? "Entrar" : mode === "signup" ? "Criar Conta" : "Redefinir Senha";
   const subtitle =
-    mode === 'login'
-      ? 'Retorne ao silêncio. Prossiga na caminhada.'
-      : mode === 'signup'
-      ? 'Uma cátedra para a vida interior. Comece agora.'
-      : 'Informe seu email para receber o link de redefinição.';
+    mode === "login"
+      ? "Retorne ao silêncio. Prossiga na caminhada."
+      : mode === "signup"
+        ? "Uma cátedra para a vida interior. Comece agora."
+        : "Informe seu email para receber o link de redefinição.";
 
   // ─── estilos base compartilhados ──────────────────────────────────────────
   const inputStyle: React.CSSProperties = {
-    background: 'transparent',
-    borderBottom: '1px solid var(--noir-line-strong)',
-    color: 'var(--noir-text)',
+    background: "transparent",
+    borderBottom: "1px solid var(--noir-line-strong)",
+    color: "var(--noir-text)",
     fontFamily: "'Playfair Display', serif",
   };
 
@@ -123,7 +129,10 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
     <div className="cathedra-noir relative flex min-h-screen w-full items-center justify-center px-6 py-16 md:px-12">
       <Helmet>
         <title>{title} · Cathedra</title>
-        <meta name="description" content="Acesse a Cathedra para retomar sua caminhada de estudo, oração e formação." />
+        <meta
+          name="description"
+          content="Acesse a Cathedra para retomar sua caminhada de estudo, oração e formação."
+        />
       </Helmet>
 
       {/* Halo dourado sutil, igual ao da Home */}
@@ -132,7 +141,7 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 50% 40%, rgba(201,168,76,0.07) 0%, transparent 65%)',
+            "radial-gradient(ellipse 70% 55% at 50% 40%, rgba(201,168,76,0.07) 0%, transparent 65%)",
         }}
       />
 
@@ -140,11 +149,14 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
       <button
         onClick={() => navigate(AppRoute.HOME)}
         className="group absolute left-6 top-6 inline-flex items-center gap-2 text-[10px] tracking-[0.28em] transition-colors md:left-12 md:top-10"
-        style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold)')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--noir-text-faint)')}
+        style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold)")}
+        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--noir-text-faint)")}
       >
-        <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-0.5" aria-hidden />
+        <ArrowLeft
+          className="h-3 w-3 transition-transform group-hover:-translate-x-0.5"
+          aria-hidden
+        />
         VOLTAR
       </button>
 
@@ -153,7 +165,7 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
         <div data-rise className="mb-12 flex flex-col items-center text-center">
           <span
             className="mb-6 inline-block text-[10px] font-medium uppercase tracking-[0.32em]"
-            style={{ color: 'var(--gold)', fontFamily: 'Inter, sans-serif' }}
+            style={{ color: "var(--gold)", fontFamily: "Inter, sans-serif" }}
           >
             Sanctuarium Spiritus
           </span>
@@ -162,16 +174,16 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             style={{
               fontFamily: "'Playfair Display', serif",
               fontWeight: 500,
-              fontSize: 'clamp(2.5rem, 8vw, 3.75rem)',
-              color: 'var(--noir-text)',
-              letterSpacing: '0.02em',
+              fontSize: "clamp(2.5rem, 8vw, 3.75rem)",
+              color: "var(--noir-text)",
+              letterSpacing: "0.02em",
             }}
           >
             {title}
           </h1>
           <p
             className="max-w-sm text-base italic leading-relaxed"
-            style={{ fontFamily: "'Playfair Display', serif", color: 'var(--noir-text-muted)' }}
+            style={{ fontFamily: "'Playfair Display', serif", color: "var(--noir-text-muted)" }}
           >
             {subtitle}
           </p>
@@ -184,10 +196,10 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             role="alert"
             className="mb-6 w-full px-4 py-3 text-sm"
             style={{
-              borderLeft: '2px solid #b06060',
-              color: '#e8b0b0',
-              background: 'rgba(176,96,96,0.08)',
-              fontFamily: 'Inter, sans-serif',
+              borderLeft: "2px solid #b06060",
+              color: "#e8b0b0",
+              background: "rgba(176,96,96,0.08)",
+              fontFamily: "Inter, sans-serif",
             }}
           >
             {error}
@@ -199,10 +211,10 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             role="status"
             className="mb-6 w-full px-4 py-3 text-sm"
             style={{
-              borderLeft: '2px solid var(--gold)',
-              color: 'var(--gold-light)',
-              background: 'rgba(201,168,76,0.06)',
-              fontFamily: 'Inter, sans-serif',
+              borderLeft: "2px solid var(--gold)",
+              color: "var(--gold-light)",
+              background: "rgba(201,168,76,0.06)",
+              fontFamily: "Inter, sans-serif",
             }}
           >
             {success}
@@ -211,12 +223,12 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
 
         {/* Formulário */}
         <form data-rise="2" onSubmit={handleSubmit} className="flex w-full flex-col gap-8">
-          {mode === 'signup' && (
+          {mode === "signup" && (
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="auth-name"
                 className="text-[10px] uppercase tracking-[0.28em]"
-                style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
+                style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
               >
                 Nome
               </label>
@@ -237,7 +249,7 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             <label
               htmlFor="auth-email"
               className="text-[10px] uppercase tracking-[0.28em]"
-              style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
+              style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
             >
               Email
             </label>
@@ -254,12 +266,12 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             />
           </div>
 
-          {mode !== 'forgot' && (
+          {mode !== "forgot" && (
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="auth-password"
                 className="text-[10px] uppercase tracking-[0.28em]"
-                style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
+                style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
               >
                 Senha
               </label>
@@ -270,7 +282,7 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
                 placeholder="Mínimo 6 caracteres"
                 className="w-full py-2 text-lg placeholder:italic placeholder:opacity-40 focus:outline-none"
                 style={inputStyle}
@@ -283,57 +295,59 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
             disabled={loading}
             className="group mt-2 inline-flex w-full items-center justify-center gap-3 border px-8 py-4 text-xs uppercase tracking-[0.32em] transition-all disabled:opacity-40"
             style={{
-              borderColor: 'var(--gold)',
-              color: 'var(--gold)',
-              fontFamily: 'Inter, sans-serif',
-              background: 'transparent',
+              borderColor: "var(--gold)",
+              color: "var(--gold)",
+              fontFamily: "Inter, sans-serif",
+              background: "transparent",
             }}
             onMouseEnter={(e) => {
               if (!loading) {
-                e.currentTarget.style.background = 'var(--gold)';
-                e.currentTarget.style.color = '#0a0a0a';
+                e.currentTarget.style.background = "var(--gold)";
+                e.currentTarget.style.color = "#0a0a0a";
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = 'var(--gold)';
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "var(--gold)";
             }}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
-            {mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Criar Conta' : 'Enviar Link'}
+            {mode === "login" ? "Entrar" : mode === "signup" ? "Criar Conta" : "Enviar Link"}
           </button>
         </form>
 
         {/* Divisor "ou" */}
-        {mode !== 'forgot' && (
+        {mode !== "forgot" && (
           <div data-rise="3" className="my-10 flex w-full items-center gap-4">
-            <div className="h-px flex-1" style={{ background: 'var(--noir-line)' }} />
+            <div className="h-px flex-1" style={{ background: "var(--noir-line)" }} />
             <span
               className="text-[10px] uppercase tracking-[0.32em]"
-              style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
+              style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
             >
               ou
             </span>
-            <div className="h-px flex-1" style={{ background: 'var(--noir-line)' }} />
+            <div className="h-px flex-1" style={{ background: "var(--noir-line)" }} />
           </div>
         )}
 
         {/* OAuth */}
-        {mode !== 'forgot' && (
+        {mode !== "forgot" && (
           <div data-rise="3" className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
             <button
               type="button"
               disabled={loading}
               onClick={async () => {
                 setLoading(true);
-                setError('');
-                const result = await lovable.auth.signInWithOAuth('google', {
+                setError("");
+                const result = await lovable.auth.signInWithOAuth("google", {
                   redirect_uri: `${window.location.origin}${AppRoute.LOGIN}${nextQuery}`,
-                  extraParams: { prompt: 'select_account' },
+                  extraParams: { prompt: "select_account" },
                 });
                 if (result.error) {
-                  console.error('Google Auth Error:', result.error);
-                  setError('Não foi possível conectar com o Google. Verifique sua conexão e tente novamente.');
+                  console.error("Google Auth Error:", result.error);
+                  setError(
+                    "Não foi possível conectar com o Google. Verifique sua conexão e tente novamente.",
+                  );
                 } else if (!result.redirected) {
                   handleSuccess();
                 }
@@ -341,20 +355,20 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
               }}
               className="inline-flex items-center justify-center gap-3 border px-4 py-3 text-xs uppercase tracking-[0.28em] transition-colors disabled:opacity-40"
               style={{
-                borderColor: 'var(--noir-line-strong)',
-                color: 'var(--noir-text)',
-                fontFamily: 'Inter, sans-serif',
-                background: 'transparent',
+                borderColor: "var(--noir-line-strong)",
+                color: "var(--noir-text)",
+                fontFamily: "Inter, sans-serif",
+                background: "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.borderColor = 'var(--gold)';
-                  e.currentTarget.style.color = 'var(--gold-light)';
+                  e.currentTarget.style.borderColor = "var(--gold)";
+                  e.currentTarget.style.color = "var(--gold-light)";
                 }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--noir-line-strong)';
-                e.currentTarget.style.color = 'var(--noir-text)';
+                e.currentTarget.style.borderColor = "var(--noir-line-strong)";
+                e.currentTarget.style.color = "var(--noir-text)";
               }}
             >
               <Icons.Google className="h-4 w-4" />
@@ -366,13 +380,13 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
               disabled={loading}
               onClick={async () => {
                 setLoading(true);
-                setError('');
-                const result = await lovable.auth.signInWithOAuth('apple', {
+                setError("");
+                const result = await lovable.auth.signInWithOAuth("apple", {
                   redirect_uri: `${window.location.origin}${AppRoute.LOGIN}${nextQuery}`,
                 });
                 if (result.error) {
-                  console.error('Apple Auth Error:', result.error);
-                  setError('Não foi possível conectar com a Apple. Tente novamente em instantes.');
+                  console.error("Apple Auth Error:", result.error);
+                  setError("Não foi possível conectar com a Apple. Tente novamente em instantes.");
                 } else if (!result.redirected) {
                   handleSuccess();
                 }
@@ -380,20 +394,20 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
               }}
               className="inline-flex items-center justify-center gap-3 border px-4 py-3 text-xs uppercase tracking-[0.28em] transition-colors disabled:opacity-40"
               style={{
-                borderColor: 'var(--noir-line-strong)',
-                color: 'var(--noir-text)',
-                fontFamily: 'Inter, sans-serif',
-                background: 'transparent',
+                borderColor: "var(--noir-line-strong)",
+                color: "var(--noir-text)",
+                fontFamily: "Inter, sans-serif",
+                background: "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.borderColor = 'var(--gold)';
-                  e.currentTarget.style.color = 'var(--gold-light)';
+                  e.currentTarget.style.borderColor = "var(--gold)";
+                  e.currentTarget.style.color = "var(--gold-light)";
                 }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--noir-line-strong)';
-                e.currentTarget.style.color = 'var(--noir-text)';
+                e.currentTarget.style.borderColor = "var(--noir-line-strong)";
+                e.currentTarget.style.color = "var(--noir-text)";
               }}
             >
               <Icons.Apple className="h-4 w-4" />
@@ -404,38 +418,42 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSignupSuccess }) => {
 
         {/* Modo-switch links */}
         <div data-rise="4" className="mt-10 flex flex-col items-center gap-3 text-center">
-          {mode === 'login' && (
+          {mode === "login" && (
             <button
               type="button"
-              onClick={() => switchMode('forgot')}
+              onClick={() => switchMode("forgot")}
               className="text-xs tracking-widest transition-colors"
-              style={{ color: 'var(--noir-text-muted)', fontFamily: 'Inter, sans-serif' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold-light)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--noir-text-muted)')}
+              style={{ color: "var(--noir-text-muted)", fontFamily: "Inter, sans-serif" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold-light)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--noir-text-muted)")}
             >
               Esqueci minha senha
             </button>
           )}
           <button
             type="button"
-            onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
+            onClick={() => switchMode(mode === "login" ? "signup" : "login")}
             className="text-sm tracking-wide transition-colors"
-            style={{ color: 'var(--gold)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--gold-light)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gold)')}
+            style={{
+              color: "var(--gold)",
+              fontFamily: "'Playfair Display', serif",
+              fontStyle: "italic",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--gold-light)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--gold)")}
           >
-            {mode === 'login'
-              ? 'Ainda não tem conta? Crie a sua'
-              : mode === 'signup'
-              ? 'Já tem conta? Entrar'
-              : 'Voltar ao login'}
+            {mode === "login"
+              ? "Ainda não tem conta? Crie a sua"
+              : mode === "signup"
+                ? "Já tem conta? Entrar"
+                : "Voltar ao login"}
           </button>
         </div>
 
         {/* Rodapé leve */}
         <p
           className="mt-16 text-center text-[10px] uppercase tracking-[0.32em]"
-          style={{ color: 'var(--noir-text-faint)', fontFamily: 'Inter, sans-serif' }}
+          style={{ color: "var(--noir-text-faint)", fontFamily: "Inter, sans-serif" }}
         >
           Acesso essencial · 100% gratuito
         </p>

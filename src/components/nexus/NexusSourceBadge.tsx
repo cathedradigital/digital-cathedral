@@ -14,16 +14,12 @@
  * Nenhuma URL é construída aqui; a página apenas rende o descritor
  * devolvido pelo grafo.
  */
-import * as React from 'react';
-import type { ResolvedNode } from '@/core/knowledge/types';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import * as React from "react";
+import type { ResolvedNode } from "@/core/knowledge/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Props {
-  node: ResolvedNode['node'];
+  node: ResolvedNode["node"];
   /** Rótulo semântico opcional da seção (ex.: "Escritura", "Catecismo"). */
   sectionLabel?: string;
 }
@@ -31,11 +27,11 @@ interface Props {
 export function NexusSourceBadge({ node, sectionLabel }: Props) {
   const description =
     `Fonte automática: KnowledgeGraph → ${node.id}` +
-    (sectionLabel ? ` (seção ${sectionLabel})` : '');
+    (sectionLabel ? ` (seção ${sectionLabel})` : "");
 
   const ariaLabel =
     `Fonte automática KnowledgeGraph, tipo ${node.kind}, id ${node.id}` +
-    (sectionLabel ? `, seção ${sectionLabel}` : '');
+    (sectionLabel ? `, seção ${sectionLabel}` : "");
 
   return (
     <Tooltip>

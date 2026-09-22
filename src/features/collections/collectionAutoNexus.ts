@@ -1,5 +1,5 @@
-import type { CollectionItem, CollectionItemType } from './types';
-import { collectionKindToNexusKind, resolveNexusHref } from '@/lib/nexusHref';
+import type { CollectionItem, CollectionItemType } from "./types";
+import { collectionKindToNexusKind, resolveNexusHref } from "@/lib/nexusHref";
 
 export interface CollectionNexusRef {
   kind: CollectionItemType;

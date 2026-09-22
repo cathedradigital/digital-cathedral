@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { Loader2, CheckCircle2, XCircle, Copy, Check, History, AlertTriangle } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Loader2, CheckCircle2, XCircle, Copy, Check, History, AlertTriangle } from "lucide-react";
 
 interface ValidateResponse {
   input: string;
@@ -14,35 +14,35 @@ interface ValidateResponse {
   canonical_abbr: string | null;
   book_name: string | null;
   bollsId: number | null;
-  testament: 'OT' | 'NT' | null;
+  testament: "OT" | "NT" | null;
   deuterocanonical: boolean | null;
   resolved: boolean;
   reason?: string;
 }
 
-const HISTORY_KEY = 'bibleAbbrValidateHistory:v1';
+const HISTORY_KEY = "bibleAbbrValidateHistory:v1";
 const HISTORY_LIMIT = 10;
 const MAX_LENGTH = 64;
 const REQUEST_TIMEOUT_MS = 8000;
 const ONLY_PUNCT_RE = /^[^\p{L}\p{N}]+$/u;
 
-type LocalError = { kind: 'empty' | 'too_long' | 'only_punct'; message: string };
+type LocalError = { kind: "empty" | "too_long" | "only_punct"; message: string };
 
 function validateLocal(raw: string): LocalError | null {
   const trimmed = raw.trim();
   if (trimmed.length === 0) {
-    return { kind: 'empty', message: 'Digite uma abreviação para validar.' };
+    return { kind: "empty", message: "Digite uma abreviação para validar." };
   }
   if (trimmed.length > MAX_LENGTH) {
     return {
-      kind: 'too_long',
+      kind: "too_long",
       message: `Abreviação excede ${MAX_LENGTH} caracteres (${trimmed.length}).`,
     };
   }
   if (ONLY_PUNCT_RE.test(trimmed)) {
     return {
-      kind: 'only_punct',
-      message: 'Entrada contém apenas pontuação/espaços — informe letras e/ou dígitos.',
+      kind: "only_punct",
+      message: "Entrada contém apenas pontuação/espaços — informe letras e/ou dígitos.",
     };
   }
   return null;
@@ -53,7 +53,9 @@ function loadHistory(): string[] {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((x) => typeof x === 'string').slice(0, HISTORY_LIMIT) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((x) => typeof x === "string").slice(0, HISTORY_LIMIT)
+      : [];
   } catch {
     return [];
   }
@@ -61,7 +63,7 @@ function loadHistory(): string[] {
 
 export async function copyToClipboard(value: string): Promise<boolean> {
   try {
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(value);
       return true;
     }
@@ -69,17 +71,17 @@ export async function copyToClipboard(value: string): Promise<boolean> {
     /* fall through to legacy path */
   }
   try {
-    if (typeof document === 'undefined') return false;
-    const ta = document.createElement('textarea');
+    if (typeof document === "undefined") return false;
+    const ta = document.createElement("textarea");
     ta.value = value;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '-1000px';
-    ta.style.opacity = '0';
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "-1000px";
+    ta.style.opacity = "0";
     document.body.appendChild(ta);
     ta.focus();
     ta.select();
-    const ok = document.execCommand?.('copy') ?? false;
+    const ok = document.execCommand?.("copy") ?? false;
     document.body.removeChild(ta);
     return ok;
   } catch {
@@ -91,12 +93,12 @@ function CopyButton({ value, label }: { value: string | number | null; label: st
   const [copied, setCopied] = useState(false);
   const [copying, setCopying] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [announcement, setAnnouncement] = useState('');
+  const [announcement, setAnnouncement] = useState("");
   const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const disabled = value === null || value === undefined || value === '';
+  const disabled = value === null || value === undefined || value === "";
   // Stable per-label toast id prevents duplicate persistent toasts on rapid clicks.
   const toastId = `bible-abbr-copy:${label}`;
-  const valueStr = value === null || value === undefined ? '' : String(value);
+  const valueStr = value === null || value === undefined ? "" : String(value);
   const ariaLabel = valueStr ? `Copiar ${label} (${valueStr})` : `Copiar ${label}`;
 
   // Return focus to this copy button when the persistent toast is dismissed.
@@ -114,10 +116,10 @@ function CopyButton({ value, label }: { value: string | number | null; label: st
         ref={buttonRef}
         type="button"
         size="sm"
-        variant={failed ? 'destructive' : 'ghost'}
+        variant={failed ? "destructive" : "ghost"}
         disabled={disabled || copying}
         aria-busy={copying || undefined}
-        data-copy-state={copying ? 'copying' : copied ? 'copied' : failed ? 'error' : 'idle'}
+        data-copy-state={copying ? "copying" : copied ? "copied" : failed ? "error" : "idle"}
         onClick={async () => {
           if (disabled || copying) return;
           setCopying(true);
@@ -142,7 +144,7 @@ function CopyButton({ value, label }: { value: string | number | null; label: st
             } else {
               setFailed(true);
               toast.dismiss(toastId);
-              toast.error('Não foi possível copiar', {
+              toast.error("Não foi possível copiar", {
                 id: toastId,
                 description: `Falha ao copiar ${label}. Verifique as permissões da área de transferência.`,
                 duration: Infinity,
@@ -172,17 +174,18 @@ function CopyButton({ value, label }: { value: string | number | null; label: st
         )}
         <span
           className={
-            'text-xs ' +
-            (failed
-              ? 'text-destructive-foreground'
-              : copied
-                ? 'text-primary'
-                : 'text-foreground')
+            "text-xs " +
+            (failed ? "text-destructive-foreground" : copied ? "text-primary" : "text-foreground")
           }
         >
-          {copying ? 'Copiando…' : failed ? 'Não foi possível copiar' : copied ? 'Copiado' : 'Copiar'}
+          {copying
+            ? "Copiando…"
+            : failed
+              ? "Não foi possível copiar"
+              : copied
+                ? "Copiado"
+                : "Copiar"}
         </span>
-
       </Button>
       <span
         role="status"
@@ -197,10 +200,8 @@ function CopyButton({ value, label }: { value: string | number | null; label: st
   );
 }
 
-
-
 export default function BibleAbbrValidatePage() {
-  const [input, setInput] = useState('2 Cr');
+  const [input, setInput] = useState("2 Cr");
   const [data, setData] = useState<ValidateResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [remoteError, setRemoteError] = useState<string | null>(null);
@@ -237,13 +238,14 @@ export default function BibleAbbrValidatePage() {
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       try {
         const { data: res, error: invokeErr } = await supabase.functions.invoke(
-          'bible-abbr-validate',
+          "bible-abbr-validate",
           { body: { abbrev: trimmed } },
         );
         clearTimeout(timeoutId);
         if (reqId !== requestIdRef.current) return;
         if (invokeErr) {
-          const ctx = (invokeErr as unknown as { context?: { json?: () => Promise<unknown> } }).context;
+          const ctx = (invokeErr as unknown as { context?: { json?: () => Promise<unknown> } })
+            .context;
           if (ctx?.json) {
             try {
               const body = (await ctx.json()) as ValidateResponse;
@@ -255,7 +257,7 @@ export default function BibleAbbrValidatePage() {
               /* fall through */
             }
           }
-          setRemoteError(invokeErr.message ?? 'Erro ao chamar a função');
+          setRemoteError(invokeErr.message ?? "Erro ao chamar a função");
           setData(null);
           return;
         }
@@ -264,13 +266,13 @@ export default function BibleAbbrValidatePage() {
       } catch (e) {
         clearTimeout(timeoutId);
         if (reqId !== requestIdRef.current) return;
-        const aborted = e instanceof Error && (e.name === 'AbortError' || /abort/i.test(e.message));
+        const aborted = e instanceof Error && (e.name === "AbortError" || /abort/i.test(e.message));
         setRemoteError(
           aborted
             ? `Tempo esgotado (>${REQUEST_TIMEOUT_MS / 1000}s) ao validar. Verifique sua conexão e tente novamente.`
             : e instanceof Error
               ? e.message
-              : 'Erro de rede desconhecido.',
+              : "Erro de rede desconhecido.",
         );
         setData(null);
       } finally {
@@ -296,10 +298,10 @@ export default function BibleAbbrValidatePage() {
           Validador de Abreviações Bíblicas
         </h1>
         <p className="text-sm text-muted-foreground">
-          Digite uma abreviação (ex.: <code className="px-1 rounded bg-muted">2 Cr</code>,{' '}
-          <code className="px-1 rounded bg-muted">1 tm</code>,{' '}
-          <code className="px-1 rounded bg-muted">Mt</code>) para validar a normalização
-          em tempo real via <code className="px-1 rounded bg-muted">bible-abbr-validate</code>.
+          Digite uma abreviação (ex.: <code className="px-1 rounded bg-muted">2 Cr</code>,{" "}
+          <code className="px-1 rounded bg-muted">1 tm</code>,{" "}
+          <code className="px-1 rounded bg-muted">Mt</code>) para validar a normalização em tempo
+          real via <code className="px-1 rounded bg-muted">bible-abbr-validate</code>.
         </p>
       </header>
 
@@ -308,7 +310,9 @@ export default function BibleAbbrValidatePage() {
           <CardTitle className="text-base">Entrada</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Label htmlFor="abbr-input" className="sr-only">Abreviação</Label>
+          <Label htmlFor="abbr-input" className="sr-only">
+            Abreviação
+          </Label>
           <div className="relative">
             <Input
               id="abbr-input"
@@ -320,7 +324,7 @@ export default function BibleAbbrValidatePage() {
               spellCheck={false}
               maxLength={MAX_LENGTH + 16}
               aria-invalid={localError ? true : undefined}
-              aria-describedby={localError ? 'abbr-local-error' : undefined}
+              aria-describedby={localError ? "abbr-local-error" : undefined}
               className="pr-9"
             />
             {loading && (
@@ -352,7 +356,12 @@ export default function BibleAbbrValidatePage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Resultado</CardTitle>
-          {loading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-label="Carregando" />}
+          {loading && (
+            <Loader2
+              className="h-4 w-4 animate-spin text-muted-foreground"
+              aria-label="Carregando"
+            />
+          )}
           {!loading && !localError && data?.resolved && (
             <Badge variant="default" className="gap-1">
               <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
@@ -389,16 +398,18 @@ export default function BibleAbbrValidatePage() {
 
               <dt className="text-muted-foreground">canonical_abbr</dt>
               <dd className="flex items-center gap-2 text-foreground">
-                <span className="font-mono text-foreground">{data.canonical_abbr ?? '—'}</span>
-                {data.canonical_abbr && <CopyButton value={data.canonical_abbr} label="canonical_abbr" />}
+                <span className="font-mono text-foreground">{data.canonical_abbr ?? "—"}</span>
+                {data.canonical_abbr && (
+                  <CopyButton value={data.canonical_abbr} label="canonical_abbr" />
+                )}
               </dd>
 
               <dt className="text-muted-foreground">book_name</dt>
-              <dd className="text-foreground">{data.book_name ?? '—'}</dd>
+              <dd className="text-foreground">{data.book_name ?? "—"}</dd>
 
               <dt className="text-muted-foreground">bollsId</dt>
               <dd className="flex items-center gap-2 text-foreground">
-                <span className="font-mono text-foreground">{data.bollsId ?? '—'}</span>
+                <span className="font-mono text-foreground">{data.bollsId ?? "—"}</span>
                 {data.bollsId !== null && <CopyButton value={data.bollsId} label="bollsId" />}
               </dd>
 
@@ -406,17 +417,19 @@ export default function BibleAbbrValidatePage() {
               <dd className="text-foreground">
                 {data.testament ? (
                   <Badge variant="secondary">
-                    {data.testament === 'OT' ? 'Antigo Testamento' : 'Novo Testamento'}
+                    {data.testament === "OT" ? "Antigo Testamento" : "Novo Testamento"}
                   </Badge>
                 ) : (
-                  '—'
+                  "—"
                 )}
               </dd>
 
               {data.deuterocanonical && (
                 <>
                   <dt className="text-muted-foreground">Deuterocanônico</dt>
-                  <dd className="text-foreground"><Badge variant="outline">sim</Badge></dd>
+                  <dd className="text-foreground">
+                    <Badge variant="outline">sim</Badge>
+                  </dd>
                 </>
               )}
 
@@ -427,7 +440,6 @@ export default function BibleAbbrValidatePage() {
                 </>
               )}
             </dl>
-
           )}
         </CardContent>
       </Card>
@@ -439,7 +451,13 @@ export default function BibleAbbrValidatePage() {
             Histórico
           </CardTitle>
           {history.length > 0 && (
-            <Button type="button" size="sm" variant="ghost" onClick={clearHistory} className="h-7 px-2 text-xs">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={clearHistory}
+              className="h-7 px-2 text-xs"
+            >
               Limpar
             </Button>
           )}
@@ -447,7 +465,8 @@ export default function BibleAbbrValidatePage() {
         <CardContent>
           {history.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nenhuma consulta ainda. Validações bem-sucedidas aparecem aqui (últimas {HISTORY_LIMIT}).
+              Nenhuma consulta ainda. Validações bem-sucedidas aparecem aqui (últimas{" "}
+              {HISTORY_LIMIT}).
             </p>
           ) : (
             <ul className="flex flex-wrap gap-2">

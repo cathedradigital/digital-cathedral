@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
 
 export type BibleGateStatus = {
   blocked: boolean;
@@ -16,22 +16,22 @@ export type BibleGateStatus = {
  */
 export function useBibleReadGate() {
   const query = useQuery({
-    queryKey: ['bible-read-gate'],
+    queryKey: ["bible-read-gate"],
     // Reduz stale para o banner atualizar após revalidações/jobs sem reload.
     staleTime: 15_000,
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
     queryFn: async (): Promise<BibleGateStatus> => {
-      const { data, error } = await supabase.rpc('bible_read_gate_status');
+      const { data, error } = await supabase.rpc("bible_read_gate_status");
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
       return {
         blocked: !!row?.blocked,
-        status: row?.status ?? 'unknown',
+        status: row?.status ?? "unknown",
         last_run_at: row?.last_run_at ?? null,
         run_id: row?.run_id ?? null,
         blocking_findings: row?.blocking_findings ?? 0,
-        reason: row?.reason ?? '',
+        reason: row?.reason ?? "",
       };
     },
   });

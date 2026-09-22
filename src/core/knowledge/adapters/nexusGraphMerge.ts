@@ -10,16 +10,16 @@
  *  - Item que não resolve em rota interna é DESCARTADO (nunca card vazio).
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import type { ResolvedNode } from '../types';
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import type { ResolvedNode } from "../types";
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 import {
   BUCKET_EYEBROW,
   intentForBucket,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import type { ContinuationSuggestion } from '../continuation';
+} from "./ReaderAutoNexus";
+import type { ContinuationSuggestion } from "../continuation";
 
 /** Registro curado, agnóstico de origem (Supabase é detalhe do service). */
 export interface CuratedNexusEdge {
@@ -36,19 +36,19 @@ export interface CuratedNexusEdge {
 
 /** NexusKind (banco) → bucket do Reader. */
 export const NEXUS_KIND_TO_BUCKET: Record<string, ReaderNexusBucket> = {
-  bible_verse: 'bible',
-  bible: 'bible',
-  catechism_paragraph: 'catechism',
-  catechism: 'catechism',
-  magisterium_doc: 'magisterium',
-  magisterium: 'magisterium',
-  patristic: 'father',
-  father: 'father',
-  saint: 'saint',
-  glossary: 'glossary',
-  prayer: 'prayer',
-  journey: 'journey',
-  liturgy: 'liturgy',
+  bible_verse: "bible",
+  bible: "bible",
+  catechism_paragraph: "catechism",
+  catechism: "catechism",
+  magisterium_doc: "magisterium",
+  magisterium: "magisterium",
+  patristic: "father",
+  father: "father",
+  saint: "saint",
+  glossary: "glossary",
+  prayer: "prayer",
+  journey: "journey",
+  liturgy: "liturgy",
 };
 
 function rebuildSuggestions(

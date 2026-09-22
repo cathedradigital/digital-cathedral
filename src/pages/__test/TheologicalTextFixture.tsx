@@ -1,6 +1,6 @@
-import React from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import TheologicalText from '@/components/cathedra/TheologicalText';
+import React from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import TheologicalText from "@/components/cathedra/TheologicalText";
 
 /**
  * Página fixture restrita a ambientes não-produção para validação E2E
@@ -8,7 +8,7 @@ import TheologicalText from '@/components/cathedra/TheologicalText';
  */
 const TheologicalTextFixture: React.FC = () => {
   const [params] = useSearchParams();
-  const text = params.get('text') ?? '';
+  const text = params.get("text") ?? "";
 
   if (import.meta.env.PROD) {
     return <div>Not available</div>;

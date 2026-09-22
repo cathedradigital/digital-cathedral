@@ -1,6 +1,5 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import { motion } from "framer-motion";
-
 
 const HeroScrollIndicator = () => (
   <motion.div
@@ -10,14 +9,14 @@ const HeroScrollIndicator = () => (
     className="absolute bottom-spacing-2xl left-spacing-2xs/2 -translate-x-1/2 z-10 flex flex-col items-center gap-spacing-md"
   >
     <motion.div
-      animate={{ 
+      animate={{
         y: [0, 8, 0],
-        opacity: [0.1, 0.3, 0.1]
+        opacity: [0.1, 0.3, 0.1],
       }}
-      transition={{ 
-        repeat: Infinity, 
-        duration: 4, 
-        ease: "easeInOut" 
+      transition={{
+        repeat: Infinity,
+        duration: 4,
+        ease: "easeInOut",
       }}
       className="flex flex-col items-center gap-spacing-xs"
     >

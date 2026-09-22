@@ -24,10 +24,10 @@ UI → JourneyService → JourneyAdapter → backend
 
 ## Nomenclatura (UI)
 
-| Contexto            | Termo         |
-| ------------------- | ------------- |
-| Coleção / navegação | **Formação**  |
-| Unidade individual  | **Caminho**   |
+| Contexto            | Termo             |
+| ------------------- | ----------------- |
+| Coleção / navegação | **Formação**      |
+| Unidade individual  | **Caminho**       |
 | Lista pessoal       | **Meus Caminhos** |
 
 Domínio interno permanece `Journey` / `journeys`.

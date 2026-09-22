@@ -34,9 +34,27 @@ export const bibleManifest: EntityManifest = {
 
     // — Núcleo editorial —
     { key: "verse_text", label: "Texto Sagrado", group: "editorial", required: true, weight: 3 },
-    { key: "commentary", label: "Comentário Teológico", group: "editorial", required: false, weight: 2 },
-    { key: "patristic_commentary", label: "Comentário Patrístico", group: "editorial", required: false, weight: 2 },
-    { key: "liturgical_context", label: "Uso Litúrgico", group: "editorial", required: false, weight: 1 },
+    {
+      key: "commentary",
+      label: "Comentário Teológico",
+      group: "editorial",
+      required: false,
+      weight: 2,
+    },
+    {
+      key: "patristic_commentary",
+      label: "Comentário Patrístico",
+      group: "editorial",
+      required: false,
+      weight: 2,
+    },
+    {
+      key: "liturgical_context",
+      label: "Uso Litúrgico",
+      group: "editorial",
+      required: false,
+      weight: 1,
+    },
 
     // — Núcleo Nexus —
     { key: "cross_refs", label: "Referências Cruzadas", group: "nexus", required: true, weight: 2 },

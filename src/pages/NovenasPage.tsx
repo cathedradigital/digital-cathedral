@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { EditorialHero } from '@/components/editorial/harmony/EditorialHero';
-import { EditorialCard } from '@/components/editorial/harmony/EditorialCard';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
+import { EditorialCard } from "@/components/editorial/harmony/EditorialCard";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +13,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { NOVENAS, type Novena } from '@/data/novenas';
+} from "@/components/ui/alert-dialog";
+import { NOVENAS, type Novena } from "@/data/novenas";
 import {
   downloadJson,
   exportAllProgress,
@@ -22,20 +22,19 @@ import {
   importProgressPayload,
   loadAllProgress,
   type ImportMode,
-} from '@/lib/novenas/progress';
-import { toast } from 'sonner';
+} from "@/lib/novenas/progress";
+import { toast } from "sonner";
 
-const FILTERS_STORAGE_KEY = 'cathedra:novenas:filters';
-
+const FILTERS_STORAGE_KEY = "cathedra:novenas:filters";
 
 const CATEGORY_LABEL: Record<string, string> = {
-  'Jesus Cristo': 'Cristo',
-  'Virgem Maria': 'Maria',
-  Santos: 'Santos',
-  'Espírito Santo': 'Espírito',
+  "Jesus Cristo": "Cristo",
+  "Virgem Maria": "Maria",
+  Santos: "Santos",
+  "Espírito Santo": "Espírito",
 };
 
-type DurationBucket = 'curta' | 'media' | 'longa';
+type DurationBucket = "curta" | "media" | "longa";
 
 function estimateMinutesPerDay(n: Novena): number {
   // ~900 caracteres por minuto de leitura contemplativa.
@@ -49,16 +48,16 @@ function estimateMinutesPerDay(n: Novena): number {
 
 function durationBucket(n: Novena): DurationBucket {
   const m = estimateMinutesPerDay(n);
-  if (m <= 5) return 'curta';
-  if (m <= 9) return 'media';
-  return 'longa';
+  if (m <= 5) return "curta";
+  if (m <= 9) return "media";
+  return "longa";
 }
 
 type StoredFilters = {
   q?: string;
   category?: string;
   patron?: string;
-  duration?: 'all' | DurationBucket;
+  duration?: "all" | DurationBucket;
 };
 
 function readStoredFilters(): StoredFilters {
@@ -78,12 +77,13 @@ const NovenasPage: React.FC = () => {
   // Prioridade: URL → localStorage → default.
   const initial = useMemo(() => {
     const stored = readStoredFilters();
-    const get = (k: string, fallback = 'all') => searchParams.get(k) ?? stored[k as keyof StoredFilters] ?? fallback;
+    const get = (k: string, fallback = "all") =>
+      searchParams.get(k) ?? stored[k as keyof StoredFilters] ?? fallback;
     return {
-      query: (searchParams.get('q') ?? stored.q ?? '') as string,
-      category: get('category'),
-      patron: get('patron'),
-      duration: get('duration') as 'all' | DurationBucket,
+      query: (searchParams.get("q") ?? stored.q ?? "") as string,
+      category: get("category"),
+      patron: get("patron"),
+      duration: get("duration") as "all" | DurationBucket,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -91,34 +91,28 @@ const NovenasPage: React.FC = () => {
   const [query, setQuery] = useState(initial.query);
   const [category, setCategory] = useState<string>(initial.category);
   const [patron, setPatron] = useState<string>(initial.patron);
-  const [duration, setDuration] = useState<'all' | DurationBucket>(initial.duration);
+  const [duration, setDuration] = useState<"all" | DurationBucket>(initial.duration);
   const [showFilters, setShowFilters] = useState(
-    initial.category !== 'all' || initial.patron !== 'all' || initial.duration !== 'all',
+    initial.category !== "all" || initial.patron !== "all" || initial.duration !== "all",
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingImportRef = useRef<unknown>(null);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
 
-  const categories = useMemo(
-    () => Array.from(new Set(NOVENAS.map((n) => n.category))).sort(),
-    [],
-  );
-  const patrons = useMemo(
-    () => Array.from(new Set(NOVENAS.map((n) => n.patron))).sort(),
-    [],
-  );
+  const categories = useMemo(() => Array.from(new Set(NOVENAS.map((n) => n.category))).sort(), []);
+  const patrons = useMemo(() => Array.from(new Set(NOVENAS.map((n) => n.patron))).sort(), []);
 
   // Sincroniza URL + localStorage sempre que filtros mudam.
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
     const setOrDel = (k: string, v: string, empty: string) => {
-      if (v === empty || v === '') next.delete(k);
+      if (v === empty || v === "") next.delete(k);
       else next.set(k, v);
     };
-    setOrDel('q', query, '');
-    setOrDel('category', category, 'all');
-    setOrDel('patron', patron, 'all');
-    setOrDel('duration', duration, 'all');
+    setOrDel("q", query, "");
+    setOrDel("category", category, "all");
+    setOrDel("patron", patron, "all");
+    setOrDel("duration", duration, "all");
     setSearchParams(next, { replace: true });
 
     try {
@@ -135,9 +129,9 @@ const NovenasPage: React.FC = () => {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return NOVENAS.filter((n) => {
-      if (category !== 'all' && n.category !== category) return false;
-      if (patron !== 'all' && n.patron !== patron) return false;
-      if (duration !== 'all' && durationBucket(n) !== duration) return false;
+      if (category !== "all" && n.category !== category) return false;
+      if (patron !== "all" && n.patron !== patron) return false;
+      if (duration !== "all" && durationBucket(n) !== duration) return false;
       if (!q) return true;
       return (
         n.title.toLowerCase().includes(q) ||
@@ -149,13 +143,13 @@ const NovenasPage: React.FC = () => {
   }, [query, category, patron, duration]);
 
   const activeFilters =
-    (category !== 'all' ? 1 : 0) + (patron !== 'all' ? 1 : 0) + (duration !== 'all' ? 1 : 0);
+    (category !== "all" ? 1 : 0) + (patron !== "all" ? 1 : 0) + (duration !== "all" ? 1 : 0);
 
   const clearFilters = () => {
-    setQuery('');
-    setCategory('all');
-    setPatron('all');
-    setDuration('all');
+    setQuery("");
+    setCategory("all");
+    setPatron("all");
+    setDuration("all");
   };
 
   const continueTarget = useMemo(() => findContinueTarget(), []);
@@ -168,19 +162,19 @@ const NovenasPage: React.FC = () => {
   const handleExport = () => {
     const payload = exportAllProgress();
     if (Object.keys(payload.entries).length === 0) {
-      toast.info('Nenhum progresso salvo para exportar.');
+      toast.info("Nenhum progresso salvo para exportar.");
       return;
     }
     const date = new Date().toISOString().slice(0, 10);
     downloadJson(payload, `cathedra-novenas-${date}.json`);
-    toast.success('Progresso exportado.');
+    toast.success("Progresso exportado.");
   };
 
   const handleImportClick = () => fileInputRef.current?.click();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = '';
+    e.target.value = "";
     if (!file) return;
     try {
       const text = await file.text();
@@ -188,7 +182,7 @@ const NovenasPage: React.FC = () => {
       pendingImportRef.current = parsed;
       setImportDialogOpen(true);
     } catch {
-      toast.error('Arquivo JSON inválido.');
+      toast.error("Arquivo JSON inválido.");
     }
   };
 
@@ -199,23 +193,21 @@ const NovenasPage: React.FC = () => {
     if (!parsed) return;
     const result = importProgressPayload(parsed, { mode });
     if (result.errors.length) {
-      toast.error(result.errors.join(' '));
+      toast.error(result.errors.join(" "));
       return;
     }
     const total = result.imported + result.merged;
     if (total === 0) {
-      toast.info('Nenhum progresso compatível encontrado.');
+      toast.info("Nenhum progresso compatível encontrado.");
       return;
     }
     const parts: string[] = [];
     if (result.imported) parts.push(`${result.imported} importada(s)`);
     if (result.merged) parts.push(`${result.merged} mesclada(s)`);
     if (result.skipped) parts.push(`${result.skipped} ignorada(s)`);
-    toast.success(parts.join(' · '));
+    toast.success(parts.join(" · "));
     setTimeout(() => window.location.reload(), 600);
   };
-
-
 
   return (
     <div className="w-full space-y-[var(--sp-xl)] pb-[var(--sp-xxl)]">
@@ -223,7 +215,8 @@ const NovenasPage: React.FC = () => {
         <EditorialHero.Eyebrow>Novenae</EditorialHero.Eyebrow>
         <EditorialHero.Title>Novenas</EditorialHero.Title>
         <EditorialHero.Subtitle>
-          Nove dias de oração perseverante — no ritmo dos Apóstolos que esperavam com Maria o dom do Espírito.
+          Nove dias de oração perseverante — no ritmo dos Apóstolos que esperavam com Maria o dom do
+          Espírito.
         </EditorialHero.Subtitle>
       </EditorialHero>
 
@@ -239,7 +232,8 @@ const NovenasPage: React.FC = () => {
             <EditorialCard.Eyebrow>Continuar onde parou</EditorialCard.Eyebrow>
             <EditorialCard.Title>{continueNovena.title}</EditorialCard.Title>
             <EditorialCard.Description>
-              Dia {continueTarget.day} de {continueNovena.days.length} · {continueTarget.progress.completedDays.length} concluído(s)
+              Dia {continueTarget.day} de {continueNovena.days.length} ·{" "}
+              {continueTarget.progress.completedDays.length} concluído(s)
             </EditorialCard.Description>
             <EditorialCard.CTA>
               <span className="inline-flex items-center gap-[var(--sp-xs)] type-rubrica text-primary">
@@ -355,13 +349,13 @@ const NovenasPage: React.FC = () => {
               {prog && (
                 <p className="type-caption text-muted-foreground pt-[var(--sp-xs)]">
                   {done === n.days.length
-                    ? 'Concluída'
+                    ? "Concluída"
                     : `Em andamento · dia ${prog.currentDay} · ${done}/${n.days.length}`}
                 </p>
               )}
               <EditorialCard.CTA>
                 <span className="inline-flex items-center gap-[var(--sp-xs)] type-rubrica text-primary">
-                  {prog ? 'Continuar novena' : 'Começar novena'}
+                  {prog ? "Continuar novena" : "Começar novena"}
                   <Icons.ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </EditorialCard.CTA>
@@ -401,9 +395,14 @@ const NovenasPage: React.FC = () => {
       </div>
 
       <p className="type-caption text-muted-foreground text-center pt-[var(--sp-l)]">
-        Todas as novenas seguem a estrutura tradicional: abertura, meditação do dia, oração final e súplica pela intenção.
+        Todas as novenas seguem a estrutura tradicional: abertura, meditação do dia, oração final e
+        súplica pela intenção.
         <br />
-        Voltar para <Link to="/oracao" className="text-primary hover:underline">Livro de Orações</Link>.
+        Voltar para{" "}
+        <Link to="/oracao" className="text-primary hover:underline">
+          Livro de Orações
+        </Link>
+        .
       </p>
 
       <AlertDialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
@@ -411,7 +410,8 @@ const NovenasPage: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Como importar este progresso?</AlertDialogTitle>
             <AlertDialogDescription>
-              Você pode <strong>mesclar</strong> com o progresso atual (mantém os dias já concluídos e une com o arquivo) ou <strong>substituir</strong> tudo pelo conteúdo do arquivo.
+              Você pode <strong>mesclar</strong> com o progresso atual (mantém os dias já concluídos
+              e une com o arquivo) ou <strong>substituir</strong> tudo pelo conteúdo do arquivo.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-[var(--sp-xs)]">
@@ -419,14 +419,12 @@ const NovenasPage: React.FC = () => {
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => runImport('replace')}
+              onClick={() => runImport("replace")}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Substituir
             </AlertDialogAction>
-            <AlertDialogAction onClick={() => runImport('merge')}>
-              Mesclar
-            </AlertDialogAction>
+            <AlertDialogAction onClick={() => runImport("merge")}>Mesclar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

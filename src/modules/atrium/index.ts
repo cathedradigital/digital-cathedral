@@ -4,4 +4,4 @@
  * Types/constants/services/hooks são detalhes internos.
  */
 
-export { default as AtriumPage } from './AtriumPage';
+export { default as AtriumPage } from "./AtriumPage";

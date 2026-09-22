@@ -9,7 +9,13 @@ export default defineTool({
     "Busca verbetes publicados do Glossário Teológico da Cathedra por termo. Retorna slug, título e definição curta. Público (dados publicados).",
   inputSchema: {
     query: z.string().trim().min(1).max(120).describe("Termo ou fragmento a buscar."),
-    limit: z.number().int().min(1).max(20).optional().describe("Máximo de resultados (default 10)."),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .optional()
+      .describe("Máximo de resultados (default 10)."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, limit }) => {

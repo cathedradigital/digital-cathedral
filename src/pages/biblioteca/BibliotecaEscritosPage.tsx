@@ -5,15 +5,15 @@
  * Lista todas as obras publicadas agrupadas por escola espiritual.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { listAllPublishedWorks } from '@/services/saintWorksService';
-import type { SaintWork, SaintWorkCategory } from '@/types/saintWorks';
-import { SAINT_WORK_CATEGORY_LABELS } from '@/types/saintWorks';
-import { EditorialHero } from '@/components/editorial';
-import { supabase } from '@/lib/db';
-import { Icons } from '../../constants';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { listAllPublishedWorks } from "@/services/saintWorksService";
+import type { SaintWork, SaintWorkCategory } from "@/types/saintWorks";
+import { SAINT_WORK_CATEGORY_LABELS } from "@/types/saintWorks";
+import { EditorialHero } from "@/components/editorial";
+import { supabase } from "@/lib/db";
+import { Icons } from "../../constants";
 
 const BibliotecaEscritosPage: React.FC = () => {
   const [works, setWorks] = useState<SaintWork[]>([]);
@@ -29,10 +29,7 @@ const BibliotecaEscritosPage: React.FC = () => {
       setWorks(rows);
       const ids = Array.from(new Set(rows.map((w) => w.saint_id)));
       if (ids.length) {
-        const { data } = await supabase
-          .from('saints')
-          .select('id, name')
-          .in('id', ids);
+        const { data } = await supabase.from("saints").select("id, name").in("id", ids);
         if (!alive) return;
         const map: Record<string, { name: string; slug: string }> = {};
         (data ?? []).forEach((s: any) => {
@@ -82,21 +79,21 @@ const BibliotecaEscritosPage: React.FC = () => {
           className="flex items-center gap-2 w-full p-3 bg-card border border-border rounded-premium hover:border-primary/40 hover:shadow-sm transition-all text-muted-foreground hover:text-foreground"
         >
           <Icons.Search className="w-4 h-4" aria-hidden />
-          <span className="text-premium-sm">Buscar por autor, obra ou palavras dentro dos capítulos…</span>
+          <span className="text-premium-sm">
+            Buscar por autor, obra ou palavras dentro dos capítulos…
+          </span>
         </Link>
       </div>
 
-
       <div className="max-w-4xl mx-auto px-spacing-md py-spacing-xl space-y-spacing-2xl">
-        {loading && (
-          <p className="text-center text-muted-foreground">Carregando obras...</p>
-        )}
+        {loading && <p className="text-center text-muted-foreground">Carregando obras...</p>}
 
         {!loading && works.length === 0 && (
           <div className="text-center py-spacing-2xl space-y-spacing-sm">
             <Icons.BookOpen className="w-12 h-12 mx-auto text-muted-foreground" aria-hidden />
             <p className="text-muted-foreground">
-              Nenhuma obra publicada ainda. As primeiras obras da Fase Piloto serão liberadas em breve.
+              Nenhuma obra publicada ainda. As primeiras obras da Fase Piloto serão liberadas em
+              breve.
             </p>
           </div>
         )}
@@ -108,7 +105,7 @@ const BibliotecaEscritosPage: React.FC = () => {
                 {SAINT_WORK_CATEGORY_LABELS[cat]}
               </h2>
               <span className="text-premium-xs text-muted-foreground tabular-nums">
-                {byCategory[cat]!.length} {byCategory[cat]!.length === 1 ? 'obra' : 'obras'}
+                {byCategory[cat]!.length} {byCategory[cat]!.length === 1 ? "obra" : "obras"}
               </span>
             </div>
 
@@ -125,7 +122,7 @@ const BibliotecaEscritosPage: React.FC = () => {
                     {author && (
                       <p className="text-[10px] uppercase tracking-widest text-primary/70 font-bold mb-1">
                         {author.name}
-                        {work.year_written ? ` · ${work.year_written}` : ''}
+                        {work.year_written ? ` · ${work.year_written}` : ""}
                       </p>
                     )}
                     <h3 className="text-premium-md font-serif font-bold text-foreground group-hover:text-primary transition-colors leading-tight">

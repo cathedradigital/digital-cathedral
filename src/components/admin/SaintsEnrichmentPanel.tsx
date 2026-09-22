@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 interface EnrichmentRun {
   id: string;
@@ -43,7 +43,7 @@ const SaintsEnrichmentPanel: React.FC = () => {
   const [runs, setRuns] = useState<EnrichmentRun[]>([]);
   const [totals, setTotals] = useState<Totals>({ total: 0, withCountry: 0, withVocation: 0 });
   const [failed, setFailed] = useState<FailedSaint[]>([]);
-  const [limit, setLimit] = useState<string>('');
+  const [limit, setLimit] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -51,20 +51,20 @@ const SaintsEnrichmentPanel: React.FC = () => {
     setLoading(true);
     const [runsRes, allRes, failedRes] = await Promise.all([
       supabase
-        .from('saints_enrichment_runs' as never)
-        .select('*')
-        .order('started_at', { ascending: false })
+        .from("saints_enrichment_runs" as never)
+        .select("*")
+        .order("started_at", { ascending: false })
         .limit(20),
-      supabase.from('saints').select('id, country, vocation', { count: 'exact', head: false }),
+      supabase.from("saints").select("id, country, vocation", { count: "exact", head: false }),
       supabase
-        .from('saints')
-        .select('id, name, category, country, vocation')
-        .or('country.is.null,vocation.is.null')
-        .order('name')
+        .from("saints")
+        .select("id, name, category, country, vocation")
+        .or("country.is.null,vocation.is.null")
+        .order("name")
         .limit(50),
     ]);
 
-    if (runsRes.error) toast.error('Falha ao ler execuções: ' + runsRes.error.message);
+    if (runsRes.error) toast.error("Falha ao ler execuções: " + runsRes.error.message);
     else setRuns((runsRes.data ?? []) as EnrichmentRun[]);
 
     if (!allRes.error && allRes.data) {
@@ -89,23 +89,21 @@ const SaintsEnrichmentPanel: React.FC = () => {
     try {
       const n = limit.trim() ? Number(limit.trim()) : null;
       if (n !== null && (!Number.isFinite(n) || n <= 0)) {
-        toast.error('Limite inválido');
+        toast.error("Limite inválido");
         return;
       }
       const { data, error } = await supabase.rpc(
-        'run_saints_enrichment_heuristic' as never,
+        "run_saints_enrichment_heuristic" as never,
         { p_limit: n } as never,
       );
       if (error) throw error;
       const row = (data ?? null) as EnrichmentRun | null;
       toast.success(
-        row
-          ? `Rodada concluída: ${row.updated}/${row.processed} atualizados`
-          : 'Rodada concluída',
+        row ? `Rodada concluída: ${row.updated}/${row.processed} atualizados` : "Rodada concluída",
       );
       await load();
     } catch (e: unknown) {
-      toast.error('Falha ao executar: ' + (e as Error).message);
+      toast.error("Falha ao executar: " + (e as Error).message);
     } finally {
       setRunning(false);
     }
@@ -139,7 +137,7 @@ const SaintsEnrichmentPanel: React.FC = () => {
             min={1}
           />
           <Button onClick={runEnrichment} disabled={running}>
-            {running ? 'Executando…' : 'Executar rodada'}
+            {running ? "Executando…" : "Executar rodada"}
           </Button>
           <Button variant="ghost" onClick={load} disabled={loading}>
             Recarregar
@@ -154,17 +152,17 @@ const SaintsEnrichmentPanel: React.FC = () => {
           <StatBox
             label="Com país"
             value={fmt(totals.withCountry, totals.total)}
-            tone={stats.missingCountry === 0 ? 'ok' : 'warn'}
+            tone={stats.missingCountry === 0 ? "ok" : "warn"}
           />
           <StatBox
             label="Com vocação"
             value={fmt(totals.withVocation, totals.total)}
-            tone={stats.missingVocation === 0 ? 'ok' : 'warn'}
+            tone={stats.missingVocation === 0 ? "ok" : "warn"}
           />
           <StatBox
             label="Faltando"
             value={`${stats.missingCountry} país · ${stats.missingVocation} vocação`}
-            tone={stats.missingCountry + stats.missingVocation === 0 ? 'ok' : 'warn'}
+            tone={stats.missingCountry + stats.missingVocation === 0 ? "ok" : "warn"}
           />
         </div>
 
@@ -196,10 +194,10 @@ const SaintsEnrichmentPanel: React.FC = () => {
                     return (
                       <tr key={r.id} className="border-t">
                         <td className="p-2 whitespace-nowrap">
-                          {new Date(r.started_at).toLocaleString('pt-BR')}
+                          {new Date(r.started_at).toLocaleString("pt-BR")}
                         </td>
                         <td className="p-2">{r.kind}</td>
-                        <td className="p-2 text-right">{r.limit_n ?? '—'}</td>
+                        <td className="p-2 text-right">{r.limit_n ?? "—"}</td>
                         <td className="p-2 text-right">{r.processed}</td>
                         <td className="p-2 text-right">{r.updated}</td>
                         <td className="p-2 text-right">{r.country_hits}</td>
@@ -208,7 +206,7 @@ const SaintsEnrichmentPanel: React.FC = () => {
                           {r.remaining_missing_country}/{r.remaining_missing_vocation}
                         </td>
                         <td className="p-2 text-center">
-                          <Badge variant={r.status === 'completed' ? 'default' : 'secondary'}>
+                          <Badge variant={r.status === "completed" ? "default" : "secondary"}>
                             {r.status}
                           </Badge>
                         </td>
@@ -232,7 +230,8 @@ const SaintsEnrichmentPanel: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-semibold">
-              Registros pendentes ({stats.missingCountry + stats.missingVocation > 0 ? 'primeiros 50' : 'nenhum'})
+              Registros pendentes (
+              {stats.missingCountry + stats.missingVocation > 0 ? "primeiros 50" : "nenhum"})
             </h3>
             {failed.length > 0 && (
               <Button size="sm" onClick={runEnrichment} disabled={running}>
@@ -262,18 +261,18 @@ const SaintsEnrichmentPanel: React.FC = () => {
   );
 };
 
-const StatBox: React.FC<{ label: string; value: string; tone?: 'ok' | 'warn' }> = ({
+const StatBox: React.FC<{ label: string; value: string; tone?: "ok" | "warn" }> = ({
   label,
   value,
   tone,
 }) => (
   <div
     className={`rounded-lg border p-3 ${
-      tone === 'ok'
-        ? 'border-emerald-500/30 bg-emerald-500/5'
-        : tone === 'warn'
-          ? 'border-amber-500/30 bg-amber-500/5'
-          : 'bg-muted/30'
+      tone === "ok"
+        ? "border-emerald-500/30 bg-emerald-500/5"
+        : tone === "warn"
+          ? "border-amber-500/30 bg-amber-500/5"
+          : "bg-muted/30"
     }`}
   >
     <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>

@@ -11,19 +11,19 @@
  *
  * Sem cards paralelos, sem tokens de skin — tudo em tokens semânticos.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { Loader2, Search as SearchIcon, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { LIBRARY_MODULE_META, LIBRARY_MODULE_ORDER } from '../search/moduleMeta';
-import type { LibraryResult } from '../search/types';
-import type { LibraryModule } from '../types';
-import { useLibrarySearch } from '../hooks/useLibrarySearch';
-import { useSearchHistory } from '../hooks/useSearchHistory';
-import { LibraryFilters } from './LibraryFilters';
-import LibraryResultRow from './LibraryResultRow';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import { Loader2, Search as SearchIcon, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { LIBRARY_MODULE_META, LIBRARY_MODULE_ORDER } from "../search/moduleMeta";
+import type { LibraryResult } from "../search/types";
+import type { LibraryModule } from "../types";
+import { useLibrarySearch } from "../hooks/useLibrarySearch";
+import { useSearchHistory } from "../hooks/useSearchHistory";
+import { LibraryFilters } from "./LibraryFilters";
+import LibraryResultRow from "./LibraryResultRow";
 
 export interface LibrarySearchPanelProps {
   placeholder?: string;
@@ -36,14 +36,14 @@ export interface LibrarySearchPanelProps {
 }
 
 export function LibrarySearchPanel({
-  placeholder = 'Buscar em toda a Biblioteca (ex.: Trindade, Eucaristia, Agostinho)…',
+  placeholder = "Buscar em toda a Biblioteca (ex.: Trindade, Eucaristia, Agostinho)…",
   autoFocus,
   className,
   groupByModule = true,
   syncUrl = true,
 }: LibrarySearchPanelProps) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const urlQuery = syncUrl ? (searchParams.get('q') ?? '') : '';
+  const urlQuery = syncUrl ? (searchParams.get("q") ?? "") : "";
   const [query, setQuery] = useState(urlQuery);
   const [active, setActive] = useState<LibraryModule[]>([]);
   const { searches, rememberSearch, rememberOpen, clearSearches } = useSearchHistory();
@@ -57,7 +57,7 @@ export function LibrarySearchPanel({
       lastUrlQuery.current = urlQuery;
       setQuery(urlQuery);
       if (urlQuery.length >= 2) {
-        sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   }, [urlQuery, syncUrl]);
@@ -67,11 +67,11 @@ export function LibrarySearchPanel({
     if (!syncUrl) return;
     const t = window.setTimeout(() => {
       const trimmed = query.trim();
-      const current = searchParams.get('q') ?? '';
+      const current = searchParams.get("q") ?? "";
       if (trimmed === current) return;
       const next = new URLSearchParams(searchParams);
-      if (trimmed.length >= 2) next.set('q', trimmed);
-      else next.delete('q');
+      if (trimmed.length >= 2) next.set("q", trimmed);
+      else next.delete("q");
       lastUrlQuery.current = trimmed;
       setSearchParams(next, { replace: true });
     }, 400);
@@ -79,7 +79,7 @@ export function LibrarySearchPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, syncUrl]);
 
-  const types = active.length === 0 ? 'all' : active;
+  const types = active.length === 0 ? "all" : active;
   const { data, isFetching, error, debouncedQuery } = useLibrarySearch({
     query,
     types,
@@ -95,9 +95,9 @@ export function LibrarySearchPanel({
       list.push(r);
       map.set(r.type, list);
     }
-    return LIBRARY_MODULE_ORDER
-      .map((mod) => ({ mod, items: map.get(mod) ?? [] }))
-      .filter((g) => g.items.length > 0);
+    return LIBRARY_MODULE_ORDER.map((mod) => ({ mod, items: map.get(mod) ?? [] })).filter(
+      (g) => g.items.length > 0,
+    );
   }, [data, groupByModule]);
 
   const handleOpen = (r: LibraryResult) => {
@@ -111,7 +111,7 @@ export function LibrarySearchPanel({
   return (
     <section
       ref={sectionRef}
-      className={cn('rounded-xl border border-border bg-card p-4 md:p-6 scroll-mt-24', className)}
+      className={cn("rounded-xl border border-border bg-card p-4 md:p-6 scroll-mt-24", className)}
       aria-label="Busca da Biblioteca"
     >
       <div className="relative">
@@ -131,7 +131,7 @@ export function LibrarySearchPanel({
         {query ? (
           <button
             type="button"
-            onClick={() => setQuery('')}
+            onClick={() => setQuery("")}
             aria-label="Limpar busca"
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted-foreground hover:bg-muted"
           >
@@ -141,11 +141,7 @@ export function LibrarySearchPanel({
       </div>
 
       <div className="mt-3">
-        <LibraryFilters
-          active={active}
-          onChange={setActive}
-          counts={data?.countsByType}
-        />
+        <LibraryFilters active={active} onChange={setActive} counts={data?.countsByType} />
       </div>
 
       {isFetching ? (
@@ -201,7 +197,7 @@ export function LibrarySearchPanel({
       {data && data.totalFound > 0 ? (
         <div className="mt-6 space-y-6">
           <p className="text-xs text-muted-foreground">
-            {data.totalFound} resultado{data.totalFound === 1 ? '' : 's'} em {data.durationMs}ms
+            {data.totalFound} resultado{data.totalFound === 1 ? "" : "s"} em {data.durationMs}ms
           </p>
 
           {grouped ? (
@@ -213,7 +209,9 @@ export function LibrarySearchPanel({
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
                     <Icon className="h-4 w-4 text-primary" aria-hidden />
                     {meta.label}
-                    <span className="text-xs font-normal text-muted-foreground">({items.length})</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      ({items.length})
+                    </span>
                   </h3>
                   <div className="space-y-2">
                     {items.map((r) => (

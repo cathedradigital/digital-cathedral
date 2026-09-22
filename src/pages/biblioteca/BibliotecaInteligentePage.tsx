@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { EditorialHero } from '@/components/editorial';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import { globalSearchV2, type GlobalSearchHit, type SearchResultType } from '@/services/globalSearchService';
-import { Link } from '@/lib/rr-compat';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { EditorialHero } from "@/components/editorial";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import {
+  globalSearchV2,
+  type GlobalSearchHit,
+  type SearchResultType,
+} from "@/services/globalSearchService";
+import { Link } from "@/lib/rr-compat";
 
 const TYPE_LABEL: Record<SearchResultType, string> = {
-  bible: 'Bíblia',
-  catechism: 'Catecismo',
-  saint: 'Santo',
-  patristic: 'Patrística',
-  magisterium: 'Magistério',
-  prayer: 'Oração',
-  journey: 'Jornada',
-  glossary: 'Glossário'
+  bible: "Bíblia",
+  catechism: "Catecismo",
+  saint: "Santo",
+  patristic: "Patrística",
+  magisterium: "Magistério",
+  prayer: "Oração",
+  journey: "Jornada",
+  glossary: "Glossário",
 };
 
 const TYPE_ICON: Record<SearchResultType, any> = {
@@ -26,7 +30,7 @@ const TYPE_ICON: Record<SearchResultType, any> = {
   magisterium: Icons.Globe,
   prayer: Icons.Hand,
   journey: Icons.Route,
-  glossary: Icons.BookMarked
+  glossary: Icons.BookMarked,
 };
 
 const TYPE_ROUTE: Record<SearchResultType, (hit: GlobalSearchHit) => string> = {
@@ -37,12 +41,12 @@ const TYPE_ROUTE: Record<SearchResultType, (hit: GlobalSearchHit) => string> = {
   magisterium: (h) => `/biblioteca/escritos/${h.slug}`,
   prayer: (h) => `/rezar/${h.slug}`,
   journey: (h) => `/jornadas/${h.slug}`,
-  glossary: (h) => `/glossario/${h.slug}`
+  glossary: (h) => `/glossario/${h.slug}`,
 };
 
 const BibliotecaInteligentePage: React.FC = () => {
   const [params, setParams] = useSearchParams();
-  const q = params.get('q') ?? '';
+  const q = params.get("q") ?? "";
   const [input, setInput] = useState(q);
   const [hits, setHits] = useState<GlobalSearchHit[]>([]);
   const [loading, setLoading] = useState(false);
@@ -67,7 +71,7 @@ const BibliotecaInteligentePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>{q ? `“${q}” — Biblioteca Inteligente` : 'Biblioteca Inteligente · Cathedra'}</title>
+        <title>{q ? `“${q}” — Biblioteca Inteligente` : "Biblioteca Inteligente · Cathedra"}</title>
       </Helmet>
 
       <EditorialHero
@@ -90,10 +94,14 @@ const BibliotecaInteligentePage: React.FC = () => {
               className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-premium focus:ring-2 focus:ring-primary/50 outline-none text-premium-base"
             />
           </div>
-          <Button type="submit" disabled={input.trim().length < 2}>Buscar</Button>
+          <Button type="submit" disabled={input.trim().length < 2}>
+            Buscar
+          </Button>
         </form>
 
-        {loading && <p className="text-center text-muted-foreground italic">Consultando o acervo...</p>}
+        {loading && (
+          <p className="text-center text-muted-foreground italic">Consultando o acervo...</p>
+        )}
 
         {!loading && hits.length > 0 && (
           <div className="grid gap-spacing-md">

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from "@/lib/rr-compat";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import { MobileSheet } from "./MobileSheet";
 import { BIBLE_DATA, type BibleBook } from "@/data/bible-books";
@@ -62,9 +62,7 @@ export function BiblePickerSheet({
     if (seed) {
       for (const t of Object.keys(BIBLE_DATA) as Testament[]) {
         for (const cat of BIBLE_DATA[t]) {
-          const found = cat.books.find(
-            (b) => b.abbr.toLowerCase() === seed.abbr.toLowerCase(),
-          );
+          const found = cat.books.find((b) => b.abbr.toLowerCase() === seed.abbr.toLowerCase());
           if (found) {
             setTestament(t);
             // Se veio da URL, entra direto no grid de capítulos do livro atual.
@@ -77,7 +75,6 @@ export function BiblePickerSheet({
     }
     setBook(null);
   }, [open, initialSelection]);
-
 
   const categories = useMemo(() => BIBLE_DATA[testament] ?? [], [testament]);
 

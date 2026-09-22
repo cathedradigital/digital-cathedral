@@ -1,25 +1,27 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface SectionHeaderProps {
   title: string;
   subtitle?: string;
   className?: string;
-  align?: 'center' | 'left';
+  align?: "center" | "left";
 }
 
-export const SectionHeader: React.FC<SectionHeaderProps> = ({ 
-  title, 
-  subtitle, 
+export const SectionHeader: React.FC<SectionHeaderProps> = ({
+  title,
+  subtitle,
   className,
-  align = 'center'
+  align = "center",
 }) => {
   return (
-    <div className={cn(
-      "flex flex-col gap-spacing-xs md:gap-spacing-md header-margin-rhythm items-center",
-      align === 'center' ? "items-center text-center" : "items-start text-left",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex flex-col gap-spacing-xs md:gap-spacing-md header-margin-rhythm items-center",
+        align === "center" ? "items-center text-center" : "items-start text-left",
+        className,
+      )}
+    >
       <h2 className="text-[10px] md:text-premium-xs font-semibold uppercase tracking-premium-widest text-primary/30">
         {title}
       </h2>

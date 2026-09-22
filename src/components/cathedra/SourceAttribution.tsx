@@ -1,5 +1,5 @@
-import React from 'react';
-import { Icons } from '@/constants';
+import React from "react";
+import { Icons } from "@/constants";
 
 interface SourceAttributionProps {
   source?: string | null;
@@ -20,17 +20,18 @@ const SourceAttribution: React.FC<SourceAttributionProps> = ({
   bioSourceUrl,
   prayerSourceUrl,
   lastScrapedAt,
-  className = '',
+  className = "",
 }) => {
-  const label = source && source !== 'Cathedra Database' ? source : null;
+  const label = source && source !== "Cathedra Database" ? source : null;
   const hasAny = Boolean(label || sourceUrl || bioSourceUrl || prayerSourceUrl);
   if (!hasAny) return null;
 
   const links: { href: string; label: string }[] = [];
-  if (sourceUrl) links.push({ href: sourceUrl, label: 'Página oficial' });
-  if (bioSourceUrl && bioSourceUrl !== sourceUrl) links.push({ href: bioSourceUrl, label: 'Biografia' });
+  if (sourceUrl) links.push({ href: sourceUrl, label: "Página oficial" });
+  if (bioSourceUrl && bioSourceUrl !== sourceUrl)
+    links.push({ href: bioSourceUrl, label: "Biografia" });
   if (prayerSourceUrl && prayerSourceUrl !== sourceUrl && prayerSourceUrl !== bioSourceUrl)
-    links.push({ href: prayerSourceUrl, label: 'Oração' });
+    links.push({ href: prayerSourceUrl, label: "Oração" });
 
   return (
     <div
@@ -54,7 +55,7 @@ const SourceAttribution: React.FC<SourceAttributionProps> = ({
       ))}
       {lastScrapedAt && (
         <span className="ml-auto opacity-70">
-          Atualizado em {new Date(lastScrapedAt).toLocaleDateString('pt-BR')}
+          Atualizado em {new Date(lastScrapedAt).toLocaleDateString("pt-BR")}
         </span>
       )}
     </div>

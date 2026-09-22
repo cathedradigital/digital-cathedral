@@ -15,25 +15,21 @@
  * prop `renderContent`. Usa Radix Popover (shadcn) por baixo.
  */
 
-import React from 'react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export type ReferenceKind =
-  | 'bible'
-  | 'catechism'
-  | 'magisterium'
-  | 'glossary'
-  | 'saint'
-  | 'father'
-  | 'prayer'
-  | 'journey'
-  | 'collection'
-  | 'theme';
+  | "bible"
+  | "catechism"
+  | "magisterium"
+  | "glossary"
+  | "saint"
+  | "father"
+  | "prayer"
+  | "journey"
+  | "collection"
+  | "theme";
 
 export interface ReferencePopoverProps {
   /** Tipo canônico da referência (usado para telemetria e estilos). */
@@ -61,16 +57,16 @@ export interface ReferencePopoverProps {
 
 /** Estilo do gatilho por tipo — coerente com NexusSourceBadge. */
 const KIND_TRIGGER: Record<ReferenceKind, string> = {
-  bible: 'decoration-primary/50 hover:decoration-primary',
-  catechism: 'decoration-secondary/50 hover:decoration-secondary',
-  magisterium: 'decoration-primary/50 hover:decoration-primary',
-  glossary: 'decoration-secondary/60 hover:decoration-secondary',
-  saint: 'decoration-secondary/50 hover:decoration-secondary',
-  father: 'decoration-muted-foreground/50 hover:decoration-foreground',
-  prayer: 'decoration-secondary/60 hover:decoration-secondary',
-  journey: 'decoration-primary/50 hover:decoration-primary',
-  collection: 'decoration-primary/50 hover:decoration-primary',
-  theme: 'decoration-secondary/50 hover:decoration-secondary',
+  bible: "decoration-primary/50 hover:decoration-primary",
+  catechism: "decoration-secondary/50 hover:decoration-secondary",
+  magisterium: "decoration-primary/50 hover:decoration-primary",
+  glossary: "decoration-secondary/60 hover:decoration-secondary",
+  saint: "decoration-secondary/50 hover:decoration-secondary",
+  father: "decoration-muted-foreground/50 hover:decoration-foreground",
+  prayer: "decoration-secondary/60 hover:decoration-secondary",
+  journey: "decoration-primary/50 hover:decoration-primary",
+  collection: "decoration-primary/50 hover:decoration-primary",
+  theme: "decoration-secondary/50 hover:decoration-secondary",
 };
 
 export const ReferencePopover: React.FC<ReferencePopoverProps> = ({
@@ -85,9 +81,7 @@ export const ReferencePopover: React.FC<ReferencePopoverProps> = ({
   title,
 }) => {
   const [open, setOpen] = React.useState(false);
-  const [resolved, setResolved] = React.useState<React.ReactNode | null>(
-    content ?? null,
-  );
+  const [resolved, setResolved] = React.useState<React.ReactNode | null>(content ?? null);
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
@@ -106,8 +100,8 @@ export const ReferencePopover: React.FC<ReferencePopoverProps> = ({
           data-reference-kind={kind}
           aria-label={ariaLabel ?? `Abrir referência: ${label}`}
           className={cn(
-            'inline underline underline-offset-2 decoration-1',
-            'transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary rounded-sm',
+            "inline underline underline-offset-2 decoration-1",
+            "transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary rounded-sm",
             KIND_TRIGGER[kind],
             className,
           )}
@@ -117,9 +111,9 @@ export const ReferencePopover: React.FC<ReferencePopoverProps> = ({
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          'w-80 p-spacing-md',
-          'border border-primary/15 bg-card/95 backdrop-blur-sm',
-          'shadow-premium/20',
+          "w-80 p-spacing-md",
+          "border border-primary/15 bg-card/95 backdrop-blur-sm",
+          "shadow-premium/20",
           contentClassName,
         )}
         align="start"
@@ -130,9 +124,7 @@ export const ReferencePopover: React.FC<ReferencePopoverProps> = ({
             {title}
           </h4>
         )}
-        <div className="text-premium-sm text-foreground leading-relaxed">
-          {resolved ?? content}
-        </div>
+        <div className="text-premium-sm text-foreground leading-relaxed">{resolved ?? content}</div>
       </PopoverContent>
     </Popover>
   );

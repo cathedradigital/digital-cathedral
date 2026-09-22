@@ -18,12 +18,14 @@ export const DESIGN_TOKENS = {
   spacing: {
     section: "py-spacing-3xl sm:py-spacing-4xl md:py-spacing-4xl lg:py-spacing-4xl",
     stack: "space-y-spacing-xl md:space-y-spacing-2xl lg:space-y-spacing-3xl",
-    container: "w-full max-w-[1280px] mx-auto px-spacing-md sm:px-spacing-xl md:px-spacing-2xl lg:px-spacing-3xl",
+    container:
+      "w-full max-w-[1280px] mx-auto px-spacing-md sm:px-spacing-xl md:px-spacing-2xl lg:px-spacing-3xl",
   },
   grid: {
-    standard: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-spacing-lg md:gap-spacing-xl lg:gap-spacing-2xl",
+    standard:
+      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-spacing-lg md:gap-spacing-xl lg:gap-spacing-2xl",
     responsive: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-spacing-xl md:gap-spacing-2xl",
-  }
+  },
 } as const;
 
 export const PREMIUM_CARD_CLASS = "premium-card";

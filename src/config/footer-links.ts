@@ -25,24 +25,24 @@ export interface FooterLink {
 
 /** Links institucionais que aparecem SEMPRE no footer público. */
 export const PUBLIC_FOOTER_LINKS: FooterLink[] = [
-  { path: '/about', label: 'Sobre' },
-  { path: '/manifesto', label: 'Manifesto' },
-  { path: '/partners', label: 'Parceiros' },
-  { path: '/contato', label: 'Contato' },
-  { path: '/legal', label: 'Centro Legal' },
-  { path: '/privacy', label: 'Privacidade' },
-  { path: '/legal/lgpd', label: 'LGPD' },
-  { path: '/terms', label: 'Termos' },
-  { path: '/transparencia', label: 'Transparência' },
+  { path: "/about", label: "Sobre" },
+  { path: "/manifesto", label: "Manifesto" },
+  { path: "/partners", label: "Parceiros" },
+  { path: "/contato", label: "Contato" },
+  { path: "/legal", label: "Centro Legal" },
+  { path: "/privacy", label: "Privacidade" },
+  { path: "/legal/lgpd", label: "LGPD" },
+  { path: "/terms", label: "Termos" },
+  { path: "/transparencia", label: "Transparência" },
 ];
 
 /** Links condicionais — só renderizam se o gate correspondente for verdadeiro. */
 export const CONDITIONAL_FOOTER_LINKS: FooterLink[] = [
   {
-    path: '/admin/seo',
-    label: 'Admin',
+    path: "/admin/seo",
+    label: "Admin",
     adminOnly: true,
-    ariaLabel: 'Painel administrativo',
+    ariaLabel: "Painel administrativo",
   },
 ];
 
@@ -53,10 +53,10 @@ export const CONDITIONAL_FOOTER_LINKS: FooterLink[] = [
  */
 export const EXTERNAL_FOOTER_LINKS: FooterLink[] = [
   {
-    href: 'https://gpwrpmoniglarqwfyryp.supabase.co/functions/v1/glossary-rss?format=rss',
-    label: 'RSS Léxico',
+    href: "https://gpwrpmoniglarqwfyryp.supabase.co/functions/v1/glossary-rss?format=rss",
+    label: "RSS Léxico",
     external: true,
-    ariaLabel: 'Feed RSS do Léxico Teológico',
+    ariaLabel: "Feed RSS do Léxico Teológico",
   },
 ];
 

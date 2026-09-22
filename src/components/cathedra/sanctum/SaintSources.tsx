@@ -1,8 +1,11 @@
-import React from 'react';
-import { Icons } from '../../../constants';
-import type { Saint } from '@/data/saints';
+import React from "react";
+import { Icons } from "../../../constants";
+import type { Saint } from "@/data/saints";
 
-const SectionTitle: React.FC<{ icon: keyof typeof Icons; children: React.ReactNode }> = ({ icon, children }) => {
+const SectionTitle: React.FC<{ icon: keyof typeof Icons; children: React.ReactNode }> = ({
+  icon,
+  children,
+}) => {
   const Icon = Icons[icon] as any;
   return (
     <div className="flex items-center gap-spacing-xs text-primary">
@@ -27,7 +30,7 @@ const SaintSources: React.FC<{ saint: Saint }> = ({ saint }) => {
             {s.year && <span>, {s.year}</span>}
             {s.url && (
               <>
-                {' · '}
+                {" · "}
                 <a
                   href={s.url}
                   target="_blank"

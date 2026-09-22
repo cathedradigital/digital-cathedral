@@ -6,11 +6,11 @@
  * CTA duplo ficam encapsulados no card.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Icons } from '../../constants';
-import { listWorksBySaint } from '@/services/saintWorksService';
-import type { SaintWork } from '@/types/saintWorks';
-import SaintWorkCard from './SaintWorkCard';
+import React, { useEffect, useState } from "react";
+import { Icons } from "../../constants";
+import { listWorksBySaint } from "@/services/saintWorksService";
+import type { SaintWork } from "@/types/saintWorks";
+import SaintWorkCard from "./SaintWorkCard";
 
 interface Props {
   saintId: string;
@@ -64,4 +64,3 @@ const SaintWorksSection: React.FC<Props> = ({ saintId, saintSlug }) => {
 };
 
 export default SaintWorksSection;
-

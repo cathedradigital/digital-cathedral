@@ -7,12 +7,12 @@
  */
 
 export type LiturgicalColorToken =
-  | 'liturgical-green'
-  | 'liturgical-white'
-  | 'liturgical-red'
-  | 'liturgical-violet'
-  | 'liturgical-rose'
-  | 'liturgical-black';
+  | "liturgical-green"
+  | "liturgical-white"
+  | "liturgical-red"
+  | "liturgical-violet"
+  | "liturgical-rose"
+  | "liturgical-black";
 
 export interface Reading {
   referencia: string;
@@ -69,7 +69,7 @@ export function registerLiturgyProvider(provider: LiturgyProvider): void {
 export function getLiturgyProvider(): LiturgyProvider {
   if (!current) {
     throw new Error(
-      '[LiturgyProvider] Nenhum provider registrado. Chame registerLiturgyProvider() em src/main.tsx.',
+      "[LiturgyProvider] Nenhum provider registrado. Chame registerLiturgyProvider() em src/main.tsx.",
     );
   }
   return current;
@@ -80,31 +80,31 @@ export function getLiturgyProvider(): LiturgyProvider {
 // ──────────────────────────────────────────────────────────────────────────
 
 const COLOR_MAP: Record<string, LiturgicalColorToken> = {
-  verde: 'liturgical-green',
-  green: 'liturgical-green',
-  branco: 'liturgical-white',
-  branca: 'liturgical-white',
-  white: 'liturgical-white',
-  vermelho: 'liturgical-red',
-  vermelha: 'liturgical-red',
-  red: 'liturgical-red',
-  roxo: 'liturgical-violet',
-  roxa: 'liturgical-violet',
-  violeta: 'liturgical-violet',
-  violet: 'liturgical-violet',
-  purple: 'liturgical-violet',
-  rosa: 'liturgical-rose',
-  rose: 'liturgical-rose',
-  pink: 'liturgical-rose',
-  preto: 'liturgical-black',
-  preta: 'liturgical-black',
-  black: 'liturgical-black',
+  verde: "liturgical-green",
+  green: "liturgical-green",
+  branco: "liturgical-white",
+  branca: "liturgical-white",
+  white: "liturgical-white",
+  vermelho: "liturgical-red",
+  vermelha: "liturgical-red",
+  red: "liturgical-red",
+  roxo: "liturgical-violet",
+  roxa: "liturgical-violet",
+  violeta: "liturgical-violet",
+  violet: "liturgical-violet",
+  purple: "liturgical-violet",
+  rosa: "liturgical-rose",
+  rose: "liturgical-rose",
+  pink: "liturgical-rose",
+  preto: "liturgical-black",
+  preta: "liturgical-black",
+  black: "liturgical-black",
 };
 
 export function normalizeColorToken(cor: string | null | undefined): LiturgicalColorToken {
-  if (!cor) return 'liturgical-green';
+  if (!cor) return "liturgical-green";
   const key = cor.trim().toLowerCase();
-  return COLOR_MAP[key] ?? 'liturgical-green';
+  return COLOR_MAP[key] ?? "liturgical-green";
 }
 
 /**
@@ -114,19 +114,19 @@ export function normalizeColorToken(cor: string | null | undefined): LiturgicalC
 export function inferSeason(input: string | null | undefined): string | null {
   if (!input) return null;
   const s = input.toLowerCase();
-  if (s.includes('advento')) return 'Advento';
-  if (s.includes('natal')) return 'Natal';
-  if (s.includes('quaresma')) return 'Quaresma';
-  if (s.includes('tríduo') || s.includes('triduo')) return 'Tríduo Pascal';
-  if (s.includes('páscoa') || s.includes('pascoa')) return 'Tempo Pascal';
-  if (s.includes('tempo comum')) return 'Tempo Comum';
+  if (s.includes("advento")) return "Advento";
+  if (s.includes("natal")) return "Natal";
+  if (s.includes("quaresma")) return "Quaresma";
+  if (s.includes("tríduo") || s.includes("triduo")) return "Tríduo Pascal";
+  if (s.includes("páscoa") || s.includes("pascoa")) return "Tempo Pascal";
+  if (s.includes("tempo comum")) return "Tempo Comum";
   return null;
 }
 
 /** Chave ISO YYYY-MM-DD em timezone local (evita divergência de UTC). */
 export function toIsoDateKey(date: Date): string {
   const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }

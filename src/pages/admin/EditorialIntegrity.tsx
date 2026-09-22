@@ -6,9 +6,9 @@
  * `deep_interpretation` (verbete volta para status='draft' após gerar).
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { supabase } from "@/lib/db";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,9 @@ interface Row {
 export default function EditorialIntegrityPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [totals, setTotals] = useState<{ published: number; complete: number; broken: number }>({
-    published: 0, complete: 0, broken: 0,
+    published: 0,
+    complete: 0,
+    broken: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +50,9 @@ export default function EditorialIntegrityPage() {
     try {
       const { data: allRows, error: e1 } = await supabase
         .from("glossary")
-        .select("slug,term,status,editorial_completeness,deep_interpretation,etymology,logos_meditation,bibliography,faq,next_steps,nexus_refs")
+        .select(
+          "slug,term,status,editorial_completeness,deep_interpretation,etymology,logos_meditation,bibliography,faq,next_steps,nexus_refs",
+        )
         .order("term");
       if (e1) throw e1;
 
@@ -101,40 +105,53 @@ export default function EditorialIntegrityPage() {
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const integrity = useMemo(() => {
     if (totals.complete === 0) return 100;
     return Math.round(((totals.complete - totals.broken) / totals.complete) * 1000) / 10;
   }, [totals]);
 
-  const generateOne = useCallback(async (slug: string) => {
-    setBusySlug(slug);
-    try {
-      const { data, error } = await supabase.functions.invoke("glossary-generate-deep", {
-        body: { slug },
-      });
-      if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
-      toast.success(`${slug}: interpretação gerada (${(data as any)?.chars} caracteres). Verbete voltou para rascunho.`);
-      await load();
-    } catch (e: any) {
-      toast.error(`${slug}: ${e?.message ?? String(e)}`);
-    } finally {
-      setBusySlug(null);
-    }
-  }, [load]);
+  const generateOne = useCallback(
+    async (slug: string) => {
+      setBusySlug(slug);
+      try {
+        const { data, error } = await supabase.functions.invoke("glossary-generate-deep", {
+          body: { slug },
+        });
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+        toast.success(
+          `${slug}: interpretação gerada (${(data as any)?.chars} caracteres). Verbete voltou para rascunho.`,
+        );
+        await load();
+      } catch (e: any) {
+        toast.error(`${slug}: ${e?.message ?? String(e)}`);
+      } finally {
+        setBusySlug(null);
+      }
+    },
+    [load],
+  );
 
   const generateAll = useCallback(async () => {
-    const targets = rows.filter(r => r.no_deep).map(r => r.slug);
+    const targets = rows.filter((r) => r.no_deep).map((r) => r.slug);
     if (targets.length === 0) {
       toast.info("Nenhum verbete sem interpretação profunda.");
       return;
     }
-    if (!confirm(`Gerar interpretação profunda para ${targets.length} verbetes via Logos AI? Todos voltam para rascunho.`)) return;
+    if (
+      !confirm(
+        `Gerar interpretação profunda para ${targets.length} verbetes via Logos AI? Todos voltam para rascunho.`,
+      )
+    )
+      return;
 
     setBatchRunning(true);
-    let ok = 0, fail = 0;
+    let ok = 0,
+      fail = 0;
     for (const slug of targets) {
       setBusySlug(slug);
       try {
@@ -148,7 +165,7 @@ export default function EditorialIntegrityPage() {
         fail += 1;
       }
       // pequeno delay para respeitar rate limit
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 800));
     }
     setBusySlug(null);
     setBatchRunning(false);
@@ -171,8 +188,8 @@ export default function EditorialIntegrityPage() {
         </p>
         <h1 className="text-3xl font-serif">Integridade Editorial</h1>
         <p className="mt-1 text-sm text-muted-foreground max-w-2xl">
-          Verbetes marcados como <code>complete</code> mas com campos obrigatórios vazios ou
-          padrão Nexus Ouro (≥ {GOLD_MIN}) não atingido.
+          Verbetes marcados como <code>complete</code> mas com campos obrigatórios vazios ou padrão
+          Nexus Ouro (≥ {GOLD_MIN}) não atingido.
         </p>
       </header>
 
@@ -202,12 +219,17 @@ export default function EditorialIntegrityPage() {
             </p>
             <Button
               onClick={generateAll}
-              disabled={batchRunning || rows.filter(r => r.no_deep).length === 0}
+              disabled={batchRunning || rows.filter((r) => r.no_deep).length === 0}
             >
               {batchRunning ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando…</>
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Gerando…
+                </>
               ) : (
-                <><Sparkles className="mr-2 h-4 w-4" /> Gerar todos ({rows.filter(r => r.no_deep).length}) via Logos AI</>
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" /> Gerar todos (
+                  {rows.filter((r) => r.no_deep).length}) via Logos AI
+                </>
               )}
             </Button>
           </div>
@@ -221,7 +243,7 @@ export default function EditorialIntegrityPage() {
                 </CardContent>
               </Card>
             )}
-            {rows.map(r => (
+            {rows.map((r) => (
               <Card key={r.slug}>
                 <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
                   <div className="min-w-0">
@@ -235,7 +257,7 @@ export default function EditorialIntegrityPage() {
                       </Badge>
                     </CardTitle>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      {r.issues.map(iss => (
+                      {r.issues.map((iss) => (
                         <Badge key={iss} variant="secondary" className="text-[10px]">
                           <AlertCircle className="mr-1 h-3 w-3" />
                           {iss}
@@ -252,9 +274,13 @@ export default function EditorialIntegrityPage() {
                         onClick={() => generateOne(r.slug)}
                       >
                         {busySlug === r.slug ? (
-                          <><Loader2 className="mr-2 h-3 w-3 animate-spin" /> Gerando…</>
+                          <>
+                            <Loader2 className="mr-2 h-3 w-3 animate-spin" /> Gerando…
+                          </>
                         ) : (
-                          <><Sparkles className="mr-2 h-3 w-3" /> Gerar via IA</>
+                          <>
+                            <Sparkles className="mr-2 h-3 w-3" /> Gerar via IA
+                          </>
                         )}
                       </Button>
                     )}
@@ -290,16 +316,27 @@ export default function EditorialIntegrityPage() {
 }
 
 function Summary({
-  label, value, tone = "neutral",
-}: { label: string; value: string | number; tone?: "ok" | "warn" | "bad" | "neutral" }) {
+  label,
+  value,
+  tone = "neutral",
+}: {
+  label: string;
+  value: string | number;
+  tone?: "ok" | "warn" | "bad" | "neutral";
+}) {
   const cls =
-    tone === "ok" ? "border-emerald-500/30 bg-emerald-500/5"
-    : tone === "warn" ? "border-amber-500/30 bg-amber-500/5"
-    : tone === "bad" ? "border-red-500/30 bg-red-500/5"
-    : "border-border";
+    tone === "ok"
+      ? "border-emerald-500/30 bg-emerald-500/5"
+      : tone === "warn"
+        ? "border-amber-500/30 bg-amber-500/5"
+        : tone === "bad"
+          ? "border-red-500/30 bg-red-500/5"
+          : "border-border";
   return (
     <div className={`rounded-lg border p-4 ${cls}`}>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </p>
       <p className="mt-1 text-2xl font-bold">{value}</p>
     </div>
   );
@@ -307,9 +344,13 @@ function Summary({
 
 function Field({ ok, label }: { ok: boolean; label: string }) {
   return (
-    <div className={`flex items-center gap-1 rounded border px-2 py-1 ${
-      ok ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-700" : "border-amber-500/30 bg-amber-500/5 text-amber-700"
-    }`}>
+    <div
+      className={`flex items-center gap-1 rounded border px-2 py-1 ${
+        ok
+          ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-700"
+          : "border-amber-500/30 bg-amber-500/5 text-amber-700"
+      }`}
+    >
       {ok ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
       <span>{label}</span>
     </div>

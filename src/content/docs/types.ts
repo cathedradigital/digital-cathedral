@@ -5,9 +5,9 @@
  * Os `slug` são idênticos em todos os idiomas para manter URLs estáveis e
  * permitir hreflang correto entre `/docs/...` e `/en/docs/...`.
  */
-import type { Language } from '@/types';
+import type { Language } from "@/types";
 
-export type DocCategory = 'inicio' | 'leitura' | 'oracao' | 'estudo';
+export type DocCategory = "inicio" | "leitura" | "oracao" | "estudo";
 
 export interface DocSection {
   heading: string;
@@ -25,7 +25,6 @@ export interface DocGuide {
   /** Preenchido quando o guia vem do idioma de referência por falta de tradução. */
   fallbackFrom?: Language;
 }
-
 
 export interface DocsBundle {
   /** Rótulos das categorias no idioma. */

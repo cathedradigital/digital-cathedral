@@ -6,19 +6,19 @@
  */
 
 export type SaintWorkCategory =
-  | 'patristica'
-  | 'escolastica'
-  | 'mistica'
-  | 'monastica'
-  | 'carmelita'
-  | 'franciscana'
-  | 'dominicana'
-  | 'doutor'
-  | 'espiritualidade'
-  | 'apologetica'
-  | 'liturgica';
+  | "patristica"
+  | "escolastica"
+  | "mistica"
+  | "monastica"
+  | "carmelita"
+  | "franciscana"
+  | "dominicana"
+  | "doutor"
+  | "espiritualidade"
+  | "apologetica"
+  | "liturgica";
 
-export type SaintWorkStatus = 'draft' | 'in_review' | 'published' | 'archived';
+export type SaintWorkStatus = "draft" | "in_review" | "published" | "archived";
 
 /**
  * Modelo de acesso ao texto da obra.
@@ -27,47 +27,43 @@ export type SaintWorkStatus = 'draft' | 'in_review' | 'published' | 'archived';
  * - `public_domain`: fonte pública validada (CCEL, Documenta Catholica Omnia, ...)
  * - `licensed`: tradução licenciada (futuro)
  */
-export type SaintWorkAccessType =
-  | 'internal'
-  | 'official_external'
-  | 'public_domain'
-  | 'licensed';
+export type SaintWorkAccessType = "internal" | "official_external" | "public_domain" | "licensed";
 
 export const SAINT_WORK_ACCESS_LABELS: Record<SaintWorkAccessType, string> = {
-  internal: 'Leitor Cathedra',
-  official_external: 'Fonte oficial',
-  public_domain: 'Domínio público',
-  licensed: 'Tradução licenciada',
+  internal: "Leitor Cathedra",
+  official_external: "Fonte oficial",
+  public_domain: "Domínio público",
+  licensed: "Tradução licenciada",
 };
 
 export const SAINT_WORK_CATEGORY_LABELS: Record<SaintWorkCategory, string> = {
-  patristica: 'Padres da Igreja',
-  escolastica: 'Escolástica',
-  mistica: 'Mística',
-  monastica: 'Monástica',
-  carmelita: 'Carmelita',
-  franciscana: 'Franciscana',
-  dominicana: 'Dominicana',
-  doutor: 'Doutores da Igreja',
-  espiritualidade: 'Espiritualidade',
-  apologetica: 'Apologética',
-  liturgica: 'Litúrgica',
+  patristica: "Padres da Igreja",
+  escolastica: "Escolástica",
+  mistica: "Mística",
+  monastica: "Monástica",
+  carmelita: "Carmelita",
+  franciscana: "Franciscana",
+  dominicana: "Dominicana",
+  doutor: "Doutores da Igreja",
+  espiritualidade: "Espiritualidade",
+  apologetica: "Apologética",
+  liturgica: "Litúrgica",
 };
 
-export type SaintWorkReadingLevel = 'beginner' | 'intermediate' | 'advanced';
+export type SaintWorkReadingLevel = "beginner" | "intermediate" | "advanced";
 
 export const SAINT_WORK_READING_LEVEL_LABELS: Record<SaintWorkReadingLevel, string> = {
-  beginner: 'Iniciante',
-  intermediate: 'Intermediário',
-  advanced: 'Avançado',
+  beginner: "Iniciante",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
 };
 
-export type SaintWorkFichaCompleteness = 'stub' | 'minimal' | 'complete';
+export type SaintWorkFichaCompleteness = "stub" | "minimal" | "complete";
 
 export const SAINT_WORK_FICHA_COMPLETENESS_LABELS: Record<SaintWorkFichaCompleteness, string> = {
-  stub: 'Rascunho',
-  minimal: 'Ficha mínima',
-  complete: 'Ficha completa',
+  stub: "Rascunho",
+  minimal: "Ficha mínima",
+  complete: "Ficha completa",
 };
 
 export interface SaintWork {

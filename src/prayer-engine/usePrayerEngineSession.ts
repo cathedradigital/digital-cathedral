@@ -20,10 +20,10 @@
  * Todos os IDs (section/mystery/block) são uuids que vêm do banco (Fase C do
  * plano); o hook não conhece o conteúdo, só a topologia.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { supabase } from "@/lib/db";
 
-export type PrayerBookmarkKind = 'favorite' | 'reflection' | 'intention' | 'word';
+export type PrayerBookmarkKind = "favorite" | "reflection" | "intention" | "word";
 
 export interface PrayerBookmark {
   id: string;
@@ -69,7 +69,7 @@ interface UsePrayerEngineSessionResult {
   hasOpenSession: boolean;
   resume: () => Promise<PrayerSessionRow | null>;
   advance: (input: AdvanceInput) => void;
-  setCursor: (input: Omit<AdvanceInput, 'mysteryBlockIds' | 'sectionMysteryIds'>) => void;
+  setCursor: (input: Omit<AdvanceInput, "mysteryBlockIds" | "sectionMysteryIds">) => void;
   addBookmark: (block_id: string, kind: PrayerBookmarkKind, text?: string) => void;
   removeBookmark: (id: string) => void;
   finish: () => Promise<void>;
@@ -84,18 +84,18 @@ function uniq(arr: string[]) {
 
 function makeId() {
   // Uses browser crypto; falls back to timestamp for SSR/tests.
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 async function fetchOpenSession(userId: string, prayerId: string) {
   const { data, error } = await supabase
-    .from('prayer_sessions')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('prayer_id', prayerId)
-    .is('completed_at', null)
-    .order('updated_at', { ascending: false })
+    .from("prayer_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("prayer_id", prayerId)
+    .is("completed_at", null)
+    .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (error) throw error;
@@ -113,7 +113,7 @@ async function fetchOpenSession(userId: string, prayerId: string) {
 async function createSession(userId: string, prayerId: string) {
   const nowIso = new Date().toISOString();
   const { data, error } = await supabase
-    .from('prayer_sessions')
+    .from("prayer_sessions")
     .upsert(
       {
         user_id: userId,
@@ -132,14 +132,13 @@ async function createSession(userId: string, prayerId: string) {
         updated_at: nowIso,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
-      { onConflict: 'user_id,prayer_id' },
+      { onConflict: "user_id,prayer_id" },
     )
-    .select('*')
+    .select("*")
     .single();
   if (error) throw error;
   return data as unknown as PrayerSessionRow;
 }
-
 
 export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerEngineSessionResult {
   const [session, setSession] = useState<PrayerSessionRow | null>(null);
@@ -207,10 +206,10 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
     if (!patch || !current) return;
     pendingPatchRef.current = null;
     const { error: e } = await supabase
-      .from('prayer_sessions')
+      .from("prayer_sessions")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .update({ ...patch, updated_at: new Date().toISOString() } as any)
-      .eq('id', current.id);
+      .eq("id", current.id);
     if (e) setError(e.message);
   }, []);
 
@@ -220,9 +219,9 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
       // Best-effort — supabase-js não expõe sendBeacon nativo aqui, mas dispara o update.
       void flush();
     };
-    window.addEventListener('beforeunload', handler);
+    window.addEventListener("beforeunload", handler);
     return () => {
-      window.removeEventListener('beforeunload', handler);
+      window.removeEventListener("beforeunload", handler);
       void flush();
     };
   }, [flush]);
@@ -279,7 +278,7 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
     [schedulePatch],
   );
 
-  const setCursor = useCallback<UsePrayerEngineSessionResult['setCursor']>(
+  const setCursor = useCallback<UsePrayerEngineSessionResult["setCursor"]>(
     (input) => {
       const current = sessionRef.current;
       if (!current) return;
@@ -292,15 +291,15 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
     [schedulePatch],
   );
 
-  const addBookmark = useCallback<UsePrayerEngineSessionResult['addBookmark']>(
+  const addBookmark = useCallback<UsePrayerEngineSessionResult["addBookmark"]>(
     (block_id, kind, text) => {
       const current = sessionRef.current;
       if (!current) return;
       // Favorito é toggle único por bloco; os outros são livres.
       const existing = current.bookmarks ?? [];
       let next: PrayerBookmark[];
-      if (kind === 'favorite') {
-        const already = existing.find((b) => b.block_id === block_id && b.kind === 'favorite');
+      if (kind === "favorite") {
+        const already = existing.find((b) => b.block_id === block_id && b.kind === "favorite");
         next = already
           ? existing.filter((b) => b.id !== already.id)
           : [
@@ -318,7 +317,7 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
     [schedulePatch],
   );
 
-  const removeBookmark = useCallback<UsePrayerEngineSessionResult['removeBookmark']>(
+  const removeBookmark = useCallback<UsePrayerEngineSessionResult["removeBookmark"]>(
     (id) => {
       const current = sessionRef.current;
       if (!current) return;
@@ -333,9 +332,9 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
     await flush();
     const nowIso = new Date().toISOString();
     const { error: e } = await supabase
-      .from('prayer_sessions')
+      .from("prayer_sessions")
       .update({ completed_at: nowIso, updated_at: nowIso })
-      .eq('id', current.id);
+      .eq("id", current.id);
     if (e) {
       setError(e.message);
       return;
@@ -349,9 +348,9 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
       // fecha a sessão atual sem contar como concluída (marca com timestamp para sair da fila de "aberta").
       await flush();
       await supabase
-        .from('prayer_sessions')
+        .from("prayer_sessions")
         .update({ completed_at: new Date().toISOString() })
-        .eq('id', current.id);
+        .eq("id", current.id);
     }
     if (!userId || !prayerId) return null;
     const row = await createSession(userId, prayerId);
@@ -360,10 +359,7 @@ export function usePrayerEngineSession(prayerId: string | undefined): UsePrayerE
   }, [flush, prayerId, userId]);
 
   const hasOpenSession = useMemo(
-    () =>
-      !!session &&
-      !session.completed_at &&
-      (session.completed_block_ids?.length ?? 0) > 0,
+    () => !!session && !session.completed_at && (session.completed_block_ids?.length ?? 0) > 0,
     [session],
   );
 

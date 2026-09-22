@@ -1,5 +1,5 @@
-import { onCLS, onLCP, onFCP, onTTFB, onINP, Metric } from 'web-vitals';
-import { supabase } from '@/lib/db';
+import { onCLS, onLCP, onFCP, onTTFB, onINP, Metric } from "web-vitals";
+import { supabase } from "@/lib/db";
 
 const sendToAnalytics = async (metric: Metric) => {
   const body = {
@@ -10,19 +10,18 @@ const sendToAnalytics = async (metric: Metric) => {
     metric_id: metric.id,
     navigation_type: metric.navigationType,
     path: window.location.pathname,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   try {
     // Usando any para ignorar temporariamente os erros de tipo até que a tabela seja reconhecida
-    const { error } = await (supabase.from('web_vitals' as any) as any)
-      .insert([body]);
-      
+    const { error } = await (supabase.from("web_vitals" as any) as any).insert([body]);
+
     if (error) {
-      if (import.meta.env.DEV) console.error('Error reporting vitals:', error);
+      if (import.meta.env.DEV) console.error("Error reporting vitals:", error);
     }
   } catch (e) {
-    if (import.meta.env.DEV) console.warn('Vitals reporting bypassed', e);
+    if (import.meta.env.DEV) console.warn("Vitals reporting bypassed", e);
   }
 };
 

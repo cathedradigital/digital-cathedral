@@ -19,4 +19,4 @@ export function isChapterMissing(abbr: string, chapter: number): boolean {
 }
 
 export const MISSING_CHAPTER_REASON =
-  'Capítulo indisponível na fonte pública atual (bolls.life / NAA / BibliaCatolica).';
+  "Capítulo indisponível na fonte pública atual (bolls.life / NAA / BibliaCatolica).";

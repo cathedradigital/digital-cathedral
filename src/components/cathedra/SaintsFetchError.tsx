@@ -1,6 +1,6 @@
-import React from 'react';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   message?: string;
@@ -13,11 +13,7 @@ interface Props {
  * - `role="alert"` + `aria-live="assertive"` → leitor de tela anuncia imediatamente.
  * - Botão "Tentar novamente" reexecuta a query mantendo o contexto.
  */
-export const SaintsFetchError: React.FC<Props> = ({
-  message,
-  onRetry,
-  isRetrying = false,
-}) => {
+export const SaintsFetchError: React.FC<Props> = ({ message, onRetry, isRetrying = false }) => {
   return (
     <div
       role="alert"
@@ -35,7 +31,7 @@ export const SaintsFetchError: React.FC<Props> = ({
           Não foi possível carregar os santos do dia.
         </p>
         <p className="text-premium-xs text-muted-foreground max-w-md mx-auto">
-          {message || 'Verifique sua conexão e tente novamente em instantes.'}
+          {message || "Verifique sua conexão e tente novamente em instantes."}
         </p>
       </div>
       <Button
@@ -46,10 +42,10 @@ export const SaintsFetchError: React.FC<Props> = ({
         className="min-h-11"
       >
         <Icons.RefreshCw
-          className={`w-spacing-md h-spacing-md ${isRetrying ? 'animate-spin' : ''}`}
+          className={`w-spacing-md h-spacing-md ${isRetrying ? "animate-spin" : ""}`}
           aria-hidden="true"
         />
-        {isRetrying ? 'Tentando…' : 'Tentar novamente'}
+        {isRetrying ? "Tentando…" : "Tentar novamente"}
       </Button>
     </div>
   );

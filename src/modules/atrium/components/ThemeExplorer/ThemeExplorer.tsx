@@ -1,5 +1,5 @@
-import React from 'react';
-import { useFeaturedThemes } from '../../hooks';
+import React from "react";
+import { useFeaturedThemes } from "../../hooks";
 
 const ThemeExplorer: React.FC = () => {
   const themes = useFeaturedThemes();
@@ -7,7 +7,10 @@ const ThemeExplorer: React.FC = () => {
 
   return (
     <section data-atrium-block="P2" aria-labelledby="atrium-themes">
-      <h2 id="atrium-themes" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-themes"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Explorar por tema
       </h2>
       <ul className="grid grid-cols-2 gap-2">

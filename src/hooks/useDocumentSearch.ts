@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
 /**
  * STAB-004.3.2 — Busca em memória dentro do documento renderizado.
@@ -10,8 +10,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObje
  *  - Sem consultas ao servidor. Sem alteração da árvore React.
  */
 
-const HIT_CLASS = 'mag-search-hit rounded-sm px-0.5 bg-primary/15 text-inherit transition-colors';
-const CURRENT_CLASS = 'is-current !bg-primary !text-primary-foreground shadow-sm';
+const HIT_CLASS = "mag-search-hit rounded-sm px-0.5 bg-primary/15 text-inherit transition-colors";
+const CURRENT_CLASS = "is-current !bg-primary !text-primary-foreground shadow-sm";
 
 function unwrapMarks(marks: HTMLElement[]) {
   const parentsToNormalize = new Set<Node>();
@@ -61,7 +61,7 @@ export function useDocumentSearch(
         if (!parent) return NodeFilter.FILTER_REJECT;
         // Evita SCRIPT/STYLE e conteúdo do próprio mark (não deveria haver aqui, mas seguro)
         const tag = parent.tagName;
-        if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'MARK') return NodeFilter.FILTER_REJECT;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "MARK") return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       },
     });
@@ -72,7 +72,7 @@ export function useDocumentSearch(
 
     const newMarks: HTMLElement[] = [];
     for (const node of textNodes) {
-      const text = node.textContent ?? '';
+      const text = node.textContent ?? "";
       const lower = text.toLowerCase();
       let idx = lower.indexOf(needle);
       if (idx === -1) continue;
@@ -81,7 +81,7 @@ export function useDocumentSearch(
       let last = 0;
       while (idx !== -1) {
         if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
-        const mark = document.createElement('mark');
+        const mark = document.createElement("mark");
         mark.className = HIT_CLASS;
         mark.textContent = text.slice(idx, idx + needle.length);
         frag.appendChild(mark);
@@ -111,7 +111,7 @@ export function useDocumentSearch(
       }
     });
     const active = marks[current - 1];
-    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (active) active.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [current, total]);
 
   // Limpa ao desmontar

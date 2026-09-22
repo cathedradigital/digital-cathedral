@@ -14,22 +14,18 @@
  * frente ao comportamento anterior.
  */
 
-import { resolveContext } from './resolveContext';
-import { findCandidates } from './findCandidates';
-import { scoreCandidates } from './scoreCandidates';
-import { chooseSuggestions } from './chooseSuggestions';
-import { fallbackSuggestions } from './fallback';
-import type {
-  ContinuationInput,
-  ContinuationResult,
-  ContinuationSuggestion,
-} from './types';
+import { resolveContext } from "./resolveContext";
+import { findCandidates } from "./findCandidates";
+import { scoreCandidates } from "./scoreCandidates";
+import { chooseSuggestions } from "./chooseSuggestions";
+import { fallbackSuggestions } from "./fallback";
+import type { ContinuationInput, ContinuationResult, ContinuationSuggestion } from "./types";
 
-const MIN_CONFIDENCE_TO_SKIP_FALLBACK: ContinuationSuggestion['confidence'] = 'medium';
+const MIN_CONFIDENCE_TO_SKIP_FALLBACK: ContinuationSuggestion["confidence"] = "medium";
 
 function hasStrongSuggestion(list: ContinuationSuggestion[]): boolean {
-  return list.some((s) =>
-    s.confidence === 'high' || s.confidence === MIN_CONFIDENCE_TO_SKIP_FALLBACK,
+  return list.some(
+    (s) => s.confidence === "high" || s.confidence === MIN_CONFIDENCE_TO_SKIP_FALLBACK,
   );
 }
 
@@ -44,7 +40,7 @@ export const ContinuationEngine = {
     if (hasStrongSuggestion(fromGraph)) {
       return {
         suggestions: fromGraph,
-        source: 'graph',
+        source: "graph",
         context,
       };
     }
@@ -53,7 +49,7 @@ export const ContinuationEngine = {
     const fallback = fallbackSuggestions(context);
 
     if (fromGraph.length === 0) {
-      return { suggestions: fallback, source: 'fallback', context };
+      return { suggestions: fallback, source: "fallback", context };
     }
 
     // Mistura: mantém o topo do grafo (mesmo com confiança baixa) e
@@ -66,6 +62,6 @@ export const ContinuationEngine = {
       merged.push(s);
       if (merged.length >= 3) break;
     }
-    return { suggestions: merged, source: 'mixed', context };
+    return { suggestions: merged, source: "mixed", context };
   },
 };

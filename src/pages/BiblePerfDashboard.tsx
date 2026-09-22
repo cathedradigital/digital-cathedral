@@ -1,11 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { biblePerf, type BiblePerfRun } from '@/lib/biblePerf';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { RefreshCw, Activity } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { biblePerf, type BiblePerfRun } from "@/lib/biblePerf";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { RefreshCw, Activity } from "lucide-react";
 
 interface PhaseStats {
   phase: string;
@@ -53,31 +60,43 @@ export default function BiblePerfDashboard() {
     setLoading(true);
     setClientRuns(biblePerf.getRuns());
     const { data } = await supabase
-      .from('bible_cache_metric_events')
-      .select('abbrev, chapter, cache, total_ms, bolls_ms, source, created_at')
-      .order('created_at', { ascending: false })
+      .from("bible_cache_metric_events")
+      .select("abbrev, chapter, cache, total_ms, bolls_ms, source, created_at")
+      .order("created_at", { ascending: false })
       .limit(500);
     setServerMetrics((data ?? []) as ServerMetric[]);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const phaseStats: PhaseStats[] = useMemo(() => {
     const phases = {
-      'Capítulo (total)': clientRuns.map(r => biblePerf.getDurations(r).total_ms).filter((v): v is number => typeof v === 'number'),
-      'Busca texto': clientRuns.map(r => biblePerf.getDurations(r).text_ms).filter((v): v is number => typeof v === 'number'),
-      'Busca conexões': clientRuns.map(r => biblePerf.getDurations(r).connections_ms).filter((v): v is number => typeof v === 'number'),
-      'Renderiza': clientRuns.map(r => biblePerf.getDurations(r).render_ms).filter((v): v is number => typeof v === 'number'),
-      'Salva progresso': clientRuns.map(r => biblePerf.getDurations(r).progress_ms).filter((v): v is number => typeof v === 'number'),
+      "Capítulo (total)": clientRuns
+        .map((r) => biblePerf.getDurations(r).total_ms)
+        .filter((v): v is number => typeof v === "number"),
+      "Busca texto": clientRuns
+        .map((r) => biblePerf.getDurations(r).text_ms)
+        .filter((v): v is number => typeof v === "number"),
+      "Busca conexões": clientRuns
+        .map((r) => biblePerf.getDurations(r).connections_ms)
+        .filter((v): v is number => typeof v === "number"),
+      Renderiza: clientRuns
+        .map((r) => biblePerf.getDurations(r).render_ms)
+        .filter((v): v is number => typeof v === "number"),
+      "Salva progresso": clientRuns
+        .map((r) => biblePerf.getDurations(r).progress_ms)
+        .filter((v): v is number => typeof v === "number"),
     };
     return Object.entries(phases).map(([phase, values]) => ({ phase, ...aggregate(values) }));
   }, [clientRuns]);
 
   const coldVsWarm = useMemo(() => {
-    const cold = serverMetrics.filter(m => m.cache === 'MISS').map(m => m.total_ms);
-    const warm = serverMetrics.filter(m => m.cache === 'HIT').map(m => m.total_ms);
-    const stale = serverMetrics.filter(m => m.cache.includes('STALE')).map(m => m.total_ms);
+    const cold = serverMetrics.filter((m) => m.cache === "MISS").map((m) => m.total_ms);
+    const warm = serverMetrics.filter((m) => m.cache === "HIT").map((m) => m.total_ms);
+    const stale = serverMetrics.filter((m) => m.cache.includes("STALE")).map((m) => m.total_ms);
     return {
       cold: aggregate(cold),
       warm: aggregate(warm),
@@ -97,23 +116,31 @@ export default function BiblePerfDashboard() {
           </p>
         </div>
         <Button onClick={load} variant="outline" size="sm" disabled={loading}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Atualizar
+          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Atualizar
         </Button>
       </div>
 
       {/* Cold vs Warm */}
       <Card>
-        <CardHeader><CardTitle className="text-sm">Servidor: Cold vs Warm (últimas {serverMetrics.length} requisições)</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-sm">
+            Servidor: Cold vs Warm (últimas {serverMetrics.length} requisições)
+          </CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: 'Cold (MISS)', data: coldVsWarm.cold, color: 'text-red-600' },
-              { label: 'Warm (HIT)', data: coldVsWarm.warm, color: 'text-green-600' },
-              { label: 'Stale (SWR)', data: coldVsWarm.stale, color: 'text-amber-600' },
+              { label: "Cold (MISS)", data: coldVsWarm.cold, color: "text-red-600" },
+              { label: "Warm (HIT)", data: coldVsWarm.warm, color: "text-green-600" },
+              { label: "Stale (SWR)", data: coldVsWarm.stale, color: "text-amber-600" },
             ].map(({ label, data, color }) => (
               <div key={label} className="space-y-1 p-4 rounded-lg border bg-card">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-                <div className={`text-2xl font-bold ${color}`}>{data.avg}ms <span className="text-xs text-muted-foreground">avg</span></div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                  {label}
+                </div>
+                <div className={`text-2xl font-bold ${color}`}>
+                  {data.avg}ms <span className="text-xs text-muted-foreground">avg</span>
+                </div>
                 <div className="text-xs text-muted-foreground">
                   n={data.count} · p50={data.p50}ms · p95={data.p95}ms · max={data.max}ms
                 </div>
@@ -126,7 +153,9 @@ export default function BiblePerfDashboard() {
       {/* Phase stats (client) */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Cliente: tempo por fase (últimas {clientRuns.length} aberturas de capítulo)</CardTitle>
+          <CardTitle className="text-sm">
+            Cliente: tempo por fase (últimas {clientRuns.length} aberturas de capítulo)
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {clientRuns.length === 0 ? (
@@ -146,7 +175,7 @@ export default function BiblePerfDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {phaseStats.map(s => (
+                {phaseStats.map((s) => (
                   <TableRow key={s.phase}>
                     <TableCell className="font-medium">{s.phase}</TableCell>
                     <TableCell className="text-right tabular-nums">{s.count}</TableCell>
@@ -164,7 +193,9 @@ export default function BiblePerfDashboard() {
 
       {/* Recent runs */}
       <Card>
-        <CardHeader><CardTitle className="text-sm">Aberturas recentes (sessão atual)</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-sm">Aberturas recentes (sessão atual)</CardTitle>
+        </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
@@ -179,21 +210,31 @@ export default function BiblePerfDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clientRuns.slice(0, 30).map(r => {
+              {clientRuns.slice(0, 30).map((r) => {
                 const d = biblePerf.getDurations(r);
                 return (
                   <TableRow key={r.id}>
-                    <TableCell className="font-mono text-xs">{r.abbr} {r.chapter}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {r.abbr} {r.chapter}
+                    </TableCell>
                     <TableCell>
-                      {r.cacheHit
-                        ? <Badge variant="secondary" className="bg-green-100 text-green-800">HIT</Badge>
-                        : <Badge variant="outline">MISS</Badge>}
+                      {r.cacheHit ? (
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          HIT
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline">MISS</Badge>
+                      )}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{d.total_ms}ms</TableCell>
-                    <TableCell className="text-right tabular-nums">{d.text_ms ?? '—'}</TableCell>
-                    <TableCell className="text-right tabular-nums">{d.connections_ms ?? '—'}</TableCell>
-                    <TableCell className="text-right tabular-nums">{d.render_ms ?? '—'}</TableCell>
-                    <TableCell><span className="text-xs">{r.status ?? '—'}</span></TableCell>
+                    <TableCell className="text-right tabular-nums">{d.text_ms ?? "—"}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {d.connections_ms ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">{d.render_ms ?? "—"}</TableCell>
+                    <TableCell>
+                      <span className="text-xs">{r.status ?? "—"}</span>
+                    </TableCell>
                   </TableRow>
                 );
               })}

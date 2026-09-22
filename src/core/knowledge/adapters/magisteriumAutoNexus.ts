@@ -3,15 +3,15 @@
  * do Magistério.
  */
 
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 import {
   BUCKET_LABEL,
   buildBucketedSuggestions,
   type ReaderAutoNexus,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
+} from "./ReaderAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
 
 export interface MagisteriumNexusInput {
   docId: string;
@@ -20,32 +20,37 @@ export interface MagisteriumNexusInput {
 }
 
 const BUCKETS: readonly ReaderNexusBucket[] = [
-  'catechism', 'bible', 'glossary', 'journey', 'saint', 'prayer',
+  "catechism",
+  "bible",
+  "glossary",
+  "journey",
+  "saint",
+  "prayer",
 ];
 
 const CACHE_MAX = 64;
 const cache = new Map<string, ReaderAutoNexusOutput>();
 
 export function _fingerprintMagisterium(i: MagisteriumNexusInput): string {
-  return [i.docId, i.title, (i.themes ?? []).join('|')].join('#');
+  return [i.docId, i.title, (i.themes ?? []).join("|")].join("#");
 }
 
-export function clearMagisteriumAutoNexusCache(): void { cache.clear(); }
+export function clearMagisteriumAutoNexusCache(): void {
+  cache.clear();
+}
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
-export function resolveMagisteriumAutoNexus(
-  input: MagisteriumNexusInput,
-): ReaderAutoNexusOutput {
+export function resolveMagisteriumAutoNexus(input: MagisteriumNexusInput): ReaderAutoNexusOutput {
   const key = _fingerprintMagisterium(input);
   const started = nowMs();
   const hit = cache.get(key);
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'magisterium', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "magisterium", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -74,12 +79,12 @@ export function resolveMagisteriumAutoNexus(
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'magisterium', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "magisterium", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
 export const magisteriumReaderAutoNexus: ReaderAutoNexus<MagisteriumNexusInput> = {
-  kind: 'magisterium',
-  label: 'Magistério',
+  kind: "magisterium",
+  label: "Magistério",
   buildSuggestions: resolveMagisteriumAutoNexus,
 };

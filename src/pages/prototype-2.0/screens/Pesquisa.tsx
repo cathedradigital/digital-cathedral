@@ -1,29 +1,73 @@
-import React, { useState, useMemo } from 'react';
-import { Link, useNavigate, useLocation, useSearchParams } from '@/lib/rr-compat';
-import { X } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { Link, useNavigate, useLocation, useSearchParams } from "@/lib/rr-compat";
+import { X } from "lucide-react";
 
-const BASE = '/prototype-2.0';
+const BASE = "/prototype-2.0";
 
-interface Hit { fonte: string; ref: string; excerpt: string; leitor: string; nexus?: boolean }
+interface Hit {
+  fonte: string;
+  ref: string;
+  excerpt: string;
+  leitor: string;
+  nexus?: boolean;
+}
 
 const CORPUS: Hit[] = [
-  { fonte: 'Bíblia', ref: 'Jo 15,1', excerpt: '"Eu sou a videira verdadeira…"', leitor: 'jo15', nexus: true },
-  { fonte: 'Bíblia', ref: 'Jo 15,5', excerpt: '"… sem mim nada podeis fazer."', leitor: 'jo15' },
-  { fonte: 'Bíblia', ref: 'Sl 80,9', excerpt: '"Do Egito trouxeste uma videira…"', leitor: 'sl23' },
-  { fonte: 'Catecismo', ref: '§755', excerpt: 'A Igreja é a videira mística escolhida por Deus.', leitor: 'cic1234', nexus: true },
-  { fonte: 'Catecismo', ref: '§787', excerpt: 'Comunhão íntima entre Cristo e os discípulos.', leitor: 'cic1234' },
-  { fonte: 'Padres', ref: 'Agostinho · Tract. 81', excerpt: 'Sobre a videira e os ramos…', leitor: 'jo15', nexus: true },
-  { fonte: 'Padres', ref: 'Cirilo Alex. · Comm. Jo', excerpt: 'Comentário ao capítulo 15.', leitor: 'jo15' },
-  { fonte: 'Magistério', ref: 'Lumen Gentium 6', excerpt: 'Imagens da Igreja: videira, rebanho, edificação.', leitor: 'jo15' },
-  { fonte: 'Orações', ref: 'Oração pelo aumento da fé', excerpt: '…', leitor: 'laudes' },
-  { fonte: 'Jornadas', ref: 'Introdução à Fé', excerpt: '14 dias · Credo, sacramentos, moral.', leitor: 'jo15' },
+  {
+    fonte: "Bíblia",
+    ref: "Jo 15,1",
+    excerpt: '"Eu sou a videira verdadeira…"',
+    leitor: "jo15",
+    nexus: true,
+  },
+  { fonte: "Bíblia", ref: "Jo 15,5", excerpt: '"… sem mim nada podeis fazer."', leitor: "jo15" },
+  { fonte: "Bíblia", ref: "Sl 80,9", excerpt: '"Do Egito trouxeste uma videira…"', leitor: "sl23" },
+  {
+    fonte: "Catecismo",
+    ref: "§755",
+    excerpt: "A Igreja é a videira mística escolhida por Deus.",
+    leitor: "cic1234",
+    nexus: true,
+  },
+  {
+    fonte: "Catecismo",
+    ref: "§787",
+    excerpt: "Comunhão íntima entre Cristo e os discípulos.",
+    leitor: "cic1234",
+  },
+  {
+    fonte: "Padres",
+    ref: "Agostinho · Tract. 81",
+    excerpt: "Sobre a videira e os ramos…",
+    leitor: "jo15",
+    nexus: true,
+  },
+  {
+    fonte: "Padres",
+    ref: "Cirilo Alex. · Comm. Jo",
+    excerpt: "Comentário ao capítulo 15.",
+    leitor: "jo15",
+  },
+  {
+    fonte: "Magistério",
+    ref: "Lumen Gentium 6",
+    excerpt: "Imagens da Igreja: videira, rebanho, edificação.",
+    leitor: "jo15",
+  },
+  { fonte: "Orações", ref: "Oração pelo aumento da fé", excerpt: "…", leitor: "laudes" },
+  {
+    fonte: "Jornadas",
+    ref: "Introdução à Fé",
+    excerpt: "14 dias · Credo, sacramentos, moral.",
+    leitor: "jo15",
+  },
 ];
 
 const Pesquisa: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [params] = useSearchParams();
-  const [q, setQ] = useState(params.get('q') ?? 'videira');
+  const [q, setQ] = useState(params.get("q") ?? "videira");
 
   const back = (location.state as any)?.from ?? `${BASE}/atrio`;
 
@@ -31,7 +75,10 @@ const Pesquisa: React.FC = () => {
     if (q.trim().length < 2) return [];
     const needle = q.toLowerCase();
     return CORPUS.filter(
-      (h) => h.ref.toLowerCase().includes(needle) || h.excerpt.toLowerCase().includes(needle) || h.fonte.toLowerCase().includes(needle),
+      (h) =>
+        h.ref.toLowerCase().includes(needle) ||
+        h.excerpt.toLowerCase().includes(needle) ||
+        h.fonte.toLowerCase().includes(needle),
     );
   }, [q]);
 
@@ -41,7 +88,15 @@ const Pesquisa: React.FC = () => {
     return g;
   }, [results]);
 
-  const totalFontes = ['Bíblia', 'Catecismo', 'Padres', 'Magistério', 'Cânon', 'Orações', 'Jornadas'];
+  const totalFontes = [
+    "Bíblia",
+    "Catecismo",
+    "Padres",
+    "Magistério",
+    "Cânon",
+    "Orações",
+    "Jornadas",
+  ];
 
   return (
     <div className="min-h-dvh bg-background/95 backdrop-blur text-foreground max-w-2xl mx-auto px-4 py-4">
@@ -51,13 +106,18 @@ const Pesquisa: React.FC = () => {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Escape') navigate(back);
-            if (e.key === 'Enter' && results[0]) navigate(`${BASE}/leitor?ref=${results[0].leitor}`);
+            if (e.key === "Escape") navigate(back);
+            if (e.key === "Enter" && results[0])
+              navigate(`${BASE}/leitor?ref=${results[0].leitor}`);
           }}
           placeholder="Buscar em tudo…"
           className="flex-1 bg-transparent outline-none text-lg font-serif"
         />
-        <button onClick={() => navigate(back)} aria-label="Fechar" className="p-1.5 rounded hover:bg-muted">
+        <button
+          onClick={() => navigate(back)}
+          aria-label="Fechar"
+          className="p-1.5 rounded hover:bg-muted"
+        >
           <X size={18} />
         </button>
       </div>
@@ -68,9 +128,21 @@ const Pesquisa: React.FC = () => {
             Sugestões de sintaxe
           </p>
           <ul className="text-sm space-y-2 font-mono">
-            <li><button onClick={() => setQ('jo 15')} className="hover:text-primary">jo 15 → João 15</button></li>
-            <li><button onClick={() => setQ('cic 1234')} className="hover:text-primary">cic 1234 → CIC §1234</button></li>
-            <li><button onClick={() => setQ('cân 204')} className="hover:text-primary">cân 204 → Cânon 204</button></li>
+            <li>
+              <button onClick={() => setQ("jo 15")} className="hover:text-primary">
+                jo 15 → João 15
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setQ("cic 1234")} className="hover:text-primary">
+                cic 1234 → CIC §1234
+              </button>
+            </li>
+            <li>
+              <button onClick={() => setQ("cân 204")} className="hover:text-primary">
+                cân 204 → Cânon 204
+              </button>
+            </li>
           </ul>
         </div>
       ) : (
@@ -83,7 +155,9 @@ const Pesquisa: React.FC = () => {
                   {fonte} ({hits.length})
                 </p>
                 {hits.length === 0 ? (
-                  <p className="text-xs text-muted-foreground italic">Sem resultados nesta fonte.</p>
+                  <p className="text-xs text-muted-foreground italic">
+                    Sem resultados nesta fonte.
+                  </p>
                 ) : (
                   <ul className="space-y-1.5">
                     {hits.map((h, i) => (
@@ -94,7 +168,9 @@ const Pesquisa: React.FC = () => {
                         >
                           <span className="text-sm font-medium">▸ {h.ref}</span>
                           {h.nexus && <span className="ml-1 text-primary text-xs">°</span>}
-                          <span className="block text-xs text-muted-foreground truncate">{h.excerpt}</span>
+                          <span className="block text-xs text-muted-foreground truncate">
+                            {h.excerpt}
+                          </span>
                         </Link>
                       </li>
                     ))}

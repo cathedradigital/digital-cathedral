@@ -11,18 +11,18 @@
  * Métricas: registra hit/miss em localStorage sob 'cathedra_liturgy_stats'.
  */
 
-import { useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   type DailyLiturgy,
   getLiturgyProvider,
   toIsoDateKey,
-} from '@/core/liturgy/LiturgyProvider';
-import { cacheLiturgy, getCachedLiturgy } from '@/lib/offlineCache';
-import { isLiturgicalPrefetchDisabled } from '@/lib/litcalPrefetchGuard';
+} from "@/core/liturgy/LiturgyProvider";
+import { cacheLiturgy, getCachedLiturgy } from "@/lib/offlineCache";
+import { isLiturgicalPrefetchDisabled } from "@/lib/litcalPrefetchGuard";
 
-const OFFLINE_FLAG_KEY = 'cathedra_offline_mode';
-const STATS_KEY = 'cathedra_liturgy_stats';
+const OFFLINE_FLAG_KEY = "cathedra_offline_mode";
+const STATS_KEY = "cathedra_liturgy_stats";
 const STALE_MS = 1000 * 60 * 60; // 1h
 
 export interface DailyLiturgyResult {
@@ -36,20 +36,22 @@ export interface DailyLiturgyResult {
 
 function isOfflineMode(): boolean {
   try {
-    return localStorage.getItem(OFFLINE_FLAG_KEY) === 'true';
+    return localStorage.getItem(OFFLINE_FLAG_KEY) === "true";
   } catch {
     return false;
   }
 }
 
-function bumpStats(kind: 'hit-memory' | 'hit-disk' | 'miss' | 'offline-hit' | 'error'): void {
+function bumpStats(kind: "hit-memory" | "hit-disk" | "miss" | "offline-hit" | "error"): void {
   try {
     const raw = localStorage.getItem(STATS_KEY);
     const s = raw ? (JSON.parse(raw) as Record<string, number>) : {};
     s[kind] = (s[kind] ?? 0) + 1;
     s.lastAt = Date.now();
     localStorage.setItem(STATS_KEY, JSON.stringify(s));
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function fetchDay(date: Date): Promise<{ data: DailyLiturgy; offline: boolean }> {
@@ -58,35 +60,34 @@ async function fetchDay(date: Date): Promise<{ data: DailyLiturgy; offline: bool
 
   if (isOfflineMode()) {
     if (cached) {
-      bumpStats('offline-hit');
+      bumpStats("offline-hit");
       return { data: cached, offline: true };
     }
-    bumpStats('error');
-    throw new Error('Modo Somente-Cache ativo: Liturgia não disponível offline.');
+    bumpStats("error");
+    throw new Error("Modo Somente-Cache ativo: Liturgia não disponível offline.");
   }
 
   try {
     const fresh = await getLiturgyProvider().getDayLiturgy(date);
     await cacheLiturgy(key, fresh);
-    bumpStats('miss');
+    bumpStats("miss");
     return { data: fresh, offline: false };
   } catch (e) {
     if (cached) {
-      bumpStats('hit-disk');
+      bumpStats("hit-disk");
       return { data: cached, offline: true };
     }
-    bumpStats('error');
-    
+    bumpStats("error");
+
     // Dispara evento global para UI reagir à falha de infra
-    window.dispatchEvent(new CustomEvent('supabase-unreachable'));
-    
+    window.dispatchEvent(new CustomEvent("supabase-unreachable"));
+
     throw e;
   }
-
 }
 
 function queryKey(date: Date): [string, string] {
-  return ['daily-liturgy', toIsoDateKey(date)];
+  return ["daily-liturgy", toIsoDateKey(date)];
 }
 
 export function useDailyLiturgy(date: Date): DailyLiturgyResult {
@@ -112,7 +113,9 @@ export function useDailyLiturgy(date: Date): DailyLiturgyResult {
         queryKey: k,
         queryFn: () => fetchDay(d),
         staleTime: STALE_MS,
-      }).catch(() => { /* silent */ });
+      }).catch(() => {
+        /* silent */
+      });
     }
   }, [date, qc]);
 
@@ -122,7 +125,9 @@ export function useDailyLiturgy(date: Date): DailyLiturgyResult {
     isError: query.isError,
     error: query.error,
     isOfflineData: query.data?.offline ?? false,
-    refresh: async () => { await query.refetch(); },
+    refresh: async () => {
+      await query.refetch();
+    },
   };
 }
 

@@ -1,5 +1,5 @@
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
 /**
  * FuzzySearchInput — shared search input used by Saints, Glossary,
  * Community and Themes pages.
@@ -24,9 +24,9 @@ import { Button } from '@/components/ui/button';
  *     isSearching={isPending}
  *   />
  */
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export interface FuzzySearchInputProps {
   /** Current input value (controlled). */
@@ -43,7 +43,7 @@ export interface FuzzySearchInputProps {
   /** Minimum length required before showing the "Buscando…" hint. Defaults to 2. */
   minLength?: number;
   /** Visual size preset. `md` is the default; `lg` matches the Saints search hero. */
-  size?: 'md' | 'lg';
+  size?: "md" | "lg";
   /** aria-label for the input (defaults to the placeholder). */
   ariaLabel?: string;
   /** Optional extra classes for the wrapper (e.g. `max-w-spacing-2xl mx-auto`). */
@@ -52,33 +52,37 @@ export interface FuzzySearchInputProps {
   inputId?: string;
 }
 
-const SIZE_TOKENS: Record<NonNullable<FuzzySearchInputProps['size']>, {
-  input: string;
-  icon: string;
-  iconWrap: string;
-  clearWrap: string;
-}> = {
+const SIZE_TOKENS: Record<
+  NonNullable<FuzzySearchInputProps["size"]>,
+  {
+    input: string;
+    icon: string;
+    iconWrap: string;
+    clearWrap: string;
+  }
+> = {
   md: {
-    input: 'pl-spacing-xl pr-spacing-xl py-spacing-sm text-premium-sm rounded-premium-full',
-    icon: 'w-spacing-md h-spacing-md',
-    iconWrap: 'left-spacing-md',
-    clearWrap: 'right-spacing-sm',
+    input: "pl-spacing-xl pr-spacing-xl py-spacing-sm text-premium-sm rounded-premium-full",
+    icon: "w-spacing-md h-spacing-md",
+    iconWrap: "left-spacing-md",
+    clearWrap: "right-spacing-sm",
   },
   lg: {
-    input: 'pl-spacing-2xl pr-spacing-2xl py-spacing-md text-premium-base rounded-premium-full shadow-premium-md',
-    icon: 'w-spacing-md h-spacing-md',
-    iconWrap: 'left-spacing-lg',
-    clearWrap: 'right-spacing-lg',
+    input:
+      "pl-spacing-2xl pr-spacing-2xl py-spacing-md text-premium-base rounded-premium-full shadow-premium-md",
+    icon: "w-spacing-md h-spacing-md",
+    iconWrap: "left-spacing-lg",
+    clearWrap: "right-spacing-lg",
   },
 };
 
 export const FuzzySearchInput: React.FC<FuzzySearchInputProps> = ({
   value,
   onChange,
-  placeholder = 'Buscar…',
+  placeholder = "Buscar…",
   isSearching = false,
   minLength = 2,
-  size = 'md',
+  size = "md",
   ariaLabel,
   className,
   inputId,
@@ -87,9 +91,10 @@ export const FuzzySearchInput: React.FC<FuzzySearchInputProps> = ({
   const showHint = isSearching && value.trim().length >= minLength;
 
   return (
-    <div className={cn('relative', className)}>
-      <Icons.Search className={cn(
-          'absolute top-spacing-2xs/2 -translate-y-1/2 text-muted-foreground pointer-events-none',
+    <div className={cn("relative", className)}>
+      <Icons.Search
+        className={cn(
+          "absolute top-spacing-2xs/2 -translate-y-1/2 text-muted-foreground pointer-events-none",
           tokens.icon,
           tokens.iconWrap,
         )}
@@ -99,22 +104,22 @@ export const FuzzySearchInput: React.FC<FuzzySearchInputProps> = ({
         id={inputId}
         type="text"
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={ariaLabel ?? placeholder}
         className={cn(
-          'w-full bg-card border border-border text-foreground placeholder:text-muted-foreground',
-          'focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all',
+          "w-full bg-card border border-border text-foreground placeholder:text-muted-foreground",
+          "focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all",
           tokens.input,
         )}
       />
       {value && (
         <Button
           type="button"
-          onClick={() => onChange('')}
+          onClick={() => onChange("")}
           aria-label="Limpar busca"
           className={cn(
-            'absolute top-spacing-2xs/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors',
+            "absolute top-spacing-2xs/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors",
             tokens.clearWrap,
           )}
         >
@@ -122,7 +127,7 @@ export const FuzzySearchInput: React.FC<FuzzySearchInputProps> = ({
         </Button>
       )}
       {showHint && (
-        <div 
+        <div
           aria-live="polite"
           className="absolute -bottom-spacing-lg left-spacing-2xs/2 -translate-x-1/2 flex items-center gap-spacing-2xs text-premium-xs font-bold uppercase tracking-widest text-muted-foreground"
         >

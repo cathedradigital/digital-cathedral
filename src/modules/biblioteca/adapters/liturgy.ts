@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/db';
-import type { LibraryAdapter, LibraryItem } from '../types';
+import { supabase } from "@/lib/db";
+import type { LibraryAdapter, LibraryItem } from "../types";
 
 /**
  * Liturgia — traz os últimos próprios do Missal (chave natural: `iso_date`).
@@ -7,14 +7,14 @@ import type { LibraryAdapter, LibraryItem } from '../types';
  * `iso_date` para link e `celebration_title` para o título.
  */
 export const liturgyAdapter: LibraryAdapter = {
-  module: 'liturgy',
-  label: 'Liturgia',
+  module: "liturgy",
+  label: "Liturgia",
 
   async list({ limit = 24, offset = 0 } = {}) {
     const { data, error } = await supabase
-      .from('missal_propers')
-      .select('id, iso_date, celebration_title, liturgical_color, updated_at')
-      .order('iso_date', { ascending: false, nullsFirst: false })
+      .from("missal_propers")
+      .select("id, iso_date, celebration_title, liturgical_color, updated_at")
+      .order("iso_date", { ascending: false, nullsFirst: false })
       .range(offset, offset + limit - 1);
     if (error) throw error;
 
@@ -22,8 +22,8 @@ export const liturgyAdapter: LibraryAdapter = {
       const slug = row.iso_date ?? String(row.id);
       return {
         id: String(row.id),
-        module: 'liturgy',
-        title: row.celebration_title ?? row.iso_date ?? 'Missal',
+        module: "liturgy",
+        title: row.celebration_title ?? row.iso_date ?? "Missal",
         slug,
         summary: row.iso_date ?? undefined,
         category: row.liturgical_color ?? undefined,

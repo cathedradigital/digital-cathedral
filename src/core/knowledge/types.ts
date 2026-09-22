@@ -4,33 +4,33 @@
  * Puramente de domínio. Nada de UI, React, Supabase, fetch.
  */
 
-import type { RouteKey } from '@/core/navigation';
+import type { RouteKey } from "@/core/navigation";
 
 /** Natureza de um nó do grafo de conhecimento. */
 export type KnowledgeNodeKind =
-  | 'theme'
-  | 'bible'
-  | 'catechism'
-  | 'magisterium'
-  | 'father'
-  | 'saint'
-  | 'council'
-  | 'canon'
-  | 'prayer'
-  | 'application'
-  | 'glossary'
-  | 'journey'
-  | 'liturgy';
+  | "theme"
+  | "bible"
+  | "catechism"
+  | "magisterium"
+  | "father"
+  | "saint"
+  | "council"
+  | "canon"
+  | "prayer"
+  | "application"
+  | "glossary"
+  | "journey"
+  | "liturgy";
 
 /** Tipo semântico de uma aresta entre dois nós. */
 export type KnowledgeRelationKind =
-  | 'develops'       // Tema → passagem/documento que desenvolve
-  | 'cites'          // Documento → passagem citada
-  | 'commented-by'   // Passagem/doc → padre/santo que comentou
-  | 'defined-in'     // Conceito → CIC/Concílio onde é definido
-  | 'applies-to'     // Conceito → aplicação prática
-  | 'prayed-as'      // Conceito → oração/lectio correspondente
-  | 'related-to';    // Afinidade genérica bidirecional
+  | "develops" // Tema → passagem/documento que desenvolve
+  | "cites" // Documento → passagem citada
+  | "commented-by" // Passagem/doc → padre/santo que comentou
+  | "defined-in" // Conceito → CIC/Concílio onde é definido
+  | "applies-to" // Conceito → aplicação prática
+  | "prayed-as" // Conceito → oração/lectio correspondente
+  | "related-to"; // Afinidade genérica bidirecional
 
 /** ID canônico opaco: `"<kind>:<slug>[:...]"`. */
 export type KnowledgeNodeId = string;

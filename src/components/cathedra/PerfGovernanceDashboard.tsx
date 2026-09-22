@@ -1,32 +1,42 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/lib/db';
-import { CathedraCard } from './CathedraCard';
-import { CathedraButton } from './CathedraButton';
-import { Icons } from '@/constants';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar, Cell
-} from 'recharts';
-import { format, subDays, isAfter, parseISO } from 'date-fns';
+import React, { useState, useEffect, useMemo } from "react";
+import { supabase } from "@/lib/db";
+import { CathedraCard } from "./CathedraCard";
+import { CathedraButton } from "./CathedraButton";
+import { Icons } from "@/constants";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate } from "@/lib/rr-compat";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  BarChart,
+  Bar,
+  Cell,
+} from "recharts";
+import { format, subDays, isAfter, parseISO } from "date-fns";
 
 const PerfGovernanceDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState<'7d' | '30d'>('7d');
+  const [period, setPeriod] = useState<"7d" | "30d">("7d");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMetrics = async () => {
       const { data, error } = await supabase
-        .from('app_metrics')
-        .select('*')
-        .eq('metric_type', 'performance_event')
-        .order('created_at', { ascending: true });
-      
+        .from("app_metrics")
+        .select("*")
+        .eq("metric_type", "performance_event")
+        .order("created_at", { ascending: true });
+
       if (!error && data) {
-        setMetrics(data.map(d => ({ ...d, ...(d.metadata as object || {}) })));
+        setMetrics(data.map((d) => ({ ...d, ...((d.metadata as object) || {}) })));
       }
 
       setLoading(false);
@@ -37,7 +47,7 @@ const PerfGovernanceDashboard: React.FC = () => {
 
   const chartData = useMemo(() => {
     const grouped = metrics.reduce((acc: any, m) => {
-      const date = format(new Date(m.created_at), 'dd/MM');
+      const date = format(new Date(m.created_at), "dd/MM");
       if (!acc[date]) acc[date] = { date, cls: 0, inp: 0, count: 0 };
       acc[date].cls += parseFloat(m.cls || 0);
       acc[date].inp += parseFloat(m.inp || 0);
@@ -48,13 +58,13 @@ const PerfGovernanceDashboard: React.FC = () => {
     return Object.values(grouped).map((g: any) => ({
       date: g.date,
       cls: (g.cls / g.count).toFixed(4),
-      inp: (g.inp / g.count).toFixed(2)
+      inp: (g.inp / g.count).toFixed(2),
     }));
   }, [metrics]);
 
   const routeAverages = useMemo(() => {
     const routes = metrics.reduce((acc: any, m) => {
-      const route = m.route || '/';
+      const route = m.route || "/";
       if (!acc[route]) acc[route] = { route, cls: 0, inp: 0, tbt: 0, count: 0 };
       acc[route].cls += parseFloat(m.cls || 0);
       acc[route].inp += parseFloat(m.inp || 0);
@@ -68,25 +78,32 @@ const PerfGovernanceDashboard: React.FC = () => {
       avgCls: (r.cls / r.count).toFixed(4),
       avgInp: (r.inp / r.count).toFixed(2),
       avgTbt: (r.tbt / r.count).toFixed(2),
-      count: r.count
+      count: r.count,
     }));
   }, [metrics]);
 
   const comparePeriods = useMemo(() => {
-    const threshold = subDays(new Date(), period === '7d' ? 7 : 30);
-    const before = metrics.filter(m => !isAfter(parseISO(m.created_at), threshold));
-    const after = metrics.filter(m => isAfter(parseISO(m.created_at), threshold));
+    const threshold = subDays(new Date(), period === "7d" ? 7 : 30);
+    const before = metrics.filter((m) => !isAfter(parseISO(m.created_at), threshold));
+    const after = metrics.filter((m) => isAfter(parseISO(m.created_at), threshold));
 
     const avg = (arr: any[]) => ({
-      cls: arr.length ? (arr.reduce((s, m) => s + parseFloat(m.cls || 0), 0) / arr.length).toFixed(4) : 0,
-      inp: arr.length ? (arr.reduce((s, m) => s + parseFloat(m.inp || 0), 0) / arr.length).toFixed(2) : 0,
-      tbt: arr.length ? (arr.reduce((s, m) => s + parseFloat(m.tbt || 0), 0) / arr.length).toFixed(2) : 0,
+      cls: arr.length
+        ? (arr.reduce((s, m) => s + parseFloat(m.cls || 0), 0) / arr.length).toFixed(4)
+        : 0,
+      inp: arr.length
+        ? (arr.reduce((s, m) => s + parseFloat(m.inp || 0), 0) / arr.length).toFixed(2)
+        : 0,
+      tbt: arr.length
+        ? (arr.reduce((s, m) => s + parseFloat(m.tbt || 0), 0) / arr.length).toFixed(2)
+        : 0,
     });
 
     return { before: avg(before), after: avg(after) };
   }, [metrics, period]);
 
-  if (loading) return <div className="p-10 text-center animate-pulse">Carregando Governança...</div>;
+  if (loading)
+    return <div className="p-10 text-center animate-pulse">Carregando Governança...</div>;
 
   return (
     <div className="max-w-7xl mx-auto p-spacing-lg space-y-spacing-xl pb-spacing-4xl">
@@ -99,15 +116,15 @@ const PerfGovernanceDashboard: React.FC = () => {
             <Icons.Activity className="text-primary" /> Painel de Governança Perf
           </h1>
           <div className="flex bg-muted p-1 rounded-full">
-            <button 
-              className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase ${period === '7d' ? 'bg-background shadow-sm' : 'opacity-40'}`}
-              onClick={() => setPeriod('7d')}
+            <button
+              className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase ${period === "7d" ? "bg-background shadow-sm" : "opacity-40"}`}
+              onClick={() => setPeriod("7d")}
             >
               7 Dias
             </button>
-            <button 
-              className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase ${period === '30d' ? 'bg-background shadow-sm' : 'opacity-40'}`}
-              onClick={() => setPeriod('30d')}
+            <button
+              className={`px-4 py-1 rounded-full text-[10px] font-bold uppercase ${period === "30d" ? "bg-background shadow-sm" : "opacity-40"}`}
+              onClick={() => setPeriod("30d")}
             >
               30 Dias
             </button>
@@ -117,7 +134,9 @@ const PerfGovernanceDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-spacing-lg">
         <CathedraCard className="p-spacing-lg space-y-md">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Comparação de CLS</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+            Comparação de CLS
+          </h3>
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-[10px] uppercase font-bold opacity-40">Anterior</p>
@@ -126,7 +145,9 @@ const PerfGovernanceDashboard: React.FC = () => {
             <Icons.ArrowRight className="opacity-20 mb-2" />
             <div>
               <p className="text-[10px] uppercase font-bold text-primary">Atual</p>
-              <p className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.cls as string) < parseFloat(comparePeriods.before.cls as string) ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.cls as string) < parseFloat(comparePeriods.before.cls as string) ? "text-green-500" : "text-red-500"}`}
+              >
                 {comparePeriods.after.cls}
               </p>
             </div>
@@ -134,16 +155,20 @@ const PerfGovernanceDashboard: React.FC = () => {
         </CathedraCard>
 
         <CathedraCard className="p-spacing-lg space-y-md">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Média INP (ms)</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+            Média INP (ms)
+          </h3>
           <div className="flex items-end justify-between gap-4">
-             <div>
+            <div>
               <p className="text-[10px] uppercase font-bold opacity-40">Anterior</p>
               <p className="text-premium-xl font-mono">{comparePeriods.before.inp}</p>
             </div>
             <Icons.ArrowRight className="opacity-20 mb-2" />
             <div>
               <p className="text-[10px] uppercase font-bold text-primary">Atual</p>
-              <p className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.inp as string) < parseFloat(comparePeriods.before.inp as string) ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.inp as string) < parseFloat(comparePeriods.before.inp as string) ? "text-green-500" : "text-red-500"}`}
+              >
                 {comparePeriods.after.inp}
               </p>
             </div>
@@ -151,16 +176,20 @@ const PerfGovernanceDashboard: React.FC = () => {
         </CathedraCard>
 
         <CathedraCard className="p-spacing-lg space-y-md">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Média TBT (ms)</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+            Média TBT (ms)
+          </h3>
           <div className="flex items-end justify-between gap-4">
-             <div>
+            <div>
               <p className="text-[10px] uppercase font-bold opacity-40">Anterior</p>
               <p className="text-premium-xl font-mono">{comparePeriods.before.tbt}</p>
             </div>
             <Icons.ArrowRight className="opacity-20 mb-2" />
             <div>
               <p className="text-[10px] uppercase font-bold text-primary">Atual</p>
-              <p className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.tbt as string) < parseFloat(comparePeriods.before.tbt as string) ? 'text-green-500' : 'text-red-500'}`}>
+              <p
+                className={`text-premium-xl font-mono ${parseFloat(comparePeriods.after.tbt as string) < parseFloat(comparePeriods.before.tbt as string) ? "text-green-500" : "text-red-500"}`}
+              >
                 {comparePeriods.after.tbt}
               </p>
             </div>
@@ -170,7 +199,9 @@ const PerfGovernanceDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-spacing-lg">
         <CathedraCard className="p-spacing-lg">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50 mb-spacing-lg">Tendência de Estabilidade (CLS)</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50 mb-spacing-lg">
+            Tendência de Estabilidade (CLS)
+          </h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
@@ -178,14 +209,23 @@ const PerfGovernanceDashboard: React.FC = () => {
                 <XAxis dataKey="date" axisLine={false} tickLine={false} fontSize={10} />
                 <YAxis axisLine={false} tickLine={false} fontSize={10} />
                 <Tooltip />
-                <Line type="monotone" dataKey="cls" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line
+                  type="monotone"
+                  dataKey="cls"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </CathedraCard>
 
         <CathedraCard className="p-spacing-lg">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50 mb-spacing-lg">Impacto por Rota (Média CLS)</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50 mb-spacing-lg">
+            Impacto por Rota (Média CLS)
+          </h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={routeAverages}>
@@ -194,7 +234,7 @@ const PerfGovernanceDashboard: React.FC = () => {
                 <Tooltip />
                 <Bar dataKey="avgCls" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>
                   {routeAverages.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fillOpacity={0.1 + (index * 0.2)} />
+                    <Cell key={`cell-${index}`} fillOpacity={0.1 + index * 0.2} />
                   ))}
                 </Bar>
               </BarChart>
@@ -205,16 +245,26 @@ const PerfGovernanceDashboard: React.FC = () => {
 
       <CathedraCard className="overflow-hidden">
         <div className="p-spacing-md border-b border-border/10 bg-muted/20">
-          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Performance por Rota</h3>
+          <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+            Performance por Rota
+          </h3>
         </div>
         <table className="w-full text-left text-premium-xs">
           <thead className="bg-muted/10">
             <tr>
               <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">Rota</th>
-              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">Amostras</th>
-              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">Média CLS</th>
-              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">Média INP</th>
-              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">Média TBT</th>
+              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">
+                Amostras
+              </th>
+              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">
+                Média CLS
+              </th>
+              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">
+                Média INP
+              </th>
+              <th className="p-spacing-md opacity-50 font-black uppercase tracking-widest">
+                Média TBT
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/10">

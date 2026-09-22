@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
-import { Icons } from '@/constants';
+import React, { useState } from "react";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { Icons } from "@/constants";
 
-type ConnectionType = 'catechism' | 'bible' | 'document' | 'theology' | 'cross_ref';
+type ConnectionType = "catechism" | "bible" | "document" | "theology" | "cross_ref";
 
 interface Props {
   open: boolean;
@@ -23,39 +36,54 @@ interface Props {
 
 const CONTRIBUTION_SCHEMA = z.object({
   verse: z.string().max(6).optional(),
-  connection_type: z.enum(['catechism', 'bible', 'document', 'theology', 'cross_ref']),
+  connection_type: z.enum(["catechism", "bible", "document", "theology", "cross_ref"]),
   reference_id: z.string().trim().max(120).optional(),
-  reference_title: z.string().trim().min(3, 'Título muito curto').max(200, 'Máximo 200 caracteres'),
-  summary: z.string().trim().min(10, 'Resumo muito curto (mín. 10 caracteres)').max(1000, 'Máximo 1000 caracteres'),
+  reference_title: z.string().trim().min(3, "Título muito curto").max(200, "Máximo 200 caracteres"),
+  summary: z
+    .string()
+    .trim()
+    .min(10, "Resumo muito curto (mín. 10 caracteres)")
+    .max(1000, "Máximo 1000 caracteres"),
   contributor_notes: z.string().trim().max(1000).optional(),
 });
 
 const TYPE_LABELS: Record<ConnectionType, string> = {
-  catechism: 'Catecismo (CIC)',
-  bible: 'Escritura (Bíblia)',
-  document: 'Magistério (Documento)',
-  theology: 'Teologia / Nexus',
-  cross_ref: 'Referência cruzada',
+  catechism: "Catecismo (CIC)",
+  bible: "Escritura (Bíblia)",
+  document: "Magistério (Documento)",
+  theology: "Teologia / Nexus",
+  cross_ref: "Referência cruzada",
 };
 
-export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, bookAbbr, bookName, chapter }) => {
+export const NexusContributionDialog: React.FC<Props> = ({
+  open,
+  onOpenChange,
+  bookAbbr,
+  bookName,
+  chapter,
+}) => {
   const { user } = useAuth();
   const [submitting, setSubmitting] = useState(false);
-  const [type, setType] = useState<ConnectionType>('catechism');
-  const [verse, setVerse] = useState('');
-  const [refId, setRefId] = useState('');
-  const [title, setTitle] = useState('');
-  const [summary, setSummary] = useState('');
-  const [notes, setNotes] = useState('');
+  const [type, setType] = useState<ConnectionType>("catechism");
+  const [verse, setVerse] = useState("");
+  const [refId, setRefId] = useState("");
+  const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
+  const [notes, setNotes] = useState("");
 
   const reset = () => {
-    setType('catechism'); setVerse(''); setRefId(''); setTitle(''); setSummary(''); setNotes('');
+    setType("catechism");
+    setVerse("");
+    setRefId("");
+    setTitle("");
+    setSummary("");
+    setNotes("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      toast.error('Faça login para contribuir com o Nexus.');
+      toast.error("Faça login para contribuir com o Nexus.");
       return;
     }
     const parsed = CONTRIBUTION_SCHEMA.safeParse({
@@ -68,17 +96,17 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
     });
     if (!parsed.success) {
       const first = Object.values(parsed.error.flatten().fieldErrors)[0]?.[0];
-      toast.error(first || 'Verifique os campos.');
+      toast.error(first || "Verifique os campos.");
       return;
     }
     const verseNum = parsed.data.verse ? parseInt(parsed.data.verse, 10) : null;
     if (parsed.data.verse && (Number.isNaN(verseNum!) || verseNum! <= 0)) {
-      toast.error('Versículo deve ser um número positivo.');
+      toast.error("Versículo deve ser um número positivo.");
       return;
     }
 
     setSubmitting(true);
-    const { error } = await supabase.from('nexus_contributions').insert({
+    const { error } = await supabase.from("nexus_contributions").insert({
       user_id: user.id,
       book_abbr: bookAbbr,
       chapter,
@@ -92,12 +120,12 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
     setSubmitting(false);
 
     if (error) {
-      console.error('[nexus_contributions] insert failed', error);
-      toast.error('Não foi possível enviar sua contribuição. Tente novamente.');
+      console.error("[nexus_contributions] insert failed", error);
+      toast.error("Não foi possível enviar sua contribuição. Tente novamente.");
       return;
     }
 
-    toast.success('Contribuição enviada! Será revisada pelos editores.');
+    toast.success("Contribuição enviada! Será revisada pelos editores.");
     reset();
     onOpenChange(false);
   };
@@ -108,7 +136,8 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
         <DialogHeader>
           <DialogTitle className="font-display text-xl">Contribuir com o Nexus</DialogTitle>
           <DialogDescription>
-            {bookName} {chapter} — sugira uma conexão com o Catecismo, Magistério ou Escritura. Sua sugestão passará por revisão editorial antes de ser publicada.
+            {bookName} {chapter} — sugira uma conexão com o Catecismo, Magistério ou Escritura. Sua
+            sugestão passará por revisão editorial antes de ser publicada.
           </DialogDescription>
         </DialogHeader>
 
@@ -128,10 +157,14 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
             <div>
               <Label htmlFor="nexus-contrib-type">Tipo</Label>
               <Select value={type} onValueChange={(v) => setType(v as ConnectionType)}>
-                <SelectTrigger id="nexus-contrib-type"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="nexus-contrib-type">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {(Object.keys(TYPE_LABELS) as ConnectionType[]).map((k) => (
-                    <SelectItem key={k} value={k}>{TYPE_LABELS[k]}</SelectItem>
+                    <SelectItem key={k} value={k}>
+                      {TYPE_LABELS[k]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -140,9 +173,17 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
 
           <div>
             <Label htmlFor="nexus-contrib-refid">
-              ID da referência (opcional) <span className="text-xs text-muted-foreground">— ex.: 1234 (CIC), Jo-6-35 (Escritura)</span>
+              ID da referência (opcional){" "}
+              <span className="text-xs text-muted-foreground">
+                — ex.: 1234 (CIC), Jo-6-35 (Escritura)
+              </span>
             </Label>
-            <Input id="nexus-contrib-refid" value={refId} onChange={(e) => setRefId(e.target.value)} maxLength={120} />
+            <Input
+              id="nexus-contrib-refid"
+              value={refId}
+              onChange={(e) => setRefId(e.target.value)}
+              maxLength={120}
+            />
           </div>
 
           <div>
@@ -184,14 +225,23 @@ export const NexusContributionDialog: React.FC<Props> = ({ open, onOpenChange, b
           </div>
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={submitting}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              disabled={submitting}
+            >
               Cancelar
             </Button>
             <Button type="submit" disabled={submitting} data-testid="nexus-contribution-submit">
               {submitting ? (
-                <><Icons.Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enviando…</>
+                <>
+                  <Icons.Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enviando…
+                </>
               ) : (
-                <><Icons.Send className="w-4 h-4 mr-2" /> Enviar contribuição</>
+                <>
+                  <Icons.Send className="w-4 h-4 mr-2" /> Enviar contribuição
+                </>
               )}
             </Button>
           </DialogFooter>

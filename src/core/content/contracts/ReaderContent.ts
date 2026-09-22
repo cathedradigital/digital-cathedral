@@ -6,8 +6,8 @@
  * saberá renderizar qualquer `ReaderContent` sem conhecer sua origem.
  */
 
-import type { KnowledgeNodeId, KnowledgeNodeKind } from '@/core/knowledge';
-import type { NavigationTarget } from './NavigationTarget';
+import type { KnowledgeNodeId, KnowledgeNodeKind } from "@/core/knowledge";
+import type { NavigationTarget } from "./NavigationTarget";
 
 /** Bloco atômico dentro do corpo de um documento. */
 export interface ReaderSection {

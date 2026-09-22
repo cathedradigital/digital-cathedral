@@ -1,4 +1,4 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 
 import { DayPicker } from "react-day-picker";
@@ -27,10 +27,14 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav_button_next: "absolute right-spacing-2xs",
         table: "w-full border-collapse space-y-spacing-2xs",
         head_row: "flex",
-        head_cell: "text-muted-foreground rounded-premium-full w-spacing-xl font-normal text-[0.8rem]",
+        head_cell:
+          "text-muted-foreground rounded-premium-full w-spacing-xl font-normal text-[0.8rem]",
         row: "flex w-full mt-spacing-xs",
         cell: "h-spacing-xl w-spacing-xl text-center text-premium-sm p-spacing-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: cn(buttonVariants({ variant: "ghost" }), "h-spacing-xl w-spacing-xl p-spacing-0 font-normal aria-selected:opacity-100"),
+        day: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-spacing-xl w-spacing-xl p-spacing-0 font-normal aria-selected:opacity-100",
+        ),
         day_range_end: "day-range-end",
         day_selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",

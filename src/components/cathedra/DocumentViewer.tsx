@@ -1,7 +1,7 @@
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * DocumentViewer — utilitário de lightbox para documentos externos (iframe).
@@ -34,7 +34,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ url, title, onClose }) 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="flex items-center justify-between px-spacing-md md:px-spacing-xl py-spacing-sm bg-card border-b border-border"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-spacing-sm min-w-spacing-0">
           <Button
@@ -54,7 +54,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ url, title, onClose }) 
           Abrir original <Icons.ExternalLink className="w-spacing-sm h-spacing-sm" />
         </a>
       </motion.div>
-      <div className="flex-1" onClick={e => e.stopPropagation()}>
+      <div className="flex-1" onClick={(e) => e.stopPropagation()}>
         <iframe
           src={url}
           title={title}

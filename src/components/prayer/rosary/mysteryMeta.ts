@@ -2,7 +2,7 @@
  * Contratos para o meta contemplativo dos mistérios do Rosário.
  * Todo conteúdo vem de `prayer_mysteries.meta` — nunca hardcoded.
  */
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
 
 export interface MysteryPassage {
   ref: string;
@@ -45,7 +45,7 @@ export interface MysteryBibliographyEntry {
   locus?: string;
 }
 
-export type MysteryArtworkCollection = 'classical' | 'byzantine' | 'contemporary';
+export type MysteryArtworkCollection = "classical" | "byzantine" | "contemporary";
 
 export interface MysteryContemplativeMeta {
   contemplative_title?: string;
@@ -83,7 +83,7 @@ export interface MysteryContemplativeMeta {
 }
 
 export function readMysteryMeta(m: DBMystery | null | undefined): MysteryContemplativeMeta {
-  if (!m || !m.meta || typeof m.meta !== 'object') return {};
+  if (!m || !m.meta || typeof m.meta !== "object") return {};
   return m.meta as MysteryContemplativeMeta;
 }
 

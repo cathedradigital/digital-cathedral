@@ -8,11 +8,11 @@
  * e barra de ação inferior discreta.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useParams, useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useParams, useNavigate, useSearchParams } from "@/lib/rr-compat";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   Award,
@@ -29,22 +29,22 @@ import {
   ShieldQuestion,
   Sparkles,
   X,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Textarea } from '@/components/ui/textarea';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { useReadingMarks } from '@/hooks/useReadingMarks';
-import { saveUserPsychology } from '@/lib/psychologicalProfile';
-import { AppRoute } from '@/types';
-import AudioContentPlayer from './AudioContentPlayer';
-import { getSaintBySubtitle } from '@/services/saintsService';
-import SacredImage from './SacredImage';
-import { ReaderShell } from '@/components/reader';
-import { EditorialHero } from '@/components/editorial/harmony/EditorialHero';
-import { ReaderContinuation } from '@/components/shared/ReaderContinuation';
-import { NexusPanel } from '@/components/nexus/NexusPanel';
-import { useJourneyNexus } from '@/hooks/useJourneyNexus';
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { useReadingMarks } from "@/hooks/useReadingMarks";
+import { saveUserPsychology } from "@/lib/psychologicalProfile";
+import { AppRoute } from "@/types";
+import AudioContentPlayer from "./AudioContentPlayer";
+import { getSaintBySubtitle } from "@/services/saintsService";
+import SacredImage from "./SacredImage";
+import { ReaderShell } from "@/components/reader";
+import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
+import { ReaderContinuation } from "@/components/shared/ReaderContinuation";
+import { NexusPanel } from "@/components/nexus/NexusPanel";
+import { useJourneyNexus } from "@/hooks/useJourneyNexus";
 
 /**
  * Cache em memória para prefetch de etapas vizinhas (prev/next).
@@ -55,15 +55,11 @@ import { useJourneyNexus } from '@/hooks/useJourneyNexus';
 const STEP_PREFETCH_CACHE = new Map<string, any>();
 const prefetchStep = async (stepId: string): Promise<void> => {
   if (!stepId || STEP_PREFETCH_CACHE.has(stepId)) return;
-  const { data } = await supabase
-    .from('journey_steps')
-    .select('*')
-    .eq('id', stepId)
-    .single();
+  const { data } = await supabase.from("journey_steps").select("*").eq("id", stepId).single();
   if (data) STEP_PREFETCH_CACHE.set(stepId, data);
 };
 const scheduleIdle = (fn: () => void) => {
-  if (typeof (window as any).requestIdleCallback === 'function') {
+  if (typeof (window as any).requestIdleCallback === "function") {
     (window as any).requestIdleCallback(fn, { timeout: 1200 });
   } else {
     setTimeout(fn, 200);
@@ -78,34 +74,34 @@ type SectionDef = {
 };
 
 const SECTION_CONFIG: SectionDef[] = [
-  { key: 'padh', label: 'A Palavra', Icon: Sparkles, isPremium: false },
-  { key: 'interpretation', label: 'Reflexão', Icon: BookOpen, isPremium: false },
-  { key: 'practical_direction', label: 'Prática do Dia', Icon: Hand, isPremium: true },
-  { key: 'guided_exercise', label: 'Exercício Espiritual', Icon: PenLine, isPremium: true },
+  { key: "padh", label: "A Palavra", Icon: Sparkles, isPremium: false },
+  { key: "interpretation", label: "Reflexão", Icon: BookOpen, isPremium: false },
+  { key: "practical_direction", label: "Prática do Dia", Icon: Hand, isPremium: true },
+  { key: "guided_exercise", label: "Exercício Espiritual", Icon: PenLine, isPremium: true },
   // Legacy / hybrid
-  { key: 'intro', label: 'Introdução', Icon: BookOpen, isPremium: false },
-  { key: 'reflection', label: 'Reflexão', Icon: PenLine, isPremium: true },
-  { key: 'practice', label: 'Prática', Icon: Hand, isPremium: true },
-  { key: 'prayer', label: 'Oração', Icon: Sparkles, isPremium: true },
+  { key: "intro", label: "Introdução", Icon: BookOpen, isPremium: false },
+  { key: "reflection", label: "Reflexão", Icon: PenLine, isPremium: true },
+  { key: "practice", label: "Prática", Icon: Hand, isPremium: true },
+  { key: "prayer", label: "Oração", Icon: Sparkles, isPremium: true },
 ];
 
 const JornadaStepPage: React.FC = () => {
   const { id: journeyId } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const stepId = searchParams.get('step');
+  const stepId = searchParams.get("step");
   const navigate = useNavigate();
   const { user, userLevel: userLevelClass, isPremium: isUserPremium } = useAuth();
   const { saveLastRead } = useReadingMarks();
 
   const [step, setStep] = useState<any>(null);
-  const [journeyTitle, setJourneyTitle] = useState('');
+  const [journeyTitle, setJourneyTitle] = useState("");
   const [totalSteps, setTotalSteps] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [reflection, setReflection] = useState('');
+  const [reflection, setReflection] = useState("");
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [completing, setCompleting] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [statusMessage, setStatusMessage] = useState("");
   const [nextStep, setNextStep] = useState<any>(null);
   const [prevStep, setPrevStep] = useState<any>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -129,7 +125,7 @@ const JornadaStepPage: React.FC = () => {
           slug: step.id, // steps use ID as unique slug
           title: step.title,
           subtitle: step.subtitle,
-          category: journeyTitle || 'Jornada',
+          category: journeyTitle || "Jornada",
         }
       : null,
   );
@@ -150,28 +146,26 @@ const JornadaStepPage: React.FC = () => {
       // para renderizar a tela de "etapa não encontrada".
       setLoading(false);
     }
-     
   }, [stepId, journeyId, user?.id]);
 
   // Registra histórico e "última leitura" apenas após o step estar carregado.
   useEffect(() => {
     if (!stepId || !journeyId || !step?.title) return;
     saveLastRead({
-      content_type: 'journey',
+      content_type: "journey",
       content_id: stepId,
-      label: `${step.title} (${journeyTitle || 'Jornada'})`,
+      label: `${step.title} (${journeyTitle || "Jornada"})`,
       url: `/jornadas/${journeyId}/step?step=${stepId}`,
       is_last_read: true,
     });
     if (user?.id) {
-      supabase.from('user_history').insert({
+      supabase.from("user_history").insert({
         user_id: user.id,
         title: step.title,
         route: `/jornadas/${journeyId}/step?step=${stepId}`,
-        type: 'journey',
+        type: "journey",
       } as any);
     }
-     
   }, [stepId, journeyId, step?.title, journeyTitle, user?.id]);
 
   const loadData = async () => {
@@ -188,19 +182,21 @@ const JornadaStepPage: React.FC = () => {
       const [stepRes, journeyRes, allStepsRes, progressRes] = await Promise.all([
         cachedStep
           ? Promise.resolve({ data: cachedStep } as any)
-          : supabase.from('journey_steps').select('*').eq('id', stepId!).single(),
-        supabase.from('journeys').select('title').eq('id', journeyId!).single(),
+          : supabase.from("journey_steps").select("*").eq("id", stepId!).single(),
+        supabase.from("journeys").select("title").eq("id", journeyId!).single(),
         supabase
-          .from('journey_steps')
-          .select('id, step_order, title, subtitle, step_type, duration_minutes, is_free, journey_id')
-          .eq('journey_id', journeyId!)
-          .order('step_order', { ascending: true }),
+          .from("journey_steps")
+          .select(
+            "id, step_order, title, subtitle, step_type, duration_minutes, is_free, journey_id",
+          )
+          .eq("journey_id", journeyId!)
+          .order("step_order", { ascending: true }),
         user
           ? supabase
-              .from('journey_progress')
-              .select('id, reflection')
-              .eq('user_id', user.id)
-              .eq('step_id', stepId!)
+              .from("journey_progress")
+              .select("id, reflection")
+              .eq("user_id", user.id)
+              .eq("step_id", stepId!)
               .maybeSingle()
           : Promise.resolve({ data: null } as any),
       ]);
@@ -234,23 +230,27 @@ const JornadaStepPage: React.FC = () => {
       // Retomar seção expandida salva
       if (storageKey) {
         try {
-          const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
           if (saved.expandedSection) setExpandedSection(saved.expandedSection);
-        } catch { /* noop */ }
+        } catch {
+          /* noop */
+        }
       }
 
       if (user && stepRes.data) {
         const progress = (progressRes as any)?.data;
         if (progress) {
           setCompleted(true);
-          setReflection(progress.reflection || '');
+          setReflection(progress.reflection || "");
         } else if (storageKey) {
           try {
-            const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-            if (typeof saved.draftReflection === 'string' && saved.draftReflection.trim()) {
+            const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+            if (typeof saved.draftReflection === "string" && saved.draftReflection.trim()) {
               setReflection(saved.draftReflection);
             }
-          } catch { /* noop */ }
+          } catch {
+            /* noop */
+          }
         }
       }
 
@@ -270,57 +270,57 @@ const JornadaStepPage: React.FC = () => {
     if (!user || !journeyId || !stepId) return;
     // Validação: se há pergunta final, a reflexão é obrigatória (mínimo 10 chars).
     const finalPromptCheck =
-      getVariantContent('final_question', content) ||
-      getVariantContent('journal_prompt', content) ||
-      getVariantContent('question', content);
+      getVariantContent("final_question", content) ||
+      getVariantContent("journal_prompt", content) ||
+      getVariantContent("question", content);
     if (finalPromptCheck && reflection.trim().length < 10) {
-      setStatusMessage('Escreva sua reflexão antes de concluir (mínimo 10 caracteres).');
-      toast.error('Escreva sua reflexão antes de concluir (mínimo 10 caracteres).');
+      setStatusMessage("Escreva sua reflexão antes de concluir (mínimo 10 caracteres).");
+      toast.error("Escreva sua reflexão antes de concluir (mínimo 10 caracteres).");
       return;
     }
     setCompleting(true);
-    setStatusMessage('Concluindo etapa…');
+    setStatusMessage("Concluindo etapa…");
     try {
-      const { error } = await supabase.from('journey_progress').upsert(
+      const { error } = await supabase.from("journey_progress").upsert(
         {
           user_id: user.id,
           journey_id: journeyId,
           step_id: stepId,
           reflection: reflection.trim() || null,
         },
-        { onConflict: 'user_id,step_id' },
+        { onConflict: "user_id,step_id" },
       );
       if (error) throw error;
 
       if (reflection.trim()) {
         supabase
-          .from('spiritual_journal')
+          .from("spiritual_journal")
           .insert([
             {
               user_id: user.id,
               content: reflection.trim(),
               journey_id: journeyId,
               step_id: stepId,
-              entry_date: new Date().toISOString().split('T')[0],
+              entry_date: new Date().toISOString().split("T")[0],
             },
           ])
           .then(({ error }) => {
-            if (error) console.error('BG Journal save failed:', error);
+            if (error) console.error("BG Journal save failed:", error);
           });
         saveUserPsychology(user.id, reflection.trim(), `journey_${journeyId}`);
       }
 
       setCompleted(true);
-      setStatusMessage('Etapa concluída.');
-      toast.success('Etapa concluída.');
+      setStatusMessage("Etapa concluída.");
+      toast.success("Etapa concluída.");
       // Se for a última, direciona para conclusão da jornada
       if (!nextStep && journeyId) {
         setTimeout(() => navigate(`/jornadas/${journeyId}/conclusao`), 600);
       }
     } catch (err) {
-      console.error('Failed to complete step:', err);
-      setStatusMessage('Erro ao concluir. Tente novamente.');
-      toast.error('Não foi possível concluir a etapa.');
+      console.error("Failed to complete step:", err);
+      setStatusMessage("Erro ao concluir. Tente novamente.");
+      toast.error("Não foi possível concluir a etapa.");
     } finally {
       setCompleting(false);
     }
@@ -330,19 +330,19 @@ const JornadaStepPage: React.FC = () => {
     if (!user || !reflection.trim()) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from('reading_reflections').insert([
+      const { error } = await supabase.from("reading_reflections").insert([
         {
           user_id: user.id,
-          reading_type: 'journey',
+          reading_type: "journey",
           content: reflection.trim(),
           context_id: `journey_${journeyId}_step_${stepId}`,
         },
       ]);
       if (error) throw error;
-      toast.success('Reflexão salva no seu perfil.');
+      toast.success("Reflexão salva no seu perfil.");
     } catch (err) {
-      console.error('Failed to save reflection:', err);
-      toast.error('Erro ao salvar reflexão.');
+      console.error("Failed to save reflection:", err);
+      toast.error("Erro ao salvar reflexão.");
     } finally {
       setSaving(false);
     }
@@ -350,11 +350,11 @@ const JornadaStepPage: React.FC = () => {
 
   const getVariantContent = (key: string, content: any): string | null => {
     if (!content) return null;
-    if (typeof content[key] === 'string') return content[key];
-    if (content[key] && typeof content[key] === 'object') {
+    if (typeof content[key] === "string") return content[key];
+    if (content[key] && typeof content[key] === "object") {
       return (
         content[key][userLevelClass] ||
-        content[key]['iniciante'] ||
+        content[key]["iniciante"] ||
         (Object.values(content[key])[0] as string)
       );
     }
@@ -363,13 +363,18 @@ const JornadaStepPage: React.FC = () => {
     return content[key] || null;
   };
 
-  const persistLocal = useCallback((patch: Record<string, any>) => {
-    if (!storageKey) return;
-    try {
-      const prev = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      localStorage.setItem(storageKey, JSON.stringify({ ...prev, ...patch, ts: Date.now() }));
-    } catch { /* noop */ }
-  }, [storageKey]);
+  const persistLocal = useCallback(
+    (patch: Record<string, any>) => {
+      if (!storageKey) return;
+      try {
+        const prev = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        localStorage.setItem(storageKey, JSON.stringify({ ...prev, ...patch, ts: Date.now() }));
+      } catch {
+        /* noop */
+      }
+    },
+    [storageKey],
+  );
 
   const toggleSection = (key: string) => {
     setExpandedSection((prev) => {
@@ -383,13 +388,15 @@ const JornadaStepPage: React.FC = () => {
   useEffect(() => {
     if (loading || !step || restoredScrollRef.current || !storageKey || !scrollRef.current) return;
     try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      if (typeof saved.scrollY === 'number' && saved.scrollY > 0) {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if (typeof saved.scrollY === "number" && saved.scrollY > 0) {
         requestAnimationFrame(() => {
-          scrollRef.current?.scrollTo({ top: saved.scrollY, behavior: 'auto' });
+          scrollRef.current?.scrollTo({ top: saved.scrollY, behavior: "auto" });
         });
       }
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
     restoredScrollRef.current = true;
   }, [loading, step, storageKey]);
 
@@ -405,9 +412,9 @@ const JornadaStepPage: React.FC = () => {
         raf = 0;
       });
     };
-    el.addEventListener('scroll', onScroll, { passive: true });
+    el.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      el.removeEventListener('scroll', onScroll);
+      el.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
   }, [storageKey, persistLocal, loading]);
@@ -425,7 +432,7 @@ const JornadaStepPage: React.FC = () => {
   // Limpar rascunho ao concluir para liberar o localStorage
   useEffect(() => {
     if (completed && storageKey) {
-      persistLocal({ draftReflection: '' });
+      persistLocal({ draftReflection: "" });
       setDraftSavedAt(null);
     }
   }, [completed, storageKey, persistLocal]);
@@ -436,29 +443,27 @@ const JornadaStepPage: React.FC = () => {
       const el = t as HTMLElement | null;
       if (!el) return false;
       const tag = el.tagName;
-      return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
+      return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
     };
     const onKey = (e: KeyboardEvent) => {
       if (isTypingTarget(e.target)) return;
-      if (e.key === 'ArrowRight' && nextStep) {
+      if (e.key === "ArrowRight" && nextStep) {
         e.preventDefault();
         navigate(`/jornadas/${journeyId}/step?step=${nextStep.id}`);
-      } else if (e.key === 'ArrowLeft' && prevStep) {
+      } else if (e.key === "ArrowLeft" && prevStep) {
         e.preventDefault();
         navigate(`/jornadas/${journeyId}/step?step=${prevStep.id}`);
-      } else if (e.key === 'Escape' || (e.key === 'ArrowLeft' && !prevStep)) {
+      } else if (e.key === "Escape" || (e.key === "ArrowLeft" && !prevStep)) {
         e.preventDefault();
         navigate(`/jornadas/${journeyId}`);
-      } else if (e.altKey && e.key === 'Enter' && !completed && !completing) {
+      } else if (e.altKey && e.key === "Enter" && !completed && !completing) {
         e.preventDefault();
         completeStep();
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-     
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [nextStep, prevStep, journeyId, completed, completing]);
-
 
   if (loading) {
     return createPortal(
@@ -489,7 +494,10 @@ const JornadaStepPage: React.FC = () => {
             </div>
             <div className="mx-auto h-px w-16 bg-stitch-secondary/30" />
             {[0, 1, 2].map((i) => (
-              <div key={i} className="space-y-3 rounded-lg border border-stitch-outline-variant/20 p-5">
+              <div
+                key={i}
+                className="space-y-3 rounded-lg border border-stitch-outline-variant/20 p-5"
+              >
                 <div className="h-4 w-32 animate-pulse rounded bg-stitch-outline-variant/20" />
                 <div className="space-y-2">
                   <div className="h-3 w-full animate-pulse rounded bg-stitch-outline-variant/15" />
@@ -525,12 +533,12 @@ const JornadaStepPage: React.FC = () => {
               Etapa indisponível
             </p>
             <h1 className="font-serif text-3xl font-bold leading-tight text-stitch-on-background">
-              {missingStepParam ? 'Nenhuma etapa selecionada' : 'Não encontramos esta etapa'}
+              {missingStepParam ? "Nenhuma etapa selecionada" : "Não encontramos esta etapa"}
             </h1>
             <p className="font-stitch-body text-[15px] leading-relaxed text-stitch-on-surface-variant">
               {missingStepParam
-                ? 'O endereço da etapa está incompleto. Abra a jornada e escolha por onde recomeçar.'
-                : 'A etapa que você tentou abrir não existe mais ou foi movida. Volte à jornada para retomar de onde parou.'}
+                ? "O endereço da etapa está incompleto. Abra a jornada e escolha por onde recomeçar."
+                : "A etapa que você tentou abrir não existe mais ou foi movida. Volte à jornada para retomar de onde parou."}
             </p>
           </div>
 
@@ -545,7 +553,7 @@ const JornadaStepPage: React.FC = () => {
               </button>
             )}
             <button
-              onClick={() => navigate('/jornadas')}
+              onClick={() => navigate("/jornadas")}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-stitch-secondary/40 px-6 py-3 font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] text-stitch-secondary transition-colors hover:border-stitch-secondary hover:bg-stitch-secondary/5 min-h-[44px]"
             >
               Ver todas as jornadas
@@ -558,12 +566,11 @@ const JornadaStepPage: React.FC = () => {
     );
   }
 
-
   const bibleRef = content.bible_ref;
   const finalPrompt =
-    getVariantContent('final_question', content) ||
-    getVariantContent('journal_prompt', content) ||
-    getVariantContent('question', content);
+    getVariantContent("final_question", content) ||
+    getVariantContent("journal_prompt", content) ||
+    getVariantContent("question", content);
   const MIN_REFLECTION_LEN = 10;
   const trimmedReflection = reflection.trim();
   const reflectionRequired = !!finalPrompt;
@@ -606,9 +613,12 @@ const JornadaStepPage: React.FC = () => {
                     Conteúdo adaptado
                   </span>
                   <span className="opacity-80">
-                    {userLevelClass === 'iniciante' && 'Nível Iniciante: conteúdo simplificado e guiado.'}
-                    {userLevelClass === 'intermediário' && 'Nível Intermediário: reflexão e aprofundamento.'}
-                    {userLevelClass === 'avançado' && 'Nível Avançado: profundidade e confrontação.'}
+                    {userLevelClass === "iniciante" &&
+                      "Nível Iniciante: conteúdo simplificado e guiado."}
+                    {userLevelClass === "intermediário" &&
+                      "Nível Intermediário: reflexão e aprofundamento."}
+                    {userLevelClass === "avançado" &&
+                      "Nível Avançado: profundidade e confrontação."}
                   </span>
                 </span>
               </span>
@@ -628,7 +638,11 @@ const JornadaStepPage: React.FC = () => {
       </header>
 
       {/* ─── Conteúdo rolável ─────────────────────────── */}
-      <div ref={scrollRef} className="custom-scrollbar flex-1 overflow-y-auto overscroll-auto" aria-label={`Etapa ${step.step_order} de ${totalSteps}: ${step.title}`}>
+      <div
+        ref={scrollRef}
+        className="custom-scrollbar flex-1 overflow-y-auto overscroll-auto"
+        aria-label={`Etapa ${step.step_order} de ${totalSteps}: ${step.title}`}
+      >
         <ReaderShell
           className="mx-auto w-full max-w-[720px] px-5 pb-32 pt-10 md:px-8 md:pt-14"
           contentMaxWidth="w-full"
@@ -637,9 +651,7 @@ const JornadaStepPage: React.FC = () => {
             <EditorialHero align="center" density="balanced">
               {bibleRef && <EditorialHero.Eyebrow>{bibleRef}</EditorialHero.Eyebrow>}
               <EditorialHero.Title>{step.title}</EditorialHero.Title>
-              {step.subtitle && (
-                <EditorialHero.Subtitle>{step.subtitle}</EditorialHero.Subtitle>
-              )}
+              {step.subtitle && <EditorialHero.Subtitle>{step.subtitle}</EditorialHero.Subtitle>}
               <EditorialHero.Meta>
                 <span className="inline-flex items-center gap-1.5">
                   <Clock className="h-3 w-3" /> {step.duration_minutes} min
@@ -651,15 +663,17 @@ const JornadaStepPage: React.FC = () => {
                     <div className="h-24 w-24 overflow-hidden rounded-full border border-stitch-secondary/30 shadow-sm">
                       <SacredImage
                         src={saintImage}
-                        alt={step.subtitle || ''}
+                        alt={step.subtitle || ""}
                         className="h-full w-full object-cover"
                       />
                     </div>
                   )}
                   <AudioContentPlayer
-                    text={`${step.title}. ${step.subtitle || ''}. ${SECTION_CONFIG.map((sec) => getVariantContent(sec.key, content))
+                    text={`${step.title}. ${step.subtitle || ""}. ${SECTION_CONFIG.map((sec) =>
+                      getVariantContent(sec.key, content),
+                    )
                       .filter(Boolean)
-                      .join('. ')}`}
+                      .join(". ")}`}
                     title="Ouvir conteúdo"
                   />
                 </div>
@@ -667,7 +681,6 @@ const JornadaStepPage: React.FC = () => {
             </EditorialHero>
           }
         >
-
           {/* Seções */}
           <div className="mt-10 space-y-3">
             {SECTION_CONFIG.map(({ key, label, Icon, isPremium: sectionIsPremium }, i) => {
@@ -684,9 +697,9 @@ const JornadaStepPage: React.FC = () => {
                   transition={{ delay: 0.05 + i * 0.04 }}
                   className={`border transition-colors ${
                     isExpanded
-                      ? 'border-stitch-secondary/40 bg-stitch-surface-container-lowest'
-                      : 'border-stitch-outline-variant/25 bg-stitch-surface-container-lowest/60 hover:border-stitch-secondary/30'
-                  } ${isLocked ? 'opacity-90' : ''}`}
+                      ? "border-stitch-secondary/40 bg-stitch-surface-container-lowest"
+                      : "border-stitch-outline-variant/25 bg-stitch-surface-container-lowest/60 hover:border-stitch-secondary/30"
+                  } ${isLocked ? "opacity-90" : ""}`}
                 >
                   <button
                     type="button"
@@ -696,19 +709,25 @@ const JornadaStepPage: React.FC = () => {
                     className="flex w-full items-center gap-4 px-5 py-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-stitch-background"
                   >
                     <span className="font-stitch-display text-[20px] italic leading-none text-stitch-secondary/40">
-                      {String(i + 1).padStart(2, '0')}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
                     <span
                       className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
-                        isExpanded ? 'bg-stitch-secondary text-stitch-primary' : 'bg-stitch-surface-container-high text-stitch-on-surface-variant'
+                        isExpanded
+                          ? "bg-stitch-secondary text-stitch-primary"
+                          : "bg-stitch-surface-container-high text-stitch-on-surface-variant"
                       }`}
                     >
-                      {isLocked ? <Lock className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
+                      {isLocked ? (
+                        <Lock className="h-3.5 w-3.5" />
+                      ) : (
+                        <Icon className="h-3.5 w-3.5" />
+                      )}
                     </span>
                     <span className="flex flex-1 flex-wrap items-center gap-2">
                       <span
                         className={`font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] ${
-                          isExpanded ? 'text-stitch-primary' : 'text-stitch-on-surface-variant'
+                          isExpanded ? "text-stitch-primary" : "text-stitch-on-surface-variant"
                         }`}
                       >
                         {label}
@@ -720,7 +739,7 @@ const JornadaStepPage: React.FC = () => {
                       )}
                     </span>
                     <ChevronDown
-                      className={`h-4 w-4 text-stitch-on-surface-variant transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      className={`h-4 w-4 text-stitch-on-surface-variant transition-transform ${isExpanded ? "rotate-180" : ""}`}
                     />
                   </button>
 
@@ -731,7 +750,7 @@ const JornadaStepPage: React.FC = () => {
                         role="region"
                         aria-label={label}
                         initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
+                        animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.25 }}
                         className="overflow-hidden"
@@ -761,9 +780,9 @@ const JornadaStepPage: React.FC = () => {
                           ) : (
                             <p
                               className={`whitespace-pre-line font-stitch-body text-[16px] leading-[30px] text-stitch-on-surface md:text-[17px] md:leading-[32px] ${
-                                key === 'padh'
-                                  ? 'border-l-2 border-stitch-secondary/40 pl-5 font-stitch-display text-[19px] italic leading-[32px] text-stitch-primary md:text-[22px] md:leading-[36px]'
-                                  : ''
+                                key === "padh"
+                                  ? "border-l-2 border-stitch-secondary/40 pl-5 font-stitch-display text-[19px] italic leading-[32px] text-stitch-primary md:text-[22px] md:leading-[36px]"
+                                  : ""
                               }`}
                             >
                               {sectionContent}
@@ -803,8 +822,8 @@ const JornadaStepPage: React.FC = () => {
               aria-describedby="reflection-help"
               className={`min-h-[140px] resize-none bg-stitch-surface-container-lowest font-stitch-body text-[15px] leading-relaxed text-stitch-on-surface placeholder:text-stitch-on-surface-variant/70 focus-visible:ring-0 ${
                 reflectionRequired && !reflectionValid && reflectionCount > 0
-                  ? 'border-destructive/60 focus-visible:border-destructive'
-                  : 'border-stitch-outline-variant/40 focus-visible:border-stitch-secondary'
+                  ? "border-destructive/60 focus-visible:border-destructive"
+                  : "border-stitch-outline-variant/40 focus-visible:border-stitch-secondary"
               }`}
               disabled={completed}
             />
@@ -816,16 +835,16 @@ const JornadaStepPage: React.FC = () => {
                 <span
                   className={
                     reflectionRequired && !reflectionValid
-                      ? 'text-destructive'
-                      : 'text-stitch-on-surface-variant/70'
+                      ? "text-destructive"
+                      : "text-stitch-on-surface-variant/70"
                   }
                   data-testid="reflection-status"
                 >
                   {reflectionRequired
                     ? reflectionValid
-                      ? 'Pronto para concluir.'
+                      ? "Pronto para concluir."
                       : `Escreva ao menos ${MIN_REFLECTION_LEN} caracteres para concluir.`
-                    : 'Opcional — escreva se quiser guardar a reflexão.'}
+                    : "Opcional — escreva se quiser guardar a reflexão."}
                 </span>
                 <span className="flex items-center gap-3 text-stitch-on-surface-variant/60">
                   {draftSavedAt && reflection.trim() && (
@@ -845,12 +864,12 @@ const JornadaStepPage: React.FC = () => {
               {nexus && (
                 <NexusPanel
                   output={nexus}
-                  kicker={`Conexões · ${step?.title ?? journeyTitle ?? 'Jornada'}`}
+                  kicker={`Conexões · ${step?.title ?? journeyTitle ?? "Jornada"}`}
                 />
               )}
               <ReaderContinuation
                 context={{
-                  kind: 'journey-step',
+                  kind: "journey-step",
                   id: stepId ?? undefined,
                   meta: {
                     journeyId: journeyId ?? undefined,
@@ -876,12 +895,14 @@ const JornadaStepPage: React.FC = () => {
             {/* Navegação entre etapas (sempre visível) */}
             <button
               type="button"
-              onClick={() => prevStep && navigate(`/jornadas/${journeyId}/step?step=${prevStep.id}`)}
+              onClick={() =>
+                prevStep && navigate(`/jornadas/${journeyId}/step?step=${prevStep.id}`)
+              }
               onMouseEnter={() => prevStep?.id && prefetchStep(prevStep.id)}
               onFocus={() => prevStep?.id && prefetchStep(prevStep.id)}
               onTouchStart={() => prevStep?.id && prefetchStep(prevStep.id)}
               disabled={!prevStep}
-              aria-label={prevStep ? `Etapa anterior: ${prevStep.title}` : 'Sem etapa anterior'}
+              aria-label={prevStep ? `Etapa anterior: ${prevStep.title}` : "Sem etapa anterior"}
               title="Etapa anterior (←)"
               className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center border border-stitch-outline-variant/40 text-stitch-primary transition-colors hover:border-stitch-secondary hover:text-stitch-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary disabled:cursor-not-allowed disabled:opacity-30"
             >
@@ -893,7 +914,9 @@ const JornadaStepPage: React.FC = () => {
                 onClick={handleSaveReflection}
                 disabled={saving || completing || !reflection.trim()}
                 aria-busy={saving}
-                aria-label={reflection.trim() ? 'Salvar reflexão' : 'Escreva uma reflexão para habilitar'}
+                aria-label={
+                  reflection.trim() ? "Salvar reflexão" : "Escreva uma reflexão para habilitar"
+                }
                 title="Salvar reflexão"
                 className="inline-flex flex-1 items-center justify-center gap-2 border border-stitch-outline-variant/40 px-4 py-3 font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] text-stitch-primary transition-colors hover:border-stitch-secondary hover:text-stitch-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -925,9 +948,9 @@ const JornadaStepPage: React.FC = () => {
                 if (!canComplete) {
                   const msg = reflectionRequired
                     ? reflectionCount === 0
-                      ? 'Escreva sua reflexão para concluir esta etapa.'
+                      ? "Escreva sua reflexão para concluir esta etapa."
                       : `Reflexão muito curta — escreva ao menos ${MIN_REFLECTION_LEN} caracteres (faltam ${MIN_REFLECTION_LEN - reflectionCount}).`
-                    : 'Dados incompletos.';
+                    : "Dados incompletos.";
                   setStatusMessage(msg);
                   toast.error(msg);
                   reflectionRef.current?.focus();
@@ -941,22 +964,22 @@ const JornadaStepPage: React.FC = () => {
                 completed
                   ? nextStep
                     ? `Próxima etapa: ${nextStep.title}`
-                    : 'Ir para a conclusão da jornada'
+                    : "Ir para a conclusão da jornada"
                   : canComplete
-                    ? 'Concluir esta etapa'
+                    ? "Concluir esta etapa"
                     : `Escreva ao menos ${MIN_REFLECTION_LEN} caracteres para concluir`
               }
               title={
                 completed
-                  ? 'Próxima etapa (→)'
+                  ? "Próxima etapa (→)"
                   : canComplete
-                    ? 'Concluir etapa (Alt+Enter)'
+                    ? "Concluir etapa (Alt+Enter)"
                     : reflectionCount === 0
-                      ? 'Escreva sua reflexão para habilitar'
+                      ? "Escreva sua reflexão para habilitar"
                       : `Faltam ${MIN_REFLECTION_LEN - reflectionCount} caracteres`
               }
               className={`${
-                completed ? 'flex-1' : 'flex-[2]'
+                completed ? "flex-1" : "flex-[2]"
               } inline-flex items-center justify-center gap-2 bg-stitch-primary px-5 py-3 font-stitch-body text-[12px] font-bold uppercase tracking-[0.22em] text-stitch-primary-foreground transition-colors hover:bg-stitch-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-stitch-background aria-disabled:cursor-not-allowed aria-disabled:opacity-50`}
             >
               {completing ? (

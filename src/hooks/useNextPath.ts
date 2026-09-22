@@ -6,15 +6,15 @@
  * cache e ligação com o usuário autenticado.
  */
 
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   resolveNextPath,
   type JourneyCandidate,
   type NextPathRecommendation,
-} from '@/core/knowledge/intelligence/nextPathEngine';
-import { getNextPathData } from '@/services/nextPathService';
+} from "@/core/knowledge/intelligence/nextPathEngine";
+import { getNextPathData } from "@/services/nextPathService";
 
 export function useNextPath(
   current: JourneyCandidate | null,
@@ -22,7 +22,7 @@ export function useNextPath(
   limit = 3,
 ): NextPathRecommendation[] {
   const { data } = useQuery({
-    queryKey: ['next-path', userId ?? 'anon'],
+    queryKey: ["next-path", userId ?? "anon"],
     queryFn: () => getNextPathData(userId),
     enabled: Boolean(current),
     staleTime: 5 * 60 * 1000,

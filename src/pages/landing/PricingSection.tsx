@@ -1,4 +1,4 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 
 import { HomeButton } from "@/components/cathedra/HomeButton";
 import { trackEvent } from "@/lib/analytics";
@@ -15,11 +15,11 @@ const PricingSection = () => {
         "Catecismo da Igreja (CIC)",
         "Liturgia Diária & Santo do Dia",
         "Orações e Devoções Básicas",
-        "3 Consultas/dia ao Logos IA"
+        "3 Consultas/dia ao Logos IA",
       ],
       button: "Começar Agora",
       popular: false,
-      icon: <Icons.Heart className="w-spacing-md h-spacing-md text-primary" />
+      icon: <Icons.Heart className="w-spacing-md h-spacing-md text-primary" />,
     },
     {
       name: "Irmandade Premium",
@@ -32,11 +32,11 @@ const PricingSection = () => {
         "Análises Teológicas Profundas",
         "Jornadas de Fé Exclusivas",
         "Comunidade & Grupos de Estudo",
-        "Acesso Antecipado a Recursos"
+        "Acesso Antecipado a Recursos",
       ],
       button: "Ser Premium",
       popular: true,
-      icon: <Icons.Sparkles className="w-spacing-md h-spacing-md text-primary" />
+      icon: <Icons.Sparkles className="w-spacing-md h-spacing-md text-primary" />,
     },
     {
       name: "Benfeitor Anual",
@@ -48,22 +48,28 @@ const PricingSection = () => {
         "Badge Exclusiva de Benfeitor",
         "Mural de Agradecimentos",
         "Vigílias Mensais Online",
-        "Apoio Direto à Evangelização"
+        "Apoio Direto à Evangelização",
       ],
       button: "Apoiar a Missão",
       popular: false,
-      icon: <Icons.Zap className="w-spacing-md h-spacing-md text-primary" />
-    }
+      icon: <Icons.Zap className="w-spacing-md h-spacing-md text-primary" />,
+    },
   ];
 
   return (
     <section className="w-full section-spacing bg-background relative overflow-hidden">
       <div className="app-container space-y-spacing-3xl">
         <div className="text-center space-y-spacing-lg max-w-spacing-3xl mx-auto">
-          <span className="text-premium-xs font-bold uppercase tracking-[0.4em] text-primary/70 block italic">Investimento Espiritual</span>
-          <h2 className="text-premium-4xl md:text-premium-5xl font-display font-bold text-foreground">Escolha seu Caminho de <span className="text-primary italic font-serif">Crescimento</span></h2>
+          <span className="text-premium-xs font-bold uppercase tracking-[0.4em] text-primary/70 block italic">
+            Investimento Espiritual
+          </span>
+          <h2 className="text-premium-4xl md:text-premium-5xl font-display font-bold text-foreground">
+            Escolha seu Caminho de{" "}
+            <span className="text-primary italic font-serif">Crescimento</span>
+          </h2>
           <p className="text-muted-foreground/90 font-serif max-w-spacing-2xl mx-auto">
-            Buscai primeiro o Reino de Deus e a sua justiça, e todas estas coisas vos serão acrescentadas. (Mt 6,33)
+            Buscai primeiro o Reino de Deus e a sua justiça, e todas estas coisas vos serão
+            acrescentadas. (Mt 6,33)
           </p>
         </div>
 
@@ -92,7 +98,11 @@ const PricingSection = () => {
                 <div className="space-y-spacing-xs">
                   <div className="flex items-baseline gap-spacing-2xs">
                     <span className="text-premium-3xl font-bold">{tier.price}</span>
-                    {tier.period && <span className="text-muted-foreground text-premium-small">{tier.period}</span>}
+                    {tier.period && (
+                      <span className="text-muted-foreground text-premium-small">
+                        {tier.period}
+                      </span>
+                    )}
                   </div>
                   <p className="text-premium-xs text-muted-foreground leading-relaxed">
                     {tier.desc}
@@ -101,7 +111,10 @@ const PricingSection = () => {
 
                 <ul className="space-y-spacing-md py-spacing-lg border-t border-border/10">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-spacing-sm text-premium-small">
+                    <li
+                      key={feature}
+                      className="flex items-start gap-spacing-sm text-premium-small"
+                    >
                       <Icons.Check className="w-spacing-md h-spacing-md text-secondary mt-spacing-3xs flex-shrink-0" />
                       <span className="text-muted-foreground leading-snug">{feature}</span>
                     </li>
@@ -110,11 +123,13 @@ const PricingSection = () => {
               </div>
 
               <div className="mt-spacing-xl">
-                <HomeButton 
+                <HomeButton
                   variant={tier.popular ? "primary" : "outline"}
                   className="w-full"
                   aria-label={`Assinar o plano ${tier.name}`}
-                  onClick={() => trackEvent('conversion', { type: 'pricing_click', tier: tier.name })}
+                  onClick={() =>
+                    trackEvent("conversion", { type: "pricing_click", tier: tier.name })
+                  }
                 >
                   {tier.button}
                 </HomeButton>

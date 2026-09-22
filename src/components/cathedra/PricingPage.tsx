@@ -1,55 +1,59 @@
-import { Icons } from '@/constants';
-import React from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { motion } from 'framer-motion';
+import { Icons } from "@/constants";
+import React from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { motion } from "framer-motion";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useNavigate } from '@/lib/rr-compat';
-import { AppRoute } from '@/types';
-import { useAuth } from '@/hooks/useAuth';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "@/lib/rr-compat";
+import { AppRoute } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as [number, number, number, number];
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i: number = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1, ease } }),
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease },
+  }),
 };
 
 const PRICE_MONTHLY = 15.92;
 const PRICE_YEARLY = 191.04;
-const PAGE_TITLE = 'Planos — Cathedra Digital · R$ 15,92/mês';
+const PAGE_TITLE = "Planos — Cathedra Digital · R$ 15,92/mês";
 const PAGE_DESCRIPTION =
-  'Cathedra PRO por R$ 15,92/mês (R$ 191,04/ano · economize 20%). Compare o plano gratuito Peregrino e o PRO: Bíblia, Catecismo, Liturgia, IA Colloquium e trilhas de formação.';
-const CANONICAL_URL = 'https://www.cathedradigital.com.br/pricing';
+  "Cathedra PRO por R$ 15,92/mês (R$ 191,04/ano · economize 20%). Compare o plano gratuito Peregrino e o PRO: Bíblia, Catecismo, Liturgia, IA Colloquium e trilhas de formação.";
+const CANONICAL_URL = "https://www.cathedradigital.com.br/pricing";
 
 export type Feature = { label: string; free: boolean };
 export type FeatureGroup = { title: string; items: Feature[] };
 
 export const PRICING_GROUPS: FeatureGroup[] = [
   {
-    title: 'Fundamentos da Fé',
+    title: "Fundamentos da Fé",
     items: [
-      { label: 'Bíblia completa', free: true },
-      { label: 'Catecismo da Igreja', free: true },
-      { label: 'Liturgia diária', free: true },
-      { label: 'Santos do dia', free: true },
-      { label: 'Rosário e orações', free: true },
+      { label: "Bíblia completa", free: true },
+      { label: "Catecismo da Igreja", free: true },
+      { label: "Liturgia diária", free: true },
+      { label: "Santos do dia", free: true },
+      { label: "Rosário e orações", free: true },
     ],
   },
   {
-    title: 'Aprofundamento e Formação',
+    title: "Aprofundamento e Formação",
     items: [
-      { label: 'Conteúdos avançados', free: false },
-      { label: 'Colloquium IA', free: false },
-      { label: 'Trilhas de formação', free: false },
-      { label: 'Badges exclusivos', free: false },
-      { label: 'Sem anúncios', free: false },
-      { label: 'Suporte prioritário', free: false },
+      { label: "Conteúdos avançados", free: false },
+      { label: "Colloquium IA", free: false },
+      { label: "Trilhas de formação", free: false },
+      { label: "Badges exclusivos", free: false },
+      { label: "Sem anúncios", free: false },
+      { label: "Suporte prioritário", free: false },
     ],
   },
 ];
 
-export const FeatureList: React.FC<{ variant: 'free' | 'pro' }> = ({ variant }) => (
+export const FeatureList: React.FC<{ variant: "free" | "pro" }> = ({ variant }) => (
   <div className="space-y-6">
     {PRICING_GROUPS.map((group) => (
       <div key={group.title} className="space-y-2">
@@ -61,15 +65,18 @@ export const FeatureList: React.FC<{ variant: 'free' | 'pro' }> = ({ variant }) 
         </h4>
         <ul className="space-y-2">
           {group.items.map((item) => {
-            const included = variant === 'pro' ? true : item.free;
+            const included = variant === "pro" ? true : item.free;
             return (
               <li key={item.label} className="flex items-center gap-3 text-sm">
                 {included ? (
                   <Icons.Check className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
                 ) : (
-                  <Icons.X className="w-4 h-4 text-muted-foreground/40 shrink-0" aria-hidden="true" />
+                  <Icons.X
+                    className="w-4 h-4 text-muted-foreground/40 shrink-0"
+                    aria-hidden="true"
+                  />
                 )}
-                <span className={included ? '' : 'text-muted-foreground/60'}>{item.label}</span>
+                <span className={included ? "" : "text-muted-foreground/60"}>{item.label}</span>
               </li>
             );
           })}
@@ -80,40 +87,45 @@ export const FeatureList: React.FC<{ variant: 'free' | 'pro' }> = ({ variant }) 
 );
 
 const priceJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: 'Cathedra PRO',
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Cathedra PRO",
   description:
-    'Assinatura Cathedra PRO: acesso completo à formação católica, Colloquium IA, trilhas e conteúdos avançados.',
-  brand: { '@type': 'Brand', name: 'Cathedra Digital' },
+    "Assinatura Cathedra PRO: acesso completo à formação católica, Colloquium IA, trilhas e conteúdos avançados.",
+  brand: { "@type": "Brand", name: "Cathedra Digital" },
   offers: [
     {
-      '@type': 'Offer',
-      name: 'Cathedra PRO — Mensal',
+      "@type": "Offer",
+      name: "Cathedra PRO — Mensal",
       price: PRICE_MONTHLY.toFixed(2),
-      priceCurrency: 'BRL',
-      availability: 'https://schema.org/InStock',
+      priceCurrency: "BRL",
+      availability: "https://schema.org/InStock",
       url: CANONICAL_URL,
-      category: 'subscription',
+      category: "subscription",
     },
     {
-      '@type': 'Offer',
-      name: 'Cathedra PRO — Anual',
+      "@type": "Offer",
+      name: "Cathedra PRO — Anual",
       price: PRICE_YEARLY.toFixed(2),
-      priceCurrency: 'BRL',
-      availability: 'https://schema.org/InStock',
+      priceCurrency: "BRL",
+      availability: "https://schema.org/InStock",
       url: CANONICAL_URL,
-      category: 'subscription',
+      category: "subscription",
     },
   ],
 };
 
 const breadcrumbJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://www.cathedradigital.com.br/' },
-    { '@type': 'ListItem', position: 2, name: 'Planos', item: CANONICAL_URL },
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Início",
+      item: "https://www.cathedradigital.com.br/",
+    },
+    { "@type": "ListItem", position: 2, name: "Planos", item: CANONICAL_URL },
   ],
 };
 
@@ -181,7 +193,7 @@ const PricingPage: React.FC = () => {
                   className="w-full h-12 rounded-full font-bold mt-auto"
                   onClick={() => navigate(user ? AppRoute.DASHBOARD : AppRoute.LOGIN)}
                 >
-                  {user ? 'Ir ao Dashboard' : 'Criar Conta Grátis'}
+                  {user ? "Ir ao Dashboard" : "Criar Conta Grátis"}
                 </Button>
               </CardContent>
             </Card>
@@ -216,7 +228,7 @@ const PricingPage: React.FC = () => {
                   className="w-full h-12 rounded-full font-bold bg-primary text-primary-foreground shadow-md shadow-primary/20 mt-auto"
                   onClick={() => navigate(AppRoute.CHECKOUT)}
                 >
-                  {isPremium ? 'Você já é PRO ✓' : 'Assinar Agora'}
+                  {isPremium ? "Você já é PRO ✓" : "Assinar Agora"}
                   {!isPremium && <Icons.ChevronRight className="w-4 h-4 ml-1" aria-hidden="true" />}
                 </Button>
               </CardContent>
@@ -233,8 +245,8 @@ const PricingPage: React.FC = () => {
         >
           <Icons.Crown className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
           <p className="text-muted-foreground leading-relaxed italic font-serif">
-            "Parte de cada assinatura PRO é destinada a projetos de evangelização e formação católica. Ao assinar, você
-            também contribui para levar a fé a mais pessoas."
+            "Parte de cada assinatura PRO é destinada a projetos de evangelização e formação
+            católica. Ao assinar, você também contribui para levar a fé a mais pessoas."
           </p>
         </motion.aside>
       </div>

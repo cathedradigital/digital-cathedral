@@ -11,10 +11,10 @@
  */
 
 export type CollectionAnalyticsEvent =
-  | 'collection_completed'
-  | 'collection_prerequisites_viewed'
-  | 'collection_certificate_completed'
-  | 'collection_search_result_clicked';
+  | "collection_completed"
+  | "collection_prerequisites_viewed"
+  | "collection_certificate_completed"
+  | "collection_search_result_clicked";
 
 export interface CollectionEventPayload {
   collection_id?: string;
@@ -33,17 +33,17 @@ export interface CollectionEventPayload {
 type Gtag = (...args: any[]) => void;
 
 function getGtag(): Gtag | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const g = (window as any).gtag;
-  return typeof g === 'function' ? g : null;
+  return typeof g === "function" ? g : null;
 }
 
 function getSentry(): { addBreadcrumb: (b: unknown) => void } | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const s = (window as any).Sentry;
-  return s && typeof s.addBreadcrumb === 'function' ? s : null;
+  return s && typeof s.addBreadcrumb === "function" ? s : null;
 }
 
 export function trackCollectionEvent(
@@ -53,14 +53,13 @@ export function trackCollectionEvent(
   try {
     const gtag = getGtag();
     if (gtag) {
-      gtag('event', event, {
+      gtag("event", event, {
         collection_id: payload.collection_id,
         collection_slug: payload.collection_slug,
         collection_title: payload.collection_title,
         category: payload.category ?? undefined,
         difficulty_level: payload.difficulty_level ?? undefined,
-        estimated_reading_time_minutes:
-          payload.estimated_reading_time_minutes ?? undefined,
+        estimated_reading_time_minutes: payload.estimated_reading_time_minutes ?? undefined,
         items_total: payload.items_total,
         items_completed: payload.items_completed,
         has_certificate: payload.has_certificate,
@@ -70,16 +69,16 @@ export function trackCollectionEvent(
     const sentry = getSentry();
     if (sentry) {
       sentry.addBreadcrumb({
-        category: 'collections',
-        type: 'info',
-        level: 'info',
+        category: "collections",
+        type: "info",
+        level: "info",
         message: event,
         data: payload,
       });
     }
     if (import.meta.env.DEV) {
       // eslint-disable-next-line no-console
-      console.debug('[collections/analytics]', event, payload);
+      console.debug("[collections/analytics]", event, payload);
     }
   } catch {
     // Analytics jamais quebra a UI

@@ -1,6 +1,5 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export interface DonationRow {
   created_at: string | null;
@@ -25,70 +24,68 @@ interface ExportInput {
   audit: AuditRow[];
 }
 
-const fmtDate = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleString('pt-BR') : '—';
+const fmtDate = (iso: string | null) => (iso ? new Date(iso).toLocaleString("pt-BR") : "—");
 
 const fmtBRL = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v / 100);
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v / 100);
 
 export async function exportProfilePdf({ userName, userEmail, donations, audit }: ExportInput) {
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const now = new Date().toLocaleString('pt-BR');
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const now = new Date().toLocaleString("pt-BR");
 
   // Cabeçalho
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
-  doc.text('Cathedra — Relatório Pessoal', 40, 50);
-  doc.setFont('helvetica', 'normal');
+  doc.text("Cathedra — Relatório Pessoal", 40, 50);
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text(`Usuário: ${userName || '—'}  ·  ${userEmail}`, 40, 68);
+  doc.text(`Usuário: ${userName || "—"}  ·  ${userEmail}`, 40, 68);
   doc.text(`Gerado em: ${now}`, 40, 82);
-
 
   // Doações
   const donationsStartY = 120;
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
-  doc.text('Histórico de Doações & Apoio', 40, donationsStartY - 8);
+  doc.text("Histórico de Doações & Apoio", 40, donationsStartY - 8);
 
   autoTable(doc, {
     startY: donationsStartY,
-    head: [['Data', 'Descrição', 'Valor', 'Status', 'Tipo', 'ID Pagamento']],
+    head: [["Data", "Descrição", "Valor", "Status", "Tipo", "ID Pagamento"]],
     body: donations.length
-      ? donations.map(d => [
+      ? donations.map((d) => [
           fmtDate(d.created_at),
-          d.description || '—',
+          d.description || "—",
           fmtBRL(d.amount || 0),
-          d.status || '—',
-          d.is_donation ? 'Doação' : 'Assinatura',
-          d.payment_id || '—',
+          d.status || "—",
+          d.is_donation ? "Doação" : "Assinatura",
+          d.payment_id || "—",
         ])
-      : [['—', 'Nenhuma doação registrada', '—', '—', '—', '—']],
+      : [["—", "Nenhuma doação registrada", "—", "—", "—", "—"]],
     styles: { fontSize: 9, cellPadding: 4 },
     headStyles: { fillColor: [11, 31, 58], textColor: 255 },
-    theme: 'striped',
+    theme: "striped",
   });
 
   // Auditoria
   const afterDonations = (doc as any).lastAutoTable.finalY + 24;
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
-  doc.text('Trilha de Auditoria (Premium)', 40, afterDonations);
+  doc.text("Trilha de Auditoria (Premium)", 40, afterDonations);
 
   autoTable(doc, {
     startY: afterDonations + 8,
-    head: [['Data', 'Evento', 'Rota', 'Metadata']],
+    head: [["Data", "Evento", "Rota", "Metadata"]],
     body: audit.length
-      ? audit.map(a => [
+      ? audit.map((a) => [
           fmtDate(a.created_at),
           a.event_type,
-          a.path || '—',
-          a.metadata ? JSON.stringify(a.metadata).slice(0, 80) : '—',
+          a.path || "—",
+          a.metadata ? JSON.stringify(a.metadata).slice(0, 80) : "—",
         ])
-      : [['—', 'Nenhum evento registrado', '—', '—']],
+      : [["—", "Nenhum evento registrado", "—", "—"]],
     styles: { fontSize: 8, cellPadding: 4 },
     headStyles: { fillColor: [11, 31, 58], textColor: 255 },
-    theme: 'striped',
+    theme: "striped",
   });
 
   // Rodapé

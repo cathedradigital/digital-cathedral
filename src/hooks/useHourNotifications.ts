@@ -6,10 +6,10 @@
  * hora ativa e reprograma a cada mudança de dia. Silencioso quando o
  * usuário não concedeu permissão.
  */
-import { useCallback, useEffect, useState } from 'react';
-import type { Prayer } from './usePrayers';
+import { useCallback, useEffect, useState } from "react";
+import type { Prayer } from "./usePrayers";
 
-const STORAGE_KEY = 'cathedra:breviary:hour-notifications';
+const STORAGE_KEY = "cathedra:breviary:hour-notifications";
 
 interface PrayerMeta {
   hour_slug?: string;
@@ -28,7 +28,7 @@ const DEFAULT_PREFS: Preferences = {
 };
 
 function load(): Preferences {
-  if (typeof window === 'undefined') return DEFAULT_PREFS;
+  if (typeof window === "undefined") return DEFAULT_PREFS;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_PREFS;
@@ -39,13 +39,13 @@ function load(): Preferences {
 }
 
 function persist(prefs: Preferences) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
 }
 
 function minutesFromClock(hhmm?: string): number | null {
   if (!hhmm || !/^\d{2}:\d{2}$/.test(hhmm)) return null;
-  const [h, m] = hhmm.split(':').map(Number);
+  const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
 }
 
@@ -57,37 +57,43 @@ function msUntilNext(nowMin: number, targetMin: number): number {
 export function useHourNotifications(prayers: Prayer[]) {
   const [prefs, setPrefs] = useState<Preferences>(() => load());
   const [permission, setPermission] = useState<NotificationPermission>(
-    typeof Notification !== 'undefined' ? Notification.permission : 'default',
+    typeof Notification !== "undefined" ? Notification.permission : "default",
   );
 
-  const setEnabled = useCallback(async (enabled: boolean) => {
-    if (enabled && typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
-      const res = await Notification.requestPermission();
-      setPermission(res);
-      if (res !== 'granted') return;
-    }
-    const next = { ...prefs, enabled };
-    setPrefs(next);
-    persist(next);
-  }, [prefs]);
+  const setEnabled = useCallback(
+    async (enabled: boolean) => {
+      if (enabled && typeof Notification !== "undefined" && Notification.permission !== "granted") {
+        const res = await Notification.requestPermission();
+        setPermission(res);
+        if (res !== "granted") return;
+      }
+      const next = { ...prefs, enabled };
+      setPrefs(next);
+      persist(next);
+    },
+    [prefs],
+  );
 
-  const toggleHour = useCallback((hourSlug: string) => {
-    const next = { ...prefs, hours: { ...prefs.hours, [hourSlug]: !prefs.hours[hourSlug] } };
-    setPrefs(next);
-    persist(next);
-  }, [prefs]);
+  const toggleHour = useCallback(
+    (hourSlug: string) => {
+      const next = { ...prefs, hours: { ...prefs.hours, [hourSlug]: !prefs.hours[hourSlug] } };
+      setPrefs(next);
+      persist(next);
+    },
+    [prefs],
+  );
 
   // Agenda uma notificação por hora ativa (apenas para o próximo disparo).
   useEffect(() => {
-    if (!prefs.enabled || permission !== 'granted' || typeof window === 'undefined') return;
-    const breviario = prayers.filter((p) => p.slug.startsWith('breviario-'));
+    if (!prefs.enabled || permission !== "granted" || typeof window === "undefined") return;
+    const breviario = prayers.filter((p) => p.slug.startsWith("breviario-"));
     const timers: number[] = [];
     const now = new Date();
     const nowMin = now.getHours() * 60 + now.getMinutes();
 
     for (const p of breviario) {
       const meta = (p as unknown as { meta?: PrayerMeta }).meta ?? {};
-      const slug = meta.hour_slug ?? p.slug.replace(/^breviario-/, '');
+      const slug = meta.hour_slug ?? p.slug.replace(/^breviario-/, "");
       if (!prefs.hours[slug]) continue;
       const start = minutesFromClock(meta.window_start);
       if (start == null) continue;
@@ -95,11 +101,13 @@ export function useHourNotifications(prayers: Prayer[]) {
       const id = window.setTimeout(() => {
         try {
           new Notification(`${p.title}`, {
-            body: p.subtitle ?? 'É hora da Liturgia das Horas.',
-            icon: '/favicon-192.png',
+            body: p.subtitle ?? "É hora da Liturgia das Horas.",
+            icon: "/favicon-192.png",
             tag: `cathedra:hour:${slug}`,
           });
-        } catch { /* browser bloqueou */ }
+        } catch {
+          /* browser bloqueou */
+        }
       }, delay);
       timers.push(id);
     }

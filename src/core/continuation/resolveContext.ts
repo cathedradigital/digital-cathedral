@@ -7,20 +7,16 @@
  * favoritos, histórico. Hoje entrega apenas normalização defensiva.
  */
 
-import type {
-  ContinuationContext,
-  ContinuationInput,
-  ContinuationKind,
-} from './types';
-import type { KnowledgeNodeKind } from '@/core/knowledge/types';
+import type { ContinuationContext, ContinuationInput, ContinuationKind } from "./types";
+import type { KnowledgeNodeKind } from "@/core/knowledge/types";
 
 /** Mapa 1:1 do `ContinuationKind` para o vocabulário do grafo. */
-const KIND_TO_GRAPH: Record<ContinuationKind, KnowledgeNodeKind | 'journey-step'> = {
-  bible: 'bible',
-  catechism: 'catechism',
-  magisterium: 'magisterium',
-  saint: 'saint',
-  'journey-step': 'journey-step',
+const KIND_TO_GRAPH: Record<ContinuationKind, KnowledgeNodeKind | "journey-step"> = {
+  bible: "bible",
+  catechism: "catechism",
+  magisterium: "magisterium",
+  saint: "saint",
+  "journey-step": "journey-step",
 };
 
 export function resolveContext(input: ContinuationInput): ContinuationContext {

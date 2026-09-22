@@ -4,15 +4,15 @@
  * majoritariamente por busca semântica.
  */
 
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 import {
   BUCKET_LABEL,
   buildBucketedSuggestions,
   type ReaderAutoNexus,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
+} from "./ReaderAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
 
 export interface LiturgyNexusInput {
   ref: string;
@@ -21,20 +21,27 @@ export interface LiturgyNexusInput {
 }
 
 const BUCKETS: readonly ReaderNexusBucket[] = [
-  'bible', 'prayer', 'saint', 'catechism', 'glossary', 'journey',
+  "bible",
+  "prayer",
+  "saint",
+  "catechism",
+  "glossary",
+  "journey",
 ];
 
 const CACHE_MAX = 64;
 const cache = new Map<string, ReaderAutoNexusOutput>();
 
 export function _fingerprintLiturgy(i: LiturgyNexusInput): string {
-  return [i.ref, i.title, i.season ?? ''].join('#');
+  return [i.ref, i.title, i.season ?? ""].join("#");
 }
 
-export function clearLiturgyAutoNexusCache(): void { cache.clear(); }
+export function clearLiturgyAutoNexusCache(): void {
+  cache.clear();
+}
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 export function resolveLiturgyAutoNexus(input: LiturgyNexusInput): ReaderAutoNexusOutput {
@@ -44,13 +51,13 @@ export function resolveLiturgyAutoNexus(input: LiturgyNexusInput): ReaderAutoNex
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'liturgy', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "liturgy", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
   const selfId = ensureNode(KIND_SPECS.liturgy, input.ref, input.title);
 
-  const queries = [input.title, input.season ?? ''].filter(
+  const queries = [input.title, input.season ?? ""].filter(
     (q): q is string => !!q && q.length >= 3,
   );
 
@@ -73,12 +80,12 @@ export function resolveLiturgyAutoNexus(input: LiturgyNexusInput): ReaderAutoNex
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'liturgy', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "liturgy", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
 export const liturgyReaderAutoNexus: ReaderAutoNexus<LiturgyNexusInput> = {
-  kind: 'liturgy',
-  label: 'Liturgia',
+  kind: "liturgy",
+  label: "Liturgia",
   buildSuggestions: resolveLiturgyAutoNexus,
 };

@@ -12,13 +12,14 @@
  * aparecer mesmo com relevância textual moderada. O semantic adapter (MCP)
  * enriquece, nunca controla.
  */
-import type { LibraryIce, LibraryModule } from '../types';
-import { LIBRARY_MODULE_META } from './moduleMeta';
+import type { LibraryIce, LibraryModule } from "../types";
+import { LIBRARY_MODULE_META } from "./moduleMeta";
 
 const normalize = (v: string) =>
-  v.toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+  v
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
 /** 0-100 baseado em posição/inclusão do termo no título e no excerpt. */
@@ -26,7 +27,7 @@ export function textRelevance(query: string, title: string, excerpt?: string): n
   const q = normalize(query);
   if (!q) return 0;
   const t = normalize(title);
-  const e = excerpt ? normalize(excerpt) : '';
+  const e = excerpt ? normalize(excerpt) : "";
 
   if (t === q) return 100;
   if (t.startsWith(q)) return 85;
@@ -38,9 +39,9 @@ export function textRelevance(query: string, title: string, excerpt?: string): n
 }
 
 export function iceWeight(status?: LibraryIce): number {
-  if (status === 'complete') return 10;
-  if (status === 'review') return 6;
-  if (status === 'draft') return 2;
+  if (status === "complete") return 10;
+  if (status === "review") return 6;
+  if (status === "draft") return 2;
   return 0;
 }
 

@@ -6,11 +6,11 @@
  * Prayer Engine para diagnóstico de erros como React #300 em rotas
  * `/oracao/:slug` (ex.: contemplative do Rosário).
  */
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { AlertTriangle, RotateCcw, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { reportPrayerError, type PrayerErrorContext } from '@/lib/prayer/telemetry';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Link } from "@/lib/rr-compat";
+import { AlertTriangle, RotateCcw, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { reportPrayerError, type PrayerErrorContext } from "@/lib/prayer/telemetry";
 
 interface Props {
   children: ReactNode;
@@ -68,8 +68,13 @@ export class PrayerErrorBoundary extends Component<Props, State> {
         </h1>
         <p className="max-w-md font-stitch-body text-sm text-stitch-on-surface-variant">
           Algo interrompeu o carregamento
-          {slug ? <> de <span className="font-semibold">{slug}</span></> : null}.
-          A equipe já foi notificada. Você pode tentar novamente ou voltar ao livro de orações.
+          {slug ? (
+            <>
+              {" "}
+              de <span className="font-semibold">{slug}</span>
+            </>
+          ) : null}
+          . A equipe já foi notificada. Você pode tentar novamente ou voltar ao livro de orações.
         </p>
 
         {this.state.reactErrorCode && (

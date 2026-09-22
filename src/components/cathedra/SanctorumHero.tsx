@@ -1,7 +1,7 @@
-import React from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { EditorialHero } from '@/components/editorial';
+import React from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { EditorialHero } from "@/components/editorial";
 
 /**
  * SanctorumHero — Hero editorial unificado para todas as páginas Sanctorum
@@ -18,27 +18,20 @@ import { EditorialHero } from '@/components/editorial';
  *
  * O `kicker` explícito sempre vence a inferência automática (backward compat).
  */
-export type SanctorumVariant = 'page' | 'category' | 'saintOfDay' | 'detail';
+export type SanctorumVariant = "page" | "category" | "saintOfDay" | "detail";
 
 export type SanctorumKind =
-  | 'santo'
-  | 'pope'
-  | 'doctor'
-  | 'martyr'
-  | 'confessor'
-  | 'virgin'
-  | 'apostle'
-  | 'father';
+  "santo" | "pope" | "doctor" | "martyr" | "confessor" | "virgin" | "apostle" | "father";
 
 const KIND_LABEL: Record<SanctorumKind, string> = {
-  santo: 'Santos',
-  pope: 'Papas',
-  doctor: 'Doutores',
-  martyr: 'Mártires',
-  confessor: 'Confessores',
-  virgin: 'Virgens',
-  apostle: 'Apóstolos',
-  father: 'Padres da Igreja',
+  santo: "Santos",
+  pope: "Papas",
+  doctor: "Doutores",
+  martyr: "Mártires",
+  confessor: "Confessores",
+  virgin: "Virgens",
+  apostle: "Apóstolos",
+  father: "Padres da Igreja",
 };
 
 export interface SanctorumHeroProps {
@@ -47,8 +40,8 @@ export interface SanctorumHeroProps {
   kicker?: React.ReactNode;
   meta?: React.ReactNode;
   action?: React.ReactNode;
-  align?: 'left' | 'center';
-  size?: 'sm' | 'md' | 'lg';
+  align?: "left" | "center";
+  size?: "sm" | "md" | "lg";
   className?: string;
   /** Semântica do hero — controla o kicker padrão. */
   variant?: SanctorumVariant;
@@ -58,23 +51,19 @@ export interface SanctorumHeroProps {
   date?: Date;
 }
 
-function deriveKicker(
-  variant: SanctorumVariant,
-  kind?: SanctorumKind,
-  date?: Date,
-): string {
+function deriveKicker(variant: SanctorumVariant, kind?: SanctorumKind, date?: Date): string {
   switch (variant) {
-    case 'saintOfDay': {
+    case "saintOfDay": {
       const d = date ?? new Date();
       return `Sanctorum · Santo do Dia · ${format(d, "dd 'de' MMMM", { locale: ptBR })}`;
     }
-    case 'category':
-      return `Sanctorum · ${kind ? KIND_LABEL[kind] : 'Coleção'}`;
-    case 'detail':
-      return kind ? `Sanctorum · ${KIND_LABEL[kind]}` : 'Sanctorum Pro';
-    case 'page':
+    case "category":
+      return `Sanctorum · ${kind ? KIND_LABEL[kind] : "Coleção"}`;
+    case "detail":
+      return kind ? `Sanctorum · ${KIND_LABEL[kind]}` : "Sanctorum Pro";
+    case "page":
     default:
-      return 'Sanctorum Pro';
+      return "Sanctorum Pro";
   }
 }
 
@@ -84,10 +73,10 @@ export const SanctorumHero: React.FC<SanctorumHeroProps> = ({
   kicker,
   meta,
   action,
-  align = 'center',
-  size = 'md',
+  align = "center",
+  size = "md",
   className,
-  variant = 'page',
+  variant = "page",
   kind,
   date,
 }) => {

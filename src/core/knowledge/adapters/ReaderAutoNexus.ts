@@ -13,24 +13,24 @@
  *   • Buckets seguem a ordem canônica declarada pelo adapter.
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import { KnowledgeRegistry } from '../KnowledgeRegistry';
-import type { KnowledgeNodeId, ResolvedNode } from '../types';
-import type { ContinuationSuggestion } from '../continuation';
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import { KnowledgeRegistry } from "../KnowledgeRegistry";
+import type { KnowledgeNodeId, ResolvedNode } from "../types";
+import type { ContinuationSuggestion } from "../continuation";
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 
 /* ------------------------------ Tipos ------------------------------ */
 
 export type ReaderNexusBucket =
-  | 'bible'
-  | 'catechism'
-  | 'glossary'
-  | 'journey'
-  | 'saint'
-  | 'father'
-  | 'liturgy'
-  | 'prayer'
-  | 'magisterium';
+  | "bible"
+  | "catechism"
+  | "glossary"
+  | "journey"
+  | "saint"
+  | "father"
+  | "liturgy"
+  | "prayer"
+  | "magisterium";
 
 export interface ReaderAutoNexusOutput {
   selfId: KnowledgeNodeId | null;
@@ -50,42 +50,46 @@ export interface ReaderAutoNexus<TInput = unknown> {
 /* -------------------------- Rótulos / eyebrows -------------------------- */
 
 export const BUCKET_LABEL: Record<ReaderNexusBucket, string> = {
-  bible: 'Escritura',
-  catechism: 'Catecismo',
-  glossary: 'Glossário',
-  journey: 'Jornadas',
-  saint: 'Santos',
-  father: 'Padres',
-  liturgy: 'Liturgia',
-  prayer: 'Orações',
-  magisterium: 'Magistério',
+  bible: "Escritura",
+  catechism: "Catecismo",
+  glossary: "Glossário",
+  journey: "Jornadas",
+  saint: "Santos",
+  father: "Padres",
+  liturgy: "Liturgia",
+  prayer: "Orações",
+  magisterium: "Magistério",
 };
 
 export const BUCKET_EYEBROW: Record<ReaderNexusBucket, string> = {
-  bible: 'Meditar na Escritura',
-  catechism: 'Aprofundar no Catecismo',
-  glossary: 'Estudar o verbete',
-  journey: 'Continuar a formação',
-  saint: 'Conhecer o santo',
-  father: 'Conhecer o Padre da Igreja',
-  liturgy: 'Rezar com a Liturgia',
-  prayer: 'Rezar agora',
-  magisterium: 'Aprofundar no Magistério',
+  bible: "Meditar na Escritura",
+  catechism: "Aprofundar no Catecismo",
+  glossary: "Estudar o verbete",
+  journey: "Continuar a formação",
+  saint: "Conhecer o santo",
+  father: "Conhecer o Padre da Igreja",
+  liturgy: "Rezar com a Liturgia",
+  prayer: "Rezar agora",
+  magisterium: "Aprofundar no Magistério",
 };
 
-export function intentForBucket(
-  b: ReaderNexusBucket,
-): ContinuationSuggestion['intent'] {
+export function intentForBucket(b: ReaderNexusBucket): ContinuationSuggestion["intent"] {
   switch (b) {
-    case 'bible': return 'study';
-    case 'catechism':
-    case 'magisterium': return 'deepen';
-    case 'glossary': return 'study';
-    case 'journey': return 'apply';
-    case 'saint':
-    case 'father': return 'meet';
-    case 'liturgy':
-    case 'prayer': return 'pray';
+    case "bible":
+      return "study";
+    case "catechism":
+    case "magisterium":
+      return "deepen";
+    case "glossary":
+      return "study";
+    case "journey":
+      return "apply";
+    case "saint":
+    case "father":
+      return "meet";
+    case "liturgy":
+    case "prayer":
+      return "pray";
   }
 }
 
@@ -108,9 +112,10 @@ export interface BuildBucketedOptions {
  * 2) Se algum bucket estiver vazio, usa `KnowledgeGraph.search()` + `neighbors()`.
  * 3) Devolve 1 sugestão por bucket na ordem canônica.
  */
-export function buildBucketedSuggestions(
-  opts: BuildBucketedOptions,
-): { byBucket: Partial<Record<ReaderNexusBucket, ResolvedNode[]>>; suggestions: ContinuationSuggestion[] } {
+export function buildBucketedSuggestions(opts: BuildBucketedOptions): {
+  byBucket: Partial<Record<ReaderNexusBucket, ResolvedNode[]>>;
+  suggestions: ContinuationSuggestion[];
+} {
   const byBucket: Partial<Record<ReaderNexusBucket, ResolvedNode[]>> = {};
 
   const push = (bucket: ReaderNexusBucket, resolved: ResolvedNode) => {

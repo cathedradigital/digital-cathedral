@@ -1,1 +1,1 @@
-export { default } from './DailyLiturgy';
+export { default } from "./DailyLiturgy";

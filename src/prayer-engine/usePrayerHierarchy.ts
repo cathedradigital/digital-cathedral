@@ -5,16 +5,16 @@
  * Sprint 1.0 — o Reader legado (`PrayerEngineReader`) consome `PrayerBlock[]`, então
  * fazemos o achatamento aqui até que a navegação hierárquica nativa entre.
  */
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   loadPrayerHierarchyBySlug,
   flattenSectionToBlocks,
   pickSectionForDay,
   type PrayerHierarchy,
   type DBSection,
-} from './loadPrayerHierarchy';
-import type { PrayerBlock } from '@/types/prayer';
+} from "./loadPrayerHierarchy";
+import type { PrayerBlock } from "@/types/prayer";
 
 interface UsePrayerHierarchyResult {
   hierarchy: PrayerHierarchy | null;
@@ -29,7 +29,7 @@ export function usePrayerHierarchy(
   sectionSlug?: string,
 ): UsePrayerHierarchyResult {
   const query = useQuery({
-    queryKey: ['prayer-hierarchy', slug],
+    queryKey: ["prayer-hierarchy", slug],
     queryFn: () => (slug ? loadPrayerHierarchyBySlug(slug) : Promise.resolve(null)),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,

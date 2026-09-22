@@ -5,25 +5,15 @@
  * fonte de verdade para tempo litúrgico, ciclos e datas móveis.
  */
 
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
 
 export type LiturgicalSeason =
-  | 'Advento'
-  | 'Natal'
-  | 'Tempo Comum'
-  | 'Quaresma'
-  | 'Tríduo Pascal'
-  | 'Tempo Pascal';
+  "Advento" | "Natal" | "Tempo Comum" | "Quaresma" | "Tríduo Pascal" | "Tempo Pascal";
 
-export type CelebrationRank =
-  | 'solenidade'
-  | 'festa'
-  | 'memoria'
-  | 'memoria_facultativa'
-  | 'feria';
+export type CelebrationRank = "solenidade" | "festa" | "memoria" | "memoria_facultativa" | "feria";
 
-export type YearCycle = 'A' | 'B' | 'C';
-export type WeekCycle = 'I' | 'II';
+export type YearCycle = "A" | "B" | "C";
+export type WeekCycle = "I" | "II";
 
 export interface ChurchKeyDates {
   adventStart: Date;
@@ -142,18 +132,18 @@ export function computeKeyDates(liturgicalYearStart: number): ChurchKeyDates {
 }
 
 const FIXED_SOLEMNITIES: Array<{ month: number; day: number; name: string }> = [
-  { month: 0, day: 1, name: 'Santa Maria, Mãe de Deus' },
-  { month: 0, day: 6, name: 'Epifania do Senhor' },
-  { month: 2, day: 19, name: 'São José, Esposo de Maria' },
-  { month: 2, day: 25, name: 'Anunciação do Senhor' },
-  { month: 5, day: 24, name: 'Natividade de São João Batista' },
-  { month: 5, day: 29, name: 'São Pedro e São Paulo' },
-  { month: 7, day: 15, name: 'Assunção de Nossa Senhora' },
-  { month: 9, day: 12, name: 'Nossa Senhora Aparecida' },
-  { month: 10, day: 1, name: 'Todos os Santos' },
-  { month: 10, day: 2, name: 'Fiéis Defuntos' },
-  { month: 11, day: 8, name: 'Imaculada Conceição' },
-  { month: 11, day: 25, name: 'Natal do Senhor' },
+  { month: 0, day: 1, name: "Santa Maria, Mãe de Deus" },
+  { month: 0, day: 6, name: "Epifania do Senhor" },
+  { month: 2, day: 19, name: "São José, Esposo de Maria" },
+  { month: 2, day: 25, name: "Anunciação do Senhor" },
+  { month: 5, day: 24, name: "Natividade de São João Batista" },
+  { month: 5, day: 29, name: "São Pedro e São Paulo" },
+  { month: 7, day: 15, name: "Assunção de Nossa Senhora" },
+  { month: 9, day: 12, name: "Nossa Senhora Aparecida" },
+  { month: 10, day: 1, name: "Todos os Santos" },
+  { month: 10, day: 2, name: "Fiéis Defuntos" },
+  { month: 11, day: 8, name: "Imaculada Conceição" },
+  { month: 11, day: 25, name: "Natal do Senhor" },
 ];
 
 export function resolveLiturgicalDay(date: Date): LiturgicalDay {
@@ -165,29 +155,37 @@ export function resolveLiturgicalDay(date: Date): LiturgicalDay {
   const liturgicalYearStart = d >= adventThisYear ? year : year - 1;
   const keyDates = computeKeyDates(liturgicalYearStart);
 
-  const { adventStart, christmas, baptismOfTheLord, ashWednesday, holyThursday, easter, pentecost, palmSunday } =
-    keyDates;
+  const {
+    adventStart,
+    christmas,
+    baptismOfTheLord,
+    ashWednesday,
+    holyThursday,
+    easter,
+    pentecost,
+    palmSunday,
+  } = keyDates;
 
   let season: LiturgicalSeason;
   let seasonWeek = 1;
 
   if (d >= adventStart && d < christmas) {
-    season = 'Advento';
+    season = "Advento";
     seasonWeek = Math.floor(diffDays(d, adventStart) / 7) + 1;
   } else if (d >= christmas && d <= baptismOfTheLord) {
-    season = 'Natal';
+    season = "Natal";
     seasonWeek = Math.floor(diffDays(d, christmas) / 7) + 1;
   } else if (d >= ashWednesday && d < holyThursday) {
-    season = 'Quaresma';
+    season = "Quaresma";
     seasonWeek = Math.floor(diffDays(d, ashWednesday) / 7) + 1;
   } else if (d >= holyThursday && d < easter) {
-    season = 'Tríduo Pascal';
+    season = "Tríduo Pascal";
     seasonWeek = 1;
   } else if (d >= easter && d <= pentecost) {
-    season = 'Tempo Pascal';
+    season = "Tempo Pascal";
     seasonWeek = Math.floor(diffDays(d, easter) / 7) + 1;
   } else {
-    season = 'Tempo Comum';
+    season = "Tempo Comum";
     if (d > baptismOfTheLord && d < ashWednesday) {
       seasonWeek = Math.floor(diffDays(d, baptismOfTheLord) / 7) + 1;
     } else {
@@ -199,32 +197,32 @@ export function resolveLiturgicalDay(date: Date): LiturgicalDay {
 
   // Ciclos de leitura
   const cycleIndex = (liturgicalYearStart + 1) % 3; // 2026 (ano lit. iniciado 2025) → C
-  const yearCycle: YearCycle = cycleIndex === 0 ? 'C' : cycleIndex === 1 ? 'A' : 'B';
-  const weekCycle: WeekCycle = (liturgicalYearStart + 1) % 2 === 1 ? 'I' : 'II';
+  const yearCycle: YearCycle = cycleIndex === 0 ? "C" : cycleIndex === 1 ? "A" : "B";
+  const weekCycle: WeekCycle = (liturgicalYearStart + 1) % 2 === 1 ? "I" : "II";
 
   // Celebração / grau
   let celebration: string | null = null;
-  let rank: CelebrationRank = 'feria';
+  let rank: CelebrationRank = "feria";
 
   const movable: Array<[Date, string]> = [
-    [easter, 'Domingo da Ressurreição'],
-    [keyDates.pentecost, 'Pentecostes'],
-    [keyDates.trinity, 'Santíssima Trindade'],
-    [keyDates.corpusChristi, 'Corpus Christi'],
-    [keyDates.sacredHeart, 'Sagrado Coração de Jesus'],
-    [keyDates.ascension, 'Ascensão do Senhor'],
-    [keyDates.christTheKing, 'Cristo Rei do Universo'],
-    [palmSunday, 'Domingo de Ramos'],
-    [keyDates.goodFriday, 'Sexta-feira da Paixão'],
-    [keyDates.holyThursday, 'Quinta-feira Santa'],
-    [keyDates.ashWednesday, 'Quarta-feira de Cinzas'],
-    [baptismOfTheLord, 'Batismo do Senhor'],
+    [easter, "Domingo da Ressurreição"],
+    [keyDates.pentecost, "Pentecostes"],
+    [keyDates.trinity, "Santíssima Trindade"],
+    [keyDates.corpusChristi, "Corpus Christi"],
+    [keyDates.sacredHeart, "Sagrado Coração de Jesus"],
+    [keyDates.ascension, "Ascensão do Senhor"],
+    [keyDates.christTheKing, "Cristo Rei do Universo"],
+    [palmSunday, "Domingo de Ramos"],
+    [keyDates.goodFriday, "Sexta-feira da Paixão"],
+    [keyDates.holyThursday, "Quinta-feira Santa"],
+    [keyDates.ashWednesday, "Quarta-feira de Cinzas"],
+    [baptismOfTheLord, "Batismo do Senhor"],
   ];
 
   for (const [when, name] of movable) {
     if (sameDay(d, when)) {
       celebration = name;
-      rank = name === 'Quarta-feira de Cinzas' ? 'feria' : 'solenidade';
+      rank = name === "Quarta-feira de Cinzas" ? "feria" : "solenidade";
       break;
     }
   }
@@ -233,12 +231,12 @@ export function resolveLiturgicalDay(date: Date): LiturgicalDay {
     const fixed = FIXED_SOLEMNITIES.find((f) => f.month === d.getMonth() && f.day === d.getDate());
     if (fixed) {
       celebration = fixed.name;
-      rank = 'solenidade';
+      rank = "solenidade";
     }
   }
 
   const isSunday = d.getDay() === 0;
-  if (!celebration && isSunday) rank = 'festa';
+  if (!celebration && isSunday) rank = "festa";
 
   const isHolyWeek = d >= palmSunday && d < easter;
 

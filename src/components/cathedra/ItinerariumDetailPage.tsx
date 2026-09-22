@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from '@/lib/rr-compat';
-import { motion } from 'framer-motion';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/constants';
-import SEOHead from '@/components/SEOHead';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "@/lib/rr-compat";
+import { motion } from "framer-motion";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Icons } from "@/constants";
+import SEOHead from "@/components/SEOHead";
 import {
   EditorialKicker,
   EditorialMeta,
   EditorialGoldMarker,
-} from '@/components/editorial/primitives';
+} from "@/components/editorial/primitives";
 
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { toast } from 'sonner';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { toast } from "sonner";
 
 type ComplementaryReading = { title: string; url?: string; source?: string; note?: string };
 type RelatedModule = { label: string; to: string; kind?: string; description?: string };
@@ -47,12 +47,12 @@ const ItinerariumDetailPage: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     const [itRes, stepsRes] = await Promise.all([
-      supabase.from('itineraria').select('*').eq('id', id!).single(),
+      supabase.from("itineraria").select("*").eq("id", id!).single(),
       supabase
-        .from('itineraria_steps')
-        .select('*')
-        .eq('itinerarium_id', id!)
-        .order('step_order', { ascending: true }),
+        .from("itineraria_steps")
+        .select("*")
+        .eq("itinerarium_id", id!)
+        .order("step_order", { ascending: true }),
     ]);
 
     if (itRes.data) setItinerarium(itRes.data);
@@ -60,10 +60,10 @@ const ItinerariumDetailPage: React.FC = () => {
 
     if (user && id) {
       const { data: progress } = await supabase
-        .from('itineraria_progress')
-        .select('step_id, reflection')
-        .eq('user_id', user.id)
-        .eq('itinerarium_id', id);
+        .from("itineraria_progress")
+        .select("step_id, reflection")
+        .eq("user_id", user.id)
+        .eq("itinerarium_id", id);
 
       if (progress) {
         setCompletedSteps(new Set(progress.map((p) => p.step_id)));
@@ -81,30 +81,30 @@ const ItinerariumDetailPage: React.FC = () => {
     if (!user || !id) return;
 
     const channel = supabase
-      .channel('itinerarium_detail_sync')
+      .channel("itinerarium_detail_sync")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'itineraria_progress',
+          event: "*",
+          schema: "public",
+          table: "itineraria_progress",
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
           const newData = payload.new as any;
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             if (newData?.step_id) {
               setCompletedSteps((prev) => new Set([...Array.from(prev), newData.step_id]));
               if (newData.reflection) {
                 setReflections((prev) => ({ ...prev, [newData.step_id]: newData.reflection }));
               }
             }
-          } else if (payload.eventType === 'UPDATE') {
+          } else if (payload.eventType === "UPDATE") {
             if (newData?.step_id && newData.reflection) {
               setReflections((prev) => ({ ...prev, [newData.step_id]: newData.reflection }));
             }
           }
-        }
+        },
       )
       .subscribe();
 
@@ -124,29 +124,25 @@ const ItinerariumDetailPage: React.FC = () => {
 
     doc.setFontSize(14);
     doc.setTextColor(100);
-    const splitDesc = doc.splitTextToSize(itinerarium.description || '', 170);
+    const splitDesc = doc.splitTextToSize(itinerarium.description || "", 170);
     doc.text(splitDesc, 20, 45);
 
     doc.setFontSize(12);
-    doc.text(
-      `Progresso: ${Math.round((completedSteps.size / steps.length) * 100)}%`,
-      20,
-      70
-    );
+    doc.text(`Progresso: ${Math.round((completedSteps.size / steps.length) * 100)}%`, 20, 70);
 
     const tableData = steps.map((step) => [
       `Capítulo ${step.step_order}: ${step.title}`,
-      completedSteps.has(step.id) ? 'Concluído' : 'Pendente',
-      reflections[step.id] || '-',
+      completedSteps.has(step.id) ? "Concluído" : "Pendente",
+      reflections[step.id] || "-",
     ]);
 
     autoTable(doc, {
       startY: 80,
-      head: [['Capítulo', 'Status', 'Minhas Reflexões']],
+      head: [["Capítulo", "Status", "Minhas Reflexões"]],
       body: tableData,
-      theme: 'striped',
+      theme: "striped",
       headStyles: { fillColor: [41, 128, 185] },
-      styles: { font: 'helvetica', fontSize: 10 },
+      styles: { font: "helvetica", fontSize: 10 },
       columnStyles: {
         0: { cellWidth: 60 },
         1: { cellWidth: 30 },
@@ -154,10 +150,8 @@ const ItinerariumDetailPage: React.FC = () => {
       },
     });
 
-    doc.save(
-      `trilha-${itinerarium.title.toLowerCase().replace(/\s+/g, '-')}.pdf`
-    );
-    toast.success('PDF da trilha gerado com sucesso!');
+    doc.save(`trilha-${itinerarium.title.toLowerCase().replace(/\s+/g, "-")}.pdf`);
+    toast.success("PDF da trilha gerado com sucesso!");
   };
 
   if (loading || !itinerarium) {
@@ -191,7 +185,7 @@ const ItinerariumDetailPage: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/itineraria')}
+            onClick={() => navigate("/itineraria")}
             className="group gap-spacing-xs text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 hover:text-primary transition-colors"
           >
             <Icons.ArrowLeft className="w-spacing-sm h-spacing-sm group-hover:-translate-x-0.5 transition-transform" />
@@ -211,7 +205,7 @@ const ItinerariumDetailPage: React.FC = () => {
           />
           <div className="relative z-10 space-y-spacing-xl max-w-[68ch]">
             <EditorialKicker>
-              CATHEDRA · TRILHA {itinerarium.category ? `· ${itinerarium.category}` : ''}
+              CATHEDRA · TRILHA {itinerarium.category ? `· ${itinerarium.category}` : ""}
             </EditorialKicker>
 
             <h1 className="font-serif text-premium-4xl md:text-premium-6xl leading-[1.05] tracking-tight text-foreground">
@@ -229,7 +223,7 @@ const ItinerariumDetailPage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-x-spacing-lg gap-y-spacing-xs">
               <EditorialMeta>{steps.length} capítulos</EditorialMeta>
               <EditorialMeta>{itinerarium.estimated_days} dias</EditorialMeta>
-              <EditorialMeta>Nível · {itinerarium.difficulty || '—'}</EditorialMeta>
+              <EditorialMeta>Nível · {itinerarium.difficulty || "—"}</EditorialMeta>
             </div>
 
             <div className="flex flex-wrap items-center gap-spacing-sm pt-spacing-md">
@@ -237,15 +231,13 @@ const ItinerariumDetailPage: React.FC = () => {
                 <Button
                   size="lg"
                   className="rounded-premium-full gap-spacing-xs bg-primary text-primary-foreground shadow-premium hover:opacity-90"
-                  onClick={() =>
-                    navigate(`/itineraria/${id}/step?step=${resumeStep.id}`)
-                  }
+                  onClick={() => navigate(`/itineraria/${id}/step?step=${resumeStep.id}`)}
                 >
                   {completedSteps.size === 0
-                    ? 'Iniciar Trilha'
+                    ? "Iniciar Trilha"
                     : isComplete
-                    ? 'Revisitar Trilha'
-                    : 'Continuar de onde parei'}
+                      ? "Revisitar Trilha"
+                      : "Continuar de onde parei"}
                   <Icons.ChevronRight className="w-spacing-md h-spacing-md" />
                 </Button>
               )}
@@ -337,8 +329,7 @@ const ItinerariumDetailPage: React.FC = () => {
           <ol className="space-y-spacing-md" aria-label="Lista de capítulos da trilha">
             {steps.map((step, idx) => {
               const isCompleted = completedSteps.has(step.id);
-              const isLocked =
-                !isCompleted && idx > 0 && !completedSteps.has(steps[idx - 1].id);
+              const isLocked = !isCompleted && idx > 0 && !completedSteps.has(steps[idx - 1].id);
 
               return (
                 <motion.li
@@ -350,17 +341,17 @@ const ItinerariumDetailPage: React.FC = () => {
                   <Card
                     className={`premium-card transition-all duration-500 border-primary/5 rounded-[1.75rem] shadow-premium-none group ${
                       isLocked
-                        ? 'opacity-40 grayscale pointer-events-none'
-                        : 'hover:border-primary/25 hover:bg-primary/[0.02]'
-                    } ${isCompleted ? 'bg-primary/[0.03]' : ''}`}
+                        ? "opacity-40 grayscale pointer-events-none"
+                        : "hover:border-primary/25 hover:bg-primary/[0.02]"
+                    } ${isCompleted ? "bg-primary/[0.03]" : ""}`}
                   >
                     <CardContent className="p-spacing-lg md:p-spacing-xl flex items-center justify-between gap-spacing-lg">
                       <div className="flex items-center gap-spacing-lg flex-1 min-w-0">
                         <div
                           className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center font-serif text-premium-lg transition-all ${
                             isCompleted
-                              ? 'bg-primary text-primary-foreground shadow-premium'
-                              : 'bg-primary/5 text-primary/70 border border-primary/15'
+                              ? "bg-primary text-primary-foreground shadow-premium"
+                              : "bg-primary/5 text-primary/70 border border-primary/15"
                           }`}
                           aria-hidden
                         >
@@ -403,12 +394,10 @@ const ItinerariumDetailPage: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            navigate(`/itineraria/${id}/step?step=${step.id}`)
-                          }
+                          onClick={() => navigate(`/itineraria/${id}/step?step=${step.id}`)}
                           className="group/btn h-10 px-spacing-lg rounded-premium-full border border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all text-[10px] font-black uppercase tracking-widest"
                         >
-                          {isCompleted ? 'Revisitar' : 'Iniciar'}
+                          {isCompleted ? "Revisitar" : "Iniciar"}
                           <Icons.ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-0.5 transition-transform" />
                         </Button>
                       )}

@@ -28,7 +28,14 @@ export interface ManifestValidationResult {
 }
 
 /** Geradores registrados no Editorial Engine. Sincronizar com `supabase/functions/editorial-generate/index.ts`. */
-export const REGISTERED_GENERATORS = new Set<string>(["glossary", "saints", "journeys", "collections", "prayers", "catechism"]);
+export const REGISTERED_GENERATORS = new Set<string>([
+  "glossary",
+  "saints",
+  "journeys",
+  "collections",
+  "prayers",
+  "catechism",
+]);
 
 const ID_PATTERN = /^[a-z][a-z0-9_-]{1,40}$/;
 
@@ -44,24 +51,29 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
   }
   if (!m.label?.trim()) err("missing_label", "label é obrigatório.");
   if (!m.shortLabel?.trim()) err("missing_short_label", "shortLabel é obrigatório.");
-  if (!m.auditRoute?.startsWith("/")) err("invalid_audit_route", "auditRoute deve ser rota absoluta.");
+  if (!m.auditRoute?.startsWith("/"))
+    err("invalid_audit_route", "auditRoute deve ser rota absoluta.");
   if (!m.icon?.trim()) warn("missing_icon", "icon vazio — Mission Control usará fallback.");
 
   // Entidades ready precisam de tabela + campos-chave; placeholders podem ficar sem eles.
   if (m.ready) {
-    if (!m.table?.trim())       err("missing_table",  "table é obrigatório para entidades ready.");
-    if (!m.slugField?.trim())   err("missing_slug",   "slugField é obrigatório para entidades ready.");
-    if (!m.titleField?.trim())  err("missing_title",  "titleField é obrigatório para entidades ready.");
-    if (!m.statusField?.trim()) err("missing_status", "statusField é obrigatório para entidades ready.");
+    if (!m.table?.trim()) err("missing_table", "table é obrigatório para entidades ready.");
+    if (!m.slugField?.trim()) err("missing_slug", "slugField é obrigatório para entidades ready.");
+    if (!m.titleField?.trim())
+      err("missing_title", "titleField é obrigatório para entidades ready.");
+    if (!m.statusField?.trim())
+      err("missing_status", "statusField é obrigatório para entidades ready.");
   }
 
   // 2. Campos obrigatórios — pelo menos 1 editorial + 1 nexus quando ready
   if (m.ready) {
-    const editorial = m.fields.filter(f => f.group === "editorial");
-    const nexus = m.fields.filter(f => f.group === "nexus");
-    if (editorial.length === 0) err("no_editorial_fields", "manifest ready precisa de ao menos 1 campo editorial.");
-    if (nexus.length === 0) err("no_nexus_fields", "manifest ready precisa de ao menos 1 campo nexus.");
-    if (editorial.filter(f => f.required).length === 0) {
+    const editorial = m.fields.filter((f) => f.group === "editorial");
+    const nexus = m.fields.filter((f) => f.group === "nexus");
+    if (editorial.length === 0)
+      err("no_editorial_fields", "manifest ready precisa de ao menos 1 campo editorial.");
+    if (nexus.length === 0)
+      err("no_nexus_fields", "manifest ready precisa de ao menos 1 campo nexus.");
+    if (editorial.filter((f) => f.required).length === 0) {
       warn("no_required_editorial", "nenhum campo editorial marcado como required.");
     }
   }
@@ -69,7 +81,10 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
   // 3. Pesos — todos numéricos, > 0, sem NaN; keys únicas
   const seen = new Set<string>();
   for (const f of m.fields) {
-    if (!f.key?.trim()) { err("field_missing_key", "campo sem key."); continue; }
+    if (!f.key?.trim()) {
+      err("field_missing_key", "campo sem key.");
+      continue;
+    }
     if (seen.has(f.key)) err("field_duplicate_key", `campo duplicado: "${f.key}".`);
     seen.add(f.key);
     const w = f.weight ?? 1;
@@ -83,9 +98,11 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
 
   // Soma total dos pesos > 0 por grupo relevante
   if (m.ready) {
-    const sum = (g: string) => m.fields.filter(f => f.group === g).reduce((s, f) => s + (f.weight ?? 1), 0);
-    if (sum("editorial") <= 0) err("weights_editorial_zero", "soma de pesos editoriais deve ser > 0.");
-    if (sum("nexus") <= 0)     err("weights_nexus_zero",     "soma de pesos nexus deve ser > 0.");
+    const sum = (g: string) =>
+      m.fields.filter((f) => f.group === g).reduce((s, f) => s + (f.weight ?? 1), 0);
+    if (sum("editorial") <= 0)
+      err("weights_editorial_zero", "soma de pesos editoriais deve ser > 0.");
+    if (sum("nexus") <= 0) err("weights_nexus_zero", "soma de pesos nexus deve ser > 0.");
   }
 
   // 4. Gate consistente — peso doutrinário válido
@@ -98,7 +115,10 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
   // 5. Freeze / lifecycle — ready deve declarar lifecycle
   if (m.ready) {
     if (!m.lifecycle) {
-      warn("missing_lifecycle", "entidade ready sem lifecycle — Mission Control mostrará defaults.");
+      warn(
+        "missing_lifecycle",
+        "entidade ready sem lifecycle — Mission Control mostrará defaults.",
+      );
     } else {
       const { version, status, migration } = m.lifecycle;
       if (!version?.trim()) err("lifecycle_missing_version", "lifecycle.version obrigatório.");
@@ -106,15 +126,20 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
         err("lifecycle_invalid_status", `lifecycle.status inválido: ${status}.`);
       }
       if (typeof migration !== "number" || migration < 0 || migration > 1) {
-        err("lifecycle_invalid_migration", `lifecycle.migration deve estar em [0,1] (recebido ${migration}).`);
+        err(
+          "lifecycle_invalid_migration",
+          `lifecycle.migration deve estar em [0,1] (recebido ${migration}).`,
+        );
       }
     }
   }
 
   // 6. Generator registrado (só entidades ready produzem geração via IA)
   if (m.ready && !REGISTERED_GENERATORS.has(m.id)) {
-    err("generator_not_registered",
-      `nenhum generator registrado para "${m.id}" em REGISTERED_GENERATORS / editorial-generate.`);
+    err(
+      "generator_not_registered",
+      `nenhum generator registrado para "${m.id}" em REGISTERED_GENERATORS / editorial-generate.`,
+    );
   }
 
   return { valid: errors.length === 0, errors, warnings };
@@ -124,7 +149,7 @@ export function validateManifest(m: EntityManifest): ManifestValidationResult {
 export function assertValidManifest(m: EntityManifest): void {
   const result = validateManifest(m);
   if (!result.valid) {
-    const details = result.errors.map(e => `  - [${e.code}] ${e.message}`).join("\n");
+    const details = result.errors.map((e) => `  - [${e.code}] ${e.message}`).join("\n");
     throw new Error(`[editorial-engine] manifesto inválido: ${m.id}\n${details}`);
   }
 }

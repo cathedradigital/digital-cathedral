@@ -6,24 +6,20 @@
  * Puro: sem React, sem Supabase, sem URLs literais.
  */
 
-import type {
-  KnowledgeNodeId,
-  KnowledgeNodeKind,
-  ResolvedNode,
-} from '@/core/knowledge/types';
+import type { KnowledgeNodeId, KnowledgeNodeKind, ResolvedNode } from "@/core/knowledge/types";
 
 /** Intenção espiritual/pedagógica da sugestão. */
 export type ContinuationIntent =
-  | 'study'   // continuar estudando (mesmo domínio ou domínio irmão)
-  | 'deepen'  // aprofundar em outro domínio (CIC, Magistério)
-  | 'pray'    // levar à oração / Lectio
-  | 'apply'   // aplicar na vida / jornada
-  | 'meet';   // conhecer alguém (padre, santo)
+  | "study" // continuar estudando (mesmo domínio ou domínio irmão)
+  | "deepen" // aprofundar em outro domínio (CIC, Magistério)
+  | "pray" // levar à oração / Lectio
+  | "apply" // aplicar na vida / jornada
+  | "meet"; // conhecer alguém (padre, santo)
 
 /** Contexto do que o usuário acabou de ler. */
 export interface ContinuationContext {
   /** Kind do conteúdo atual (bible, catechism, magisterium, saint, journey-step). */
-  currentKind: KnowledgeNodeKind | 'journey-step';
+  currentKind: KnowledgeNodeKind | "journey-step";
   /** ID canônico do nó no grafo, se resolvível. */
   currentId?: KnowledgeNodeId;
   /** Temas explicitamente associados a esta leitura. */

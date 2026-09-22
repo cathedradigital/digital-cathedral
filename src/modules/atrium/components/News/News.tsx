@@ -1,5 +1,5 @@
-import React from 'react';
-import { useAnnouncements } from '../../hooks';
+import React from "react";
+import { useAnnouncements } from "../../hooks";
 
 const News: React.FC = () => {
   const items = useAnnouncements();
@@ -7,7 +7,10 @@ const News: React.FC = () => {
 
   return (
     <section data-atrium-block="P6" aria-labelledby="atrium-news">
-      <h2 id="atrium-news" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-news"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Novidades
       </h2>
       <ul className="flex flex-col gap-1.5">

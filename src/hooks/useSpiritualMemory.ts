@@ -4,8 +4,8 @@
  * Consolida contagens simples (leituras, orações, jornadas) e o streak
  * atual/recorde para exibir "Sua caminhada" no Átrio.
  */
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/db";
 
 export interface SpiritualMemory {
   streakDays: number;
@@ -28,7 +28,7 @@ const INITIAL: SpiritualMemory = {
 export function useSpiritualMemory(
   userId: string | null | undefined,
   streakDays: number = 0,
-  maxStreak: number = 0
+  maxStreak: number = 0,
 ): SpiritualMemory {
   const [state, setState] = useState<SpiritualMemory>(INITIAL);
 
@@ -43,17 +43,17 @@ export function useSpiritualMemory(
     (async () => {
       const [readingsRes, prayersRes, journeysRes] = await Promise.all([
         supabase
-          .from('user_notes')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId),
+          .from("user_notes")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId),
         (supabase as any)
-          .from('prayer_sessions')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', userId),
+          .from("prayer_sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId),
         supabase
-          .from('journey_progress')
-          .select('journey_id', { count: 'exact', head: true })
-          .eq('user_id', userId),
+          .from("journey_progress")
+          .select("journey_id", { count: "exact", head: true })
+          .eq("user_id", userId),
       ]);
 
       if (!active) return;

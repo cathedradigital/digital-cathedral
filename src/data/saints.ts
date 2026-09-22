@@ -1,4 +1,4 @@
-import { DeepContent } from '@/types';
+import { DeepContent } from "@/types";
 
 export interface SaintWork {
   title: string;
@@ -7,19 +7,19 @@ export interface SaintWork {
 }
 
 // Sanctorum 2.0 — estruturas editoriais expandidas
-export type SaintContentStatus = 'stub' | 'partial' | 'complete';
+export type SaintContentStatus = "stub" | "partial" | "complete";
 
 export type SaintTimelineEventType =
-  | 'birth'
-  | 'conversion'
-  | 'formation'
-  | 'mission'
-  | 'work'
-  | 'miracle'
-  | 'martyrdom'
-  | 'death'
-  | 'canonization'
-  | 'feast';
+  | "birth"
+  | "conversion"
+  | "formation"
+  | "mission"
+  | "work"
+  | "miracle"
+  | "martyrdom"
+  | "death"
+  | "canonization"
+  | "feast";
 
 export interface SaintTimelineEvent {
   year?: string | number;
@@ -95,7 +95,8 @@ export interface Saint extends Partial<DeepContent> {
   fullBio?: string;
   works: SaintWork[];
   quotes: string[];
-  category: 'apostle' | 'martyr' | 'doctor' | 'virgin' | 'confessor' | 'pope' | 'founder' | 'mystic';
+  category:
+    "apostle" | "martyr" | "doctor" | "virgin" | "confessor" | "pope" | "founder" | "mystic";
   image?: string;
   prayer?: string;
   virtues?: string[];
@@ -129,7 +130,6 @@ export interface Saint extends Partial<DeepContent> {
   keyEvents?: SaintKeyEvent[];
 }
 
-
 export interface SaintAIReflectionTeaching {
   title: string;
   body: string;
@@ -137,9 +137,9 @@ export interface SaintAIReflectionTeaching {
 }
 
 export interface SaintAIReflectionCitation {
-  type: 'quote' | 'work' | 'biography' | 'virtue';
+  type: "quote" | "work" | "biography" | "virtue";
   text: string;
-  used_in?: 'summary' | 'teaching' | 'meditation' | 'prayer';
+  used_in?: "summary" | "teaching" | "meditation" | "prayer";
 }
 
 export interface SaintAIReflection {

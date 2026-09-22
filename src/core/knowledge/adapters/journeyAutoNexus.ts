@@ -6,9 +6,9 @@
  * os resultados por `kind`. Toda URL vem de `KnowledgeResolver`/`RouteRegistry`.
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import type { KnowledgeNodeId, ResolvedNode } from '../types';
-import { recordNexusMetric } from './nexusMetrics';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import type { KnowledgeNodeId, ResolvedNode } from "../types";
+import { recordNexusMetric } from "./nexusMetrics";
 
 export interface JourneyLike {
   id: string;
@@ -19,18 +19,18 @@ export interface JourneyLike {
 }
 
 const KIND_LABELS: Record<string, string> = {
-  bible: 'Escritura',
-  catechism: 'Catecismo',
-  magisterium: 'Magistério',
-  saint: 'Santos',
-  father: 'Padres',
-  liturgy: 'Liturgia',
-  prayer: 'Orações',
-  glossary: 'Glossário',
-  journey: 'Jornadas',
+  bible: "Escritura",
+  catechism: "Catecismo",
+  magisterium: "Magistério",
+  saint: "Santos",
+  father: "Padres",
+  liturgy: "Liturgia",
+  prayer: "Orações",
+  glossary: "Glossário",
+  journey: "Jornadas",
 };
 
-const VISIBLE_KINDS = ['bible', 'catechism', 'saint', 'prayer', 'glossary'] as const;
+const VISIBLE_KINDS = ["bible", "catechism", "saint", "prayer", "glossary"] as const;
 export type JourneyNexusKind = (typeof VISIBLE_KINDS)[number];
 
 export interface JourneyAutoNexusResult {
@@ -49,13 +49,9 @@ const cache = new Map<string, JourneyAutoNexusResult>();
  * por testes unitários (`_fingerprintJourney`) e uso pelo `nexusMetrics`.
  */
 export function _fingerprintJourney(j: JourneyLike): string {
-  return [
-    j.id,
-    j.title ?? '',
-    j.subtitle ?? '',
-    j.category ?? '',
-    (j.tags ?? []).join('|'),
-  ].join('#');
+  return [j.id, j.title ?? "", j.subtitle ?? "", j.category ?? "", (j.tags ?? []).join("|")].join(
+    "#",
+  );
 }
 
 export function clearJourneyAutoNexusCache(): void {
@@ -90,7 +86,7 @@ function collectTerms(j: JourneyLike): string[] {
 }
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 export function resolveJourneyAutoNexus(journey: JourneyLike): JourneyAutoNexusResult {
@@ -100,7 +96,7 @@ export function resolveJourneyAutoNexus(journey: JourneyLike): JourneyAutoNexusR
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'journey', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "journey", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -130,6 +126,6 @@ export function resolveJourneyAutoNexus(journey: JourneyLike): JourneyAutoNexusR
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'journey', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "journey", hit: false, ms: nowMs() - started, key });
   return result;
 }

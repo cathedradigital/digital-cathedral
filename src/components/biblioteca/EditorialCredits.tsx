@@ -11,8 +11,8 @@
  *  - Traduções modernas exibem crédito explícito + licença + fonte.
  *  - Nunca ocultar a fonte quando declarada.
  */
-import React from 'react';
-import { Icons } from '@/constants';
+import React from "react";
+import { Icons } from "@/constants";
 
 export interface EditorialCreditsProps {
   isPublicDomain: boolean;
@@ -38,7 +38,7 @@ export const EditorialCredits: React.FC<EditorialCreditsProps> = ({
   let hostname: string | null = null;
   if (sourceUrl) {
     try {
-      hostname = new URL(sourceUrl).hostname.replace(/^www\./, '');
+      hostname = new URL(sourceUrl).hostname.replace(/^www\./, "");
     } catch {
       hostname = sourceUrl;
     }
@@ -47,11 +47,11 @@ export const EditorialCredits: React.FC<EditorialCreditsProps> = ({
   return (
     <aside
       className={
-        'text-premium-xs text-muted-foreground leading-relaxed ' +
+        "text-premium-xs text-muted-foreground leading-relaxed " +
         (compact
-          ? 'flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/40 pt-3 mt-6 '
-          : 'space-y-1.5 pt-4 mt-6 border-t border-border/50 ') +
-        (className ?? '')
+          ? "flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/40 pt-3 mt-6 "
+          : "space-y-1.5 pt-4 mt-6 border-t border-border/50 ") +
+        (className ?? "")
       }
       aria-label="Créditos editoriais"
     >
@@ -74,14 +74,14 @@ export const EditorialCredits: React.FC<EditorialCreditsProps> = ({
       </div>
 
       {translationCredit && (
-        <p className={compact ? 'w-full' : ''}>
+        <p className={compact ? "w-full" : ""}>
           <span className="uppercase tracking-wide text-[10px] font-semibold mr-1">Tradução:</span>
           {translationCredit}
         </p>
       )}
 
       {sourceUrl && hostname && (
-        <p className={compact ? 'w-full' : ''}>
+        <p className={compact ? "w-full" : ""}>
           <span className="uppercase tracking-wide text-[10px] font-semibold mr-1">Fonte:</span>
           <a
             href={sourceUrl}

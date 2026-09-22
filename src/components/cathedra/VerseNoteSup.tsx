@@ -1,6 +1,6 @@
-import DOMPurify from 'dompurify';
-import { useMemo } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import DOMPurify from "dompurify";
+import { useMemo } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface VerseNoteSupProps {
   index: number;
@@ -15,10 +15,10 @@ interface VerseNoteSupProps {
 export function VerseNoteSup({ index, label, contentHtml }: VerseNoteSupProps) {
   const display = label || String(index);
   const safeHtml = useMemo(() => {
-    if (!contentHtml) return '';
+    if (!contentHtml) return "";
     return DOMPurify.sanitize(contentHtml, {
-      ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'span', 'br', 'sup', 'sub'],
-      ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'class'],
+      ALLOWED_TAGS: ["a", "b", "i", "em", "strong", "span", "br", "sup", "sub"],
+      ALLOWED_ATTR: ["href", "title", "target", "rel", "class"],
       ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
     });
   }, [contentHtml]);

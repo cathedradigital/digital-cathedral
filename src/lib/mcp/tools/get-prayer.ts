@@ -24,7 +24,11 @@ export default defineTool({
       .eq("is_published", true)
       .maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!data) return { content: [{ type: "text", text: `Oração '${slug}' não encontrada ou não publicada.` }], isError: true };
+    if (!data)
+      return {
+        content: [{ type: "text", text: `Oração '${slug}' não encontrada ou não publicada.` }],
+        isError: true,
+      };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
       structuredContent: { prayer: data },

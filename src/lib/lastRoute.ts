@@ -3,17 +3,11 @@
  * Usada para restaurar o contexto do usuário após novo login
  * e para redirecionar da Landing (/) direto ao Átrio.
  */
-const KEY = 'cathedra_last_route';
+const KEY = "cathedra_last_route";
 
-const EXCLUDED_PREFIXES = [
-  '/auth',
-  '/login',
-  '/reset-password',
-  '/.lovable',
-  '/oauth',
-];
+const EXCLUDED_PREFIXES = ["/auth", "/login", "/reset-password", "/.lovable", "/oauth"];
 
-const EXCLUDED_EXACT = new Set<string>(['/', '']);
+const EXCLUDED_EXACT = new Set<string>(["/", ""]);
 
 export function isTrackableRoute(pathname: string): boolean {
   if (!pathname) return false;
@@ -49,7 +43,7 @@ export function clearLastRoute(): void {
 }
 
 /** Rota padrão do usuário autenticado quando não há histórico. */
-export const DEFAULT_AUTH_HOME = '/atrium';
+export const DEFAULT_AUTH_HOME = "/atrium";
 
 export function resolveAuthHome(): string {
   return getLastRoute() ?? DEFAULT_AUTH_HOME;

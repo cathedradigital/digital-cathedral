@@ -1,8 +1,13 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';
-import { useSaintOfDay, type SaintOfDay } from '@/hooks/useSaintOfDay';
-import { toIsoDateKey, type DailyLiturgy, type Reading, type Psalm } from '@/core/liturgy/LiturgyProvider';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useDailyLiturgy } from "@/hooks/useDailyLiturgy";
+import { useSaintOfDay, type SaintOfDay } from "@/hooks/useSaintOfDay";
+import {
+  toIsoDateKey,
+  type DailyLiturgy,
+  type Reading,
+  type Psalm,
+} from "@/core/liturgy/LiturgyProvider";
 import {
   resolveLiturgicalDay,
   msUntilNextMidnight,
@@ -11,9 +16,9 @@ import {
   type LiturgicalSeason,
   type YearCycle,
   type WeekCycle,
-} from '@/core/church/liturgicalCalendar';
-import { getSaintsByDate } from '@/services/saintsService';
-import { supabase } from '@/lib/db';
+} from "@/core/church/liturgicalCalendar";
+import { getSaintsByDate } from "@/services/saintsService";
+import { supabase } from "@/lib/db";
 
 /**
  * Church Context Engine — Contexto Eclesial Global (SSoT · KERNEL).
@@ -33,7 +38,7 @@ export interface PopeContext {
   image: string;
   reign: string;
   isSaint: boolean;
-  status: 'current' | 'historical';
+  status: "current" | "historical";
   /** Intenção mensal do Papa, quando disponível. */
   intention: string | null;
 }
@@ -110,18 +115,18 @@ export interface ChurchContext {
 
 // Fallback do Papa caso a base falhe
 export const FALLBACK_POPE: PopeContext = {
-  id: 'leo-xiv',
-  name: 'Leão XIV',
-  title: 'Bispo de Roma, Vigário de Jesus Cristo',
-  image: '',
-  reign: '2025 – Presente',
+  id: "leo-xiv",
+  name: "Leão XIV",
+  title: "Bispo de Roma, Vigário de Jesus Cristo",
+  image: "",
+  reign: "2025 – Presente",
   isSaint: false,
-  status: 'current',
+  status: "current",
   intention: null,
 };
 
 const JUBILEE_YEARS: Record<number, string> = {
-  2025: 'Jubileu Ordinário de 2025 — Peregrinos da Esperança',
+  2025: "Jubileu Ordinário de 2025 — Peregrinos da Esperança",
 };
 
 function mapSaint(s: any): SaintOfDay {
@@ -130,7 +135,7 @@ function mapSaint(s: any): SaintOfDay {
     title: s.title ?? null,
     slug: s.slug ?? null,
     image: s.image ?? null,
-    source: 'santoral',
+    source: "santoral",
   };
 }
 
@@ -152,11 +157,11 @@ function useMidnightTick(): number {
         setDayKey(nowKey);
         setTick((t) => t + 1);
         // Refresh consistente de todo o contexto eclesial
-        queryClient.invalidateQueries({ queryKey: ['church-pope'] });
-        queryClient.invalidateQueries({ queryKey: ['saint-of-day'] });
-        queryClient.invalidateQueries({ queryKey: ['church-saints'] });
-        queryClient.invalidateQueries({ queryKey: ['daily-liturgy'] });
-        queryClient.invalidateQueries({ queryKey: ['liturgy'] });
+        queryClient.invalidateQueries({ queryKey: ["church-pope"] });
+        queryClient.invalidateQueries({ queryKey: ["saint-of-day"] });
+        queryClient.invalidateQueries({ queryKey: ["church-saints"] });
+        queryClient.invalidateQueries({ queryKey: ["daily-liturgy"] });
+        queryClient.invalidateQueries({ queryKey: ["liturgy"] });
       }
       schedule();
     };
@@ -170,15 +175,15 @@ function useMidnightTick(): number {
 
     // Dispositivo suspenso / aba em background pode atrasar o timeout
     const onVisible = () => {
-      if (document.visibilityState === 'visible') fire();
+      if (document.visibilityState === "visible") fire();
     };
-    document.addEventListener('visibilitychange', onVisible);
-    window.addEventListener('focus', onVisible);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
 
     return () => {
       if (timer) window.clearTimeout(timer);
-      document.removeEventListener('visibilitychange', onVisible);
-      window.removeEventListener('focus', onVisible);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
     };
   }, [dayKey, queryClient]);
 
@@ -198,24 +203,24 @@ export function useChurchContext(date?: Date): ChurchContext {
 
   // ── 1. Papa Atual (P0) ────────────────────────────────
   const { data: currentPope, isLoading: loadingPope } = useQuery({
-    queryKey: ['church-pope', 'current'],
+    queryKey: ["church-pope", "current"],
     queryFn: async (): Promise<PopeContext> => {
       const { data, error } = await supabase
-        .from('library_items_v1')
-        .select('*')
-        .eq('status', 'current')
+        .from("library_items_v1")
+        .select("*")
+        .eq("status", "current")
         .limit(1)
         .maybeSingle();
 
       if (data && !error && data.title) {
         return {
-          id: data.id || 'current-pope',
+          id: data.id || "current-pope",
           name: data.title,
-          title: data.author_label || 'Bispo de Roma',
+          title: data.author_label || "Bispo de Roma",
           image: data.cover_image_url || FALLBACK_POPE.image,
           reign: data.published_at || FALLBACK_POPE.reign,
-          isSaint: data.category === 'saint',
-          status: 'current',
+          isSaint: data.category === "saint",
+          status: "current",
           intention: null,
         };
       }
@@ -229,7 +234,7 @@ export function useChurchContext(date?: Date): ChurchContext {
   const { data: principalSaint, isLoading: loadingSaint } = useSaintOfDay(effectiveDate);
 
   const { data: saintsOfDate, isLoading: loadingSaints } = useQuery({
-    queryKey: ['church-saints', isoDate],
+    queryKey: ["church-saints", isoDate],
     queryFn: async () => {
       const list = await getSaintsByDate(effectiveDate.getMonth() + 1, effectiveDate.getDate());
       return (list ?? []) as any[];
@@ -245,8 +250,9 @@ export function useChurchContext(date?: Date): ChurchContext {
     const principalName = principalSaint?.name?.toLowerCase();
     const rest = all.filter((s) => s.name?.toLowerCase() !== principalName);
 
-    const isBlessed = (s: SaintOfDay) => /^be(a|á)t[oa]\b|bem-aventurad/i.test(`${s.name} ${s.title ?? ''}`);
-    const isMartyr = (s: SaintOfDay) => /m[áa]rtir/i.test(`${s.title ?? ''}`);
+    const isBlessed = (s: SaintOfDay) =>
+      /^be(a|á)t[oa]\b|bem-aventurad/i.test(`${s.name} ${s.title ?? ""}`);
+    const isMartyr = (s: SaintOfDay) => /m[áa]rtir/i.test(`${s.title ?? ""}`);
 
     return {
       principal: principalSaint ?? all[0] ?? null,
@@ -272,16 +278,16 @@ export function useChurchContext(date?: Date): ChurchContext {
     const k = calendar.keyDates;
     const iso = (d: Date) => toIsoDateKey(d);
     return {
-      isAdvent: calendar.season === 'Advento',
-      isChristmas: calendar.season === 'Natal',
-      isLent: calendar.season === 'Quaresma',
+      isAdvent: calendar.season === "Advento",
+      isChristmas: calendar.season === "Natal",
+      isLent: calendar.season === "Quaresma",
       isHolyWeek: calendar.isHolyWeek,
-      isEaster: calendar.season === 'Tempo Pascal' || calendar.season === 'Tríduo Pascal',
+      isEaster: calendar.season === "Tempo Pascal" || calendar.season === "Tríduo Pascal",
       isPentecost: isoDate === iso(k.pentecost),
       isCorpusChristi: isoDate === iso(k.corpusChristi),
       isAssumption: isoDate === iso(k.assumption),
       isAllSaints: isoDate === iso(k.allSaints),
-      isOrdinaryTime: calendar.season === 'Tempo Comum',
+      isOrdinaryTime: calendar.season === "Tempo Comum",
     };
   }, [calendar, isoDate]);
 
@@ -305,7 +311,7 @@ export function useChurchContext(date?: Date): ChurchContext {
       liturgicalYear: calendar.liturgicalYear,
       yearCycle: calendar.yearCycle,
       weekCycle: calendar.weekCycle,
-      liturgicalColor: liturgy?.colorToken ?? 'liturgical-green',
+      liturgicalColor: liturgy?.colorToken ?? "liturgical-green",
       rank: calendar.rank,
       celebration: calendar.celebration ?? liturgy?.liturgia ?? null,
       seasonFlags,

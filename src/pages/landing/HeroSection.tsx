@@ -12,17 +12,17 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onStart }: HeroSectionProps) => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ 
-    target: heroRef, 
-    offset: ["start start", "end start"] 
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
   });
-  
+
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
   return (
-    <section 
-      ref={heroRef} 
+    <section
+      ref={heroRef}
       className="relative w-full min-h-screen flex items-center justify-center px-spacing-lg overflow-hidden bg-background"
       aria-label="Cathedra Digital - Introdução"
     >
@@ -33,13 +33,10 @@ const HeroSection = ({ onStart }: HeroSectionProps) => {
       <Suspense fallback={null}>
         <HeroParticles />
       </Suspense>
-      <Suspense fallback={<div className="relative z-10 w-full h-full flex items-center justify-center" />}>
-        <HeroContent 
-          heroOpacity={heroOpacity} 
-          heroScale={1} 
-          heroY={heroY} 
-          onStart={onStart} 
-        />
+      <Suspense
+        fallback={<div className="relative z-10 w-full h-full flex items-center justify-center" />}
+      >
+        <HeroContent heroOpacity={heroOpacity} heroScale={1} heroY={heroY} onStart={onStart} />
       </Suspense>
       <div className="sr-only">Rolar para baixo para explorar o santuário digital</div>
       <Suspense fallback={null}>

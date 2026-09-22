@@ -3,14 +3,15 @@
 // Returns segments of text and catechism references
 
 export interface CatechismSegment {
-  type: 'text' | 'catechismRef';
+  type: "text" | "catechismRef";
   value: string;
   paragraph?: number;
 }
 
 // Matches a single CIC/§ reference optionally followed by comma-separated numbers/§numbers
 // e.g. "CIC §1324, 1325, §1327" or "§1324, 1325" or "CIC §§1324-1327, 1330"
-const CIC_BLOCK_PATTERN = /(?:CIC\s*§§?\s*|§§?\s*)(\d{1,4})(?:\s*[-–]\s*\d{1,4})?(?:\s*[,;]\s*§?\s*(\d{1,4})(?:\s*[-–]\s*\d{1,4})?)*/g;
+const CIC_BLOCK_PATTERN =
+  /(?:CIC\s*§§?\s*|§§?\s*)(\d{1,4})(?:\s*[-–]\s*\d{1,4})?(?:\s*[,;]\s*§?\s*(\d{1,4})(?:\s*[-–]\s*\d{1,4})?)*/g;
 
 export function parseCatechismReferences(text: string): CatechismSegment[] {
   if (!text) return [];
@@ -21,7 +22,7 @@ export function parseCatechismReferences(text: string): CatechismSegment[] {
   let match: RegExpExecArray | null;
   while ((match = CIC_BLOCK_PATTERN.exec(text)) !== null) {
     if (match.index > lastIndex) {
-      segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
+      segments.push({ type: "text", value: text.slice(lastIndex, match.index) });
     }
 
     // Extract ALL paragraph numbers from the matched block
@@ -52,28 +53,28 @@ export function parseCatechismReferences(text: string): CatechismSegment[] {
         // render "§§2053" or "CIC §§2053".
         if (numMatch.index > blockLastIndex) {
           const rawPrefix = block.slice(blockLastIndex, numMatch.index);
-          const cleanedPrefix = rawPrefix.replace(/§+\s*$/u, '');
+          const cleanedPrefix = rawPrefix.replace(/§+\s*$/u, "");
           if (cleanedPrefix.length > 0) {
-            segments.push({ type: 'text', value: cleanedPrefix });
+            segments.push({ type: "text", value: cleanedPrefix });
           }
         }
-        segments.push({ type: 'catechismRef', value: `§${num}`, paragraph: num });
+        segments.push({ type: "catechismRef", value: `§${num}`, paragraph: num });
         blockLastIndex = numMatch.index + numMatch[0].length;
       }
       // Trailing text in block
       if (blockLastIndex < block.length) {
-        segments.push({ type: 'text', value: block.slice(blockLastIndex) });
+        segments.push({ type: "text", value: block.slice(blockLastIndex) });
       }
     } else {
-      segments.push({ type: 'text', value: block });
+      segments.push({ type: "text", value: block });
     }
 
     lastIndex = match.index + match[0].length;
   }
 
   if (lastIndex < text.length) {
-    segments.push({ type: 'text', value: text.slice(lastIndex) });
+    segments.push({ type: "text", value: text.slice(lastIndex) });
   }
 
-  return segments.length > 0 ? segments : [{ type: 'text', value: text }];
+  return segments.length > 0 ? segments : [{ type: "text", value: text }];
 }

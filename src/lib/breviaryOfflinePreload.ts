@@ -10,29 +10,22 @@
  * Idempotente e silencioso. Nunca falha o carregamento do app.
  */
 
-const BUCKET = 'cathedra-breviary-assets-v1';
+const BUCKET = "cathedra-breviary-assets-v1";
 
 /** URLs de assets binários que o Breviário depende (ícones/imagens brand). */
-const BREVIARY_ASSET_URLS: readonly string[] = [
-  '/favicon.ico',
-];
+const BREVIARY_ASSET_URLS: readonly string[] = ["/favicon.ico"];
 
 /** Nomes de fontes carregadas pelo tema — pré-resolve para uso offline. */
-const BREVIARY_FONT_QUERIES: readonly string[] = [
-  '400 1em sans-serif',
-  '700 1em sans-serif',
-];
+const BREVIARY_FONT_QUERIES: readonly string[] = ["400 1em sans-serif", "700 1em sans-serif"];
 
 async function warmBrowserCache(urls: readonly string[]): Promise<void> {
   await Promise.allSettled(
-    urls.map((u) =>
-      fetch(u, { cache: 'force-cache', credentials: 'omit' }).catch(() => null),
-    ),
+    urls.map((u) => fetch(u, { cache: "force-cache", credentials: "omit" }).catch(() => null)),
   );
 }
 
 async function persistToCacheStorage(urls: readonly string[]): Promise<void> {
-  if (typeof caches === 'undefined') return;
+  if (typeof caches === "undefined") return;
   try {
     const cache = await caches.open(BUCKET);
     await Promise.allSettled(
@@ -40,22 +33,28 @@ async function persistToCacheStorage(urls: readonly string[]): Promise<void> {
         const existing = await cache.match(url);
         if (existing) return;
         try {
-          const res = await fetch(url, { cache: 'force-cache', credentials: 'omit' });
+          const res = await fetch(url, { cache: "force-cache", credentials: "omit" });
           if (res.ok) await cache.put(url, res.clone());
-        } catch { /* silent */ }
+        } catch {
+          /* silent */
+        }
       }),
     );
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 async function warmFonts(): Promise<void> {
-  if (typeof document === 'undefined' || !document.fonts) return;
+  if (typeof document === "undefined" || !document.fonts) return;
   try {
     await Promise.allSettled(
       BREVIARY_FONT_QUERIES.map((q) => document.fonts.load(q).catch(() => null)),
     );
     await document.fonts.ready.catch(() => undefined);
-  } catch { /* silent */ }
+  } catch {
+    /* silent */
+  }
 }
 
 let warmed = false;
@@ -68,7 +67,11 @@ export async function preloadBreviaryOfflineAssets(
   extraUrls: readonly string[] = [],
 ): Promise<void> {
   const urls = [...BREVIARY_ASSET_URLS, ...extraUrls];
-  const jobs: Promise<unknown>[] = [warmBrowserCache(urls), persistToCacheStorage(urls), warmFonts()];
+  const jobs: Promise<unknown>[] = [
+    warmBrowserCache(urls),
+    persistToCacheStorage(urls),
+    warmFonts(),
+  ];
   if (!warmed) warmed = true;
   await Promise.allSettled(jobs);
 }

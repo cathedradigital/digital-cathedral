@@ -8,17 +8,17 @@
  *
  * Nunca envie payload da linha ou valores sensíveis no `context`.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 
 /** Códigos PostgREST/Postgres que indicam bloqueio de acesso. */
 const DENIAL_CODES = new Set([
-  '42501', // insufficient_privilege / RLS violation
-  '42P01', // undefined_table (permissão revogada expõe como tabela inexistente)
-  'PGRST301', // JWT ausente/expirado
-  'PGRST116', // no rows returned quando single() é bloqueado por RLS
+  "42501", // insufficient_privilege / RLS violation
+  "42P01", // undefined_table (permissão revogada expõe como tabela inexistente)
+  "PGRST301", // JWT ausente/expirado
+  "PGRST116", // no rows returned quando single() é bloqueado por RLS
 ]);
 
-export type DenialAction = 'select' | 'insert' | 'update' | 'delete' | 'realtime';
+export type DenialAction = "select" | "insert" | "update" | "delete" | "realtime";
 
 export interface DenialErrorLike {
   code?: string | null;
@@ -28,11 +28,11 @@ export interface DenialErrorLike {
 export function isAccessDenied(error: DenialErrorLike | null | undefined): boolean {
   if (!error) return false;
   if (error.code && DENIAL_CODES.has(error.code)) return true;
-  const message = (error.message ?? '').toLowerCase();
+  const message = (error.message ?? "").toLowerCase();
   return (
-    message.includes('row-level security') ||
-    message.includes('row level security') ||
-    message.includes('permission denied')
+    message.includes("row-level security") ||
+    message.includes("row level security") ||
+    message.includes("permission denied")
   );
 }
 
@@ -46,7 +46,7 @@ export async function logRlsDenial(
   error?: DenialErrorLike | null,
   context: Record<string, unknown> = {},
 ): Promise<void> {
-  const key = `${tableName}:${action}:${error?.code ?? 'unknown'}`;
+  const key = `${tableName}:${action}:${error?.code ?? "unknown"}`;
   const now = Date.now();
   const last = recentlyLogged.get(key);
   if (last && now - last < DEDUPE_WINDOW_MS) return;
@@ -57,7 +57,7 @@ export async function logRlsDenial(
     // A RPC exige sessão autenticada; anônimos são apenas ignorados.
     if (!session?.session) return;
 
-    await supabase.rpc('log_rls_denial', {
+    await supabase.rpc("log_rls_denial", {
       p_table: tableName,
       p_action: action,
       p_reason: error?.code ?? error?.message?.slice(0, 200) ?? null,

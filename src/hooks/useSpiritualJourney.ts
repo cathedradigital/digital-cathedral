@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useReadingMarks } from './useReadingMarks';
-import { useAuth } from './useAuth';
+import { useMemo } from "react";
+import { useReadingMarks } from "./useReadingMarks";
+import { useAuth } from "./useAuth";
 
 export interface DailyStep {
   icon: string;
@@ -16,7 +16,7 @@ export function useSpiritualJourney() {
   const { profile } = useAuth();
 
   const lastRead = useMemo(() => {
-    return marks.find(m => m.is_last_read) || marks[0];
+    return marks.find((m) => m.is_last_read) || marks[0];
   }, [marks]);
 
   const dailySteps = useMemo<DailyStep[]>(() => {
@@ -24,33 +24,33 @@ export function useSpiritualJourney() {
     // linking the liturgy of the day with the user's history.
     return [
       {
-        category: 'Liturgia',
-        icon: '📖',
-        label: 'Evangelho do Dia',
-        href: '/liturgia',
-        description: 'A Palavra que ilumina o caminho.'
+        category: "Liturgia",
+        icon: "📖",
+        label: "Evangelho do Dia",
+        href: "/liturgia",
+        description: "A Palavra que ilumina o caminho.",
       },
       {
-        category: 'Oração',
-        icon: '🙏',
-        label: 'Oração da Manhã',
-        href: '/oracao/manha',
-        description: 'Consagração do dia ao Senhor.'
+        category: "Oração",
+        icon: "🙏",
+        label: "Oração da Manhã",
+        href: "/oracao/manha",
+        description: "Consagração do dia ao Senhor.",
       },
       {
-        category: 'Santoral',
-        icon: '👤',
-        label: 'Santo do Dia',
-        href: '/santos',
-        description: 'Um modelo de vida para hoje.'
+        category: "Santoral",
+        icon: "👤",
+        label: "Santo do Dia",
+        href: "/santos",
+        description: "Um modelo de vida para hoje.",
       },
       {
-        category: 'Doutrina',
-        icon: '🏛',
-        label: 'Catecismo §142',
-        href: '/catechism?p=142',
-        description: 'Relacionado à liturgia de hoje.'
-      }
+        category: "Doutrina",
+        icon: "🏛",
+        label: "Catecismo §142",
+        href: "/catechism?p=142",
+        description: "Relacionado à liturgia de hoje.",
+      },
     ];
   }, []);
 
@@ -58,6 +58,6 @@ export function useSpiritualJourney() {
     lastRead,
     dailySteps,
     profile,
-    loading
+    loading,
   };
 }

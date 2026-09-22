@@ -1,2 +1,2 @@
-import AZFaithPage from './AZFaithPage';
+import AZFaithPage from "./AZFaithPage";
 export default AZFaithPage;

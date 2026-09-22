@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { fetchCatechismParagraph } from '@/hooks/useCatechismParagraph';
-import { BOOK_NAME_BY_ABBR } from '@/lib/bibleCanon';
-import { type TagContent } from '@/lib/nexusContent';
+import React, { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { fetchCatechismParagraph } from "@/hooks/useCatechismParagraph";
+import { BOOK_NAME_BY_ABBR } from "@/lib/bibleCanon";
+import { type TagContent } from "@/lib/nexusContent";
 
 const MAX_CHARS = 420;
 
@@ -17,8 +17,8 @@ interface Props {
 type Fetched = { text: string; source?: string } | null;
 
 const truncate = (s: string, n = MAX_CHARS) => {
-  const clean = s.replace(/\s+/g, ' ').trim();
-  return clean.length > n ? clean.slice(0, n).trimEnd() + '…' : clean;
+  const clean = s.replace(/\s+/g, " ").trim();
+  return clean.length > n ? clean.slice(0, n).trimEnd() + "…" : clean;
 };
 
 const bibleQuery = (item: TagContent) => {
@@ -31,66 +31,69 @@ const bibleQuery = (item: TagContent) => {
 
 async function fetchInline(item: TagContent): Promise<Fetched> {
   switch (item.type) {
-    case 'bible': {
+    case "bible": {
       const { abbr, chapter, verse, enabled } = bibleQuery(item);
       if (!enabled) return null;
-      const { data, error } = await supabase.functions.invoke('bible-text', {
+      const { data, error } = await supabase.functions.invoke("bible-text", {
         body: { abbrev: abbr, chapter },
       });
       if (error) throw error;
-      const verses: { number: number; text: string }[] = Array.isArray(data?.verses) ? data.verses : [];
+      const verses: { number: number; text: string }[] = Array.isArray(data?.verses)
+        ? data.verses
+        : [];
       if (verses.length === 0) return null;
-      const book = (typeof data?.book === 'string' && data.book) || BOOK_NAME_BY_ABBR[abbr!] || abbr!;
+      const book =
+        (typeof data?.book === "string" && data.book) || BOOK_NAME_BY_ABBR[abbr!] || abbr!;
       if (verse) {
-        const idx = verses.findIndex(v => Number(v.number) === verse);
+        const idx = verses.findIndex((v) => Number(v.number) === verse);
         if (idx !== -1) {
           const slice = verses.slice(Math.max(0, idx - 0), Math.min(verses.length, idx + 2));
           return {
-            text: slice.map(v => `${v.number} ${v.text}`).join(' '),
+            text: slice.map((v) => `${v.number} ${v.text}`).join(" "),
             source: `${book} ${chapter},${verse}`,
           };
         }
       }
       const slice = verses.slice(0, 3);
       return {
-        text: slice.map(v => `${v.number} ${v.text}`).join(' '),
+        text: slice.map((v) => `${v.number} ${v.text}`).join(" "),
         source: `${book} ${chapter}`,
       };
     }
-    case 'catechism': {
+    case "catechism": {
       const meta = item.metadata ?? {};
       const p = Number(meta.paragraph ?? meta.number);
       if (!Number.isFinite(p)) return null;
       const para = await fetchCatechismParagraph(p);
-      const text = para.content || para.explicacao || '';
+      const text = para.content || para.explicacao || "";
       if (!text) return null;
       return { text, source: `CIC §${p}` };
     }
-    case 'saint': {
+    case "saint": {
       const meta = item.metadata ?? {};
       const ident = (meta.slug ?? meta.id ?? item.id) as string | undefined;
       if (!ident) return null;
       // tenta por slug e por id
       const { data } = await supabase
-        .from('saints')
-        .select('name,bio,full_bio')
+        .from("saints")
+        .select("name,bio,full_bio")
         .or(`id.eq.${ident},name.ilike.${ident}`)
         .limit(1);
       const row = Array.isArray(data) && data[0];
       if (!row) return null;
-      const text = row.bio || row.full_bio || '';
+      const text = row.bio || row.full_bio || "";
       if (!text) return null;
       return { text, source: row.name };
     }
-    case 'magisterium': {
+    case "magisterium": {
       // Magistério: se veio content_text já usamos; senão busca em spiritual_contents
       const { data } = await supabase
-        .from('spiritual_contents')
-        .select('content_text,title')
-        .eq('id', item.id)
+        .from("spiritual_contents")
+        .select("content_text,title")
+        .eq("id", item.id)
         .limit(1);
       const row = Array.isArray(data) && data[0];
-      const text = row?.content_text || '';
+      const text = row?.content_text || "";
       if (!text) return null;
       return { text, source: row?.title || item.title };
     }
@@ -103,10 +106,19 @@ const NexusInlinePreview: React.FC<Props> = ({ item, openHref, onOpen, ctaLabel 
   const [expanded, setExpanded] = useState(false);
 
   const hasSeed = !!item.content_text;
-  const shouldFetch = !hasSeed && ['bible', 'catechism', 'saint', 'magisterium'].includes(item.type);
+  const shouldFetch =
+    !hasSeed && ["bible", "catechism", "saint", "magisterium"].includes(item.type);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['nexus-inline', item.type, item.id, item.metadata?.paragraph, item.metadata?.book, item.metadata?.chapter, item.metadata?.verse],
+    queryKey: [
+      "nexus-inline",
+      item.type,
+      item.id,
+      item.metadata?.paragraph,
+      item.metadata?.book,
+      item.metadata?.chapter,
+      item.metadata?.verse,
+    ],
     queryFn: () => fetchInline(item),
     enabled: shouldFetch,
     staleTime: 1000 * 60 * 30,
@@ -115,7 +127,7 @@ const NexusInlinePreview: React.FC<Props> = ({ item, openHref, onOpen, ctaLabel 
 
   const previewText = useMemo(() => {
     if (hasSeed) return item.content_text as string;
-    return data?.text ?? '';
+    return data?.text ?? "";
   }, [hasSeed, item.content_text, data]);
 
   const displayed = expanded ? previewText : truncate(previewText);
@@ -137,13 +149,13 @@ const NexusInlinePreview: React.FC<Props> = ({ item, openHref, onOpen, ctaLabel 
           {displayed}
           {canExpand && (
             <>
-              {' '}
+              {" "}
               <button
                 type="button"
-                onClick={() => setExpanded(v => !v)}
+                onClick={() => setExpanded((v) => !v)}
                 className="not-italic text-[11px] uppercase tracking-[0.2em] text-secondary hover:text-primary underline decoration-dotted underline-offset-4"
               >
-                {expanded ? 'menos' : 'ler mais'}
+                {expanded ? "menos" : "ler mais"}
               </button>
             </>
           )}

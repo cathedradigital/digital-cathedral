@@ -1,11 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from '@/lib/rr-compat';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Icons } from '@/constants';
-import { AppRoute } from '@/types';
-import { cn } from '@/lib/utils';
-import { findContinueTarget } from '@/lib/novenas/progress';
-import { NOVENAS } from '@/data/novenas';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "@/lib/rr-compat";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { Icons } from "@/constants";
+import { AppRoute } from "@/types";
+import { cn } from "@/lib/utils";
+import { findContinueTarget } from "@/lib/novenas/progress";
+import { NOVENAS } from "@/data/novenas";
 
 interface ShortcutTile {
   key: string;
@@ -17,37 +23,36 @@ interface ShortcutTile {
 
 const BASE_SHORTCUTS: ShortcutTile[] = [
   {
-    key: 'buscar',
-    label: 'Buscar',
-    description: 'Bíblia, Catecismo, Santos',
+    key: "buscar",
+    label: "Buscar",
+    description: "Bíblia, Catecismo, Santos",
     icon: Icons.Search,
     onSelect: () => {
-      window.dispatchEvent(new CustomEvent('open-command-center'));
+      window.dispatchEvent(new CustomEvent("open-command-center"));
     },
   },
   {
-    key: 'oracao',
-    label: 'Oração',
-    description: 'Entrar em silêncio',
+    key: "oracao",
+    label: "Oração",
+    description: "Entrar em silêncio",
     icon: Icons.Sparkles,
     onSelect: (navigate) => navigate(AppRoute.ORACAO),
   },
   {
-    key: 'diario',
-    label: 'Diário',
-    description: 'Registrar reflexão',
+    key: "diario",
+    label: "Diário",
+    description: "Registrar reflexão",
     icon: Icons.PenLine,
     onSelect: (navigate) => navigate(AppRoute.DIARIO),
   },
   {
-    key: 'favoritos',
-    label: 'Favoritos',
-    description: 'Itens salvos',
+    key: "favoritos",
+    label: "Favoritos",
+    description: "Itens salvos",
     icon: Icons.Heart,
     onSelect: (navigate) => navigate(AppRoute.FAVORITES),
   },
 ];
-
 
 interface SmartActionSheetProps {
   open: boolean;
@@ -86,8 +91,8 @@ export const SmartActionSheet: React.FC<SmartActionSheetProps> = ({ open, onOpen
     const novena = NOVENAS.find((n) => n.slug === target.slug);
     if (!novena) return BASE_SHORTCUTS;
     const tile: ShortcutTile = {
-      key: 'continuar-novena',
-      label: 'Continuar',
+      key: "continuar-novena",
+      label: "Continuar",
       description: `${novena.title} · dia ${target.day}`,
       icon: Icons.RefreshCw,
       onSelect: (nav) => nav(`/oracao/novenas/${target.slug}?dia=${target.day}`),
@@ -132,17 +137,22 @@ export const SmartActionSheet: React.FC<SmartActionSheetProps> = ({ open, onOpen
                 aria-busy={tileLoading || undefined}
                 data-testid={`smart-action-${s.key}`}
                 className={cn(
-                  'flex flex-col items-start gap-spacing-xs p-spacing-md text-left',
-                  'rounded-[1.25rem] border border-primary/10 bg-card',
-                  'active:scale-[0.98] transition-transform duration-200',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30',
-                  'min-h-[88px]',
-                  'disabled:opacity-60 disabled:cursor-wait',
+                  "flex flex-col items-start gap-spacing-xs p-spacing-md text-left",
+                  "rounded-[1.25rem] border border-primary/10 bg-card",
+                  "active:scale-[0.98] transition-transform duration-200",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30",
+                  "min-h-[88px]",
+                  "disabled:opacity-60 disabled:cursor-wait",
                 )}
               >
                 <span className="flex items-center justify-center w-spacing-2xl h-spacing-2xl rounded-premium-full bg-primary/10 text-primary">
                   {tileLoading ? (
-                    <Icons.Loader size={20} strokeWidth={1.8} className="animate-spin" aria-hidden="true" />
+                    <Icons.Loader
+                      size={20}
+                      strokeWidth={1.8}
+                      className="animate-spin"
+                      aria-hidden="true"
+                    />
                   ) : (
                     <Icon size={20} strokeWidth={1.5} aria-hidden="true" />
                   )}

@@ -8,22 +8,22 @@
  */
 
 export type LibraryModule =
-  | 'glossary'
-  | 'bible'
-  | 'catechism'
-  | 'saints'
-  | 'prayers'
-  | 'collections'
-  | 'journeys'
-  | 'magisterium'
-  | 'patristics'
-  | 'liturgy';
+  | "glossary"
+  | "bible"
+  | "catechism"
+  | "saints"
+  | "prayers"
+  | "collections"
+  | "journeys"
+  | "magisterium"
+  | "patristics"
+  | "liturgy";
 
 /**
  * Selo editorial derivado de `editorial_completeness` (quando existe na tabela
  * de origem). Sem score numérico nesta sprint — ICE Universal entra na C0.6.
  */
-export type LibraryIce = 'draft' | 'review' | 'complete';
+export type LibraryIce = "draft" | "review" | "complete";
 
 export interface LibraryItem {
   /** ID estável dentro do módulo (slug preferido). */
@@ -63,5 +63,5 @@ export interface LibraryAdapter {
   /** Label exibido no card (ex.: "Glossário"). */
   label: string;
   list(options?: LibraryAdapterListOptions): Promise<LibraryItem[]>;
-  resolveHref(item: Pick<LibraryItem, 'slug' | 'module'>): string;
+  resolveHref(item: Pick<LibraryItem, "slug" | "module">): string;
 }

@@ -40,7 +40,7 @@
 
 .type-lead {
   font-family: var(--font-body);
-  font-size: 1.125rem;   /* 18px */
+  font-size: 1.125rem; /* 18px */
   line-height: 1.6;
   font-weight: 400;
   color: hsl(var(--foreground) / 0.82);
@@ -48,21 +48,21 @@
 
 .type-body {
   font-family: var(--font-body);
-  font-size: 1rem;       /* 16px */
+  font-size: 1rem; /* 16px */
   line-height: 1.7;
   font-weight: 400;
 }
 
 .type-caption {
   font-family: var(--font-body);
-  font-size: 0.875rem;   /* 14px */
+  font-size: 0.875rem; /* 14px */
   line-height: 1.5;
   color: hsl(var(--foreground) / 0.7);
 }
 
 .type-meta {
   font-family: var(--font-body);
-  font-size: 0.8125rem;  /* 13px */
+  font-size: 0.8125rem; /* 13px */
   line-height: 1.4;
   color: hsl(var(--foreground) / 0.6);
   letter-spacing: 0.005em;
@@ -71,7 +71,7 @@
 /* Rubrica: kicker/eyebrow litúrgico — versalete espaçado, dourado no ambiente atual */
 .type-rubrica {
   font-family: var(--font-body);
-  font-size: 0.75rem;    /* 12px */
+  font-size: 0.75rem; /* 12px */
   line-height: 1.2;
   font-weight: 600;
   letter-spacing: 0.18em;

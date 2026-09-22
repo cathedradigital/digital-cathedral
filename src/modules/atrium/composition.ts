@@ -12,18 +12,18 @@
  * Fundamentação: ATRIUM-CONTRACT.md §6b (perfis) e §6c (P0..P6).
  */
 
-import type { ComponentType } from 'react';
-import type { AtriumBlock, AtriumProfile } from './types';
-import { PROFILE_BLOCK_ORDER } from './constants';
+import type { ComponentType } from "react";
+import type { AtriumBlock, AtriumProfile } from "./types";
+import { PROFILE_BLOCK_ORDER } from "./constants";
 
-import Header from './components/Header';
-import JourneyResume from './components/Journey';
-import UniversalSearch from './components/Search';
-import ThemeExplorer from './components/ThemeExplorer';
-import DailyLiturgy from './components/Liturgy';
-import EnvironmentGrid from './components/EnvironmentGrid';
-import Recommendations from './components/Recommendations';
-import News from './components/News';
+import Header from "./components/Header";
+import JourneyResume from "./components/Journey";
+import UniversalSearch from "./components/Search";
+import ThemeExplorer from "./components/ThemeExplorer";
+import DailyLiturgy from "./components/Liturgy";
+import EnvironmentGrid from "./components/EnvironmentGrid";
+import Recommendations from "./components/Recommendations";
+import News from "./components/News";
 
 /** Mapa AtriumBlock → componente responsável. */
 export const BLOCK_COMPONENT: Record<AtriumBlock, ComponentType> = {

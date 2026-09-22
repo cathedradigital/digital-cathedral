@@ -13,8 +13,8 @@
  * de embedding. Quando o backend de embeddings existir, basta trocar a
  * implementação registrada em `getSemanticSearcher()`.
  */
-import { supabase } from '@/lib/db';
-import type { LibraryModule } from '../../types';
+import { supabase } from "@/lib/db";
+import type { LibraryModule } from "../../types";
 
 export interface SemanticHit {
   /** Módulo canônico (mesma escala do resto da Biblioteca). */
@@ -47,28 +47,47 @@ export interface SemanticSearcher {
 }
 
 const NEXUS_TO_MODULE: Partial<Record<string, LibraryModule>> = {
-  glossary: 'glossary',
-  bible: 'bible',
-  catechism: 'catechism',
-  saint: 'saints',
-  prayer: 'prayers',
-  collection: 'collections',
-  journey: 'journeys',
-  magisterium: 'magisterium',
-  patristic: 'patristics',
-  liturgy: 'liturgy',
+  glossary: "glossary",
+  bible: "bible",
+  catechism: "catechism",
+  saint: "saints",
+  prayer: "prayers",
+  collection: "collections",
+  journey: "journeys",
+  magisterium: "magisterium",
+  patristic: "patristics",
+  liturgy: "liturgy",
 };
 
 const normalize = (v: string) =>
-  v.toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+  v
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim();
 
 const tokenize = (q: string): string[] => {
   const stop = new Set([
-    'de', 'da', 'do', 'das', 'dos', 'a', 'o', 'as', 'os', 'e', 'em',
-    'no', 'na', 'nos', 'nas', 'um', 'uma', 'que', 'com', 'para',
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "a",
+    "o",
+    "as",
+    "os",
+    "e",
+    "em",
+    "no",
+    "na",
+    "nos",
+    "nas",
+    "um",
+    "uma",
+    "que",
+    "com",
+    "para",
   ]);
   return normalize(q)
     .split(/\s+/)
@@ -93,21 +112,24 @@ class ConceptGraphSearcher implements SemanticSearcher {
       tokens.map(async (tok) => {
         const l = like(tok);
         const { data } = await supabase
-          .from('glossary')
-          .select('slug, term, short_definition, category')
-          .eq('status', 'published')
+          .from("glossary")
+          .select("slug, term, short_definition, category")
+          .eq("status", "published")
           .or(`term.ilike.${l},short_definition.ilike.${l},definition.ilike.${l}`)
           .limit(maxAnchors);
         return { token: tok, rows: data ?? [] };
       }),
     );
 
-    const anchors = new Map<string, {
-      slug: string;
-      term: string;
-      matchedTokens: Set<string>;
-      titleHit: boolean;
-    }>();
+    const anchors = new Map<
+      string,
+      {
+        slug: string;
+        term: string;
+        matchedTokens: Set<string>;
+        titleHit: boolean;
+      }
+    >();
     for (const { token, rows } of anchorResponses) {
       for (const r of rows) {
         if (!r.slug || !r.term) continue;
@@ -140,14 +162,14 @@ class ConceptGraphSearcher implements SemanticSearcher {
       const base = a.titleHit ? 0.85 : 0.65;
       const score = Math.min(0.98, base + conceptCoverage * 0.1);
       pushHit({
-        type: 'glossary',
-        kind: 'glossary',
+        type: "glossary",
+        kind: "glossary",
         ref: a.slug,
         title: a.term,
         score,
         reason: a.titleHit
           ? `Conceito central para "${query}".`
-          : `Conceito relacionado a "${Array.from(a.matchedTokens).join(', ')}".`,
+          : `Conceito relacionado a "${Array.from(a.matchedTokens).join(", ")}".`,
         matchedConcepts: [a.term],
       });
     }
@@ -158,15 +180,15 @@ class ConceptGraphSearcher implements SemanticSearcher {
     // por `->>slug` e falhamos em silêncio se a query rejeitar — o hit
     // âncora (glossary) já foi empurrado acima.
     const anchorRefs = anchorList.map((a) => a.slug);
-    const list = anchorRefs.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(',');
+    const list = anchorRefs.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(",");
     const titleByAnchor = new Map(anchorList.map((a) => [a.slug, a.term]));
 
     const extractRef = (json: unknown): string | undefined => {
-      if (!json || typeof json !== 'object') return undefined;
+      if (!json || typeof json !== "object") return undefined;
       const obj = json as Record<string, unknown>;
-      for (const k of ['slug', 'ref'] as const) {
+      for (const k of ["slug", "ref"] as const) {
         const v = obj[k];
-        if (typeof v === 'string' && v.length > 0) return v;
+        if (typeof v === "string" && v.length > 0) return v;
       }
       return undefined;
     };
@@ -174,26 +196,26 @@ class ConceptGraphSearcher implements SemanticSearcher {
     try {
       const [asSource, asTarget] = await Promise.all([
         supabase
-          .from('nexus_relations')
-          .select('source_ref, target_kind, target_ref, relation_type, note')
-          .eq('source_kind', 'glossary')
-          .filter('source_ref->>slug', 'in', `(${list})`)
+          .from("nexus_relations")
+          .select("source_ref, target_kind, target_ref, relation_type, note")
+          .eq("source_kind", "glossary")
+          .filter("source_ref->>slug", "in", `(${list})`)
           .limit(maxRelated),
         supabase
-          .from('nexus_relations')
-          .select('target_ref, source_kind, source_ref, relation_type, note')
-          .eq('target_kind', 'glossary')
-          .filter('target_ref->>slug', 'in', `(${list})`)
+          .from("nexus_relations")
+          .select("target_ref, source_kind, source_ref, relation_type, note")
+          .eq("target_kind", "glossary")
+          .filter("target_ref->>slug", "in", `(${list})`)
           .limit(maxRelated),
       ]);
 
       for (const row of asSource.data ?? []) {
         const mod = NEXUS_TO_MODULE[row.target_kind as string];
         if (!mod) continue;
-        const anchor = extractRef(row.source_ref) ?? '';
-        const target = extractRef(row.target_ref) ?? '';
+        const anchor = extractRef(row.source_ref) ?? "";
+        const target = extractRef(row.target_ref) ?? "";
         if (!target) continue;
-        const anchorTerm = titleByAnchor.get(anchor) ?? 'conceito';
+        const anchorTerm = titleByAnchor.get(anchor) ?? "conceito";
         pushHit({
           type: mod,
           kind: String(row.target_kind),
@@ -202,31 +224,29 @@ class ConceptGraphSearcher implements SemanticSearcher {
           score: 0.55,
           reason: row.note
             ? String(row.note)
-            : `Relacionado a "${anchorTerm}" via ${row.relation_type ?? 'nexus'}.`,
+            : `Relacionado a "${anchorTerm}" via ${row.relation_type ?? "nexus"}.`,
           matchedConcepts: [anchorTerm],
         });
       }
       for (const row of asTarget.data ?? []) {
         const mod = NEXUS_TO_MODULE[row.source_kind as string];
         if (!mod) continue;
-        const anchor = extractRef(row.target_ref) ?? '';
-        const source = extractRef(row.source_ref) ?? '';
+        const anchor = extractRef(row.target_ref) ?? "";
+        const source = extractRef(row.source_ref) ?? "";
         if (!source) continue;
-        const anchorTerm = titleByAnchor.get(anchor) ?? 'conceito';
+        const anchorTerm = titleByAnchor.get(anchor) ?? "conceito";
         pushHit({
           type: mod,
           kind: String(row.source_kind),
           ref: source,
           title: `${row.source_kind}:${source}`,
           score: 0.5,
-          reason: row.note
-            ? String(row.note)
-            : `Citado a partir de "${anchorTerm}".`,
+          reason: row.note ? String(row.note) : `Citado a partir de "${anchorTerm}".`,
           matchedConcepts: [anchorTerm],
         });
       }
     } catch (err) {
-      if (import.meta.env.DEV) console.warn('[semanticClient] expansão nexus falhou', err);
+      if (import.meta.env.DEV) console.warn("[semanticClient] expansão nexus falhou", err);
     }
 
     return Array.from(hits.values()).sort((a, b) => b.score - a.score);

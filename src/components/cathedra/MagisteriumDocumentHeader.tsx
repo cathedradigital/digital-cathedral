@@ -1,13 +1,12 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import type { MagisteriumDocument } from '@/data/magisterium-urls';
-import PassageActions from '@/components/shared/PassageActions';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import type { MagisteriumDocument } from "@/data/magisterium-urls";
+import PassageActions from "@/components/shared/PassageActions";
 
 interface MagisteriumDocumentHeaderProps {
   doc: MagisteriumDocument;
 }
-
 
 /**
  * STAB-004.2 — Ficha rica do documento.
@@ -18,11 +17,13 @@ interface MagisteriumDocumentHeaderProps {
 const formatDate = (iso?: string, year?: number): string | null => {
   if (iso) {
     try {
-      const d = new Date(iso + 'T00:00:00');
+      const d = new Date(iso + "T00:00:00");
       if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
       }
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }
   return year ? String(year) : null;
 };
@@ -43,8 +44,7 @@ const MagisteriumDocumentHeader: React.FC<MagisteriumDocumentHeaderProps> = ({ d
   const dateLabel = formatDate(doc.date, doc.year);
   const showPontificate = doc.pontificate && doc.pontificate !== doc.author;
 
-  const referenceLabel = `${doc.title} — ${doc.author}${doc.year ? ` (${doc.year})` : ''}`;
-
+  const referenceLabel = `${doc.title} — ${doc.author}${doc.year ? ` (${doc.year})` : ""}`;
 
   return (
     <header
@@ -151,7 +151,7 @@ const MagisteriumDocumentHeader: React.FC<MagisteriumDocumentHeaderProps> = ({ d
             text={doc.summary || doc.title}
             reference={referenceLabel}
             title={doc.title}
-            passage={{ kind: 'magisterium', id: doc.id, highlight: doc.abbr || doc.title }}
+            passage={{ kind: "magisterium", id: doc.id, highlight: doc.abbr || doc.title }}
             size="sm"
           />
         </div>

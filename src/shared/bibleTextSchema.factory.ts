@@ -11,13 +11,15 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildBibleTextSchemas(z: any) {
-  const BibleTextInputSchema = z.object({
-    abbrev: z.string().trim().min(1, "abbrev é obrigatório").max(16, "abbrev muito longo"),
-    chapter: z.number({ invalid_type_error: "chapter deve ser número" }).int().positive(),
-    client_cache_version: z.union([z.string(), z.number()]).optional(),
-    translation_id: z.string().uuid().optional(),
-    modernize: z.boolean().optional(),
-  }).strict();
+  const BibleTextInputSchema = z
+    .object({
+      abbrev: z.string().trim().min(1, "abbrev é obrigatório").max(16, "abbrev muito longo"),
+      chapter: z.number({ invalid_type_error: "chapter deve ser número" }).int().positive(),
+      client_cache_version: z.union([z.string(), z.number()]).optional(),
+      translation_id: z.string().uuid().optional(),
+      modernize: z.boolean().optional(),
+    })
+    .strict();
 
   const BibleVerseSchema = z.object({
     number: z.number().int().positive(),
@@ -25,23 +27,25 @@ export function buildBibleTextSchemas(z: any) {
     comment: z.string().nullable().optional(),
   });
 
-  const BibleTextMetadataSchema = z.object({
-    source: z.string().min(1),
-    correlationId: z.string().min(1),
-    cache_version: z.string().optional(),
-    logic_version: z.number().optional(),
-    current_version: z.number().optional(),
-    contentHash: z.string().optional(),
-    ttl_hours: z.number().optional(),
-    shouldInvalidateL1: z.boolean().optional(),
-    stale: z.boolean().optional(),
-    received_abbrev: z.string().min(1),
-    canonical_abbr: z.string().nullable(),
-    bollsId: z.number().int().positive().nullable(),
-    translation_id: z.string().uuid().nullable().optional(),
-    translation_code: z.string().nullable().optional(),
-    modernized: z.boolean().optional(),
-  }).passthrough();
+  const BibleTextMetadataSchema = z
+    .object({
+      source: z.string().min(1),
+      correlationId: z.string().min(1),
+      cache_version: z.string().optional(),
+      logic_version: z.number().optional(),
+      current_version: z.number().optional(),
+      contentHash: z.string().optional(),
+      ttl_hours: z.number().optional(),
+      shouldInvalidateL1: z.boolean().optional(),
+      stale: z.boolean().optional(),
+      received_abbrev: z.string().min(1),
+      canonical_abbr: z.string().nullable(),
+      bollsId: z.number().int().positive().nullable(),
+      translation_id: z.string().uuid().nullable().optional(),
+      translation_code: z.string().nullable().optional(),
+      modernized: z.boolean().optional(),
+    })
+    .passthrough();
 
   const BibleTextSuccessSchema = z.object({
     book: z.string().min(1),
@@ -84,11 +88,9 @@ export function buildBibleTextSchemas(z: any) {
 }
 
 /** Categoriza um payload de erro para o resumo CI. Sem dependência de zod. */
-export function classifyError(reason: string | undefined | null):
-  | "unknown_abbrev"
-  | "chapter_unavailable"
-  | "invalid_payload"
-  | "other" {
+export function classifyError(
+  reason: string | undefined | null,
+): "unknown_abbrev" | "chapter_unavailable" | "invalid_payload" | "other" {
   if (!reason) return "other";
   if (/Abreviação não reconhecida/i.test(reason)) return "unknown_abbrev";
   if (/não foi encontrado em nenhuma fonte/i.test(reason)) return "chapter_unavailable";

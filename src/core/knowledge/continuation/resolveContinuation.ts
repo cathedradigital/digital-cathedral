@@ -9,54 +9,56 @@
  * (ReaderContinuation) aplica seu fallback editorial.
  */
 
-import { KnowledgeGraph } from '@/core/knowledge/KnowledgeGraph';
+import { KnowledgeGraph } from "@/core/knowledge/KnowledgeGraph";
 import type {
   KnowledgeNode,
   KnowledgeNodeKind,
   KnowledgeRelation,
   KnowledgeRelationKind,
-} from '@/core/knowledge/types';
-import type {
-  ContinuationContext,
-  ContinuationIntent,
-  ContinuationSuggestion,
-} from './types';
+} from "@/core/knowledge/types";
+import type { ContinuationContext, ContinuationIntent, ContinuationSuggestion } from "./types";
 
 const MAX_SUGGESTIONS = 4;
 
 /** Mapa relação → intenção padrão. */
 const RELATION_INTENT: Record<KnowledgeRelationKind, ContinuationIntent> = {
-  develops: 'study',
-  cites: 'study',
-  'defined-in': 'deepen',
-  'commented-by': 'meet',
-  'applies-to': 'apply',
-  'prayed-as': 'pray',
-  'related-to': 'study',
+  develops: "study",
+  cites: "study",
+  "defined-in": "deepen",
+  "commented-by": "meet",
+  "applies-to": "apply",
+  "prayed-as": "pray",
+  "related-to": "study",
 };
 
 /** Refinamento por kind do nó destino (kind do target vence a relação). */
 function intentByTargetKind(kind: KnowledgeNodeKind): ContinuationIntent | null {
   switch (kind) {
-    case 'prayer': return 'pray';
-    case 'application': return 'apply';
-    case 'father':
-    case 'saint': return 'meet';
-    case 'catechism':
-    case 'magisterium':
-    case 'council':
-    case 'canon': return 'deepen';
-    case 'bible': return 'study';
-    default: return null;
+    case "prayer":
+      return "pray";
+    case "application":
+      return "apply";
+    case "father":
+    case "saint":
+      return "meet";
+    case "catechism":
+    case "magisterium":
+    case "council":
+    case "canon":
+      return "deepen";
+    case "bible":
+      return "study";
+    default:
+      return null;
   }
 }
 
 const EYEBROW: Record<ContinuationIntent, string> = {
-  study: 'Continuar estudando',
-  deepen: 'Aprofundar',
-  pray: 'Transformar em oração',
-  apply: 'Colocar em prática',
-  meet: 'Conhecer',
+  study: "Continuar estudando",
+  deepen: "Aprofundar",
+  pray: "Transformar em oração",
+  apply: "Colocar em prática",
+  meet: "Conhecer",
 };
 
 interface Candidate {
@@ -79,8 +81,7 @@ function collectFromAnchors(anchorIds: string[]): Candidate[] {
       if (excluded.has(rel.to)) continue;
       const targetNode = KnowledgeGraph.findNode(rel.to);
       if (!targetNode) continue;
-      const intent =
-        intentByTargetKind(targetNode.kind) ?? RELATION_INTENT[rel.kind];
+      const intent = intentByTargetKind(targetNode.kind) ?? RELATION_INTENT[rel.kind];
       const weight = rel.weight ?? 0.5;
       const prev = seen.get(rel.to);
       if (!prev || prev.weight < weight) {
@@ -92,9 +93,7 @@ function collectFromAnchors(anchorIds: string[]): Candidate[] {
   return Array.from(seen.values());
 }
 
-export function resolveContinuation(
-  ctx: ContinuationContext,
-): ContinuationSuggestion[] {
+export function resolveContinuation(ctx: ContinuationContext): ContinuationSuggestion[] {
   const anchors: string[] = [];
   if (ctx.currentId && KnowledgeGraph.hasNode(ctx.currentId)) {
     anchors.push(ctx.currentId);

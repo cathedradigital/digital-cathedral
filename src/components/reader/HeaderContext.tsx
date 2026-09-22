@@ -20,8 +20,8 @@
  * `docs/reader-architecture-master.md`.
  */
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Container base
@@ -50,7 +50,7 @@ export const HeaderContext: React.FC<HeaderContextProps> = ({
   items,
   children,
   accent,
-  ariaLabel = 'Contexto da leitura',
+  ariaLabel = "Contexto da leitura",
   className,
 }) => {
   return (
@@ -58,18 +58,18 @@ export const HeaderContext: React.FC<HeaderContextProps> = ({
       data-reader-slot="header-context"
       aria-label={ariaLabel}
       className={cn(
-        'w-full mx-auto max-w-[68ch]',
-        'px-[var(--stitch-margin-mobile)] md:px-0',
-        'py-spacing-md',
-        'border-b border-border/40',
+        "w-full mx-auto max-w-[68ch]",
+        "px-[var(--stitch-margin-mobile)] md:px-0",
+        "py-spacing-md",
+        "border-b border-border/40",
         className,
       )}
-      style={accent ? { ['--reader-context-accent' as string]: accent } : undefined}
+      style={accent ? { ["--reader-context-accent" as string]: accent } : undefined}
     >
       {eyebrow && (
         <div
           className="text-eyebrow uppercase tracking-wider mb-spacing-xs"
-          style={accent ? { color: 'var(--reader-context-accent)' } : undefined}
+          style={accent ? { color: "var(--reader-context-accent)" } : undefined}
         >
           {eyebrow}
         </div>
@@ -122,11 +122,11 @@ export const LiturgicalContext: React.FC<LiturgicalContextProps> = ({
   season,
   className,
 }) => {
-  const items: HeaderContextProps['items'] = [];
-  if (date) items.push({ label: 'Data', value: date });
-  if (rank) items.push({ label: 'Grau', value: rank });
-  if (color) items.push({ label: 'Cor', value: color });
-  if (season) items.push({ label: 'Tempo', value: season });
+  const items: HeaderContextProps["items"] = [];
+  if (date) items.push({ label: "Data", value: date });
+  if (rank) items.push({ label: "Grau", value: rank });
+  if (color) items.push({ label: "Cor", value: color });
+  if (season) items.push({ label: "Tempo", value: season });
 
   return (
     <HeaderContext
@@ -154,12 +154,12 @@ export const JourneyContext: React.FC<JourneyContextProps> = ({
   progressPct,
   className,
 }) => {
-  const items: HeaderContextProps['items'] = [];
+  const items: HeaderContextProps["items"] = [];
   if (currentDay && totalDays) {
-    items.push({ label: 'Dia', value: `${currentDay} de ${totalDays}` });
+    items.push({ label: "Dia", value: `${currentDay} de ${totalDays}` });
   }
-  if (typeof progressPct === 'number') {
-    items.push({ label: 'Progresso', value: `${Math.round(progressPct)}%` });
+  if (typeof progressPct === "number") {
+    items.push({ label: "Progresso", value: `${Math.round(progressPct)}%` });
   }
   return (
     <HeaderContext
@@ -200,13 +200,13 @@ export const CatechesisContext: React.FC<CatechesisContextProps> = ({
   theme,
   className,
 }) => {
-  const items: HeaderContextProps['items'] = [];
-  if (part) items.push({ label: 'Parte', value: part });
-  if (section) items.push({ label: 'Seção', value: section });
-  if (chapter) items.push({ label: 'Capítulo', value: chapter });
-  if (article) items.push({ label: 'Artigo', value: article });
-  if (theme) items.push({ label: 'Tema', value: theme });
-  if (level) items.push({ label: 'Nível', value: level });
+  const items: HeaderContextProps["items"] = [];
+  if (part) items.push({ label: "Parte", value: part });
+  if (section) items.push({ label: "Seção", value: section });
+  if (chapter) items.push({ label: "Capítulo", value: chapter });
+  if (article) items.push({ label: "Artigo", value: article });
+  if (theme) items.push({ label: "Tema", value: theme });
+  if (level) items.push({ label: "Nível", value: level });
   return (
     <HeaderContext
       eyebrow={moduleTitle}
@@ -216,7 +216,6 @@ export const CatechesisContext: React.FC<CatechesisContextProps> = ({
     />
   );
 };
-
 
 export interface StudyContextProps {
   collectionTitle: React.ReactNode;
@@ -232,9 +231,9 @@ export const StudyContext: React.FC<StudyContextProps> = ({
   curator,
   className,
 }) => {
-  const items: HeaderContextProps['items'] = [];
-  if (position) items.push({ label: 'Posição', value: position });
-  if (curator) items.push({ label: 'Curadoria', value: curator });
+  const items: HeaderContextProps["items"] = [];
+  if (position) items.push({ label: "Posição", value: position });
+  if (curator) items.push({ label: "Curadoria", value: curator });
   return (
     <HeaderContext
       eyebrow={collectionTitle}
@@ -268,10 +267,10 @@ export const PrayerContext: React.FC<PrayerContextProps> = ({
   step,
   className,
 }) => {
-  const items: HeaderContextProps['items'] = [];
-  if (station) items.push({ label: 'Neste momento', value: station });
-  if (step) items.push({ label: 'Passo', value: step });
-  if (rhythm) items.push({ label: 'Ritmo', value: rhythm });
+  const items: HeaderContextProps["items"] = [];
+  if (station) items.push({ label: "Neste momento", value: station });
+  if (step) items.push({ label: "Passo", value: step });
+  if (rhythm) items.push({ label: "Ritmo", value: rhythm });
   return (
     <HeaderContext
       eyebrow={category}
@@ -283,4 +282,3 @@ export const PrayerContext: React.FC<PrayerContextProps> = ({
 };
 
 export default HeaderContext;
-

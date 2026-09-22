@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * ContentSkeleton — primitiva unificada de loading do Cathedra Design System.
@@ -17,8 +17,8 @@ import { cn } from '@/lib/utils';
  *   <SkeletonGrid count={6} />
  */
 
-type Variant = 'block' | 'text' | 'circle' | 'pill';
-type Tone = 'shimmer' | 'pulse';
+type Variant = "block" | "text" | "circle" | "pill";
+type Tone = "shimmer" | "pulse";
 
 interface ContentSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: Variant;
@@ -28,36 +28,42 @@ interface ContentSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const shapeMap: Record<Variant, string> = {
-  block: 'rounded-premium',
-  text: 'rounded-premium-full h-spacing-md',
-  circle: 'rounded-premium-full',
-  pill: 'rounded-premium-full h-spacing-md',
+  block: "rounded-premium",
+  text: "rounded-premium-full h-spacing-md",
+  circle: "rounded-premium-full",
+  pill: "rounded-premium-full h-spacing-md",
 };
 
 const toneMap: Record<Tone, string> = {
-  shimmer: 'cathedra-shimmer',
-  pulse: 'animate-pulse bg-muted/30',
+  shimmer: "cathedra-shimmer",
+  pulse: "animate-pulse bg-muted/30",
 };
 
 export const ContentSkeleton = React.forwardRef<HTMLDivElement, ContentSkeletonProps>(
-  ({ variant = 'block', tone = 'shimmer', lines = 1, lineGap = 'space-y-spacing-xs', className, ...rest }, ref) => {
-    if (variant === 'text' && lines > 1) {
+  (
+    {
+      variant = "block",
+      tone = "shimmer",
+      lines = 1,
+      lineGap = "space-y-spacing-xs",
+      className,
+      ...rest
+    },
+    ref,
+  ) => {
+    if (variant === "text" && lines > 1) {
       return (
         <div
           ref={ref}
           aria-hidden="true"
           aria-busy="true"
-          className={cn('flex flex-col', lineGap, className)}
+          className={cn("flex flex-col", lineGap, className)}
           {...rest}
         >
           {Array.from({ length: lines }).map((_, i) => (
             <div
               key={i}
-              className={cn(
-                shapeMap.text,
-                toneMap[tone],
-                i === lines - 1 ? 'w-[72%]' : 'w-full',
-              )}
+              className={cn(shapeMap.text, toneMap[tone], i === lines - 1 ? "w-[72%]" : "w-full")}
             />
           ))}
         </div>
@@ -75,7 +81,7 @@ export const ContentSkeleton = React.forwardRef<HTMLDivElement, ContentSkeletonP
     );
   },
 );
-ContentSkeleton.displayName = 'ContentSkeleton';
+ContentSkeleton.displayName = "ContentSkeleton";
 
 /* -----------------------------------------------------------------------
  * Composições padrão — reduzem duplicação nas páginas.
@@ -86,10 +92,7 @@ export const SkeletonCard: React.FC<{ className?: string; withMedia?: boolean }>
   withMedia = false,
 }) => (
   <div
-    className={cn(
-      'premium-card p-spacing-lg space-y-spacing-md',
-      className,
-    )}
+    className={cn("premium-card p-spacing-lg space-y-spacing-md", className)}
     aria-hidden="true"
     aria-busy="true"
   >
@@ -106,13 +109,13 @@ export const SkeletonGrid: React.FC<{
   className?: string;
 }> = ({ count = 6, cols = 3, withMedia = false, className }) => {
   const gridCols = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 sm:grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+    1: "grid-cols-1",
+    2: "grid-cols-1 sm:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
   }[cols];
   return (
-    <div className={cn('grid gap-spacing-lg', gridCols, className)}>
+    <div className={cn("grid gap-spacing-lg", gridCols, className)}>
       {Array.from({ length: count }).map((_, i) => (
         <SkeletonCard key={i} withMedia={withMedia} />
       ))}
@@ -124,7 +127,7 @@ export const SkeletonHero: React.FC<{ className?: string }> = ({ className }) =>
   <div
     aria-hidden="true"
     aria-busy="true"
-    className={cn('space-y-spacing-md py-spacing-2xl', className)}
+    className={cn("space-y-spacing-md py-spacing-2xl", className)}
   >
     <ContentSkeleton variant="pill" className="w-[120px]" />
     <ContentSkeleton variant="block" className="h-spacing-2xl w-[70%]" />

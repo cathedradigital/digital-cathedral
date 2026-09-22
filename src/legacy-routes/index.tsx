@@ -304,7 +304,7 @@ NÃO remover funcionalidades existentes.
 NÃO declarar sucesso sem teste funcional real.
 */
 
-import React from 'react';
+import React from "react";
 
 export const InfrastructureDiagnostics: React.FC = () => {
   return (
@@ -312,15 +312,15 @@ export const InfrastructureDiagnostics: React.FC = () => {
       <h1 className="text-4xl font-display italic text-primary mb-8 border-b-2 border-gold-text/20 pb-4">
         Cathedra Mission Control — Auditoria Global
       </h1>
-      
+
       {/* 🏛️ ÁTRIO */}
       <section>
         <h2 className="text-2xl font-display text-primary mb-6 flex items-center gap-3">
           <span className="text-xl">🏛️</span> Átrio (Home)
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <AuditTable 
-            title="Desktop" 
+          <AuditTable
+            title="Desktop"
             status="Certified"
             rows={[
               { label: "Existe?", res: "SIM", pass: true },
@@ -334,8 +334,8 @@ export const InfrastructureDiagnostics: React.FC = () => {
               { label: "Visual consistente?", res: "PASS", pass: true },
             ]}
           />
-          <AuditTable 
-            title="Mobile" 
+          <AuditTable
+            title="Mobile"
             status="Certified"
             rows={[
               { label: "Bottom Nav Ativo?", res: "PASS", pass: true },
@@ -357,8 +357,8 @@ export const InfrastructureDiagnostics: React.FC = () => {
           <span className="text-xl">🕯️</span> Sacrário (Orações & Liturgia)
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <AuditTable 
-            title="Desktop" 
+          <AuditTable
+            title="Desktop"
             status="Certified"
             rows={[
               { label: "Abre (/rezar)?", res: "PASS", pass: true },
@@ -370,8 +370,8 @@ export const InfrastructureDiagnostics: React.FC = () => {
               { label: "Mobile Responsive?", res: "PASS", pass: true },
             ]}
           />
-          <AuditTable 
-            title="Mobile" 
+          <AuditTable
+            title="Mobile"
             status="Certified"
             rows={[
               { label: "Nav (5 áreas)?", res: "PASS*", pass: true },
@@ -387,13 +387,8 @@ export const InfrastructureDiagnostics: React.FC = () => {
               { label: "Navegação App-like?", res: "PASS", pass: true },
             ]}
           />
-
-
-
-
         </div>
       </section>
-
 
       {/* 🧭 NEXUS */}
       <section>
@@ -420,23 +415,33 @@ export const InfrastructureDiagnostics: React.FC = () => {
       </section>
 
       <footer className="pt-8 border-t border-gold-text/10 space-y-2 text-sm text-muted-foreground italic">
-        <p>* Navegação validada via auditoria em 18/08/2026. Alvos móveis (/bible, /oracao, /community, /acervo, /conta) confirmados.</p>
-        <p>** Reader de oração padronizado com Nexus e Bíblia/Catecismo validados em profundidade (Agosto 2026).</p>
+        <p>
+          * Navegação validada via auditoria em 18/08/2026. Alvos móveis (/bible, /oracao,
+          /community, /acervo, /conta) confirmados.
+        </p>
+        <p>
+          ** Reader de oração padronizado com Nexus e Bíblia/Catecismo validados em profundidade
+          (Agosto 2026).
+        </p>
 
-
-        <p>*** Auditoria de Perfil, Orações, Liturgia, Claustro e Favoritos validada em 18/08/2026 via iPhone 12 Emulation.</p>
-
-
+        <p>
+          *** Auditoria de Perfil, Orações, Liturgia, Claustro e Favoritos validada em 18/08/2026
+          via iPhone 12 Emulation.
+        </p>
       </footer>
 
-      <div style={{ display: 'none' }} id="audit-manifesto">
+      <div style={{ display: "none" }} id="audit-manifesto">
         CATHEDRA MISSION CONTROL - AUDIT DESKTOP & ÍCONES - RESULT: PASS
       </div>
     </div>
   );
 };
 
-const AuditTable: React.FC<{ title: string; status: string; rows: { label: string; res: string; pass: boolean }[] }> = ({ title, status, rows }) => (
+const AuditTable: React.FC<{
+  title: string;
+  status: string;
+  rows: { label: string; res: string; pass: boolean }[];
+}> = ({ title, status, rows }) => (
   <section className="border border-gold-text/20 p-6 bg-accentest rounded-premium shadow-sm">
     <h3 className="text-xl font-display text-primary mb-4 flex items-center justify-between">
       {title}
@@ -447,15 +452,21 @@ const AuditTable: React.FC<{ title: string; status: string; rows: { label: strin
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b border-gold-text/10">
-          <th className="text-left py-2 font-bold uppercase tracking-tighter text-[10px] text-muted-foreground">Critério</th>
-          <th className="text-right py-2 font-bold uppercase tracking-tighter text-[10px] text-muted-foreground">Resultado</th>
+          <th className="text-left py-2 font-bold uppercase tracking-tighter text-[10px] text-muted-foreground">
+            Critério
+          </th>
+          <th className="text-right py-2 font-bold uppercase tracking-tighter text-[10px] text-muted-foreground">
+            Resultado
+          </th>
         </tr>
       </thead>
       <tbody>
         {rows.map((row, i) => (
           <tr key={i} className="border-b border-gold-text/5 last:border-0">
             <td className="py-2.5 text-primary/80">{row.label}</td>
-            <td className={cn("text-right font-bold", row.pass ? "text-green-600" : "text-red-600")}>
+            <td
+              className={cn("text-right font-bold", row.pass ? "text-green-600" : "text-red-600")}
+            >
               {row.res}
             </td>
           </tr>
@@ -467,7 +478,7 @@ const AuditTable: React.FC<{ title: string; status: string; rows: { label: strin
 
 // Helper for classes (usually imported but added here for the standalone diagnostic page context if needed)
 function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default InfrastructureDiagnostics;

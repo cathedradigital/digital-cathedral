@@ -1,5 +1,5 @@
-import React from 'react';
-import { ContentSkeleton } from './primitives';
+import React from "react";
+import { ContentSkeleton } from "./primitives";
 
 /**
  * LiturgiaSkeleton — consolidado no Sprint P2 (Logos 2030).
@@ -7,11 +7,7 @@ import { ContentSkeleton } from './primitives';
  */
 export const LiturgiaSkeleton: React.FC = () => {
   return (
-    <div
-      className="max-w-3xl mx-auto space-y-spacing-xl"
-      aria-hidden="true"
-      aria-busy="true"
-    >
+    <div className="max-w-3xl mx-auto space-y-spacing-xl" aria-hidden="true" aria-busy="true">
       <div className="space-y-spacing-md text-center flex flex-col items-center">
         <ContentSkeleton variant="block" className="h-spacing-xl w-[240px]" />
         <div className="flex items-center justify-center gap-spacing-md">

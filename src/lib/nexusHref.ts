@@ -13,17 +13,12 @@
  * `collectionKindToNexusKind` e `nexusChannelToListingHref` para atravessar
  * a fronteira sem reimplementar rotas.
  */
-import type { NexusKind, NexusRef } from '@/types/nexus';
-import type { NexusChannel } from '@/components/cathedra/nexus/nexusPresets';
-import { catechismInternalPath } from '@/lib/nexusNavigation';
+import type { NexusKind, NexusRef } from "@/types/nexus";
+import type { NexusChannel } from "@/components/cathedra/nexus/nexusPresets";
+import { catechismInternalPath } from "@/lib/nexusNavigation";
 
 export type NexusRefLike =
-  | NexusRef
-  | Partial<NexusRef>
-  | Record<string, unknown>
-  | string
-  | null
-  | undefined;
+  NexusRef | Partial<NexusRef> | Record<string, unknown> | string | null | undefined;
 
 /**
  * Extrai o identificador natural de um `NexusRef` (JSONB variável).
@@ -31,12 +26,12 @@ export type NexusRefLike =
  */
 export function extractNexusRefId(ref: NexusRefLike): string | null {
   if (ref == null) return null;
-  if (typeof ref === 'string') return ref.length > 0 ? ref : null;
+  if (typeof ref === "string") return ref.length > 0 ? ref : null;
   const obj = ref as Record<string, unknown>;
-  for (const k of ['slug', 'id', 'ref'] as const) {
+  for (const k of ["slug", "id", "ref"] as const) {
     const v = obj[k];
-    if (typeof v === 'string' && v.length > 0) return v;
-    if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+    if (typeof v === "string" && v.length > 0) return v;
+    if (typeof v === "number" && Number.isFinite(v)) return String(v);
   }
   return null;
 }
@@ -45,39 +40,35 @@ export function extractNexusRefId(ref: NexusRefLike): string | null {
  * Resolve o href interno canônico para uma referência do Nexus.
  * Retorna `null` quando o kind não é navegável ou o ref é inválido.
  */
-export function resolveNexusHref(
-  kind: NexusKind,
-  ref: NexusRefLike,
-): string | null {
-
+export function resolveNexusHref(kind: NexusKind, ref: NexusRefLike): string | null {
   const id = extractNexusRefId(ref);
   if (!id) return null;
 
   switch (kind) {
-    case 'saint':
+    case "saint":
       return `/santos/${id}`;
-    case 'glossary':
+    case "glossary":
       return `/glossario/${id}`;
-    case 'prayer':
+    case "prayer":
       return `/oracao/${id}`;
-    case 'journey':
+    case "journey":
       return `/jornadas/${id}`;
-    case 'catechism_paragraph': {
+    case "catechism_paragraph": {
       const n = Number(id);
       return Number.isFinite(n) ? catechismInternalPath(n) : null;
     }
-    case 'bible_verse':
+    case "bible_verse":
       return `/bible?ref=${encodeURIComponent(id)}`;
-    case 'magisterium_doc':
+    case "magisterium_doc":
       return `/magisterium/${id}`;
-    case 'patristic':
+    case "patristic":
       return `/patristica/${id}`;
-    case 'liturgy':
+    case "liturgy":
       return `/missal/${id}`;
-    case 'saint_work':
+    case "saint_work":
       // Espera-se `autor/obra` (ex.: "agostinho/confissoes").
-      return id.includes('/') ? `/biblioteca/escritos/${id}` : null;
-    case 'other':
+      return id.includes("/") ? `/biblioteca/escritos/${id}` : null;
+    case "other":
     default:
       return null;
   }
@@ -89,15 +80,15 @@ export function resolveNexusHref(
  * este helper garante que o href passe pelo `resolveNexusHref`.
  */
 const COLLECTION_TO_NEXUS: Record<string, NexusKind> = {
-  glossary: 'glossary',
-  prayer: 'prayer',
-  saint: 'saint',
-  saint_work: 'saint_work',
-  bible: 'bible_verse',
-  liturgy: 'liturgy',
-  catechism: 'catechism_paragraph',
-  magisterium: 'magisterium_doc',
-  journey: 'journey',
+  glossary: "glossary",
+  prayer: "prayer",
+  saint: "saint",
+  saint_work: "saint_work",
+  bible: "bible_verse",
+  liturgy: "liturgy",
+  catechism: "catechism_paragraph",
+  magisterium: "magisterium_doc",
+  journey: "journey",
 };
 
 export function collectionKindToNexusKind(kind: string): NexusKind | null {
@@ -110,13 +101,13 @@ export function collectionKindToNexusKind(kind: string): NexusKind | null {
  * NÃO substitui `resolveNexusHref` — este resolve entidades individuais.
  */
 const CHANNEL_TO_LISTING: Record<NexusChannel, string> = {
-  bible: '/bible',
-  catechism: '/catechism',
-  magisterium: '/magisterium',
-  father: '/patristica',
-  saint: '/santos',
-  journey: '/jornadas',
-  theme: '/buscar',
+  bible: "/bible",
+  catechism: "/catechism",
+  magisterium: "/magisterium",
+  father: "/patristica",
+  saint: "/santos",
+  journey: "/jornadas",
+  theme: "/buscar",
 };
 
 export function nexusChannelToListingHref(channel: NexusChannel): string {

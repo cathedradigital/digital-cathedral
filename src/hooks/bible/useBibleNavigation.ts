@@ -16,23 +16,13 @@
  * re-renderiza. Não há useEffect state ↔ URL (evita loops).
  */
 
-import { useCallback, useMemo } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { BIBLE_DATA, BibleBook } from '@/data/bible-books';
+import { useCallback, useMemo } from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import { BIBLE_DATA, BibleBook } from "@/data/bible-books";
 
-export type BibleViewMode =
-  | 'home'
-  | 'chapters'
-  | 'reading'
-  | 'search'
-  | 'notes'
-  | 'monthly_recap';
+export type BibleViewMode = "home" | "chapters" | "reading" | "search" | "notes" | "monthly_recap";
 
-const SPECIAL_VIEWS: ReadonlySet<BibleViewMode> = new Set([
-  'search',
-  'notes',
-  'monthly_recap',
-]);
+const SPECIAL_VIEWS: ReadonlySet<BibleViewMode> = new Set(["search", "notes", "monthly_recap"]);
 
 const ALL_BOOKS: BibleBook[] = Object.values(BIBLE_DATA)
   .flat()
@@ -41,9 +31,7 @@ const ALL_BOOKS: BibleBook[] = Object.values(BIBLE_DATA)
 function findBook(rawAbbr: string | null): BibleBook | null {
   if (!rawAbbr) return null;
   const decoded = decodeURIComponent(rawAbbr);
-  return (
-    ALL_BOOKS.find((b) => b.abbr === decoded || b.name === decoded) ?? null
-  );
+  return ALL_BOOKS.find((b) => b.abbr === decoded || b.name === decoded) ?? null;
 }
 
 export interface UseBibleNavigation {
@@ -68,10 +56,10 @@ export interface UseBibleNavigation {
 export function useBibleNavigation(): UseBibleNavigation {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const rawView = searchParams.get('view') as BibleViewMode | null;
-  const bookParam = searchParams.get('book');
-  const chapterParam = searchParams.get('ch');
-  const searchQuery = searchParams.get('q') ?? '';
+  const rawView = searchParams.get("view") as BibleViewMode | null;
+  const bookParam = searchParams.get("book");
+  const chapterParam = searchParams.get("ch");
+  const searchQuery = searchParams.get("q") ?? "";
 
   const selectedBook = useMemo(() => findBook(bookParam), [bookParam]);
 
@@ -83,9 +71,9 @@ export function useBibleNavigation(): UseBibleNavigation {
 
   const viewMode: BibleViewMode = useMemo(() => {
     if (rawView && SPECIAL_VIEWS.has(rawView)) return rawView;
-    if (selectedBook && chapterParam) return 'reading';
-    if (selectedBook) return 'chapters';
-    return 'home';
+    if (selectedBook && chapterParam) return "reading";
+    if (selectedBook) return "chapters";
+    return "home";
   }, [rawView, selectedBook, chapterParam]);
 
   // Helper to mutate params without stomping siblings.
@@ -107,15 +95,15 @@ export function useBibleNavigation(): UseBibleNavigation {
     (book: BibleBook | null) => {
       mutate((p) => {
         if (book) {
-          p.set('book', encodeURIComponent(book.abbr));
+          p.set("book", encodeURIComponent(book.abbr));
           // Trocar de livro reseta o capítulo (comportamento atual).
-          p.delete('ch');
-          p.delete('v');
-          p.delete('view');
+          p.delete("ch");
+          p.delete("v");
+          p.delete("view");
         } else {
-          p.delete('book');
-          p.delete('ch');
-          p.delete('v');
+          p.delete("book");
+          p.delete("ch");
+          p.delete("v");
         }
       });
     },
@@ -125,9 +113,9 @@ export function useBibleNavigation(): UseBibleNavigation {
   const setSelectedChapter = useCallback(
     (chapter: number) => {
       mutate((p) => {
-        p.set('ch', String(chapter));
-        p.delete('v');
-        p.delete('view');
+        p.set("ch", String(chapter));
+        p.delete("v");
+        p.delete("view");
       });
     },
     [mutate],
@@ -136,23 +124,23 @@ export function useBibleNavigation(): UseBibleNavigation {
   const setViewMode = useCallback(
     (mode: BibleViewMode) => {
       mutate((p) => {
-        if (mode === 'home') {
-          p.delete('view');
-          p.delete('book');
-          p.delete('ch');
-          p.delete('v');
-          p.delete('q');
-        } else if (mode === 'chapters') {
+        if (mode === "home") {
+          p.delete("view");
+          p.delete("book");
+          p.delete("ch");
+          p.delete("v");
+          p.delete("q");
+        } else if (mode === "chapters") {
           // Requer book já presente na URL (callsites atuais garantem isso).
-          p.delete('view');
-          p.delete('ch');
-          p.delete('v');
-        } else if (mode === 'reading') {
+          p.delete("view");
+          p.delete("ch");
+          p.delete("v");
+        } else if (mode === "reading") {
           // Requer book+ch já presentes na URL.
-          p.delete('view');
+          p.delete("view");
         } else {
           // search | notes | monthly_recap
-          p.set('view', mode);
+          p.set("view", mode);
         }
       });
     },
@@ -162,23 +150,20 @@ export function useBibleNavigation(): UseBibleNavigation {
   const setSearchQuery = useCallback(
     (q: string) => {
       mutate((p) => {
-        if (q) p.set('q', q);
-        else p.delete('q');
+        if (q) p.set("q", q);
+        else p.delete("q");
       });
     },
     [mutate],
   );
 
-  const selectBook = useCallback(
-    (book: BibleBook) => setSelectedBook(book),
-    [setSelectedBook],
-  );
+  const selectBook = useCallback((book: BibleBook) => setSelectedBook(book), [setSelectedBook]);
 
   const selectChapter = useCallback(
     (chapter: number) => {
       setSelectedChapter(chapter);
-      if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       }
     },
     [setSelectedChapter],

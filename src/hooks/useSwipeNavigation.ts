@@ -1,12 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { telemetry } from '@/utils/navigation-telemetry';
+import { useEffect, useRef } from "react";
+import { telemetry } from "@/utils/navigation-telemetry";
 
 interface SwipeOptions {
-  onSwipeLeft?: () => void;   // próximo
-  onSwipeRight?: () => void;  // anterior
-  onTap?: () => void;         // tap rápido para revelar UI
-  threshold?: number;         // px mínimos (opcional, sobrescreve env)
-  ratio?: number;            // razão diagonal (opcional, sobrescreve env)
+  onSwipeLeft?: () => void; // próximo
+  onSwipeRight?: () => void; // anterior
+  onTap?: () => void; // tap rápido para revelar UI
+  threshold?: number; // px mínimos (opcional, sobrescreve env)
+  ratio?: number; // razão diagonal (opcional, sobrescreve env)
   enabled?: boolean;
 }
 
@@ -65,46 +65,50 @@ export function useSwipeNavigation({
       // Swipe horizontal (predominante sobre vertical)
       // Increased ratio from 1.5 to 2.5 to be more strict
       if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy) * ratio) {
-        telemetry.log('Valid Swipe Triggered', 'info', { dx, dy, threshold });
+        telemetry.log("Valid Swipe Triggered", "info", { dx, dy, threshold });
         if (dx < 0) onSwipeLeft?.();
         else onSwipeRight?.();
       } else if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {
-        telemetry.log('Swipe Below Threshold or Ratio', 'warn', { dx, dy, threshold });
-        window.dispatchEvent(new CustomEvent('nav-blocked', { 
-          detail: { reason: 'threshold_not_met', dx, dy, threshold } 
-        }));
+        telemetry.log("Swipe Below Threshold or Ratio", "warn", { dx, dy, threshold });
+        window.dispatchEvent(
+          new CustomEvent("nav-blocked", {
+            detail: { reason: "threshold_not_met", dx, dy, threshold },
+          }),
+        );
       }
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
       // Navegação por setas (acessibilidade e conveniência desktop)
-      if (e.key === 'ArrowLeft') {
+      if (e.key === "ArrowLeft") {
         onSwipeRight?.();
         onTap?.(); // Revela a UI brevemente como feedback visual
       }
-      if (e.key === 'ArrowRight') {
+      if (e.key === "ArrowRight") {
         onSwipeLeft?.();
         onTap?.(); // Revela a UI brevemente como feedback visual
       }
       // Espaço ou Enter para revelar a UI no modo contemplativo
-      if (e.key === ' ' || e.key === 'Enter') {
-        if (document.activeElement?.tagName === 'BODY' || document.activeElement?.tagName === 'DIV') {
+      if (e.key === " " || e.key === "Enter") {
+        if (
+          document.activeElement?.tagName === "BODY" ||
+          document.activeElement?.tagName === "DIV"
+        ) {
           onTap?.();
         }
       }
     };
 
-    window.addEventListener('touchstart', onStart, { passive: true });
-    window.addEventListener('touchmove', onMove, { passive: true });
-    window.addEventListener('touchend', onEnd, { passive: true });
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchmove", onMove, { passive: true });
+    window.addEventListener("touchend", onEnd, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      window.removeEventListener('touchstart', onStart);
-      window.removeEventListener('touchmove', onMove);
-      window.removeEventListener('touchend', onEnd);
-      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onEnd);
+      window.removeEventListener("keydown", onKeyDown);
     };
   }, [enabled, threshold, onSwipeLeft, onSwipeRight, onTap]);
-
 }

@@ -1,10 +1,10 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import { useState, useEffect } from "react";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AppRoute, Language } from "@/types";
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from "@/lib/rr-compat";
 
 import { useLang } from "@/hooks/useLang";
 import { HomeButton } from "../cathedra/HomeButton";
@@ -17,13 +17,13 @@ const LandingHeader = () => {
   const { lang, setLang } = useLang();
 
   const languages: { code: Language; label: string; flag: string }[] = [
-    { code: 'pt', label: 'Português', flag: '🇧🇷' },
-    { code: 'en', label: 'English', flag: '🇺🇸' },
-    { code: 'es', label: 'Español', flag: '🇪🇸' },
-    { code: 'la', label: 'Latina', flag: '🇻🇦' },
-    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
-    { code: 'fr', label: 'Français', flag: '🇫🇷' },
-    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: "pt", label: "Português", flag: "🇧🇷" },
+    { code: "en", label: "English", flag: "🇺🇸" },
+    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "la", label: "Latina", flag: "🇻🇦" },
+    { code: "it", label: "Italiano", flag: "🇮🇹" },
+    { code: "fr", label: "Français", flag: "🇫🇷" },
+    { code: "de", label: "Deutsch", flag: "🇩🇪" },
   ];
   useEffect(() => {
     const handleScroll = () => {
@@ -62,15 +62,22 @@ const LandingHeader = () => {
       }`}
     >
       <div className="app-container flex items-center justify-between">
-        <Link 
+        <Link
           to={AppRoute.HOME}
           className="flex items-center gap-spacing-md cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-premium-full p-spacing-2xs transition-shadow"
           aria-label="Cathedra - Página Inicial"
         >
-          <Icons.Logo className="w-spacing-2xl h-spacing-2xl transition-all duration-1000 group-hover:scale-105" variant="gold" />
+          <Icons.Logo
+            className="w-spacing-2xl h-spacing-2xl transition-all duration-1000 group-hover:scale-105"
+            variant="gold"
+          />
           <div className="hidden sm:flex flex-col">
-            <h2 className="text-premium-xl font-display font-medium text-primary tracking-[0.4em] uppercase leading-none">CATHEDRA</h2>
-            <span className="text-[8px] font-black uppercase tracking-[0.6em] text-secondary mt-spacing-2xs">Digital Sanctuarium</span>
+            <h2 className="text-premium-xl font-display font-medium text-primary tracking-[0.4em] uppercase leading-none">
+              CATHEDRA
+            </h2>
+            <span className="text-[8px] font-black uppercase tracking-[0.6em] text-secondary mt-spacing-2xs">
+              Digital Sanctuarium
+            </span>
           </div>
         </Link>
 
@@ -89,9 +96,9 @@ const LandingHeader = () => {
               <span className="absolute -bottom-spacing-2xs left-0 w-spacing-0 h-spacing-3xs bg-primary transition-all group-hover:w-full" />
             </Button>
           ))}
-          
+
           <div className="relative">
-            <Button 
+            <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowLangMenu(!showLangMenu)}
@@ -117,8 +124,11 @@ const LandingHeader = () => {
                       key={l.code}
                       variant="ghost"
                       size="sm"
-                      onClick={() => { setLang(l.code); setShowLangMenu(false); }}
-                      className={`w-full px-spacing-md py-spacing-xs justify-between font-normal tracking-normal shadow-premium-none ${lang === l.code ? 'text-primary font-bold' : 'text-muted-foreground'}`}
+                      onClick={() => {
+                        setLang(l.code);
+                        setShowLangMenu(false);
+                      }}
+                      className={`w-full px-spacing-md py-spacing-xs justify-between font-normal tracking-normal shadow-premium-none ${lang === l.code ? "text-primary font-bold" : "text-muted-foreground"}`}
                       type="button"
                     >
                       <span>{l.label}</span>
@@ -135,7 +145,7 @@ const LandingHeader = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => window.dispatchEvent(new CustomEvent('open-a11y-settings'))}
+            onClick={() => window.dispatchEvent(new CustomEvent("open-a11y-settings"))}
             className="min-h-[44px] min-w-[44px] rounded-premium-full text-muted-foreground hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Configurações de acessibilidade"
           >
@@ -152,7 +162,7 @@ const LandingHeader = () => {
           >
             Entrar
           </Button>
-          
+
           <HomeButton
             variant="ghost"
             size="sm"
@@ -197,10 +207,7 @@ const LandingHeader = () => {
                 </Button>
               ))}
               <hr className="border-border/10" />
-              <HomeButton
-                className="w-full"
-                onClick={() => navigate(AppRoute.LOGIN)}
-              >
+              <HomeButton className="w-full" onClick={() => navigate(AppRoute.LOGIN)}>
                 Iniciar Agora
               </HomeButton>
             </div>

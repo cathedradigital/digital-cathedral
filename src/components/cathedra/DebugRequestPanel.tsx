@@ -9,14 +9,14 @@
  * erros de rede. Botão flutuante no canto inferior direito abre a lista.
  * Zero impacto quando desativado (não instala o interceptor).
  */
-import React from 'react';
+import React from "react";
 
 type FailedRequest = {
   id: string;
   timestamp: number;
   method: string;
   url: string;
-  status: number | 'network';
+  status: number | "network";
   statusText?: string;
   durationMs: number;
   bodyPreview?: string;
@@ -41,26 +41,25 @@ function push(entry: FailedRequest) {
  * Redaction automática de tokens e PII antes de exibir ou exportar.
  * Aplicada em URL (querystring), body preview e mensagens.
  */
-const SENSITIVE_QS_KEYS = /^(authorization|auth|token|access_token|refresh_token|id_token|apikey|api_key|key|secret|password|passwd|pwd|session|sig|signature)$/i;
-const SENSITIVE_JSON_KEYS = /(authorization|auth|token|access_token|refresh_token|id_token|apikey|api_key|secret|password|passwd|pwd|session|cookie|set-cookie|bearer)/i;
+const SENSITIVE_QS_KEYS =
+  /^(authorization|auth|token|access_token|refresh_token|id_token|apikey|api_key|key|secret|password|passwd|pwd|session|sig|signature)$/i;
+const SENSITIVE_JSON_KEYS =
+  /(authorization|auth|token|access_token|refresh_token|id_token|apikey|api_key|secret|password|passwd|pwd|session|cookie|set-cookie|bearer)/i;
 
 function redactString(input: string): string {
   if (!input) return input;
   let s = input;
   // JWT (3 segmentos base64url separados por ponto)
-  s = s.replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, '[JWT_REDACTED]');
+  s = s.replace(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, "[JWT_REDACTED]");
   // Bearer / Basic tokens
-  s = s.replace(/\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi, '$1 [REDACTED]');
+  s = s.replace(/\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi, "$1 [REDACTED]");
   // Emails
-  s = s.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[EMAIL_REDACTED]');
+  s = s.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "[EMAIL_REDACTED]");
   // Chaves longas (>=32 chars) hex/base64-ish soltas
-  s = s.replace(/\b[A-Za-z0-9_-]{40,}\b/g, (m) =>
-    /^[0-9]+$/.test(m) ? m : '[TOKEN_REDACTED]'
-  );
+  s = s.replace(/\b[A-Za-z0-9_-]{40,}\b/g, (m) => (/^[0-9]+$/.test(m) ? m : "[TOKEN_REDACTED]"));
   // JSON: "chave_sensivel":"valor"
-  s = s.replace(
-    /"([^"]+)"\s*:\s*"([^"]*)"/g,
-    (full, k, v) => (SENSITIVE_JSON_KEYS.test(k) ? `"${k}":"[REDACTED]"` : full)
+  s = s.replace(/"([^"]+)"\s*:\s*"([^"]*)"/g, (full, k, v) =>
+    SENSITIVE_JSON_KEYS.test(k) ? `"${k}":"[REDACTED]"` : full,
   );
   return s;
 }
@@ -69,10 +68,10 @@ function redactUrl(rawUrl: string): string {
   try {
     const url = new URL(rawUrl, window.location.origin);
     url.searchParams.forEach((val, key) => {
-      if (SENSITIVE_QS_KEYS.test(key)) url.searchParams.set(key, '[REDACTED]');
+      if (SENSITIVE_QS_KEYS.test(key)) url.searchParams.set(key, "[REDACTED]");
     });
     // Preserva host completo? Não — só path+search suficiente pra debug.
-    return url.pathname + (url.search ? url.search.slice(0, 200) : '');
+    return url.pathname + (url.search ? url.search.slice(0, 200) : "");
   } catch {
     return redactString(rawUrl).slice(0, 200);
   }
@@ -82,7 +81,7 @@ function redactFullUrl(rawUrl: string): string {
   try {
     const url = new URL(rawUrl, window.location.origin);
     url.searchParams.forEach((val, key) => {
-      if (SENSITIVE_QS_KEYS.test(key)) url.searchParams.set(key, '[REDACTED]');
+      if (SENSITIVE_QS_KEYS.test(key)) url.searchParams.set(key, "[REDACTED]");
     });
     return url.toString();
   } catch {
@@ -95,13 +94,24 @@ function shortUrl(u: string) {
 }
 
 function installInterceptor() {
-  if (installed || typeof window === 'undefined') return;
+  if (installed || typeof window === "undefined") return;
   installed = true;
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const start = performance.now();
-    const method = (init?.method || (typeof input !== 'string' && 'method' in (input as Request) ? (input as Request).method : 'GET') || 'GET').toUpperCase();
-    const url = typeof input === 'string' ? input : (input instanceof URL ? input.toString() : (input as Request).url);
+    const method = (
+      init?.method ||
+      (typeof input !== "string" && "method" in (input as Request)
+        ? (input as Request).method
+        : "GET") ||
+      "GET"
+    ).toUpperCase();
+    const url =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : (input as Request).url;
     try {
       const res = await originalFetch(input as any, init);
       if (!res.ok) {
@@ -110,7 +120,9 @@ function installInterceptor() {
           const clone = res.clone();
           const txt = await clone.text();
           bodyPreview = redactString(txt).slice(0, 400);
-        } catch {/* ignore */}
+        } catch {
+          /* ignore */
+        }
         push({
           id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
           timestamp: Date.now(),
@@ -129,8 +141,8 @@ function installInterceptor() {
         timestamp: Date.now(),
         method,
         url: redactFullUrl(url),
-        status: 'network',
-        statusText: redactString(err?.message || 'Network error'),
+        status: "network",
+        statusText: redactString(err?.message || "Network error"),
         durationMs: Math.round(performance.now() - start),
       });
       throw err;
@@ -142,8 +154,8 @@ function useEnabled() {
   const [enabled, setEnabled] = React.useState(false);
   React.useEffect(() => {
     try {
-      const ls = window.localStorage.getItem('debug:requests') === '1';
-      const qs = new URLSearchParams(window.location.search).get('debug') === 'requests';
+      const ls = window.localStorage.getItem("debug:requests") === "1";
+      const qs = new URLSearchParams(window.location.search).get("debug") === "requests";
       setEnabled(Boolean(ls || qs));
     } catch {
       setEnabled(false);
@@ -156,7 +168,9 @@ function useFailedRequests() {
   const [, force] = React.useReducer((n) => n + 1, 0);
   React.useEffect(() => {
     listeners.add(force);
-    return () => { listeners.delete(force); };
+    return () => {
+      listeners.delete(force);
+    };
   }, []);
   return STORE;
 }
@@ -195,7 +209,10 @@ export const DebugRequestPanel: React.FC = () => {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => { STORE.length = 0; notify(); }}
+                onClick={() => {
+                  STORE.length = 0;
+                  notify();
+                }}
                 className="text-rose-700 dark:text-rose-300 hover:underline"
               >
                 limpar
@@ -203,7 +220,11 @@ export const DebugRequestPanel: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  try { window.localStorage.removeItem('debug:requests'); } catch {/* */}
+                  try {
+                    window.localStorage.removeItem("debug:requests");
+                  } catch {
+                    /* */
+                  }
                   setEnabled(false);
                   setOpen(false);
                 }}
@@ -211,7 +232,11 @@ export const DebugRequestPanel: React.FC = () => {
               >
                 desligar
               </button>
-              <button type="button" onClick={() => setOpen(false)} className="text-muted-foreground hover:underline">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="text-muted-foreground hover:underline"
+              >
                 fechar
               </button>
             </div>
@@ -224,7 +249,7 @@ export const DebugRequestPanel: React.FC = () => {
             )}
             {entries.map((e) => {
               const time = new Date(e.timestamp).toLocaleTimeString();
-              const statusLabel = e.status === 'network' ? 'NET' : String(e.status);
+              const statusLabel = e.status === "network" ? "NET" : String(e.status);
               return (
                 <details key={e.id} className="px-3 py-2 hover:bg-muted/40">
                   <summary className="cursor-pointer flex items-center gap-2">
@@ -232,18 +257,26 @@ export const DebugRequestPanel: React.FC = () => {
                       {statusLabel}
                     </span>
                     <span className="text-muted-foreground">{e.method}</span>
-                    <span className="truncate flex-1" title={e.url}>{shortUrl(e.url)}</span>
+                    <span className="truncate flex-1" title={e.url}>
+                      {shortUrl(e.url)}
+                    </span>
                     <span className="text-muted-foreground shrink-0">{e.durationMs}ms</span>
                   </summary>
                   <div className="mt-2 space-y-1 pl-1">
-                    <div><span className="text-muted-foreground">hora:</span> {time}</div>
-                    <div className="break-all"><span className="text-muted-foreground">url:</span> {e.url}</div>
+                    <div>
+                      <span className="text-muted-foreground">hora:</span> {time}
+                    </div>
+                    <div className="break-all">
+                      <span className="text-muted-foreground">url:</span> {e.url}
+                    </div>
                     {e.statusText && (
-                      <div><span className="text-muted-foreground">status:</span> {e.statusText}</div>
+                      <div>
+                        <span className="text-muted-foreground">status:</span> {e.statusText}
+                      </div>
                     )}
                     {e.bodyPreview && (
                       <pre className="mt-1 max-h-40 overflow-auto rounded bg-muted/60 p-2 whitespace-pre-wrap break-all">
-{e.bodyPreview}
+                        {e.bodyPreview}
                       </pre>
                     )}
                   </div>

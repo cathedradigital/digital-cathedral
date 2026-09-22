@@ -5,10 +5,10 @@
  * complementa o Próprio gerado dinamicamente. Renderiza compacto, respeitando
  * o design system do Breviário (tokens `spacing`, `premium`, `serif`).
  */
-import React from 'react';
-import { Icons } from '../../../../constants';
-import { getHourEditorial } from '@/data/liturgyHoursEditorial';
-import type { HourSlug } from '@/hooks/useLiturgyHoursOffice';
+import React from "react";
+import { Icons } from "../../../../constants";
+import { getHourEditorial } from "@/data/liturgyHoursEditorial";
+import type { HourSlug } from "@/hooks/useLiturgyHoursOffice";
 
 interface Props {
   hourSlug: HourSlug;
@@ -16,7 +16,7 @@ interface Props {
   className?: string;
 }
 
-export const HourSpiritCard: React.FC<Props> = ({ hourSlug, hourTitle, className = '' }) => {
+export const HourSpiritCard: React.FC<Props> = ({ hourSlug, hourTitle, className = "" }) => {
   const editorial = getHourEditorial(hourSlug);
   if (!editorial) return null;
 

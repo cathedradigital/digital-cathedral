@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { useAuth } from './useAuth';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { useAuth } from "./useAuth";
 
-export type GlossaryRole = 'editor' | 'reviewer' | 'admin';
+export type GlossaryRole = "editor" | "reviewer" | "admin";
 
 interface Result {
   role: GlossaryRole | null;
@@ -22,15 +22,15 @@ export function useGlossaryRole(): Result {
   const { user } = useAuth();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['glossary-role', user?.id],
+    queryKey: ["glossary-role", user?.id],
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data, error } = await supabase.rpc('glossary_role_for', { _uid: user.id });
+      const { data, error } = await supabase.rpc("glossary_role_for", { _uid: user.id });
       if (error) return null;
       const role = (data ?? null) as GlossaryRole | null;
-      if (role && ['editor', 'reviewer', 'admin'].includes(role)) return role;
+      if (role && ["editor", "reviewer", "admin"].includes(role)) return role;
       return null;
     },
   });
@@ -39,9 +39,9 @@ export function useGlossaryRole(): Result {
   return {
     role,
     isLoading,
-    canEdit: role === 'editor' || role === 'reviewer' || role === 'admin',
-    canReview: role === 'reviewer' || role === 'admin',
-    canPublish: role === 'reviewer' || role === 'admin',
-    canDelete: role === 'admin',
+    canEdit: role === "editor" || role === "reviewer" || role === "admin",
+    canReview: role === "reviewer" || role === "admin",
+    canPublish: role === "reviewer" || role === "admin",
+    canDelete: role === "admin",
   };
 }

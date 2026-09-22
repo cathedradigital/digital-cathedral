@@ -9,16 +9,16 @@
  */
 
 export type BiblePerfPhase =
-  | 'cache:check'
-  | 'cache:hit'
-  | 'text:start'
-  | 'text:end'
-  | 'connections:start'
-  | 'connections:end'
-  | 'render'
-  | 'progress:start'
-  | 'progress:end'
-  | 'end';
+  | "cache:check"
+  | "cache:hit"
+  | "text:start"
+  | "text:end"
+  | "connections:start"
+  | "connections:end"
+  | "render"
+  | "progress:start"
+  | "progress:end"
+  | "end";
 
 export interface BiblePerfRun {
   id: string;
@@ -30,18 +30,18 @@ export interface BiblePerfRun {
   versesCount?: number;
   connectionsCount?: number;
   cacheHit?: boolean;
-  status?: 'ok' | 'error' | '400' | '404' | '304' | 'empty';
+  status?: "ok" | "error" | "400" | "404" | "304" | "empty";
 }
 
 const MAX_RUNS = 50;
 const runs: BiblePerfRun[] = [];
 
 function now(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 function ensureGlobal() {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const w = window as any;
   if (!w.__biblePerf) {
     w.__biblePerf = {
@@ -92,13 +92,13 @@ export function end(id: string, patch?: Partial<BiblePerfRun>) {
 function durationsOf(run: BiblePerfRun) {
   const m = run.marks;
   const v = (a?: number, b?: number) =>
-    typeof a === 'number' && typeof b === 'number' ? Math.round(b - a) : undefined;
+    typeof a === "number" && typeof b === "number" ? Math.round(b - a) : undefined;
   return {
-    cache_ms: v(0, m['cache:check']),
-    text_ms: v(m['text:start'], m['text:end']),
-    connections_ms: v(m['connections:start'], m['connections:end']),
-    render_ms: v(m['text:end'], m.render),
-    progress_ms: v(m['progress:start'], m['progress:end']),
+    cache_ms: v(0, m["cache:check"]),
+    text_ms: v(m["text:start"], m["text:end"]),
+    connections_ms: v(m["connections:start"], m["connections:end"]),
+    render_ms: v(m["text:end"], m.render),
+    progress_ms: v(m["progress:start"], m["progress:end"]),
     total_ms: Math.round(m.end ?? 0),
   };
 }
@@ -107,18 +107,27 @@ function logRun(run: BiblePerfRun) {
   const d = durationsOf(run);
   // Pretty console group for the run.
   /* eslint-disable no-console */
-  const label = `🕮 Bible perf · ${run.abbr} ${run.chapter} · ${d.total_ms}ms${run.cacheHit ? ' (cache)' : ''}`;
+  const label = `🕮 Bible perf · ${run.abbr} ${run.chapter} · ${d.total_ms}ms${run.cacheHit ? " (cache)" : ""}`;
   try {
     console.groupCollapsed(label);
     console.table({
-      'Capítulo (total)': { ms: d.total_ms ?? '—' },
-      'Cache check': { ms: d.cache_ms ?? '—' },
-      'Busca texto': { ms: d.text_ms ?? '—' },
-      'Busca conexões': { ms: d.connections_ms ?? '—' },
-      'Renderiza': { ms: d.render_ms ?? '—' },
-      'Salva progresso': { ms: d.progress_ms ?? '—' },
+      "Capítulo (total)": { ms: d.total_ms ?? "—" },
+      "Cache check": { ms: d.cache_ms ?? "—" },
+      "Busca texto": { ms: d.text_ms ?? "—" },
+      "Busca conexões": { ms: d.connections_ms ?? "—" },
+      Renderiza: { ms: d.render_ms ?? "—" },
+      "Salva progresso": { ms: d.progress_ms ?? "—" },
     });
-    console.log('Status:', run.status, '· Source:', run.source, '· Versículos:', run.versesCount, '· Conexões:', run.connectionsCount);
+    console.log(
+      "Status:",
+      run.status,
+      "· Source:",
+      run.source,
+      "· Versículos:",
+      run.versesCount,
+      "· Conexões:",
+      run.connectionsCount,
+    );
     console.groupEnd();
   } catch {
     console.log(label, d);
@@ -130,9 +139,9 @@ export function printTable() {
   /* eslint-disable no-console */
   const rows = runs.map((r) => ({
     livro: `${r.abbr} ${r.chapter}`,
-    status: r.status ?? '—',
+    status: r.status ?? "—",
     ...durationsOf(r),
-    source: r.source ?? '—',
+    source: r.source ?? "—",
   }));
   console.table(rows);
   /* eslint-enable no-console */
@@ -144,18 +153,18 @@ export function summary() {
   if (!completed.length) return { count: 0 };
   const ds = completed.map(durationsOf);
   const avg = (k: keyof ReturnType<typeof durationsOf>) => {
-    const vals = ds.map((d) => d[k]).filter((v): v is number => typeof v === 'number');
+    const vals = ds.map((d) => d[k]).filter((v): v is number => typeof v === "number");
     return vals.length ? Math.round(vals.reduce((s, v) => s + v, 0) / vals.length) : 0;
   };
   return {
     count: completed.length,
-    avg_total_ms: avg('total_ms'),
-    avg_text_ms: avg('text_ms'),
-    avg_connections_ms: avg('connections_ms'),
-    avg_render_ms: avg('render_ms'),
-    avg_progress_ms: avg('progress_ms'),
+    avg_total_ms: avg("total_ms"),
+    avg_text_ms: avg("text_ms"),
+    avg_connections_ms: avg("connections_ms"),
+    avg_render_ms: avg("render_ms"),
+    avg_progress_ms: avg("progress_ms"),
     cache_hit_rate: Math.round(
-      (completed.filter((r) => r.cacheHit).length / completed.length) * 100
+      (completed.filter((r) => r.cacheHit).length / completed.length) * 100,
     ),
   };
 }

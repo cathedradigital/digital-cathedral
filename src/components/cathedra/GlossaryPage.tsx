@@ -12,37 +12,30 @@
  *    do verbete (/glossario/:slug) — sem expansão inline.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from '@/lib/rr-compat';
-import { Search } from 'lucide-react';
-import SEOHead from '@/components/SEOHead';
-import { supabase } from '@/lib/db';
-import { useFuzzySearch } from '@/hooks/useFuzzySearch';
-import {
-  EditorialShell,
-  EditorialHero,
-  EditorialDivider,
-} from '@/components/editorial';
-import {
-  EditorialKicker,
-  EditorialEmptyState,
-} from '@/components/editorial/primitives';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "@/lib/rr-compat";
+import { Search } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
+import { supabase } from "@/lib/db";
+import { useFuzzySearch } from "@/hooks/useFuzzySearch";
+import { EditorialShell, EditorialHero, EditorialDivider } from "@/components/editorial";
+import { EditorialKicker, EditorialEmptyState } from "@/components/editorial/primitives";
 import {
   getRosaryReturn,
   clearRosaryReturn,
   formatElapsedShort,
   ROSARY_MODE_LABEL,
   type RosaryReturnContext,
-} from '@/lib/rosaryReturnContext';
-import { cn } from '@/lib/utils';
+} from "@/lib/rosaryReturnContext";
+import { cn } from "@/lib/utils";
 
 export function slugifyTerm(term: string): string {
   return term
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 interface GlossaryTerm {
@@ -53,22 +46,22 @@ interface GlossaryTerm {
   definition: string;
   category: string | null;
   status: string | null;
-  editorial_completeness: 'complete' | 'expanding' | 'reviewed_theologically' | null;
+  editorial_completeness: "complete" | "expanding" | "reviewed_theologically" | null;
   similarityScore?: number;
 }
 
 const COMPLETENESS_DOT: Record<string, { color: string; label: string }> = {
-  complete: { color: 'bg-emerald-500', label: 'Completo' },
-  expanding: { color: 'bg-amber-500', label: 'Em expansão' },
-  reviewed_theologically: { color: 'bg-sky-500', label: 'Revisado teologicamente' },
+  complete: { color: "bg-emerald-500", label: "Completo" },
+  expanding: { color: "bg-amber-500", label: "Em expansão" },
+  reviewed_theologically: { color: "bg-sky-500", label: "Revisado teologicamente" },
 };
 
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 function firstLetter(term: string): string {
-  const clean = term.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const ch = (clean[0] ?? '').toUpperCase();
-  return /[A-Z]/.test(ch) ? ch : '#';
+  const clean = term.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const ch = (clean[0] ?? "").toUpperCase();
+  return /[A-Z]/.test(ch) ? ch : "#";
 }
 
 const GlossaryPage: React.FC = () => {
@@ -77,8 +70,8 @@ const GlossaryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [terms, setTerms] = useState<GlossaryTerm[]>([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState(() => searchParams.get('category') || 'Todos');
-  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '');
+  const [category, setCategory] = useState(() => searchParams.get("category") || "Todos");
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") || "");
   const [rosaryReturn, setRosaryReturn] = useState<RosaryReturnContext | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -94,14 +87,14 @@ const GlossaryPage: React.FC = () => {
   const handleReturnToRosary = () => {
     clearRosaryReturn();
     setRosaryReturn(null);
-    navigate('/rosary#preparation');
+    navigate("/rosary#preparation");
   };
 
   const { results: searchResults, isPending: isSearchPending } = useFuzzySearch<GlossaryTerm>({
-    rpc: 'search_glossary_fuzzy',
+    rpc: "search_glossary_fuzzy",
     query: searchQuery,
-    primaryField: 'term',
-    secondaryField: 'definition',
+    primaryField: "term",
+    secondaryField: "definition",
     secondaryWeight: 0.5,
   });
 
@@ -110,11 +103,13 @@ const GlossaryPage: React.FC = () => {
     (async () => {
       setLoading(true);
       const { data, error } = await (supabase as any)
-        .from('glossary')
-        .select('id, slug, term, short_definition, definition, category, status, editorial_completeness')
-        .order('term', { ascending: true });
+        .from("glossary")
+        .select(
+          "id, slug, term, short_definition, definition, category, status, editorial_completeness",
+        )
+        .order("term", { ascending: true });
       if (cancelled) return;
-      if (error) console.error('Erro ao carregar glossário:', error);
+      if (error) console.error("Erro ao carregar glossário:", error);
       setTerms((data as GlossaryTerm[]) || []);
       setLoading(false);
     })();
@@ -125,12 +120,12 @@ const GlossaryPage: React.FC = () => {
 
   const categories = useMemo(() => {
     const cats = new Set(terms.map((t) => t.category).filter(Boolean) as string[]);
-    return ['Todos', ...Array.from(cats).sort((a, b) => a.localeCompare(b, 'pt'))];
+    return ["Todos", ...Array.from(cats).sort((a, b) => a.localeCompare(b, "pt"))];
   }, [terms]);
 
   const filtered = useMemo(() => {
     const base = searchQuery.trim().length >= 2 && searchResults ? searchResults : terms;
-    return category === 'Todos' ? base : base.filter((t) => t.category === category);
+    return category === "Todos" ? base : base.filter((t) => t.category === category);
   }, [terms, searchResults, searchQuery, category]);
 
   // Agrupamento A–Z (só quando não há busca ativa)
@@ -142,7 +137,7 @@ const GlossaryPage: React.FC = () => {
       arr.push(t);
       map.set(letter, arr);
     }
-    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b, 'pt'));
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b, "pt"));
   }, [filtered]);
 
   const availableLetters = useMemo(() => new Set(grouped.map(([l]) => l)), [grouped]);
@@ -150,10 +145,10 @@ const GlossaryPage: React.FC = () => {
   // Sincroniza URL
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
-    if (searchQuery.trim()) next.set('q', searchQuery.trim());
-    else next.delete('q');
-    if (category !== 'Todos') next.set('category', category);
-    else next.delete('category');
+    if (searchQuery.trim()) next.set("q", searchQuery.trim());
+    else next.delete("q");
+    if (category !== "Todos") next.set("category", category);
+    else next.delete("category");
     if (next.toString() !== searchParams.toString()) {
       setSearchParams(next, { replace: true });
     }
@@ -169,7 +164,10 @@ const GlossaryPage: React.FC = () => {
         description="Enciclopédia católica viva: definições editoriais, contexto histórico, Escritura, Catecismo, Magistério, Santos e Liturgia interconectados no Nexus."
         path="/glossario"
         keywords="glossário teológico, léxico católico, enciclopédia teológica, definições católicas"
-        breadcrumbs={[{ name: 'Início', path: '/' }, { name: 'Léxico', path: '/glossario' }]}
+        breadcrumbs={[
+          { name: "Início", path: "/" },
+          { name: "Léxico", path: "/glossario" },
+        ]}
       />
 
       <EditorialShell>
@@ -186,8 +184,8 @@ const GlossaryPage: React.FC = () => {
                 Sessão em andamento
               </p>
               <p className="font-stitch-serif text-stitch-body-sm text-stitch-on-background truncate">
-                {rosaryReturn.setName} · {rosaryReturn.mysteryLabel} · modo{' '}
-                <strong>{ROSARY_MODE_LABEL[rosaryReturn.mode]}</strong> ·{' '}
+                {rosaryReturn.setName} · {rosaryReturn.mysteryLabel} · modo{" "}
+                <strong>{ROSARY_MODE_LABEL[rosaryReturn.mode]}</strong> ·{" "}
                 {formatElapsedShort(rosaryReturn.elapsedMs)}
               </p>
             </div>
@@ -227,11 +225,11 @@ const GlossaryPage: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Digite uma palavra ou conceito…"
               className={cn(
-                'w-full pl-12 pr-12 py-4 rounded-full',
-                'bg-card border border-border/60',
-                'font-serif text-premium-base text-foreground',
-                'placeholder:text-muted-foreground/70',
-                'focus-visible:outline-none focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/30',
+                "w-full pl-12 pr-12 py-4 rounded-full",
+                "bg-card border border-border/60",
+                "font-serif text-premium-base text-foreground",
+                "placeholder:text-muted-foreground/70",
+                "focus-visible:outline-none focus-visible:border-gold focus-visible:ring-2 focus-visible:ring-gold/30",
               )}
             />
             {isSearchPending && (
@@ -255,10 +253,10 @@ const GlossaryPage: React.FC = () => {
                     onClick={() => setCategory(cat)}
                     aria-pressed={active}
                     className={cn(
-                      'px-4 py-2 rounded-full border font-stitch-label text-stitch-label-sm uppercase tracking-[0.22em] transition-colors',
+                      "px-4 py-2 rounded-full border font-stitch-label text-stitch-label-sm uppercase tracking-[0.22em] transition-colors",
                       active
-                        ? 'border-stitch-secondary bg-stitch-secondary text-stitch-secondary-foreground font-semibold'
-                        : 'border-stitch-outline-variant/50 text-stitch-on-surface-variant hover:border-stitch-secondary hover:text-[color:var(--gold-text-strong)]',
+                        ? "border-stitch-secondary bg-stitch-secondary text-stitch-secondary-foreground font-semibold"
+                        : "border-stitch-outline-variant/50 text-stitch-on-surface-variant hover:border-stitch-secondary hover:text-[color:var(--gold-text-strong)]",
                     )}
                   >
                     {cat}
@@ -323,7 +321,7 @@ const GlossaryPage: React.FC = () => {
               <div>
                 <dt className="text-foreground/85">Publicados</dt>
                 <dd className="mt-1 font-stitch-display text-stitch-display-sm text-stitch-on-background">
-                  {terms.filter((t) => t.status === 'published').length}
+                  {terms.filter((t) => t.status === "published").length}
                 </dd>
               </div>
             </dl>
@@ -338,16 +336,16 @@ const GlossaryPage: React.FC = () => {
             </div>
           ) : filtered.length === 0 ? (
             <EditorialEmptyState
-              kicker={isSearching ? 'Nenhum resultado' : 'Léxico vazio'}
+              kicker={isSearching ? "Nenhum resultado" : "Léxico vazio"}
               title={
                 isSearching
                   ? `Nenhum verbete encontrado para "${searchQuery}".`
-                  : 'Nenhum verbete disponível ainda.'
+                  : "Nenhum verbete disponível ainda."
               }
               description={
                 isSearching
-                  ? 'Experimente outro termo ou remova o filtro de categoria.'
-                  : 'Novos verbetes serão publicados em breve.'
+                  ? "Experimente outro termo ou remova o filtro de categoria."
+                  : "Novos verbetes serão publicados em breve."
               }
             />
           ) : isSearching ? (
@@ -370,7 +368,7 @@ const GlossaryPage: React.FC = () => {
                       {letter}
                     </span>
                     <EditorialKicker>
-                      {items.length} {items.length === 1 ? 'verbete' : 'verbetes'}
+                      {items.length} {items.length === 1 ? "verbete" : "verbetes"}
                     </EditorialKicker>
                     <div className="flex-1 h-px bg-border/40" />
                   </header>
@@ -402,19 +400,16 @@ const TermCard: React.FC<{ term: GlossaryTerm; highlight?: string }> = ({ term, 
       <Link
         to={to}
         className={cn(
-          'group block h-full p-6 rounded-premium',
-          'bg-card border border-border/40',
-          'hover:border-gold/60 focus-visible:border-gold',
-          'focus-visible:outline-none transition-colors',
+          "group block h-full p-6 rounded-premium",
+          "bg-card border border-border/40",
+          "hover:border-gold/60 focus-visible:border-gold",
+          "focus-visible:outline-none transition-colors",
         )}
       >
         {(term.category || term.editorial_completeness) && (
           <div className="flex items-center gap-3 mb-2">
             {term.category && (
-              <span className="type-rubrica text-[color:var(--gold-text)]">
-                {term.category}
-              </span>
-
+              <span className="type-rubrica text-[color:var(--gold-text)]">{term.category}</span>
             )}
             {term.editorial_completeness && COMPLETENESS_DOT[term.editorial_completeness] && (
               <span
@@ -423,7 +418,10 @@ const TermCard: React.FC<{ term: GlossaryTerm; highlight?: string }> = ({ term, 
                 aria-label={`Grau editorial: ${COMPLETENESS_DOT[term.editorial_completeness].label}`}
               >
                 <span
-                  className={cn('h-1.5 w-1.5 rounded-full', COMPLETENESS_DOT[term.editorial_completeness].color)}
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    COMPLETENESS_DOT[term.editorial_completeness].color,
+                  )}
                   aria-hidden="true"
                 />
                 {COMPLETENESS_DOT[term.editorial_completeness].label}
@@ -432,11 +430,7 @@ const TermCard: React.FC<{ term: GlossaryTerm; highlight?: string }> = ({ term, 
           </div>
         )}
         <h3 className="font-display text-premium-xl text-foreground group-hover:text-[color:var(--gold-text)] transition-colors">
-          {highlight ? (
-            <HighlightedText text={term.term} query={highlight} />
-          ) : (
-            term.term
-          )}
+          {highlight ? <HighlightedText text={term.term} query={highlight} /> : term.term}
         </h3>
         <p className="mt-3 font-stitch-serif text-stitch-body-sm text-stitch-on-surface-variant line-clamp-3">
           {summary}

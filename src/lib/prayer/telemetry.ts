@@ -5,15 +5,15 @@
  *
  * Sprint · Bug React #300 (/oracao/rosario contemplative)
  */
-import * as Sentry from '@sentry/react';
-import { trackNavigationError } from '@/lib/telemetry';
+import * as Sentry from "@sentry/react";
+import { trackNavigationError } from "@/lib/telemetry";
 
 export interface PrayerErrorContext {
   slug?: string | null;
   searchParams?: Record<string, string>;
   userId?: string | null;
   engineVersion?: number | null;
-  hierarchyStatus?: 'idle' | 'loading' | 'ready' | 'error';
+  hierarchyStatus?: "idle" | "loading" | "ready" | "error";
   blocksCount?: number;
   activeSectionSlug?: string | null;
   mysteriesCount?: number;
@@ -39,15 +39,15 @@ export function reportPrayerError(
 
   // Console estruturado — visível em dev e no console dos usuários.
   // eslint-disable-next-line no-console
-  console.error('[PrayerEngine:error]', payload, error);
+  console.error("[PrayerEngine:error]", payload, error);
 
   Sentry.withScope((scope) => {
-    scope.setTag('surface', 'prayer-engine');
-    scope.setTag('prayer_slug', ctx.slug ?? 'unknown');
+    scope.setTag("surface", "prayer-engine");
+    scope.setTag("prayer_slug", ctx.slug ?? "unknown");
     if (payload.react_error_code) {
-      scope.setTag('react_error_code', payload.react_error_code);
+      scope.setTag("react_error_code", payload.react_error_code);
     }
-    scope.setContext('prayer_context', payload as Record<string, unknown>);
+    scope.setContext("prayer_context", payload as Record<string, unknown>);
     Sentry.captureException(error, {
       extra: { componentStack: extra?.componentStack ?? null },
     });
@@ -65,12 +65,12 @@ export function reportPrayerError(
  * o estado exato antes de uma falha React #300.
  */
 export function logPrayerDiagnostics(label: string, ctx: PrayerErrorContext): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   // eslint-disable-next-line no-console
-  console.debug('[PrayerEngine:diag]', label, ctx);
+  console.debug("[PrayerEngine:diag]", label, ctx);
   Sentry.addBreadcrumb({
-    category: 'prayer-engine',
-    level: 'info',
+    category: "prayer-engine",
+    level: "info",
     message: label,
     data: ctx as Record<string, unknown>,
   });
@@ -87,7 +87,7 @@ export function serializeSearchParams(sp: URLSearchParams): Record<string, strin
   sp.forEach((v, k) => {
     // Sanitiza tokens conhecidos.
     if (/token|secret|key|password/i.test(k)) {
-      out[k] = '[REDACTED]';
+      out[k] = "[REDACTED]";
     } else {
       out[k] = v;
     }

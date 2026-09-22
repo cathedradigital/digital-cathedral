@@ -4,12 +4,12 @@
  * ação concreta para o dia (meta.concrete_action) e CTA para o próximo
  * mistério. Substitui o antigo bloco "mystery-done".
  */
-import React from 'react';
-import { ArrowRight, Leaf, HandHeart, Sunrise } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta } from './mysteryMeta';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { ArrowRight, Leaf, HandHeart, Sunrise } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta } from "./mysteryMeta";
+import { cn } from "@/lib/utils";
 
 interface Props {
   mystery: DBMystery;
@@ -19,7 +19,13 @@ interface Props {
   slotAfter?: React.ReactNode;
 }
 
-const MysteryClosingCard: React.FC<Props> = ({ mystery, isLast, onNext, accentClass = 'text-stitch-secondary', slotAfter }) => {
+const MysteryClosingCard: React.FC<Props> = ({
+  mystery,
+  isLast,
+  onNext,
+  accentClass = "text-stitch-secondary",
+  slotAfter,
+}) => {
   const meta = readMysteryMeta(mystery);
   const fruit = meta.virtue ?? mystery.fruit;
   const closingPrayer = meta.closing_prayer;
@@ -30,7 +36,12 @@ const MysteryClosingCard: React.FC<Props> = ({ mystery, isLast, onNext, accentCl
       aria-labelledby="mystery-closing"
       className="mb-10 rounded-3xl border border-stitch-outline-variant/40 bg-stitch-surface-container-lowest/50 p-6 md:p-8"
     >
-      <p className={cn('font-stitch-body text-[11px] font-bold uppercase tracking-[0.32em]', accentClass)}>
+      <p
+        className={cn(
+          "font-stitch-body text-[11px] font-bold uppercase tracking-[0.32em]",
+          accentClass,
+        )}
+      >
         Dezena concluída
       </p>
       <h3
@@ -43,7 +54,7 @@ const MysteryClosingCard: React.FC<Props> = ({ mystery, isLast, onNext, accentCl
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {fruit && (
           <div className="rounded-2xl border border-stitch-outline-variant/30 bg-stitch-surface/40 p-4">
-            <div className={cn('inline-flex items-center gap-1.5', accentClass)}>
+            <div className={cn("inline-flex items-center gap-1.5", accentClass)}>
               <Leaf aria-hidden className="h-3.5 w-3.5" />
               <p className="font-stitch-body text-[10px] font-bold uppercase tracking-[0.24em]">
                 Fruto
@@ -57,7 +68,7 @@ const MysteryClosingCard: React.FC<Props> = ({ mystery, isLast, onNext, accentCl
 
         {closingPrayer && (
           <div className="rounded-2xl border border-stitch-outline-variant/30 bg-stitch-surface/40 p-4">
-            <div className={cn('inline-flex items-center gap-1.5', accentClass)}>
+            <div className={cn("inline-flex items-center gap-1.5", accentClass)}>
               <HandHeart aria-hidden className="h-3.5 w-3.5" />
               <p className="font-stitch-body text-[10px] font-bold uppercase tracking-[0.24em]">
                 Pequena oração
@@ -71,7 +82,7 @@ const MysteryClosingCard: React.FC<Props> = ({ mystery, isLast, onNext, accentCl
 
         {concreteAction && (
           <div className="rounded-2xl border border-stitch-outline-variant/30 bg-stitch-surface/40 p-4">
-            <div className={cn('inline-flex items-center gap-1.5', accentClass)}>
+            <div className={cn("inline-flex items-center gap-1.5", accentClass)}>
               <Sunrise aria-hidden className="h-3.5 w-3.5" />
               <p className="font-stitch-body text-[10px] font-bold uppercase tracking-[0.24em]">
                 Ação para o dia

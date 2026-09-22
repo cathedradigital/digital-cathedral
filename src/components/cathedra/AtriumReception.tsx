@@ -13,8 +13,8 @@
  *  - Todos os tokens semânticos (nada hardcode).
  *  - Nunca renderiza para visitantes (AtriumHome decide o gate).
  */
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
 import {
   Heart,
   BookOpen,
@@ -25,53 +25,53 @@ import {
   ArrowRight,
   Flame,
   Sparkles,
-} from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useResume, useLiturgyToday } from '@/modules/atrium/hooks';
-import { useSpiritualMemory } from '@/hooks/useSpiritualMemory';
-import type { ResumeItem } from '@/modules/atrium/types';
+} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useResume, useLiturgyToday } from "@/modules/atrium/hooks";
+import { useSpiritualMemory } from "@/hooks/useSpiritualMemory";
+import type { ResumeItem } from "@/modules/atrium/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const WEEKDAY_LABEL = [
-  'domingo',
-  'segunda-feira',
-  'terça-feira',
-  'quarta-feira',
-  'quinta-feira',
-  'sexta-feira',
-  'sábado',
+  "domingo",
+  "segunda-feira",
+  "terça-feira",
+  "quarta-feira",
+  "quinta-feira",
+  "sexta-feira",
+  "sábado",
 ];
 
 function firstName(name?: string | null): string {
-  if (!name) return 'irmão';
+  if (!name) return "irmão";
   return name.trim().split(/\s+/)[0];
 }
 
 function humanizeRelative(iso?: string): string {
-  if (!iso) return '';
+  if (!iso) return "";
   const t = new Date(iso).getTime();
-  if (Number.isNaN(t)) return '';
+  if (Number.isNaN(t)) return "";
   const diff = Date.now() - t;
   const day = 24 * 60 * 60 * 1000;
-  if (diff < day && new Date(t).getDate() === new Date().getDate()) return 'Hoje';
-  if (diff < 2 * day) return 'Ontem';
+  if (diff < day && new Date(t).getDate() === new Date().getDate()) return "Hoje";
+  if (diff < 2 * day) return "Ontem";
   const days = Math.floor(diff / day);
   if (days < 7) return `há ${days} dias`;
   if (days < 30) return `há ${Math.floor(days / 7)} sem.`;
-  return new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  return new Date(t).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
-const KIND_LABEL: Record<ResumeItem['kind'], string> = {
-  reading: 'Leitura',
-  study: 'Estudo',
-  formation: 'Formação',
-  lectio: 'Lectio Divina',
-  note: 'Nota',
-  prayer: 'Oração',
+const KIND_LABEL: Record<ResumeItem["kind"], string> = {
+  reading: "Leitura",
+  study: "Estudo",
+  formation: "Formação",
+  lectio: "Lectio Divina",
+  note: "Nota",
+  prayer: "Oração",
 };
 
-const KIND_ICON: Record<ResumeItem['kind'], React.ComponentType<{ className?: string }>> = {
+const KIND_ICON: Record<ResumeItem["kind"], React.ComponentType<{ className?: string }>> = {
   reading: BookOpen,
   study: ScrollText,
   formation: GraduationCap,
@@ -99,7 +99,7 @@ const WidgetCard: React.FC<WidgetProps> = ({
   subtitle,
   progress,
   to,
-  cta = 'Continuar',
+  cta = "Continuar",
 }) => (
   <Link
     to={to}
@@ -108,17 +108,11 @@ const WidgetCard: React.FC<WidgetProps> = ({
     <div>
       <div className="flex items-center gap-spacing-xs text-secondary">
         <Icon className="h-4 w-4" aria-hidden="true" />
-        <span className="text-[11px] font-semibold uppercase tracking-widest">
-          {label}
-        </span>
+        <span className="text-[11px] font-semibold uppercase tracking-widest">{label}</span>
       </div>
-      <p className="mt-spacing-xs font-serif text-lg text-foreground leading-snug">
-        {title}
-      </p>
-      {subtitle && (
-        <p className="mt-spacing-3xs text-sm text-muted-foreground">{subtitle}</p>
-      )}
-      {typeof progress === 'number' && (
+      <p className="mt-spacing-xs font-serif text-lg text-foreground leading-snug">{title}</p>
+      {subtitle && <p className="mt-spacing-3xs text-sm text-muted-foreground">{subtitle}</p>}
+      {typeof progress === "number" && (
         <div className="mt-spacing-sm">
           <div className="h-1 w-full rounded-premium bg-muted">
             <div
@@ -146,14 +140,10 @@ const AtriumReception: React.FC = () => {
   const { user, profile } = useAuth();
   const resume = useResume();
   const liturgy = useLiturgyToday();
-  const memory = useSpiritualMemory(
-    user?.id,
-    profile?.streak ?? 0,
-    profile?.max_streak ?? 0,
-  );
+  const memory = useSpiritualMemory(user?.id, profile?.streak ?? 0, profile?.max_streak ?? 0);
 
-  const lastPrayer = resume.find((r) => r.kind === 'prayer');
-  const lastReading = resume.find((r) => ['reading', 'study', 'lectio', 'note'].includes(r.kind));
+  const lastPrayer = resume.find((r) => r.kind === "prayer");
+  const lastReading = resume.find((r) => ["reading", "study", "lectio", "note"].includes(r.kind));
   const lastActivity = resume[0] ?? null;
   const lastActivityIcon = lastActivity ? KIND_ICON[lastActivity.kind] : Sparkles;
 
@@ -165,15 +155,10 @@ const AtriumReception: React.FC = () => {
     : `Hoje é ${weekday}.`;
 
   const saintName = liturgy?.saintOfDay?.name;
-  const saintPath = liturgy?.saintOfDay?.slug
-    ? `/santos/${liturgy.saintOfDay.slug}`
-    : '/santos';
+  const saintPath = liturgy?.saintOfDay?.slug ? `/santos/${liturgy.saintOfDay.slug}` : "/santos";
 
   return (
-    <section
-      aria-label="Recepção personalizada"
-      className="mb-spacing-xl animate-fade-in"
-    >
+    <section aria-label="Recepção personalizada" className="mb-spacing-xl animate-fade-in">
       {/* Saudação */}
       <div className="mb-spacing-lg">
         <h2 className="mb-spacing-2xs text-xs font-semibold uppercase tracking-widest text-secondary">
@@ -192,24 +177,26 @@ const AtriumReception: React.FC = () => {
         <WidgetCard
           Icon={Heart}
           label="Oração"
-          title={lastPrayer?.label ?? 'Iniciar Rosário'}
-          subtitle={lastPrayer ? humanizeRelative(lastPrayer.lastActivityAt) : 'Nova oração'}
+          title={lastPrayer?.label ?? "Iniciar Rosário"}
+          subtitle={lastPrayer ? humanizeRelative(lastPrayer.lastActivityAt) : "Nova oração"}
           progress={lastPrayer?.progressPct}
-          to={lastPrayer?.targetPath ?? '/oracao/rosario'}
+          to={lastPrayer?.targetPath ?? "/oracao/rosario"}
         />
         <WidgetCard
           Icon={BookOpen}
           label="Leitura"
-          title={lastReading?.label ?? 'Abrir Bíblia'}
-          subtitle={lastReading ? humanizeRelative(lastReading.lastActivityAt) : 'Sagrada Escritura'}
+          title={lastReading?.label ?? "Abrir Bíblia"}
+          subtitle={
+            lastReading ? humanizeRelative(lastReading.lastActivityAt) : "Sagrada Escritura"
+          }
           progress={lastReading?.progressPct}
-          to={lastReading?.targetPath ?? '/bible'}
+          to={lastReading?.targetPath ?? "/bible"}
         />
         <WidgetCard
           Icon={Compass}
           label="Santo do dia"
-          title={saintName ?? 'Sanctorum'}
-          subtitle={liturgy?.saintOfDay?.title ?? 'Vidas e testemunhos'}
+          title={saintName ?? "Sanctorum"}
+          subtitle={liturgy?.saintOfDay?.title ?? "Vidas e testemunhos"}
           to={saintPath}
           cta="Conhecer"
         />
@@ -217,7 +204,7 @@ const AtriumReception: React.FC = () => {
           Icon={Sun}
           label="Liturgia"
           title="Missal e Ofício"
-          subtitle={liturgy?.season ?? 'Próprio do dia'}
+          subtitle={liturgy?.season ?? "Próprio do dia"}
           to="/liturgia"
           cta="Rezar"
         />
@@ -248,7 +235,7 @@ const AtriumReception: React.FC = () => {
             </h2>
             <div className="flex items-start gap-spacing-sm">
               <span className="mt-spacing-3xs shrink-0 rounded-premium bg-muted p-spacing-2xs text-secondary">
-                {React.createElement(lastActivityIcon, { className: 'h-5 w-5' })}
+                {React.createElement(lastActivityIcon, { className: "h-5 w-5" })}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
@@ -276,7 +263,7 @@ const AtriumReception: React.FC = () => {
             </h2>
           </div>
           <p className="font-serif text-3xl text-foreground leading-none">
-            {memory.streakDays} {memory.streakDays === 1 ? 'dia' : 'dias'} consecutivos
+            {memory.streakDays} {memory.streakDays === 1 ? "dia" : "dias"} consecutivos
           </p>
           {memory.maxStreak > memory.streakDays && (
             <p className="mt-spacing-3xs text-xs text-muted-foreground">
@@ -285,23 +272,21 @@ const AtriumReception: React.FC = () => {
           )}
           <dl className="mt-spacing-md grid grid-cols-3 gap-spacing-sm">
             {[
-              { label: 'Leituras', value: memory.readings },
-              { label: 'Orações', value: memory.prayers },
-              { label: 'Jornadas', value: memory.journeys },
+              { label: "Leituras", value: memory.readings },
+              { label: "Orações", value: memory.prayers },
+              { label: "Jornadas", value: memory.journeys },
             ].map((s) => (
               <div key={s.label}>
                 <dt className="text-[11px] uppercase tracking-widest text-muted-foreground">
                   {s.label}
                 </dt>
                 <dd className="font-serif text-xl text-foreground">
-                  {memory.loading ? '·' : s.value}
+                  {memory.loading ? "·" : s.value}
                 </dd>
               </div>
             ))}
           </dl>
-          <p className="mt-spacing-md text-sm italic text-muted-foreground">
-            Continue.
-          </p>
+          <p className="mt-spacing-md text-sm italic text-muted-foreground">Continue.</p>
         </article>
       </div>
     </section>

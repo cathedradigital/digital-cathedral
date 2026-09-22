@@ -9,7 +9,7 @@
  * Nenhum componente novo. Todos os imports vêm do barrel
  * `@/components/reader`.
  */
-import React from 'react';
+import React from "react";
 import {
   EditorialClosure,
   EditorialHero,
@@ -17,43 +17,42 @@ import {
   ReaderContinuation,
   ReaderShell,
   StudyContext,
-} from '@/components/reader';
-import SacredImage from '@/components/cathedra/SacredImage';
-import { useSaintNexus } from '@/hooks/useSaintNexus';
-import type { SaintPageDescriptor } from './types';
-import { SaintBioBlock } from './blocks/SaintBioBlock';
-import { SaintTimelineBlock } from './blocks/SaintTimelineBlock';
-import { SaintVirtuesBlock } from './blocks/SaintVirtuesBlock';
-import { SaintWritingsBlock } from './blocks/SaintWritingsBlock';
-import { SaintPrayersBlock } from './blocks/SaintPrayersBlock';
-import { SaintSourcesBlock } from './blocks/SaintSourcesBlock';
-import { SaintMeditationBlock } from './blocks/SaintMeditationBlock';
+} from "@/components/reader";
+import SacredImage from "@/components/cathedra/SacredImage";
+import { useSaintNexus } from "@/hooks/useSaintNexus";
+import type { SaintPageDescriptor } from "./types";
+import { SaintBioBlock } from "./blocks/SaintBioBlock";
+import { SaintTimelineBlock } from "./blocks/SaintTimelineBlock";
+import { SaintVirtuesBlock } from "./blocks/SaintVirtuesBlock";
+import { SaintWritingsBlock } from "./blocks/SaintWritingsBlock";
+import { SaintPrayersBlock } from "./blocks/SaintPrayersBlock";
+import { SaintSourcesBlock } from "./blocks/SaintSourcesBlock";
+import { SaintMeditationBlock } from "./blocks/SaintMeditationBlock";
 
 interface Props {
   descriptor: SaintPageDescriptor;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
-  doctor: 'Doutor da Igreja',
-  father: 'Padre da Igreja',
-  martyr: 'Mártir',
-  saint: 'Santo',
+  doctor: "Doutor da Igreja",
+  father: "Padre da Igreja",
+  martyr: "Mártir",
+  saint: "Santo",
 };
 
 export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
   const { header, blocks, closure } = descriptor;
-  const categoryLabel = CATEGORY_LABEL[header.category] ?? 'Santo';
+  const categoryLabel = CATEGORY_LABEL[header.category] ?? "Santo";
   const kickerParts = [categoryLabel, header.epoch, header.region].filter(Boolean);
 
-  const virtues = (blocks.find((b) => b.id === 'virtues')?.data ?? []) as Array<
+  const virtues = (blocks.find((b) => b.id === "virtues")?.data ?? []) as Array<
     { name?: string; label?: string } | string
   >;
   const virtueNames = virtues
-    .map((v) => (typeof v === 'string' ? v : (v?.label ?? v?.name)))
+    .map((v) => (typeof v === "string" ? v : (v?.label ?? v?.name)))
     .filter((v): v is string => Boolean(v));
 
   const nexus = useSaintNexus(descriptor.slug, header.name, virtueNames);
-
 
   const image = header.iconography?.imageUrl;
   const attributes = header.iconography?.attributes ?? [];
@@ -65,10 +64,10 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
       headerContext={
         <StudyContext
           collectionTitle="Sanctorum"
-          position={[header.epoch, header.region].filter(Boolean).join(' · ') || categoryLabel}
+          position={[header.epoch, header.region].filter(Boolean).join(" · ") || categoryLabel}
           curator={
             header.feast
-              ? `Festa: ${header.feast.dateLabel}${header.feast.rank ? ` · ${header.feast.rank}` : ''}`
+              ? `Festa: ${header.feast.dateLabel}${header.feast.rank ? ` · ${header.feast.rank}` : ""}`
               : undefined
           }
         />
@@ -79,7 +78,7 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
           {closure && <EditorialClosure {...closure} />}
           <ReaderContinuation
             context={{
-              kind: 'saint',
+              kind: "saint",
               id: descriptor.slug,
               graphNodeId: nexus.selfId ?? undefined,
               meta: { theme: virtueNames[0] },
@@ -90,11 +89,11 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
       }
       hero={
         <EditorialHero
-          kicker={kickerParts.join(' · ')}
+          kicker={kickerParts.join(" · ")}
           title={header.name}
           subtitle={
             header.feast
-              ? `Festa: ${header.feast.dateLabel}${header.feast.rank ? ` · ${header.feast.rank}` : ''}`
+              ? `Festa: ${header.feast.dateLabel}${header.feast.rank ? ` · ${header.feast.rank}` : ""}`
               : header.shortBio
           }
         />
@@ -111,23 +110,21 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
             />
             {attributes.length > 0 && (
               <figcaption className="text-premium-xs text-muted-foreground text-center">
-                Iconografia: {attributes.join(', ')}
+                Iconografia: {attributes.join(", ")}
               </figcaption>
             )}
           </figure>
         )}
 
         {header.shortBio && header.feast && (
-          <p className="text-premium-md text-foreground/90 leading-relaxed">
-            {header.shortBio}
-          </p>
+          <p className="text-premium-md text-foreground/90 leading-relaxed">{header.shortBio}</p>
         )}
 
         {blocks.map((b) => {
           switch (b.id) {
-            case 'bio':
+            case "bio":
               return <SaintBioBlock key={b.id} text={b.data as string} />;
-            case 'reflection':
+            case "reflection":
               return (
                 <SaintBioBlock
                   key={b.id}
@@ -136,9 +133,9 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
                   text={b.data as string}
                 />
               );
-            case 'meditation':
+            case "meditation":
               return <SaintMeditationBlock key={b.id} text={b.data as string} />;
-            case 'legacy':
+            case "legacy":
               return (
                 <SaintBioBlock
                   key={b.id}
@@ -147,15 +144,15 @@ export const SaintAutoPage: React.FC<Props> = ({ descriptor }) => {
                   text={b.data as string}
                 />
               );
-            case 'timeline':
+            case "timeline":
               return <SaintTimelineBlock key={b.id} events={b.data as never} />;
-            case 'virtues':
+            case "virtues":
               return <SaintVirtuesBlock key={b.id} virtues={b.data as never} />;
-            case 'writings':
+            case "writings":
               return <SaintWritingsBlock key={b.id} writings={b.data as never} />;
-            case 'prayers':
+            case "prayers":
               return <SaintPrayersBlock key={b.id} prayers={b.data as never} />;
-            case 'sources':
+            case "sources":
               return <SaintSourcesBlock key={b.id} sources={b.data as never} />;
             default:
               return null;

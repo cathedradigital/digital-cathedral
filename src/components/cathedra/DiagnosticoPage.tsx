@@ -1,15 +1,15 @@
-import { Icons } from '@/constants';
-import React, { useState, useContext } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
-import { LangContext } from '@/contexts/LangContext';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
+import { LangContext } from "@/contexts/LangContext";
 
 interface DiagnosisQuestion {
   id: string;
@@ -19,53 +19,133 @@ interface DiagnosisQuestion {
 
 const QUESTIONS: DiagnosisQuestion[] = [
   {
-    id: 'moment',
-    question: 'Como você descreveria seu momento espiritual atual?',
+    id: "moment",
+    question: "Como você descreveria seu momento espiritual atual?",
     options: [
-      { label: 'Estou começando a buscar Deus', value: 'beginning', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho fé, mas quero aprofundar', value: 'deepening', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Passo por um momento difícil', value: 'struggling', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
-      { label: 'Quero servir melhor a Igreja', value: 'serving', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Estou começando a buscar Deus",
+        value: "beginning",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho fé, mas quero aprofundar",
+        value: "deepening",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Passo por um momento difícil",
+        value: "struggling",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Quero servir melhor a Igreja",
+        value: "serving",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'prayer',
-    question: 'Qual é sua relação com a oração?',
+    id: "prayer",
+    question: "Qual é sua relação com a oração?",
     options: [
-      { label: 'Quase não rezo', value: 'rarely', icon: <Icons.Hand className="w-spacing-md h-spacing-md" /> },
-      { label: 'Rezo às vezes, mas sem constância', value: 'sometimes', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho vida de oração regular', value: 'regular', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Busco oração contemplativa', value: 'contemplative', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Quase não rezo",
+        value: "rarely",
+        icon: <Icons.Hand className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Rezo às vezes, mas sem constância",
+        value: "sometimes",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho vida de oração regular",
+        value: "regular",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Busco oração contemplativa",
+        value: "contemplative",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'knowledge',
-    question: 'Quanto você conhece da doutrina católica?',
+    id: "knowledge",
+    question: "Quanto você conhece da doutrina católica?",
     options: [
-      { label: 'Muito pouco, o básico', value: 'basic', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Conheço razoavelmente', value: 'moderate', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Estudo com frequência', value: 'advanced', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho formação teológica', value: 'theological', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Muito pouco, o básico",
+        value: "basic",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Conheço razoavelmente",
+        value: "moderate",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Estudo com frequência",
+        value: "advanced",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho formação teológica",
+        value: "theological",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'sacraments',
-    question: 'Como é sua vivência sacramental?',
+    id: "sacraments",
+    question: "Como é sua vivência sacramental?",
     options: [
-      { label: 'Não frequento os sacramentos', value: 'none', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
-      { label: 'Vou à Missa aos domingos', value: 'sunday', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
-      { label: 'Missa frequente e confissão regular', value: 'frequent', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Vida sacramental intensa', value: 'intense', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Não frequento os sacramentos",
+        value: "none",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Vou à Missa aos domingos",
+        value: "sunday",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Missa frequente e confissão regular",
+        value: "frequent",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Vida sacramental intensa",
+        value: "intense",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'goal',
-    question: 'O que você mais deseja nesta jornada?',
+    id: "goal",
+    question: "O que você mais deseja nesta jornada?",
     options: [
-      { label: 'Encontrar paz interior', value: 'peace', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
-      { label: 'Conhecer melhor a fé', value: 'knowledge', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Criar uma rotina espiritual', value: 'routine', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Transformação profunda de vida', value: 'transformation', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Encontrar paz interior",
+        value: "peace",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Conhecer melhor a fé",
+        value: "knowledge",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Criar uma rotina espiritual",
+        value: "routine",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Transformação profunda de vida",
+        value: "transformation",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
 ];
@@ -78,7 +158,7 @@ const DiagnosticoPage: React.FC = () => {
   const { user } = useAuth();
   const { t } = useContext(LangContext);
 
-  const progress = ((currentStep) / QUESTIONS.length) * 100;
+  const progress = (currentStep / QUESTIONS.length) * 100;
 
   const handleAnswer = (value: string) => {
     const question = QUESTIONS[currentStep];
@@ -95,44 +175,67 @@ const DiagnosticoPage: React.FC = () => {
 
   const saveDiagnosis = async (result: Record<string, string>) => {
     if (!user) {
-      console.error('saveDiagnosis: no user');
+      console.error("saveDiagnosis: no user");
       return;
     }
     try {
       const { data, error } = await (supabase as any)
-        .from('user_sensitive_data')
+        .from("user_sensitive_data")
         .update({ diagnosis_result: result })
-        .eq('user_id', user.id)
+        .eq("user_id", user.id)
         .select();
       if (error) {
-        console.error('Failed to save diagnosis (DB error):', error);
+        console.error("Failed to save diagnosis (DB error):", error);
       } else if (!data || data.length === 0) {
-        console.warn('saveDiagnosis: no row matched, attempting upsert');
+        console.warn("saveDiagnosis: no row matched, attempting upsert");
         const { error: upsertErr } = await (supabase as any)
-          .from('user_sensitive_data')
-          .upsert({ user_id: user.id, diagnosis_result: result, email: '' }, { onConflict: 'user_id' });
-        if (upsertErr) console.error('Upsert failed:', upsertErr);
+          .from("user_sensitive_data")
+          .upsert(
+            { user_id: user.id, diagnosis_result: result, email: "" },
+            { onConflict: "user_id" },
+          );
+        if (upsertErr) console.error("Upsert failed:", upsertErr);
       }
     } catch (err) {
-      console.error('Failed to save diagnosis:', err);
+      console.error("Failed to save diagnosis:", err);
     }
   };
 
   const getRecommendation = () => {
     const { moment, prayer, knowledge } = answers;
-    if (moment === 'beginning' || knowledge === 'basic') {
-      return { title: 'Primeiros Passos na Fé', description: 'Uma jornada gentil para conhecer os fundamentos da fé católica.', category: 'fundamentos' };
+    if (moment === "beginning" || knowledge === "basic") {
+      return {
+        title: "Primeiros Passos na Fé",
+        description: "Uma jornada gentil para conhecer os fundamentos da fé católica.",
+        category: "fundamentos",
+      };
     }
-    if (moment === 'struggling' || answers.goal === 'peace') {
-      return { title: 'Caminho de Cura Interior', description: 'Encontre consolo e renovação através da oração e dos sacramentos.', category: 'cura' };
+    if (moment === "struggling" || answers.goal === "peace") {
+      return {
+        title: "Caminho de Cura Interior",
+        description: "Encontre consolo e renovação através da oração e dos sacramentos.",
+        category: "cura",
+      };
     }
-    if (prayer === 'contemplative' || answers.goal === 'transformation') {
-      return { title: 'Aprofundamento Místico', description: 'Uma jornada para quem busca intimidade mais profunda com Deus.', category: 'mistico' };
+    if (prayer === "contemplative" || answers.goal === "transformation") {
+      return {
+        title: "Aprofundamento Místico",
+        description: "Uma jornada para quem busca intimidade mais profunda com Deus.",
+        category: "mistico",
+      };
     }
-    if (answers.goal === 'routine' || prayer === 'rarely' || prayer === 'sometimes') {
-      return { title: 'Rotina Espiritual', description: 'Construa hábitos diários de oração, leitura e reflexão.', category: 'rotina' };
+    if (answers.goal === "routine" || prayer === "rarely" || prayer === "sometimes") {
+      return {
+        title: "Rotina Espiritual",
+        description: "Construa hábitos diários de oração, leitura e reflexão.",
+        category: "rotina",
+      };
     }
-    return { title: 'Formação Integral', description: 'Aprofunde-se na doutrina, espiritualidade e vida cristã.', category: 'formacao' };
+    return {
+      title: "Formação Integral",
+      description: "Aprofunde-se na doutrina, espiritualidade e vida cristã.",
+      category: "formacao",
+    };
   };
 
   if (showResult) {
@@ -147,13 +250,17 @@ const DiagnosticoPage: React.FC = () => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', delay: 0.2 }}
+            transition={{ type: "spring", delay: 0.2 }}
             className="w-spacing-3xl h-spacing-3xl mx-auto rounded-premium-full bg-primary/10 flex items-center justify-center"
           >
             <Icons.Compass className="w-spacing-xl h-spacing-xl text-primary" />
           </motion.div>
-          <h1 className="text-premium-2xl font-bold font-serif text-foreground">Sua Jornada Recomendada</h1>
-          <p className="text-muted-foreground">Com base nas suas respostas, preparamos o caminho ideal para você.</p>
+          <h1 className="text-premium-2xl font-bold font-serif text-foreground">
+            Sua Jornada Recomendada
+          </h1>
+          <p className="text-muted-foreground">
+            Com base nas suas respostas, preparamos o caminho ideal para você.
+          </p>
         </div>
 
         <Card className="p-spacing-lg space-y-spacing-md border-primary/20">
@@ -178,8 +285,12 @@ const DiagnosticoPage: React.FC = () => {
     <div className="max-w-spacing-lg mx-auto space-y-spacing-lg">
       <div className="text-center space-y-spacing-xs">
         <Icons.Compass className="w-spacing-xl h-spacing-xl mx-auto text-primary" />
-        <h1 className="text-premium-2xl font-bold font-serif text-foreground">Diagnóstico Espiritual</h1>
-        <p className="text-premium-sm text-muted-foreground">Responda com sinceridade para encontrarmos a jornada ideal para você.</p>
+        <h1 className="text-premium-2xl font-bold font-serif text-foreground">
+          Diagnóstico Espiritual
+        </h1>
+        <p className="text-premium-sm text-muted-foreground">
+          Responda com sinceridade para encontrarmos a jornada ideal para você.
+        </p>
       </div>
 
       <Progress value={progress} className="h-spacing-xs" />
@@ -196,7 +307,9 @@ const DiagnosticoPage: React.FC = () => {
           transition={{ duration: 0.25 }}
           className="space-y-spacing-md"
         >
-          <h2 className="text-premium-lg font-semibold text-foreground text-center">{question.question}</h2>
+          <h2 className="text-premium-lg font-semibold text-foreground text-center">
+            {question.question}
+          </h2>
 
           <div className="space-y-spacing-sm">
             {question.options.map((opt) => (
@@ -206,9 +319,10 @@ const DiagnosticoPage: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleAnswer(opt.value)}
                 className={`w-full flex items-center gap-spacing-sm p-spacing-md rounded-premium-full border transition-all text-left
-                  ${answers[question.id] === opt.value
-                    ? 'border-primary bg-primary/10 text-foreground'
-                    : 'border-border bg-card text-foreground hover:border-primary/40'
+                  ${
+                    answers[question.id] === opt.value
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-card text-foreground hover:border-primary/40"
                   }`}
               >
                 <span className="text-primary">{opt.icon}</span>

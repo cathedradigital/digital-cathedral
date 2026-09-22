@@ -6,8 +6,8 @@
  * `RouteRegistry.resolve()`.
  */
 
-import type { KnowledgeNodeId } from '@/core/knowledge';
-import type { RouteKey } from '@/core/navigation';
+import type { KnowledgeNodeId } from "@/core/knowledge";
+import type { RouteKey } from "@/core/navigation";
 
 export interface NavigationTarget {
   /** ID canônico do nó de conhecimento correspondente. */

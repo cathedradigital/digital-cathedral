@@ -10,7 +10,7 @@
  * the developer apply the same change at the source.
  */
 
-import { contrastConfig, requiredRatio, type WcagLevel, type LargeMode } from './contrast-config';
+import { contrastConfig, requiredRatio, type WcagLevel, type LargeMode } from "./contrast-config";
 
 export type AuditSettings = {
   level: WcagLevel;
@@ -25,7 +25,7 @@ function parseColor(str: string): RGBA | null {
   if (!str) return null;
   const m = str.match(/rgba?\(([^)]+)\)/);
   if (!m) return null;
-  const parts = m[1].split(',').map((v) => parseFloat(v.trim()));
+  const parts = m[1].split(",").map((v) => parseFloat(v.trim()));
   const [r, g, b, a = 1] = parts;
   if ([r, g, b].some((n) => Number.isNaN(n))) return null;
   return { r, g, b, a };
@@ -56,14 +56,14 @@ function effectiveBackground(el: Element): RGBA {
   }
   const bodyBg = parseColor(getComputedStyle(document.body).backgroundColor);
   if (bodyBg && bodyBg.a > 0) return bodyBg;
-  return document.documentElement.classList.contains('dark')
+  return document.documentElement.classList.contains("dark")
     ? { r: 10, g: 10, b: 12, a: 1 }
     : { r: 255, g: 255, b: 255, a: 1 };
 }
 
 function hasOwnText(el: Element): boolean {
   for (const node of Array.from(el.childNodes)) {
-    if (node.nodeType === Node.TEXT_NODE && (node.nodeValue || '').trim().length > 0) return true;
+    if (node.nodeType === Node.TEXT_NODE && (node.nodeValue || "").trim().length > 0) return true;
   }
   return false;
 }
@@ -71,7 +71,7 @@ function hasOwnText(el: Element): boolean {
 function shortSelector(el: Element): string {
   const tag = el.tagName.toLowerCase();
   if (el.id) return `${tag}#${el.id}`;
-  const cls = (el.getAttribute('class') || '').trim().split(/\s+/).slice(0, 2).join('.');
+  const cls = (el.getAttribute("class") || "").trim().split(/\s+/).slice(0, 2).join(".");
   return cls ? `${tag}.${cls}` : tag;
 }
 
@@ -84,19 +84,63 @@ function shortSelector(el: Element): string {
  */
 const CLASS_REPLACEMENTS: Array<{ test: RegExp; replacement: string; rationale: string }> = [
   // Foreground tokens
-  { test: /^text-gray-(900|800|950)$/, replacement: 'text-foreground', rationale: 'Texto primário → token foreground' },
-  { test: /^text-(black|slate-900|zinc-900|neutral-900|stone-900)$/, replacement: 'text-foreground', rationale: 'Texto preto → token foreground (cobre dark mode)' },
-  { test: /^text-(white|gray-50|slate-50)$/, replacement: 'text-primary-foreground', rationale: 'Texto branco → primary-foreground se sobre primário' },
-  { test: /^text-gray-(400|500|600|700)$/, replacement: 'text-muted-foreground', rationale: 'Cinza médio → token muted-foreground' },
-  { test: /^text-(slate|zinc|neutral|stone)-(400|500|600|700)$/, replacement: 'text-muted-foreground', rationale: 'Escala cinza → token muted-foreground' },
-  { test: /^text-gray-(100|200|300)$/, replacement: 'text-muted-foreground', rationale: 'Cinza claro tem contraste insuficiente em light mode' },
+  {
+    test: /^text-gray-(900|800|950)$/,
+    replacement: "text-foreground",
+    rationale: "Texto primário → token foreground",
+  },
+  {
+    test: /^text-(black|slate-900|zinc-900|neutral-900|stone-900)$/,
+    replacement: "text-foreground",
+    rationale: "Texto preto → token foreground (cobre dark mode)",
+  },
+  {
+    test: /^text-(white|gray-50|slate-50)$/,
+    replacement: "text-primary-foreground",
+    rationale: "Texto branco → primary-foreground se sobre primário",
+  },
+  {
+    test: /^text-gray-(400|500|600|700)$/,
+    replacement: "text-muted-foreground",
+    rationale: "Cinza médio → token muted-foreground",
+  },
+  {
+    test: /^text-(slate|zinc|neutral|stone)-(400|500|600|700)$/,
+    replacement: "text-muted-foreground",
+    rationale: "Escala cinza → token muted-foreground",
+  },
+  {
+    test: /^text-gray-(100|200|300)$/,
+    replacement: "text-muted-foreground",
+    rationale: "Cinza claro tem contraste insuficiente em light mode",
+  },
   // Arbitrary hex/rgb on text — always a violation of the system.
-  { test: /^text-\[#?[0-9a-fA-F]{3,8}\]$/, replacement: 'text-foreground', rationale: 'Valor cru deve virar token semântico (foreground/muted-foreground/primary)' },
-  { test: /^text-\[rgb/, replacement: 'text-foreground', rationale: 'rgb() arbitrário deve virar token semântico' },
+  {
+    test: /^text-\[#?[0-9a-fA-F]{3,8}\]$/,
+    replacement: "text-foreground",
+    rationale: "Valor cru deve virar token semântico (foreground/muted-foreground/primary)",
+  },
+  {
+    test: /^text-\[rgb/,
+    replacement: "text-foreground",
+    rationale: "rgb() arbitrário deve virar token semântico",
+  },
   // Backgrounds
-  { test: /^bg-(white|gray-50|slate-50)$/, replacement: 'bg-background', rationale: 'Branco → token background' },
-  { test: /^bg-(black|slate-900|zinc-900)$/, replacement: 'bg-foreground', rationale: 'Preto → token foreground (inverte em dark)' },
-  { test: /^bg-\[#?[0-9a-fA-F]{3,8}\]$/, replacement: 'bg-background', rationale: 'Hex cru → token background/muted/card' },
+  {
+    test: /^bg-(white|gray-50|slate-50)$/,
+    replacement: "bg-background",
+    rationale: "Branco → token background",
+  },
+  {
+    test: /^bg-(black|slate-900|zinc-900)$/,
+    replacement: "bg-foreground",
+    rationale: "Preto → token foreground (inverte em dark)",
+  },
+  {
+    test: /^bg-\[#?[0-9a-fA-F]{3,8}\]$/,
+    replacement: "bg-background",
+    rationale: "Hex cru → token background/muted/card",
+  },
 ];
 
 export type TokenSuggestion = {
@@ -119,8 +163,11 @@ export function suggestTokenReplacements(classNames: string): TokenSuggestion[] 
   return out;
 }
 
-export function applyTokenFixToElement(el: Element, suggestions: TokenSuggestion[]): { before: string; after: string } {
-  const before = el.getAttribute('class') || '';
+export function applyTokenFixToElement(
+  el: Element,
+  suggestions: TokenSuggestion[],
+): { before: string; after: string } {
+  const before = el.getAttribute("class") || "";
   const tokens = before.split(/\s+/).filter(Boolean);
   const next: string[] = [];
   const replaceMap = new Map(suggestions.map((s) => [s.from, s.to]));
@@ -132,8 +179,8 @@ export function applyTokenFixToElement(el: Element, suggestions: TokenSuggestion
       next.push(t);
     }
   }
-  const after = next.join(' ');
-  el.setAttribute('class', after);
+  const after = next.join(" ");
+  el.setAttribute("class", after);
   return { before, after };
 }
 
@@ -157,17 +204,18 @@ export type ContrastViolation = {
 export type AuditResult = {
   capturedAt: string;
   route: string;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   level: WcagLevel;
   scanned: number;
   violations: ContrastViolation[];
 };
 
-const TEXT_HOSTS = 'h1,h2,h3,h4,h5,h6,p,span,a,button,li,dt,dd,label,small,strong,em,code,figcaption,th,td,blockquote,summary';
+const TEXT_HOSTS =
+  "h1,h2,h3,h4,h5,h6,p,span,a,button,li,dt,dd,label,small,strong,em,code,figcaption,th,td,blockquote,summary";
 
 export function scanPageForContrastViolations(settings: AuditSettings): AuditResult {
   const maxNodes = settings.maxNodes ?? Math.max(200, contrastConfig.maxNodesPerSelector * 20);
-  const denyClause = contrastConfig.denySelectors.map((s) => `:not(${s})`).join('');
+  const denyClause = contrastConfig.denySelectors.map((s) => `:not(${s})`).join("");
   const all = Array.from(document.querySelectorAll(TEXT_HOSTS));
   const violations: ContrastViolation[] = [];
   let scanned = 0;
@@ -175,7 +223,7 @@ export function scanPageForContrastViolations(settings: AuditSettings): AuditRes
     if (scanned >= maxNodes) break;
     if (!hasOwnText(el)) continue;
     if (denyClause && !el.matches(`*${denyClause}`)) continue;
-    if ((el as HTMLElement).closest('[data-contrast-inspector]')) continue;
+    if ((el as HTMLElement).closest("[data-contrast-inspector]")) continue;
     scanned++;
 
     const cs = getComputedStyle(el);
@@ -187,16 +235,16 @@ export function scanPageForContrastViolations(settings: AuditSettings): AuditRes
     const fontWeight = parseInt(cs.fontWeight, 10) || 400;
     const autoLarge = fontSize >= 24 || (fontSize >= 18.66 && fontWeight >= 700);
     const isLarge =
-      settings.largeMode === 'large' ? true : settings.largeMode === 'normal' ? false : autoLarge;
+      settings.largeMode === "large" ? true : settings.largeMode === "normal" ? false : autoLarge;
     const required = requiredRatio(isLarge, settings.level);
     if (ratio >= required) continue;
 
-    const classes = el.getAttribute('class') || '';
+    const classes = el.getAttribute("class") || "";
     violations.push({
       id: `${shortSelector(el)}#${violations.length}`,
       selector: shortSelector(el),
       tag: el.tagName.toLowerCase(),
-      text: ((el as HTMLElement).innerText || '').slice(0, 80).replace(/\s+/g, ' ').trim(),
+      text: ((el as HTMLElement).innerText || "").slice(0, 80).replace(/\s+/g, " ").trim(),
       classes,
       color: `rgb(${fg.r}, ${fg.g}, ${fg.b})`,
       background: `rgb(${bg.r}, ${bg.g}, ${bg.b})`,
@@ -204,15 +252,20 @@ export function scanPageForContrastViolations(settings: AuditSettings): AuditRes
       required,
       isLarge,
       suggestions: suggestTokenReplacements(classes),
-      ref: (typeof (globalThis as { WeakRef?: unknown }).WeakRef === 'function'
-        ? new (globalThis as unknown as { WeakRef: new (t: Element) => { deref(): Element | undefined } }).WeakRef(el)
-        : { deref: () => el }),
+      ref:
+        typeof (globalThis as { WeakRef?: unknown }).WeakRef === "function"
+          ? new (
+              globalThis as unknown as {
+                WeakRef: new (t: Element) => { deref(): Element | undefined };
+              }
+            ).WeakRef(el)
+          : { deref: () => el },
     });
   }
   return {
     capturedAt: new Date().toISOString(),
-    route: typeof window !== 'undefined' ? window.location.pathname : '/',
-    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+    route: typeof window !== "undefined" ? window.location.pathname : "/",
+    theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
     level: settings.level,
     scanned,
     violations,

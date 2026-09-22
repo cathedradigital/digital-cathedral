@@ -8,33 +8,25 @@
  *  - A página completa antiga (tabs/favoritos/pesquisa avançada) fica em /biblioteca-legacy.
  */
 
-import React from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import {
-  BookMarked,
-  BookOpen,
-  Gavel,
-  Sparkles,
-  Network,
-  ArrowRight,
-} from 'lucide-react';
-import { AppRoute } from '@/types';
-import { useBibliotecaRecents } from '@/hooks/useBibliotecaState';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import { LibrarySearchPanel, LibraryThemesBlock } from '@/modules/biblioteca';
-import { EditorialHero } from '@/components/editorial/harmony';
-import { SafeImage } from '@/components/library/SafeImage';
-import { LIBRARY_ACERVOS } from '@/config/libraryAcervos';
+import React from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { BookMarked, BookOpen, Gavel, Sparkles, Network, ArrowRight } from "lucide-react";
+import { AppRoute } from "@/types";
+import { useBibliotecaRecents } from "@/hooks/useBibliotecaState";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { LibrarySearchPanel, LibraryThemesBlock } from "@/modules/biblioteca";
+import { EditorialHero } from "@/components/editorial/harmony";
+import { SafeImage } from "@/components/library/SafeImage";
+import { LIBRARY_ACERVOS } from "@/config/libraryAcervos";
 import {
   SpaceLayout,
   SpaceHeader,
   SpaceEntrance,
   SpaceSectionTitle,
   SpaceFooter,
-} from '@/components/cathedra/space/SpaceLayout';
-
+} from "@/components/cathedra/space/SpaceLayout";
 
 type Collection = {
   title: string;
@@ -68,8 +60,7 @@ const AtriumBibliotecaPage: React.FC = () => {
     <div
       className="min-h-screen w-full bg-stitch-background text-stitch-on-background"
       style={{
-        backgroundImage:
-          'url("https://www.transparenttextures.com/patterns/p6.png")',
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
       }}
     >
       <Helmet>
@@ -87,7 +78,10 @@ const AtriumBibliotecaPage: React.FC = () => {
         <EditorialHero density="minimal">
           <EditorialHero.Eyebrow>Archival Collection</EditorialHero.Eyebrow>
           <EditorialHero.Title>Biblioteca</EditorialHero.Title>
-          <EditorialHero.Subtitle>Navegue pelos ecos sagrados de dois milênios. Dos Padres Apostólicos ao Magistério contemporâneo, explore a sabedoria curada da Igreja.</EditorialHero.Subtitle>
+          <EditorialHero.Subtitle>
+            Navegue pelos ecos sagrados de dois milênios. Dos Padres Apostólicos ao Magistério
+            contemporâneo, explore a sabedoria curada da Igreja.
+          </EditorialHero.Subtitle>
         </EditorialHero>
 
         {/* ─── 3. Entrada (busca unificada) ────────────────────────── */}
@@ -100,9 +94,6 @@ const AtriumBibliotecaPage: React.FC = () => {
           <SpaceSectionTitle title="Descobrir por tema" />
           <LibraryThemesBlock />
         </section>
-
-
-
 
         {/* ─── Continue Reading ───────────────────────────────────────── */}
         {recents.length > 0 && (
@@ -133,7 +124,7 @@ const AtriumBibliotecaPage: React.FC = () => {
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       <span className="font-stitch-body text-[12px] font-bold uppercase tracking-[0.15em] text-stitch-on-surface-variant">
-                        {r.subtitle ?? 'Leitura'}
+                        {r.subtitle ?? "Leitura"}
                       </span>
                       <h3 className="mt-1 font-stitch-display text-[20px] leading-tight text-stitch-primary">
                         {r.title}
@@ -236,8 +227,7 @@ const AtriumBibliotecaPage: React.FC = () => {
                   A Arquitetura do Silêncio
                 </h3>
                 <p className="mt-4 font-stitch-body text-[18px] leading-[28px] text-stitch-primary-foreground/80">
-                  Como os espaços monásticos espelham a paisagem interior da
-                  oração contemplativa.
+                  Como os espaços monásticos espelham a paisagem interior da oração contemplativa.
                 </p>
                 <span className="mt-8 inline-block border border-stitch-secondary-fixed px-6 py-2 font-stitch-body text-[14px] font-medium uppercase tracking-[0.1em] text-stitch-secondary-fixed transition-all group-hover:bg-stitch-secondary-fixed group-hover:text-stitch-primary">
                   Explorar Série
@@ -293,13 +283,12 @@ const AtriumBibliotecaPage: React.FC = () => {
         <SpaceFooter
           note="A leitura amadurece quando volta à oração e à vida da Igreja."
           links={[
-            { label: 'Átrio', to: '/', hint: 'Voltar à entrada do Mosteiro' },
-            { label: 'Rezar', to: '/oracao', hint: 'Levar a leitura à oração' },
-            { label: 'Acervo completo', to: '/acervo', hint: 'Todas as estantes' },
+            { label: "Átrio", to: "/", hint: "Voltar à entrada do Mosteiro" },
+            { label: "Rezar", to: "/oracao", hint: "Levar a leitura à oração" },
+            { label: "Acervo completo", to: "/acervo", hint: "Todas as estantes" },
           ]}
         />
       </SpaceLayout>
-
 
       <MobileBottomNav />
     </div>

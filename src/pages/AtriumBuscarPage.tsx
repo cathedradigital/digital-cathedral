@@ -8,9 +8,9 @@
  *  - Versão anterior segue em /buscar-legacy.
  */
 
-import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
+import React, { lazy, Suspense, useEffect, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useSearchParams } from "@/lib/rr-compat";
 import {
   Search as SearchIcon,
   BookOpen,
@@ -21,15 +21,13 @@ import {
   Tag as TagIcon,
   ArrowRight,
   BookMarked as BookFilterIcon,
-} from 'lucide-react';
-import { AppRoute } from '@/types';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import { BiblePickerSheet } from '@/components/mobile/BiblePickerSheet';
+} from "lucide-react";
+import { AppRoute } from "@/types";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { BiblePickerSheet } from "@/components/mobile/BiblePickerSheet";
 
-const GlobalSearchPage = lazy(
-  () => import('@/components/cathedra/GlobalSearchPage'),
-);
+const GlobalSearchPage = lazy(() => import("@/components/cathedra/GlobalSearchPage"));
 
 type Territory = {
   title: string;
@@ -41,63 +39,63 @@ type Territory = {
 
 const TERRITORIES: Territory[] = [
   {
-    title: 'Sagrada Escritura',
-    meta: '73 Livros',
-    description: 'Pesquise versículos, temas e figuras bíblicas.',
+    title: "Sagrada Escritura",
+    meta: "73 Livros",
+    description: "Pesquise versículos, temas e figuras bíblicas.",
     to: AppRoute.BIBLE,
     Icon: BookOpen,
   },
   {
-    title: 'Catecismo',
-    meta: '2865 Parágrafos',
-    description: 'Localize a doutrina por parágrafo, tema ou palavra-chave.',
+    title: "Catecismo",
+    meta: "2865 Parágrafos",
+    description: "Localize a doutrina por parágrafo, tema ou palavra-chave.",
     to: AppRoute.CATECHISM,
     Icon: BookMarked,
   },
   {
-    title: 'Santos & Padres',
-    meta: 'Vida e Escritos',
-    description: 'Encontre testemunhos, festas e obras.',
+    title: "Santos & Padres",
+    meta: "Vida e Escritos",
+    description: "Encontre testemunhos, festas e obras.",
     to: AppRoute.SAINTS,
     Icon: Users,
   },
   {
-    title: 'Glossário',
-    meta: 'Termos Teológicos',
-    description: 'Definições curadas com Nexus contextual.',
+    title: "Glossário",
+    meta: "Termos Teológicos",
+    description: "Definições curadas com Nexus contextual.",
     to: AppRoute.GLOSSARY,
     Icon: Sparkles,
   },
   {
-    title: 'Temas',
-    meta: 'Rede de Conceitos',
-    description: 'Explore o grafo de assuntos interconectados.',
+    title: "Temas",
+    meta: "Rede de Conceitos",
+    description: "Explore o grafo de assuntos interconectados.",
     to: AppRoute.TEMAS,
     Icon: TagIcon,
   },
   {
-    title: 'Comunidade',
-    meta: 'Discussões Vivas',
-    description: 'Perguntas e reflexões compartilhadas por leitores.',
+    title: "Comunidade",
+    meta: "Discussões Vivas",
+    description: "Perguntas e reflexões compartilhadas por leitores.",
     to: AppRoute.COMMUNITY,
     Icon: MessageCircle,
   },
 ];
 
 const SUGGESTIONS = [
-  'Eucaristia',
-  'Trindade',
-  'Oração contemplativa',
-  'Graça',
-  'Escatologia',
-  'Mariologia',
+  "Eucaristia",
+  "Trindade",
+  "Oração contemplativa",
+  "Graça",
+  "Escatologia",
+  "Mariologia",
 ];
 
 const AtriumBuscarPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const urlQuery = searchParams.get('q') ?? '';
-  const livro = searchParams.get('livro') ?? '';
-  const capitulo = searchParams.get('capitulo') ?? '';
+  const urlQuery = searchParams.get("q") ?? "";
+  const livro = searchParams.get("livro") ?? "";
+  const capitulo = searchParams.get("capitulo") ?? "";
   const [draft, setDraft] = useState(urlQuery);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -111,25 +109,23 @@ const AtriumBuscarPage: React.FC = () => {
 
   const submit = (value: string) => {
     const next = new URLSearchParams(searchParams);
-    if (value.trim().length >= 2) next.set('q', value.trim());
-    else next.delete('q');
+    if (value.trim().length >= 2) next.set("q", value.trim());
+    else next.delete("q");
     setSearchParams(next, { replace: true });
   };
 
   const clearBibleFilter = () => {
     const next = new URLSearchParams(searchParams);
-    next.delete('livro');
-    next.delete('capitulo');
+    next.delete("livro");
+    next.delete("capitulo");
     setSearchParams(next, { replace: true });
   };
-
 
   return (
     <div
       className="min-h-screen w-full bg-stitch-background text-stitch-on-background"
       style={{
-        backgroundImage:
-          'url("https://www.transparenttextures.com/patterns/p6.png")',
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
       }}
     >
       <Helmet>
@@ -154,9 +150,8 @@ const AtriumBuscarPage: React.FC = () => {
               Pesquise a sabedoria da Igreja.
             </h1>
             <p className="mt-4 font-stitch-body text-[20px] leading-[32px] text-stitch-on-surface-variant">
-              Uma única busca atravessa Escritura, Catecismo, Magistério,
-              Santos, temas e discussões da comunidade. Comece por uma palavra
-              — o Nexus fará o resto.
+              Uma única busca atravessa Escritura, Catecismo, Magistério, Santos, temas e discussões
+              da comunidade. Comece por uma palavra — o Nexus fará o resto.
             </p>
           </div>
 
@@ -182,8 +177,8 @@ const AtriumBuscarPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setDraft('');
-                  submit('');
+                  setDraft("");
+                  submit("");
                 }}
                 className="font-stitch-body text-[12px] font-bold uppercase tracking-[0.15em] text-stitch-on-surface-variant hover:text-stitch-primary"
               >
@@ -203,7 +198,7 @@ const AtriumBuscarPage: React.FC = () => {
               className="inline-flex items-center gap-2 rounded-full border border-stitch-outline-variant/40 bg-stitch-surface-container-low px-3 py-1.5 font-stitch-body text-[12px] font-bold uppercase tracking-[0.12em] text-stitch-on-surface-variant transition-colors hover:border-stitch-secondary hover:text-stitch-primary"
             >
               <BookFilterIcon className="h-3.5 w-3.5 text-stitch-secondary" />
-              {livro && capitulo ? `${livro.toUpperCase()} ${capitulo}` : 'Livro / Capítulo'}
+              {livro && capitulo ? `${livro.toUpperCase()} ${capitulo}` : "Livro / Capítulo"}
             </button>
             {(livro || capitulo) && (
               <button
@@ -215,7 +210,6 @@ const AtriumBuscarPage: React.FC = () => {
               </button>
             )}
           </div>
-
 
           {/* Sugestões */}
           {!hasQuery && (
@@ -272,7 +266,7 @@ const AtriumBuscarPage: React.FC = () => {
                   <div className="mb-4 flex items-center justify-between">
                     <t.Icon className="h-6 w-6 text-stitch-secondary" />
                     <span className="font-stitch-display text-[32px] italic text-stitch-secondary/75">
-                      {String(i + 1).padStart(2, '0')}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
                   <h3 className="font-stitch-display text-[20px] leading-tight text-stitch-primary transition-colors group-hover:text-stitch-secondary">
@@ -303,13 +297,11 @@ const AtriumBuscarPage: React.FC = () => {
         open={pickerOpen}
         onOpenChange={setPickerOpen}
         selectionOnly
-        initialSelection={
-          hasBibleFilter ? { abbr: livro, chapter: Number(capitulo) } : null
-        }
+        initialSelection={hasBibleFilter ? { abbr: livro, chapter: Number(capitulo) } : null}
         onSelect={(sel) => {
           const next = new URLSearchParams(searchParams);
-          next.set('livro', sel.abbr);
-          next.set('capitulo', String(sel.chapter));
+          next.set("livro", sel.abbr);
+          next.set("capitulo", String(sel.chapter));
           setSearchParams(next, { replace: true });
         }}
       />

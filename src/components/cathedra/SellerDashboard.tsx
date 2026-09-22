@@ -1,15 +1,23 @@
-import { Icons } from '@/constants';
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-
+import { Icons } from "@/constants";
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 const WalletHistory: React.FC = () => {
   return (
     <Card className="shadow-premium-none border-border/50">
       <CardHeader>
-        <CardTitle className="text-premium-xl font-serif font-bold">Histórico da Carteira</CardTitle>
+        <CardTitle className="text-premium-xl font-serif font-bold">
+          Histórico da Carteira
+        </CardTitle>
         <CardDescription>Visualize todas as suas movimentações financeiras.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -27,7 +35,9 @@ const WalletHistory: React.FC = () => {
               <TableCell>26/04/2026</TableCell>
               <TableCell>Venda</TableCell>
               <TableCell className="text-emerald-600 font-bold">R$ 150,00</TableCell>
-              <TableCell><Badge className="bg-emerald-500/10 text-emerald-500">Concluído</Badge></TableCell>
+              <TableCell>
+                <Badge className="bg-emerald-500/10 text-emerald-500">Concluído</Badge>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -40,7 +50,9 @@ const WithdrawalRequests: React.FC = () => {
   return (
     <Card className="shadow-premium-none border-border/50">
       <CardHeader>
-        <CardTitle className="text-premium-xl font-serif font-bold">Solicitações de Saque</CardTitle>
+        <CardTitle className="text-premium-xl font-serif font-bold">
+          Solicitações de Saque
+        </CardTitle>
         <CardDescription>Acompanhe o status dos seus pedidos de resgate.</CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,7 +68,9 @@ const WithdrawalRequests: React.FC = () => {
             <TableRow>
               <TableCell>25/04/2026</TableCell>
               <TableCell className="font-bold">R$ 500,00</TableCell>
-              <TableCell><Badge variant="secondary">Pendente</Badge></TableCell>
+              <TableCell>
+                <Badge variant="secondary">Pendente</Badge>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -73,8 +87,12 @@ const SellerDashboard: React.FC = () => {
           <Icons.Store className="w-spacing-lg h-spacing-lg" />
         </div>
         <div>
-          <h1 className="text-premium-3xl font-serif font-bold tracking-tight">Painel do Vendedor</h1>
-          <p className="text-premium-sm text-muted-foreground uppercase tracking-widest font-bold">Gestão de Vendas e Saques</p>
+          <h1 className="text-premium-3xl font-serif font-bold tracking-tight">
+            Painel do Vendedor
+          </h1>
+          <p className="text-premium-sm text-muted-foreground uppercase tracking-widest font-bold">
+            Gestão de Vendas e Saques
+          </p>
         </div>
       </div>
 

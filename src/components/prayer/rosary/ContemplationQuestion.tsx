@@ -2,10 +2,10 @@
  * ContemplationQuestion — pergunta espiritual ao final da dezena.
  * Sem resposta obrigatória — apenas convite silencioso.
  */
-import React from 'react';
-import { HelpCircle } from 'lucide-react';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta } from './mysteryMeta';
+import React from "react";
+import { HelpCircle } from "lucide-react";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta } from "./mysteryMeta";
 
 const ContemplationQuestion: React.FC<{ mystery: DBMystery }> = ({ mystery }) => {
   const meta = readMysteryMeta(mystery);

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLiturgyToday } from '../../hooks';
-import { useSaintOfDay } from '@/hooks/useSaintOfDay';
+import React from "react";
+import { useLiturgyToday } from "../../hooks";
+import { useSaintOfDay } from "@/hooks/useSaintOfDay";
 
 const DailyLiturgy: React.FC = () => {
   const l = useLiturgyToday();
@@ -13,7 +13,10 @@ const DailyLiturgy: React.FC = () => {
 
   return (
     <section data-atrium-block="P3" aria-labelledby="atrium-liturgy">
-      <h2 id="atrium-liturgy" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-liturgy"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Liturgia do dia
       </h2>
       <a
@@ -33,9 +36,7 @@ const DailyLiturgy: React.FC = () => {
         {displayName ? (
           <div className="text-sm">
             <span className="font-medium">{displayName}</span>
-            {displayTitle && (
-              <span className="text-muted-foreground"> — {displayTitle}</span>
-            )}
+            {displayTitle && <span className="text-muted-foreground"> — {displayTitle}</span>}
           </div>
         ) : (
           <div className="text-sm font-medium">Abrir liturgia</div>

@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { useAuth } from './useAuth';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { useAuth } from "./useAuth";
 
 /**
  * Server-trusted admin check. Queries user_roles via RLS so a user that has
@@ -10,16 +10,16 @@ export function useIsAdmin() {
   const { user } = useAuth();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['is-admin', user?.id],
+    queryKey: ["is-admin", user?.id],
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       if (!user?.id) return false;
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('role', 'admin')
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
         .maybeSingle();
       if (error) return false;
       return !!data;

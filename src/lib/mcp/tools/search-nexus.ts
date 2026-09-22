@@ -23,19 +23,25 @@ export default defineTool({
     const [outgoing, incoming] = await Promise.all([
       sb
         .from("nexus_relations")
-        .select("relation_type,source_kind,source_ref,target_kind,target_ref,note,confidence,attributed_to")
+        .select(
+          "relation_type,source_kind,source_ref,target_kind,target_ref,note,confidence,attributed_to",
+        )
         .eq("source_kind", kind)
         .eq("source_ref", ref)
         .limit(max),
       sb
         .from("nexus_relations")
-        .select("relation_type,source_kind,source_ref,target_kind,target_ref,note,confidence,attributed_to")
+        .select(
+          "relation_type,source_kind,source_ref,target_kind,target_ref,note,confidence,attributed_to",
+        )
         .eq("target_kind", kind)
         .eq("target_ref", ref)
         .limit(max),
     ]);
-    if (outgoing.error) return { content: [{ type: "text", text: outgoing.error.message }], isError: true };
-    if (incoming.error) return { content: [{ type: "text", text: incoming.error.message }], isError: true };
+    if (outgoing.error)
+      return { content: [{ type: "text", text: outgoing.error.message }], isError: true };
+    if (incoming.error)
+      return { content: [{ type: "text", text: incoming.error.message }], isError: true };
     const payload = {
       node: { kind, ref },
       outgoing: outgoing.data ?? [],

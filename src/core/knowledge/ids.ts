@@ -26,22 +26,22 @@
  *   3. IDs são opacos para consumidores — parseie apenas via helpers abaixo.
  */
 
-import type { KnowledgeNodeId, KnowledgeNodeKind } from './types';
+import type { KnowledgeNodeId, KnowledgeNodeKind } from "./types";
 
 export const KNOWLEDGE_KINDS: readonly KnowledgeNodeKind[] = [
-  'theme',
-  'bible',
-  'catechism',
-  'magisterium',
-  'father',
-  'saint',
-  'council',
-  'canon',
-  'prayer',
-  'application',
-  'glossary',
-  'journey',
-  'liturgy',
+  "theme",
+  "bible",
+  "catechism",
+  "magisterium",
+  "father",
+  "saint",
+  "council",
+  "canon",
+  "prayer",
+  "application",
+  "glossary",
+  "journey",
+  "liturgy",
 ] as const;
 
 const KIND_SET = new Set<string>(KNOWLEDGE_KINDS);
@@ -51,11 +51,11 @@ const SEGMENT_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /** Normaliza um texto para slug canônico (kebab, ASCII, minúsculo). */
 export function slugify(input: string): string {
   return input
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 /** Constrói um ID canônico. Lança se algum segmento for inválido. */
@@ -77,7 +77,7 @@ export function buildId(
     }
     return v;
   });
-  return [kind, slug, ...tail].join(':');
+  return [kind, slug, ...tail].join(":");
 }
 
 export interface ParsedId {
@@ -88,8 +88,8 @@ export interface ParsedId {
 
 /** Faz o parse de um ID canônico. Retorna `null` se inválido. */
 export function parseId(id: KnowledgeNodeId): ParsedId | null {
-  if (typeof id !== 'string' || !id) return null;
-  const [kind, slug, ...sub] = id.split(':');
+  if (typeof id !== "string" || !id) return null;
+  const [kind, slug, ...sub] = id.split(":");
   if (!kind || !slug) return null;
   if (!KIND_SET.has(kind)) return null;
   if (!SLUG_RE.test(slug)) return null;
@@ -99,5 +99,5 @@ export function parseId(id: KnowledgeNodeId): ParsedId | null {
 
 /** True se o ID respeita a convenção canônica. */
 export function isValidId(id: unknown): id is KnowledgeNodeId {
-  return typeof id === 'string' && parseId(id) !== null;
+  return typeof id === "string" && parseId(id) !== null;
 }

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { ArrowLeft, Type, Focus, Share2 } from "lucide-react";
-import { useNavigate } from '@/lib/rr-compat';
+import { useNavigate } from "@/lib/rr-compat";
 import { cn } from "@/lib/utils";
 
 interface MobileReaderChromeProps {
@@ -40,11 +40,7 @@ export function MobileReaderChrome({
 
   return (
     <header
-      className={cn(
-        "sticky top-0 z-30 w-full md:hidden",
-        "bg-stitch-surface",
-        className,
-      )}
+      className={cn("sticky top-0 z-30 w-full md:hidden", "bg-stitch-surface", className)}
       style={{ paddingTop: "var(--stitch-mobile-safe-top)" }}
     >
       <div

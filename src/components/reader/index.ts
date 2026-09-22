@@ -22,13 +22,13 @@
  *   </ReaderShell>
  */
 
-export { ReaderShell, type ReaderShellProps } from './ReaderShell';
-export { ReaderToolbar, type ReaderToolbarProps } from './ReaderToolbar';
+export { ReaderShell, type ReaderShellProps } from "./ReaderShell";
+export { ReaderToolbar, type ReaderToolbarProps } from "./ReaderToolbar";
 export {
   ReferencePopover,
   type ReferencePopoverProps,
   type ReferenceKind,
-} from './ReferencePopover';
+} from "./ReferencePopover";
 export {
   HeaderContext,
   LiturgicalContext,
@@ -42,15 +42,14 @@ export {
   type CatechesisContextProps,
   type StudyContextProps,
   type PrayerContextProps,
-} from './HeaderContext';
+} from "./HeaderContext";
 
 export {
   EditorialClosure,
   type EditorialClosureProps,
   type EditorialClosureNexusItem,
-} from './EditorialClosure';
+} from "./EditorialClosure";
 
-export { NexusPanel, type NexusPanelProps } from '@/components/nexus/NexusPanel';
-export { default as ReaderContinuation } from '@/components/shared/ReaderContinuation';
-export { EditorialHero } from '@/components/editorial';
-
+export { NexusPanel, type NexusPanelProps } from "@/components/nexus/NexusPanel";
+export { default as ReaderContinuation } from "@/components/shared/ReaderContinuation";
+export { EditorialHero } from "@/components/editorial";

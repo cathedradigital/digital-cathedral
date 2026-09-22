@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { AppRoute } from '@/types';
-import { Button } from '@/components/ui/button';
-import { GuidedReadingFlow } from '@/components/cathedra/GuidedReadingFlow';
-import AppHeader from '@/components/cathedra/AppHeader';
-import SEOHead from '@/components/SEOHead';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
-import { useAuth } from '@/hooks/useAuth';
-import { useLang } from '@/hooks/useLang';
-import { useReadingMode } from '@/hooks/useReadingMode';
-import ContemplativeLayout from '@/components/cathedra/ContemplativeLayout';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { AppRoute } from "@/types";
+import { Button } from "@/components/ui/button";
+import { GuidedReadingFlow } from "@/components/cathedra/GuidedReadingFlow";
+import AppHeader from "@/components/cathedra/AppHeader";
+import SEOHead from "@/components/SEOHead";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+import { useAuth } from "@/hooks/useAuth";
+import { useLang } from "@/hooks/useLang";
+import { useReadingMode } from "@/hooks/useReadingMode";
+import ContemplativeLayout from "@/components/cathedra/ContemplativeLayout";
 
 const GuidedReadingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const GuidedReadingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-1000">
-      <AppHeader 
+      <AppHeader
         user={user}
         isDark={isNight}
         onToggleDark={toggle}
@@ -35,8 +35,8 @@ const GuidedReadingPage: React.FC = () => {
         onSignOut={signOut}
         onOpenSidebar={handleToggleSidebar}
       />
-      
-      <SEOHead 
+
+      <SEOHead
         title="Jornada de Leitura Guiada"
         description="Uma experiência contemplativa e organizada para sua leitura espiritual diária."
         path="/jornada-guiada"
@@ -49,11 +49,11 @@ const GuidedReadingPage: React.FC = () => {
               <div className="w-spacing-2xs h-spacing-2xs rounded-premium-full bg-primary animate-pulse" />
               Experiência Guiada
             </div>
-            
+
             <h1 className="text-premium-5xl md:text-premium-7xl font-display font-medium tracking-tighter text-primary">
               Jornada de Luz
             </h1>
-            
+
             <p className="text-premium-xl text-muted-foreground/40 font-serif italic leading-relaxed">
               "Para onde eu for, que a Tua Palavra seja minha lâmpada."
             </p>

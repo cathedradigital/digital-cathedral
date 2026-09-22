@@ -9,8 +9,8 @@
  * para o Reader atual. Fase seguinte substitui o Reader por navegação
  * hierárquica nativa sem alterar o schema.
  */
-import { supabase } from '@/lib/db';
-import type { PrayerBlock } from '@/types/prayer';
+import { supabase } from "@/lib/db";
+import type { PrayerBlock } from "@/types/prayer";
 
 export interface DBSection {
   id: string;
@@ -52,23 +52,26 @@ export interface PrayerHierarchy {
   blocks: DBBlock[];
 }
 
-const BLOCK_KIND_MAP: Record<string, PrayerBlock['kind']> = {
-  announce: 'mystery',
-  pater_noster: 'prayer',
-  ave_maria: 'decade',
-  gloria: 'prayer',
-  fatima: 'prayer',
-  meditation: 'meditation',
-  intro: 'intro',
-  closing: 'closing',
+const BLOCK_KIND_MAP: Record<string, PrayerBlock["kind"]> = {
+  announce: "mystery",
+  pater_noster: "prayer",
+  ave_maria: "decade",
+  gloria: "prayer",
+  fatima: "prayer",
+  meditation: "meditation",
+  intro: "intro",
+  closing: "closing",
 };
 
 const REPEAT_LABEL: Record<string, string> = {
-  ave_maria: 'Ave-Maria',
+  ave_maria: "Ave-Maria",
 };
 
 /** Escolhe a seção para o dia da semana (0=Dom). */
-export function pickSectionForDay(sections: DBSection[], day = new Date().getDay()): DBSection | null {
+export function pickSectionForDay(
+  sections: DBSection[],
+  day = new Date().getDay(),
+): DBSection | null {
   if (!sections.length) return null;
   const match = sections.find((s) => (s.weekdays ?? []).includes(day));
   return match ?? sections[0];
@@ -76,28 +79,20 @@ export function pickSectionForDay(sections: DBSection[], day = new Date().getDay
 
 export async function loadPrayerHierarchyBySlug(slug: string): Promise<PrayerHierarchy | null> {
   const { data: prayer, error: pe } = await supabase
-    .from('prayers')
-    .select('id, engine_version')
-    .eq('slug', slug)
+    .from("prayers")
+    .select("id, engine_version")
+    .eq("slug", slug)
     .maybeSingle();
   if (pe || !prayer) return null;
 
   const [sectionsRes, mysteriesRes, blocksRes] = await Promise.all([
+    supabase.from("prayer_sections").select("*").eq("prayer_id", prayer.id).order("order_index"),
     supabase
-      .from('prayer_sections')
-      .select('*')
-      .eq('prayer_id', prayer.id)
-      .order('order_index'),
-    supabase
-      .from('prayer_mysteries')
-      .select('*, prayer_sections!inner(prayer_id)')
-      .eq('prayer_sections.prayer_id', prayer.id)
-      .order('order_index'),
-    supabase
-      .from('prayer_blocks')
-      .select('*')
-      .eq('prayer_id', prayer.id)
-      .order('order_index'),
+      .from("prayer_mysteries")
+      .select("*, prayer_sections!inner(prayer_id)")
+      .eq("prayer_sections.prayer_id", prayer.id)
+      .order("order_index"),
+    supabase.from("prayer_blocks").select("*").eq("prayer_id", prayer.id).order("order_index"),
   ]);
 
   if (sectionsRes.error || mysteriesRes.error || blocksRes.error) return null;
@@ -134,40 +129,40 @@ export function flattenSectionToBlocks(
   let orderCounter = 0;
 
   const emitBlock = (b: DBBlock, mystery: DBMystery | null) => {
-    const kind = BLOCK_KIND_MAP[b.type] ?? 'prayer';
+    const kind = BLOCK_KIND_MAP[b.type] ?? "prayer";
     const content = b.content ?? {};
-    const text = typeof content.text === 'string' ? content.text : undefined;
-    const latin = typeof content.latin === 'string' ? content.latin : undefined;
-    const medText = typeof content.meditation === 'string' ? content.meditation : undefined;
+    const text = typeof content.text === "string" ? content.text : undefined;
+    const latin = typeof content.latin === "string" ? content.latin : undefined;
+    const medText = typeof content.meditation === "string" ? content.meditation : undefined;
     const gospelRef =
-      typeof content.gospel_ref === 'string'
+      typeof content.gospel_ref === "string"
         ? content.gospel_ref
-        : mystery?.gospel_ref ?? undefined;
-    const fruit = typeof content.fruit === 'string' ? content.fruit : undefined;
-    const rubric = typeof content.rubric === 'string' ? content.rubric : undefined;
+        : (mystery?.gospel_ref ?? undefined);
+    const fruit = typeof content.fruit === "string" ? content.fruit : undefined;
+    const rubric = typeof content.rubric === "string" ? content.rubric : undefined;
 
     const meta = (b.meta ?? {}) as Record<string, unknown>;
-    const optionGroup = typeof meta.option_group === 'string' ? meta.option_group : undefined;
-    const optionKey = typeof meta.option_key === 'string' ? meta.option_key : undefined;
-    const optionLabel = typeof meta.option_label === 'string' ? meta.option_label : undefined;
+    const optionGroup = typeof meta.option_group === "string" ? meta.option_group : undefined;
+    const optionKey = typeof meta.option_key === "string" ? meta.option_key : undefined;
+    const optionLabel = typeof meta.option_label === "string" ? meta.option_label : undefined;
 
     const block: PrayerBlock = {
       id: b.id,
       kind,
       order: orderCounter++,
-      title: b.type === 'announce' && mystery ? mystery.title : b.title ?? mystery?.title ?? '',
-      subtitle: b.type === 'announce' ? section.title : undefined,
+      title: b.type === "announce" && mystery ? mystery.title : (b.title ?? mystery?.title ?? ""),
+      subtitle: b.type === "announce" ? section.title : undefined,
       body: text,
       latin,
       meditation:
-        b.type === 'announce'
-          ? medText ?? mystery?.meditation ?? undefined
-          : b.type === 'meditation'
-            ? text ?? mystery?.meditation ?? undefined
+        b.type === "announce"
+          ? (medText ?? mystery?.meditation ?? undefined)
+          : b.type === "meditation"
+            ? (text ?? mystery?.meditation ?? undefined)
             : undefined,
-      fruit: b.type === 'meditation' ? fruit ?? mystery?.fruit ?? undefined : undefined,
+      fruit: b.type === "meditation" ? (fruit ?? mystery?.fruit ?? undefined) : undefined,
       rubric,
-      refs: gospelRef && b.type === 'announce' ? { bible: [gospelRef] } : undefined,
+      refs: gospelRef && b.type === "announce" ? { bible: [gospelRef] } : undefined,
       mysteryId: mystery?.id,
       sectionId: section.id,
       sourceType: b.type,

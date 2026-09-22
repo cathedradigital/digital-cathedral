@@ -1,7 +1,6 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-
 
 import { cn } from "@/lib/utils";
 

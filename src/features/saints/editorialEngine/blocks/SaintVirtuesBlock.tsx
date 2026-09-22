@@ -1,12 +1,15 @@
-import React from 'react';
-import type { SaintVirtue } from '../types';
+import React from "react";
+import type { SaintVirtue } from "../types";
 
 interface Props {
   virtues: SaintVirtue[];
 }
 
 export const SaintVirtuesBlock: React.FC<Props> = ({ virtues }) => (
-  <section aria-labelledby="saint-virtues" className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg">
+  <section
+    aria-labelledby="saint-virtues"
+    className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg"
+  >
     <h2 id="saint-virtues" className="font-serif text-premium-lg text-foreground mb-spacing-sm">
       Virtudes e carisma
     </h2>

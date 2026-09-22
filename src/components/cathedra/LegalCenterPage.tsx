@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '../../constants';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "../../constants";
 
 interface LegalDoc {
   path: string;
@@ -11,27 +11,27 @@ interface LegalDoc {
 
 const DOCS: LegalDoc[] = [
   {
-    path: '/legal/privacy',
-    label: 'Política de Privacidade',
-    desc: 'Quais dados coletamos, por quê, por quanto tempo e quais são os seus direitos como titular.',
+    path: "/legal/privacy",
+    label: "Política de Privacidade",
+    desc: "Quais dados coletamos, por quê, por quanto tempo e quais são os seus direitos como titular.",
     icon: <Icons.Lock className="w-spacing-lg h-spacing-lg" />,
   },
   {
-    path: '/legal/lgpd',
-    label: 'LGPD — Lei Geral de Proteção de Dados',
-    desc: 'Como a Cathedra cumpre a Lei nº 13.709/2018: bases legais, DPO, incidentes e canal do titular.',
+    path: "/legal/lgpd",
+    label: "LGPD — Lei Geral de Proteção de Dados",
+    desc: "Como a Cathedra cumpre a Lei nº 13.709/2018: bases legais, DPO, incidentes e canal do titular.",
     icon: <Icons.Shield className="w-spacing-lg h-spacing-lg" />,
   },
   {
-    path: '/terms',
-    label: 'Termos de Uso',
-    desc: 'Direitos, deveres, propriedade intelectual e regras de utilização da plataforma.',
+    path: "/terms",
+    label: "Termos de Uso",
+    desc: "Direitos, deveres, propriedade intelectual e regras de utilização da plataforma.",
     icon: <Icons.Book className="w-spacing-lg h-spacing-lg" />,
   },
   {
-    path: '/transparencia',
-    label: 'Transparência',
-    desc: 'Relatório de uso de recursos, apostolado apoiado e destinação dos aportes.',
+    path: "/transparencia",
+    label: "Transparência",
+    desc: "Relatório de uso de recursos, apostolado apoiado e destinação dos aportes.",
     icon: <Icons.Eye className="w-spacing-lg h-spacing-lg" />,
   },
 ];
@@ -49,8 +49,8 @@ const LegalCenterPage: React.FC = () => (
         Centro Legal & Privacidade
       </h1>
       <p className="text-muted-foreground text-premium-lg max-w-2xl mx-auto">
-        Todos os documentos institucionais da Cathedra Digital em um só lugar — clareza, respeito ao usuário
-        e conformidade com a legislação brasileira.
+        Todos os documentos institucionais da Cathedra Digital em um só lugar — clareza, respeito ao
+        usuário e conformidade com a legislação brasileira.
       </p>
     </header>
 
@@ -79,7 +79,9 @@ const LegalCenterPage: React.FC = () => (
     </section>
 
     <section className="bg-primary/[0.01] rounded-premium border border-primary/5 p-spacing-lg space-y-spacing-sm text-center">
-      <h2 className="text-premium-lg font-serif font-bold text-foreground">Canal do titular de dados</h2>
+      <h2 className="text-premium-lg font-serif font-bold text-foreground">
+        Canal do titular de dados
+      </h2>
       <p className="text-muted-foreground text-premium-sm max-w-2xl mx-auto">
         Para exercer qualquer direito previsto na LGPD (acesso, correção, portabilidade, exclusão),
         fale com nosso encarregado (DPO).

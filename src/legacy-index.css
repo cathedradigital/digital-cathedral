@@ -1,30 +1,27 @@
-
 @layer base {
   :root {
     /* --- Core Visual Tokens: Cathedra Premium System --- */
-    
+
     /* 1. Colors (HSL) */
     --background: 220 15% 96%; /* Revertendo para o tom sóbrio anterior */
 
     --foreground: 220 25% 15%; /* Aumentado de 10% para 15% para suavizar mas manter contraste */
 
-    
     --card: 45 35% 99.4%;
     --card-foreground: 220 25% 10%;
-    
-    --primary: 220 30% 12%; 
+
+    --primary: 220 30% 12%;
     --primary-foreground: 45 40% 98%;
-    
+
     --secondary: 42 30% 35%; /* Escurecido de 45% para 35% para melhor contraste no mobile */
     --secondary-foreground: 45 40% 98%;
 
-    
     --muted: 45 20% 97%;
-    --muted-foreground: 220 15% 25%; /* Aumentado de 35% para 25% para conformidade WCAG AA */ 
-    
+    --muted-foreground: 220 15% 25%; /* Aumentado de 35% para 25% para conformidade WCAG AA */
+
     --accent: 42 20% 95%;
     --accent-foreground: 220 20% 12%;
-    
+
     --border: 220 30% 90%;
     --input: 220 30% 90%;
     --ring: 220 20% 12%;
@@ -44,19 +41,19 @@
     --gold-text-strong: #6d5a1a;
     /* Gold para TEXTO sobre fundo ESCURO (#000/#0B1F3A). ~ratio 8.5:1 sobre #000. */
     --gold-on-dark: #e6c96b;
-    
+
     /* 2. Spacing Scale (8pt-based) */
     --spacing-3xs: 0.125rem; /* 2px */
-    --spacing-2xs: 0.25rem;  /* 4px */
-    --spacing-xs: 0.5rem;   /* 8px */
-    --spacing-sm: 0.75rem;  /* 12px */
-    --spacing-md: 1rem;     /* 16px */
-    --spacing-lg: 1.5rem;   /* 24px */
-    --spacing-xl: 2rem;     /* 32px */
-    --spacing-2xl: 3rem;    /* 48px */
-    --spacing-3xl: 4rem;    /* 64px */
-    --spacing-4xl: 6rem;    /* 96px */
-    
+    --spacing-2xs: 0.25rem; /* 4px */
+    --spacing-xs: 0.5rem; /* 8px */
+    --spacing-sm: 0.75rem; /* 12px */
+    --spacing-md: 1rem; /* 16px */
+    --spacing-lg: 1.5rem; /* 24px */
+    --spacing-xl: 2rem; /* 32px */
+    --spacing-2xl: 3rem; /* 48px */
+    --spacing-3xl: 4rem; /* 64px */
+    --spacing-4xl: 6rem; /* 96px */
+
     /* 3. Borders & Radius */
     --radius-sm: 0.5rem;
     --radius-md: 1rem;
@@ -64,17 +61,16 @@
     --radius-xl: 2rem;
     --radius-premium: 2.5rem;
     --radius: 1.5rem;
-    
+
     --border-thin: 1px;
     --border-medium: 1.5px;
 
-    
     /* 4. Shadows */
     --shadow-premium-sm: 0 1px 2px 0 rgb(0 0 0 / 0.02);
     --shadow-premium-md: 0 2px 4px -1px rgb(0 0 0 / 0.01);
     --shadow-premium: 0 4px 20px -10px rgba(0, 0, 0, 0.01);
     --shadow-premium-hover: 0 10px 30px -15px rgba(0, 0, 0, 0.02);
-    
+
     /* 5. Typography Scale */
     --text-premium-xs: 0.75rem;
     --text-premium-sm: 0.875rem;
@@ -85,12 +81,12 @@
     --text-premium-3xl: 1.875rem;
     --text-premium-4xl: 2.25rem;
     --text-premium-5xl: 3rem;
-    
+
     --font-weight-light: 300;
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
-    
+
     --letter-spacing-tight: -0.02em;
     --letter-spacing-wide: 0.05em;
     --letter-spacing-widest: 0.25em;
@@ -102,14 +98,14 @@
     --layout-content-width-mobile: 85vw;
     --header-height: 40px;
     --bottom-nav-height: 52px;
-    
+
     /* 8. Icons */
     --icon-size-sm: 16px;
     --icon-size-md: 20px;
     --icon-size-lg: 24px;
     --icon-size-xl: 32px;
     --icon-stroke-width: 1.2;
-    
+
     /* 7. Transitions */
     --transition-premium: 500ms cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: 200ms ease;
@@ -121,20 +117,20 @@
     --space-editorial-lg: 9rem;
 
     /* SP4 Onda A — Escala unificada de espaçamento (usar em novos módulos e em migração dos existentes) */
-    --sp-xs: 0.25rem;   /* 4px  */
-    --sp-s:  0.5rem;    /* 8px  */
-    --sp-m:  1rem;      /* 16px — item */
-    --sp-l:  1.5rem;    /* 24px */
-    --sp-xl: 2.5rem;    /* 40px — bloco */
-    --sp-xxl: 4rem;     /* 64px — seção */
+    --sp-xs: 0.25rem; /* 4px  */
+    --sp-s: 0.5rem; /* 8px  */
+    --sp-m: 1rem; /* 16px — item */
+    --sp-l: 1.5rem; /* 24px */
+    --sp-xl: 2.5rem; /* 40px — bloco */
+    --sp-xxl: 4rem; /* 64px — seção */
     --rule-gold: 43 45% 54%;
     /* Dourado legível como TEXTO (AA sobre fundo claro). O `--rule-gold`
        permanece reservado a filetes, bordas e halos. */
     --rule-gold-ink: 43 62% 30%;
     --rule-gold-soft: hsl(var(--rule-gold) / 0.2);
     --rule-gold-hair: hsl(var(--rule-gold) / 0.12);
-    --font-display: 'Cormorant Garamond', ui-serif, Georgia, serif;
-    --font-body: 'Karla', ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-body: "Karla", ui-sans-serif, system-ui, sans-serif;
 
     /* ==================================================================
      * STITCH TOKENS (Sprint R0 — Reskin foundation)
@@ -143,50 +139,50 @@
      * (R1..R7) opta por consumir estes tokens na sua rota-alvo.
      * Fonte: Google Stitch HTMLs (M3 palette). HSL derivado dos hexes.
      * ================================================================ */
-    --stitch-primary: 222 100% 11%;             /* #00113a */
-    --stitch-on-primary: 0 0% 100%;             /* #ffffff */
-    --stitch-primary-container: 220 100% 20%;   /* #002366 */
+    --stitch-primary: 222 100% 11%; /* #00113a */
+    --stitch-on-primary: 0 0% 100%; /* #ffffff */
+    --stitch-primary-container: 220 100% 20%; /* #002366 */
     --stitch-on-primary-container: 224 55% 65%; /* #758dd5 */
-    --stitch-primary-fixed: 228 100% 93%;       /* #dbe1ff */
-    --stitch-inverse-primary: 224 100% 85%;     /* #b3c5ff */
+    --stitch-primary-fixed: 228 100% 93%; /* #dbe1ff */
+    --stitch-inverse-primary: 224 100% 85%; /* #b3c5ff */
 
-    --stitch-secondary: 48 100% 23%;            /* #735c00 */
+    --stitch-secondary: 48 100% 23%; /* #735c00 */
     --stitch-on-secondary: 0 0% 100%;
-    --stitch-secondary-container: 48 99% 68%;   /* #fed65b */
+    --stitch-secondary-container: 48 99% 68%; /* #fed65b */
     --stitch-on-secondary-container: 48 100% 23%; /* #745c00 */
-    --stitch-secondary-fixed: 45 100% 76%;      /* #ffe088 */
-    --stitch-secondary-fixed-dim: 47 79% 60%;   /* #e9c349 */
+    --stitch-secondary-fixed: 45 100% 76%; /* #ffe088 */
+    --stitch-secondary-fixed-dim: 47 79% 60%; /* #e9c349 */
 
-    --stitch-tertiary: 36 41% 6%;               /* #191308 */
-    --stitch-tertiary-fixed: 35 46% 87%;        /* #eee1ce */
-    --stitch-on-tertiary-fixed: 42 39% 10%;     /* #211b0f */
+    --stitch-tertiary: 36 41% 6%; /* #191308 */
+    --stitch-tertiary-fixed: 35 46% 87%; /* #eee1ce */
+    --stitch-on-tertiary-fixed: 42 39% 10%; /* #211b0f */
 
-    --stitch-background: 20 25% 98%;            /* #fbf9f8 */
-    --stitch-on-background: 180 2% 11%;         /* #1b1c1c */
+    --stitch-background: 20 25% 98%; /* #fbf9f8 */
+    --stitch-on-background: 180 2% 11%; /* #1b1c1c */
     --stitch-surface: 20 25% 98%;
     --stitch-on-surface: 180 2% 11%;
-    --stitch-on-surface-variant: 230 8% 29%;    /* #444650 */
+    --stitch-on-surface-variant: 230 8% 29%; /* #444650 */
 
     --stitch-surface-container-lowest: 0 0% 100%;
     --stitch-surface-container-low: 15 14% 96%; /* #f6f3f2 */
-    --stitch-surface-container: 0 6% 93%;       /* #f0eded */
+    --stitch-surface-container: 0 6% 93%; /* #f0eded */
     --stitch-surface-container-high: 20 6% 91%; /* #eae8e7 */
     --stitch-surface-container-highest: 20 4% 89%; /* #e4e2e1 */
     --stitch-surface-variant: 20 4% 89%;
-    --stitch-surface-dim: 0 4% 85%;             /* #dcd9d9 */
+    --stitch-surface-dim: 0 4% 85%; /* #dcd9d9 */
     --stitch-surface-bright: 20 25% 98%;
-    --stitch-surface-tint: 224 40% 45%;         /* #435b9f */
+    --stitch-surface-tint: 224 40% 45%; /* #435b9f */
 
-    --stitch-outline: 232 6% 48%;               /* #757682 */
-    --stitch-outline-variant: 233 11% 80%;      /* #c5c6d2 */
+    --stitch-outline: 232 6% 48%; /* #757682 */
+    --stitch-outline-variant: 233 11% 80%; /* #c5c6d2 */
 
-    --stitch-inverse-surface: 0 0% 19%;         /* #303030 */
-    --stitch-inverse-on-surface: 0 6% 95%;      /* #f3f0f0 */
+    --stitch-inverse-surface: 0 0% 19%; /* #303030 */
+    --stitch-inverse-on-surface: 0 6% 95%; /* #f3f0f0 */
 
-    --stitch-error: 0 75% 42%;                  /* #ba1a1a */
+    --stitch-error: 0 75% 42%; /* #ba1a1a */
     --stitch-on-error: 0 0% 100%;
-    --stitch-error-container: 6 100% 92%;       /* #ffdad6 */
-    --stitch-on-error-container: 355 100% 29%;  /* #93000a */
+    --stitch-error-container: 6 100% 92%; /* #ffdad6 */
+    --stitch-on-error-container: 355 100% 29%; /* #93000a */
 
     /* Stitch scale */
     --stitch-radius-default: 0.125rem;
@@ -208,13 +204,14 @@
     --stitch-mobile-blur: saturate(180%) blur(14px);
 
     /* Stitch tipografia (mapeada às fontes já carregadas do projeto) */
-    --font-stitch-display: 'EB Garamond', 'Cormorant Garamond', ui-serif, Georgia, serif;
-    --font-stitch-body: 'EB Garamond', ui-serif, Georgia, serif;
-    --font-stitch-label: 'Karla', ui-sans-serif, system-ui, sans-serif;
+    --font-stitch-display: "EB Garamond", "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-stitch-body: "EB Garamond", ui-serif, Georgia, serif;
+    --font-stitch-label: "Karla", ui-sans-serif, system-ui, sans-serif;
   }
 
   /* Dark mode Stitch — pares oficiais M3 (invertidos). Ativa dentro de .dark. */
-  .dark, [data-theme='dark'] {
+  .dark,
+  [data-theme="dark"] {
     --stitch-primary: 224 100% 85%;
     --stitch-on-primary: 222 100% 11%;
     --stitch-primary-container: 220 100% 20%;
@@ -246,57 +243,58 @@
     --stitch-inverse-on-surface: 0 0% 19%;
   }
 
-
-  .dark, [data-theme='dark'] {
+  .dark,
+  [data-theme="dark"] {
     --background: 220 15% 9%;
     --foreground: 45 10% 95%; /* Maior brilho no dark para legibilidade */
-    
+
     --card: 220 15% 10%;
     --card-foreground: 45 10% 88%;
-    
+
     --primary: 42 15% 70%;
     --primary-foreground: 220 15% 5%;
-    
+
     --border: 45 15% 90% / 0.08;
     --shadow-premium: 0 20px 80px -20px rgba(0, 0, 0, 0.5);
     --rule-gold-ink: 43 60% 72%;
   }
 
   /* Reading Themes - Consolidated with Core */
-  .reading-theme-paper { 
-    --background: 220 15% 96%; 
+  .reading-theme-paper {
+    --background: 220 15% 96%;
     --foreground: 220 25% 10%;
     --primary: 220 30% 12%;
     background-color: #f1f3f5 !important;
     color: #1a1a1a !important;
   }
 
-  .reading-theme-sepia { 
-    --background: 38 35% 92%; 
-    --foreground: 25 20% 20%; 
+  .reading-theme-sepia {
+    --background: 38 35% 92%;
+    --foreground: 25 20% 20%;
     --primary: 25 20% 15%;
     --border: 25 20% 10% / 0.1;
-    background-color: #E8E2D2 !important;
+    background-color: #e8e2d2 !important;
     color: #2b2621 !important;
   }
-  .reading-theme-dark { 
-    --background: 220 15% 12%; 
-    --foreground: 45 10% 88%; 
+  .reading-theme-dark {
+    --background: 220 15% 12%;
+    --foreground: 45 10% 88%;
     --primary: 42 15% 70%;
     --border: 45 15% 90% / 0.05;
-    background-color: #1A1C1E !important;
+    background-color: #1a1c1e !important;
     color: #e0e0e0 !important;
   }
-  .reading-theme-night { 
-    --background: 220 20% 7%; 
-    --foreground: 45 10% 70%; 
+  .reading-theme-night {
+    --background: 220 20% 7%;
+    --foreground: 45 10% 70%;
     --primary: 42 15% 50%;
     --border: 45 15% 90% / 0.03;
-    background-color: #0D0E10 !important;
+    background-color: #0d0e10 !important;
     color: #b0b0b0 !important;
   }
 
-  .high-contrast, [data-contrast='high'] {
+  .high-contrast,
+  [data-contrast="high"] {
     --background: 0 0% 100% !important;
     --foreground: 0 0% 0% !important;
     --primary: 0 0% 0% !important;
@@ -315,12 +313,29 @@
     --shadow-premium: none !important;
   }
 
-  .high-contrast.reading-theme-paper, [data-contrast='high'].reading-theme-paper { background-color: #ffffff !important; color: #000000 !important; }
-  .high-contrast.reading-theme-sepia, [data-contrast='high'].reading-theme-sepia { background-color: #ffffff !important; color: #000000 !important; }
-  .high-contrast.reading-theme-dark, [data-contrast='high'].reading-theme-dark { background-color: #000000 !important; color: #ffffff !important; }
-  .high-contrast.reading-theme-night, [data-contrast='high'].reading-theme-night { background-color: #000000 !important; color: #ffffff !important; }
+  .high-contrast.reading-theme-paper,
+  [data-contrast="high"].reading-theme-paper {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .high-contrast.reading-theme-sepia,
+  [data-contrast="high"].reading-theme-sepia {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .high-contrast.reading-theme-dark,
+  [data-contrast="high"].reading-theme-dark {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+  .high-contrast.reading-theme-night,
+  [data-contrast="high"].reading-theme-night {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
 
-  .dark.high-contrast, .dark[data-contrast='high'] {
+  .dark.high-contrast,
+  .dark[data-contrast="high"] {
     --background: 0 0% 0% !important;
     --foreground: 0 0% 100% !important;
     --primary: 0 0% 100% !important;
@@ -334,13 +349,22 @@
     --border: 0 0% 100% / 0.8 !important;
   }
 
-
-
   /* Typography System */
-  .font-display { font-family: 'Cinzel', serif; font-weight: 400; }
-  .font-serif { font-family: 'Playfair Display', serif; font-weight: 400; }
-  .font-reader { font-family: 'Lora', serif; font-weight: 400; }
-  .font-ui { font-family: 'Inter', sans-serif; }
+  .font-display {
+    font-family: "Cinzel", serif;
+    font-weight: 400;
+  }
+  .font-serif {
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+  }
+  .font-reader {
+    font-family: "Lora", serif;
+    font-weight: 400;
+  }
+  .font-ui {
+    font-family: "Inter", sans-serif;
+  }
 
   /* =====================================================================
    * Cathedra Noir & Gold — escopo local da Home unificada.
@@ -358,9 +382,9 @@
     --noir-line-strong: rgba(255, 255, 255, 0.12);
     --gold: #c9a84c;
     --gold-light: #dfc17a;
-    --font-display: 'Cormorant Garamond', 'Playfair Display', serif;
-    --font-body: 'Karla', 'Inter', sans-serif;
-    
+    --font-display: "Cormorant Garamond", "Playfair Display", serif;
+    --font-body: "Karla", "Inter", sans-serif;
+
     background-color: var(--noir-bg);
     color: var(--noir-text);
     font-family: var(--font-body);
@@ -370,7 +394,10 @@
     border-radius: var(--radius-premium);
   }
 
-  .cathedra-noir ::selection { background: rgba(201, 168, 76, 0.35); color: #0d0d0d; }
+  .cathedra-noir ::selection {
+    background: rgba(201, 168, 76, 0.35);
+    color: #0d0d0d;
+  }
 
   /* Reset agressivo dos estilos globais dentro do escopo Noir.
      O sistema global força uppercase/tracking/blur em h1-h3 e altera line-height.
@@ -386,27 +413,59 @@
     color: inherit;
     font-weight: inherit;
   }
-  .cathedra-noir p { color: inherit; font-family: inherit; }
-  .cathedra-noir a:focus-visible { outline: 1px solid var(--gold); outline-offset: 4px; box-shadow: none; }
-  .cathedra-noir input:focus-visible { outline: none; box-shadow: none; }
+  .cathedra-noir p {
+    color: inherit;
+    font-family: inherit;
+  }
+  .cathedra-noir a:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 4px;
+    box-shadow: none;
+  }
+  .cathedra-noir input:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
 
   @keyframes cathedra-noir-rise {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
-  .cathedra-noir [data-rise] { animation: cathedra-noir-rise 900ms cubic-bezier(0.2,0.7,0.2,1) both; }
-  .cathedra-noir [data-rise="1"] { animation-delay: 80ms; }
-  .cathedra-noir [data-rise="2"] { animation-delay: 220ms; }
-  .cathedra-noir [data-rise="3"] { animation-delay: 380ms; }
-  .cathedra-noir [data-rise="4"] { animation-delay: 560ms; }
+  .cathedra-noir [data-rise] {
+    animation: cathedra-noir-rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .cathedra-noir [data-rise="1"] {
+    animation-delay: 80ms;
+  }
+  .cathedra-noir [data-rise="2"] {
+    animation-delay: 220ms;
+  }
+  .cathedra-noir [data-rise="3"] {
+    animation-delay: 380ms;
+  }
+  .cathedra-noir [data-rise="4"] {
+    animation-delay: 560ms;
+  }
   @media (prefers-reduced-motion: reduce) {
-    .cathedra-noir [data-rise] { animation: none; }
+    .cathedra-noir [data-rise] {
+      animation: none;
+    }
   }
 
   /* Shimmer para skeletons — respeita prefers-reduced-motion */
   @keyframes cathedra-shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
   .cathedra-shimmer {
     background-image: linear-gradient(
@@ -426,10 +485,6 @@
     }
   }
 
-
-
-
-
   * {
     @apply border-border;
     -webkit-font-smoothing: antialiased;
@@ -440,12 +495,16 @@
   /* Premium Accessible Focus System */
   :focus-visible {
     @apply outline-none ring-2 ring-secondary/60 ring-offset-2 ring-offset-background;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--secondary) / 0.4);
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--secondary) / 0.4);
   }
 
   .dark :focus-visible {
     @apply ring-secondary/80 ring-offset-background;
-    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--secondary) / 0.6);
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--secondary) / 0.6);
   }
 
   /* High Contrast Focus */
@@ -453,15 +512,17 @@
     @apply ring-4 ring-primary ring-offset-4 ring-offset-background !important;
   }
 
-  html, body {
+  html,
+  body {
     @apply h-full overflow-x-hidden bg-background text-foreground selection:bg-secondary/20;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     text-rendering: optimizeLegibility;
     line-height: 1.6;
     scroll-behavior: smooth;
   }
 
-  h1, .h1 {
+  h1,
+  .h1 {
     @apply font-display font-normal uppercase tracking-premium-widest text-primary;
     font-size: clamp(var(--text-premium-3xl), 10vw, var(--text-premium-5xl));
     line-height: 1.05;
@@ -469,20 +530,22 @@
     text-shadow: 0 0 1px hsla(var(--primary) / 0.1);
   }
 
-
-  h2, .h2 {
+  h2,
+  .h2 {
     @apply font-display font-light uppercase tracking-premium-wide text-primary/80;
     font-size: clamp(var(--text-premium-xl), 6vw, var(--text-premium-4xl));
     line-height: 1.15;
   }
 
-  h3, .h3 {
+  h3,
+  .h3 {
     @apply font-display font-light tracking-premium-tight text-primary/70;
     font-size: clamp(var(--text-premium-lg), 5vw, var(--text-premium-3xl));
     line-height: 1.25;
   }
 
-  p, .body-text {
+  p,
+  .body-text {
     @apply font-ui font-normal text-foreground/90;
     /* Escala responsiva por steps refinados usando fluid typography */
     font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
@@ -492,21 +555,23 @@
   }
 
   @media (min-width: 390px) {
-    p, .body-text {
+    p,
+    .body-text {
       font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
     }
   }
 
   @media (min-width: 768px) {
-    p, .body-text {
+    p,
+    .body-text {
       font-size: clamp(1.125rem, 1rem + 0.4vw, 1.25rem);
     }
   }
 
-  .dark p, .dark .body-text {
+  .dark p,
+  .dark .body-text {
     @apply text-foreground/75; /* Aumentado para garantir contraste WCAG AA no modo dark */
   }
-
 
   /* Reading Core - Optimized Rhythm */
   .reader-text {
@@ -519,32 +584,56 @@
     overflow-wrap: break-word;
   }
 
-
-  .line-spacing-tight .reader-text { line-height: 1.5; }
-  .line-spacing-normal .reader-text { line-height: 1.8; }
-  .line-spacing-wide .reader-text { line-height: 2.2; }
+  .line-spacing-tight .reader-text {
+    line-height: 1.5;
+  }
+  .line-spacing-normal .reader-text {
+    line-height: 1.8;
+  }
+  .line-spacing-wide .reader-text {
+    line-height: 2.2;
+  }
 
   @screen md {
     .reader-text {
       line-height: 2;
     }
-    .line-spacing-tight .reader-text { line-height: 1.7; }
-    .line-spacing-normal .reader-text { line-height: 2; }
-    .line-spacing-wide .reader-text { line-height: 2.5; }
+    .line-spacing-tight .reader-text {
+      line-height: 1.7;
+    }
+    .line-spacing-normal .reader-text {
+      line-height: 2;
+    }
+    .line-spacing-wide .reader-text {
+      line-height: 2.5;
+    }
   }
 
-  .font-size-small { font-size: 0.875rem !important; }
-  .font-size-medium { font-size: 1rem !important; }
-  .font-size-large { font-size: 1.25rem !important; }
-  .font-size-extra-large { font-size: 1.5rem !important; }
+  .font-size-small {
+    font-size: 0.875rem !important;
+  }
+  .font-size-medium {
+    font-size: 1rem !important;
+  }
+  .font-size-large {
+    font-size: 1.25rem !important;
+  }
+  .font-size-extra-large {
+    font-size: 1.5rem !important;
+  }
 
-  .font-size-small.reader-text { font-size: var(--text-premium-lg) !important; }
-  .font-size-medium.reader-text { font-size: var(--text-premium-xl) !important; }
-  .font-size-large.reader-text { font-size: var(--text-premium-2xl) !important; }
-  .font-size-extra-large.reader-text { font-size: var(--text-premium-3xl) !important; }
-
-
-  
+  .font-size-small.reader-text {
+    font-size: var(--text-premium-lg) !important;
+  }
+  .font-size-medium.reader-text {
+    font-size: var(--text-premium-xl) !important;
+  }
+  .font-size-large.reader-text {
+    font-size: var(--text-premium-2xl) !important;
+  }
+  .font-size-extra-large.reader-text {
+    font-size: var(--text-premium-3xl) !important;
+  }
 
   /* Premium Editorial Styling for Bible/Catechism */
   .prose-premium {
@@ -562,14 +651,26 @@
   }
 
   /* Atmosphere & Theme Depth - Variable Surface Levels */
-  .reading-theme-paper { background-color: #FDF8F3 !important; color: #1a1a1a !important; font-family: 'Playfair Display', serif; }
-  .reading-theme-sepia { background-color: #E8E2D2 !important; color: #2b2621 !important; }
-  .reading-theme-dark { background-color: #1A1C1E !important; color: #e0e0e0 !important; }
-  .reading-theme-night { background-color: #0D0E10 !important; color: #b0b0b0 !important; }
+  .reading-theme-paper {
+    background-color: #fdf8f3 !important;
+    color: #1a1a1a !important;
+    font-family: "Playfair Display", serif;
+  }
+  .reading-theme-sepia {
+    background-color: #e8e2d2 !important;
+    color: #2b2621 !important;
+  }
+  .reading-theme-dark {
+    background-color: #1a1c1e !important;
+    color: #e0e0e0 !important;
+  }
+  .reading-theme-night {
+    background-color: #0d0e10 !important;
+    color: #b0b0b0 !important;
+  }
 }
 
 @layer components {
-
   /* Shared Module Header Style - Deprecated in favor of ContemplativeLayout props */
   .module-header {
     @apply text-center mb-spacing-xl md:mb-spacing-3xl space-y-spacing-md md:space-y-spacing-lg;
@@ -596,8 +697,6 @@
     @apply p-spacing-md md:p-spacing-xl;
   }
 
-
-
   /* Unified Search Input Utility */
   .search-input-premium {
     @apply w-full pl-spacing-2xl pr-spacing-lg py-spacing-md rounded-premium-full border border-primary/[0.08] bg-white/40 backdrop-blur-xl focus:bg-white/80 focus:ring-1 focus:ring-primary/10 transition-all font-serif italic text-premium-lg placeholder:text-primary/20 shadow-premium-sm;
@@ -607,7 +706,9 @@
   @media (max-width: 768px) {
     .header-reading-auto-hide,
     .bottom-nav-reading-auto-hide {
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+      transition:
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.6s ease;
     }
 
     body.is-scrolling-down .header-auto-hide {
@@ -621,12 +722,16 @@
       opacity: 0;
       pointer-events: none;
     }
-    
+
     .monastic-sanctuary::after {
-      content: '';
+      content: "";
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle at center, transparent 40%, hsl(var(--background) / 0.1) 100%);
+      background: radial-gradient(
+        circle at center,
+        transparent 40%,
+        hsl(var(--background) / 0.1) 100%
+      );
       pointer-events: none;
       z-index: 10;
     }
@@ -653,17 +758,20 @@
     @apply btn-premium bg-transparent text-primary/30 hover:text-primary hover:bg-primary/[0.04];
   }
 
-
-
   .btn-full-mobile {
     @apply w-full md:w-auto min-h-[44px] flex items-center justify-center;
   }
 }
 
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .cinematic-fade-in {
     animation: cinematicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
@@ -673,7 +781,7 @@
   }
 
   .premium-glow::after {
-    content: '';
+    content: "";
     @apply absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none;
     background: radial-gradient(circle at center, hsl(var(--primary) / 0.05) 0%, transparent 80%);
   }
@@ -688,8 +796,16 @@
 }
 
 @keyframes cinematicFadeIn {
-  from { opacity: 0; transform: scale(1.002) translateY(8px); filter: blur(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  from {
+    opacity: 0;
+    transform: scale(1.002) translateY(8px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
 }
 
 /* Modo Foco & Silêncio Visual */
@@ -739,8 +855,8 @@ header:hover {
   @apply transition-all duration-1000 border-transparent !shadow-premium-none;
 }
 
-.visual-silence header, 
-.visual-silence footer, 
+.visual-silence header,
+.visual-silence footer,
 .visual-silence nav {
   @apply opacity-[0.15] hover:opacity-100 transition-opacity duration-1000;
 }
@@ -765,8 +881,14 @@ header:hover {
 }
 
 @keyframes cinematicFadeInQuiet {
-  from { opacity: 0; filter: blur(4px); }
-  to { opacity: 1; filter: blur(0); }
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 
 @layer base {
@@ -789,19 +911,37 @@ header:hover {
 }
 
 /* Suavização de leitura e Ritmo */
-[data-line-spacing='tight'] .reader-text { line-height: 1.6 !important; }
-[data-line-spacing='normal'] .reader-text { line-height: 2.1 !important; }
-[data-line-spacing='wide'] .reader-text { line-height: 2.8 !important; }
+[data-line-spacing="tight"] .reader-text {
+  line-height: 1.6 !important;
+}
+[data-line-spacing="normal"] .reader-text {
+  line-height: 2.1 !important;
+}
+[data-line-spacing="wide"] .reader-text {
+  line-height: 2.8 !important;
+}
 
-[data-letter-spacing='tight'] .reader-text { letter-spacing: -0.01em !important; }
-[data-letter-spacing='normal'] .reader-text { letter-spacing: var(--letter-spacing-wide) !important; }
-[data-letter-spacing='wide'] .reader-text { letter-spacing: 0.1em !important; }
+[data-letter-spacing="tight"] .reader-text {
+  letter-spacing: -0.01em !important;
+}
+[data-letter-spacing="normal"] .reader-text {
+  letter-spacing: var(--letter-spacing-wide) !important;
+}
+[data-letter-spacing="wide"] .reader-text {
+  letter-spacing: 0.1em !important;
+}
 
 /* Mobile adjustments */
 @media (max-width: 640px) {
-  [data-line-spacing='tight'] .reader-text { line-height: 1.4 !important; }
-  [data-line-spacing='normal'] .reader-text { line-height: 1.8 !important; }
-  [data-line-spacing='wide'] .reader-text { line-height: 2.2 !important; }
+  [data-line-spacing="tight"] .reader-text {
+    line-height: 1.4 !important;
+  }
+  [data-line-spacing="normal"] .reader-text {
+    line-height: 1.8 !important;
+  }
+  [data-line-spacing="wide"] .reader-text {
+    line-height: 2.2 !important;
+  }
 }
 
 .visual-silence .reader-text {
@@ -841,48 +981,73 @@ header:hover {
 }
 
 /* Layout Density & Reading Rhythm */
-[data-line-spacing='tight'] .reader-text { line-height: 1.5; }
-[data-line-spacing='normal'] .reader-text { line-height: 1.9; }
-[data-line-spacing='wide'] .reader-text { line-height: 2.4; }
+[data-line-spacing="tight"] .reader-text {
+  line-height: 1.5;
+}
+[data-line-spacing="normal"] .reader-text {
+  line-height: 1.9;
+}
+[data-line-spacing="wide"] .reader-text {
+  line-height: 2.4;
+}
 
-[data-letter-spacing='tight'] .reader-text { letter-spacing: -0.01em; }
-[data-letter-spacing='normal'] .reader-text { letter-spacing: 0.015em; }
-[data-letter-spacing='wide'] .reader-text { letter-spacing: 0.04em; }
+[data-letter-spacing="tight"] .reader-text {
+  letter-spacing: -0.01em;
+}
+[data-letter-spacing="normal"] .reader-text {
+  letter-spacing: 0.015em;
+}
+[data-letter-spacing="wide"] .reader-text {
+  letter-spacing: 0.04em;
+}
 
-[data-side-margins='standard'] .reader-container { @apply max-w-[70ch] px-spacing-lg sm:px-spacing-xl; }
-[data-side-margins='comfortable'] .reader-container { @apply max-w-[65ch] px-spacing-xl sm:px-spacing-3xl md:px-spacing-4xl; }
-[data-side-margins='wide'] .reader-container { @apply max-w-[60ch] px-spacing-xl sm:px-spacing-4xl md:px-spacing-4xl; }
+[data-side-margins="standard"] .reader-container {
+  @apply max-w-[70ch] px-spacing-lg sm:px-spacing-xl;
+}
+[data-side-margins="comfortable"] .reader-container {
+  @apply max-w-[65ch] px-spacing-xl sm:px-spacing-3xl md:px-spacing-4xl;
+}
+[data-side-margins="wide"] .reader-container {
+  @apply max-w-[60ch] px-spacing-xl sm:px-spacing-4xl md:px-spacing-4xl;
+}
 
 /* Font size mapping for more granular control */
-.font-size-small .reader-text { font-size: 1.15rem; }
-.font-size-medium .reader-text { font-size: 1.4rem; }
-.font-size-large .reader-text { font-size: 1.75rem; }
-.font-size-extra-large .reader-text { font-size: 2.2rem; }
-
+.font-size-small .reader-text {
+  font-size: 1.15rem;
+}
+.font-size-medium .reader-text {
+  font-size: 1.4rem;
+}
+.font-size-large .reader-text {
+  font-size: 1.75rem;
+}
+.font-size-extra-large .reader-text {
+  font-size: 2.2rem;
+}
 
 /* ─────────────────────────────────────────────
  * Nexus — Alto contraste (WCAG AAA quando possível)
  * Ativado via hook useHighContrast → [data-nexus-contrast="high"]
  * Reforça borda, foco e tipografia das bolhas em light/dark.
  * ───────────────────────────────────────────── */
-[data-nexus-contrast='high'] [data-testid^='nexus-bubbles-'] button {
+[data-nexus-contrast="high"] [data-testid^="nexus-bubbles-"] button {
   border-width: 2px !important;
   border-color: hsl(var(--primary)) !important;
   background-color: hsl(var(--background)) !important;
   box-shadow: 0 1px 0 0 hsl(var(--primary) / 0.15);
 }
-[data-nexus-contrast='high'] [data-testid^='nexus-bubbles-'] button > div:first-child {
+[data-nexus-contrast="high"] [data-testid^="nexus-bubbles-"] button > div:first-child {
   width: 5px !important;
 }
-[data-nexus-contrast='high'] [data-testid^='nexus-bubbles-'] button span {
+[data-nexus-contrast="high"] [data-testid^="nexus-bubbles-"] button span {
   opacity: 1 !important;
   color: hsl(var(--primary)) !important;
 }
-[data-nexus-contrast='high'] [data-testid^='nexus-bubbles-'] button:hover {
+[data-nexus-contrast="high"] [data-testid^="nexus-bubbles-"] button:hover {
   background-color: hsl(var(--secondary) / 0.18) !important;
   border-color: hsl(var(--secondary)) !important;
 }
-[data-nexus-contrast='high'] [data-testid^='nexus-bubbles-'] button:focus-visible {
+[data-nexus-contrast="high"] [data-testid^="nexus-bubbles-"] button:focus-visible {
   outline: 3px solid hsl(var(--secondary)) !important;
   outline-offset: 3px !important;
 }
@@ -915,7 +1080,9 @@ header:hover {
     padding-inline: 0;
   }
 }
-.editorial-column--narrow { max-width: min(var(--reading-column-narrow), 100%); }
+.editorial-column--narrow {
+  max-width: min(var(--reading-column-narrow), 100%);
+}
 /* Touch targets ≥ 44px em toque para links/botões dentro da coluna editorial */
 @media (max-width: 767px) {
   .editorial-column a[href],
@@ -944,40 +1111,52 @@ header:hover {
   margin-inline: auto;
   margin-block: var(--space-editorial);
 }
-.editorial-rule--hair { border-top-color: var(--rule-gold-hair); }
-.editorial-section { padding-block: var(--space-editorial); }
-.editorial-section--lg { padding-block: var(--space-editorial-lg); }
+.editorial-rule--hair {
+  border-top-color: var(--rule-gold-hair);
+}
+.editorial-section {
+  padding-block: var(--space-editorial);
+}
+.editorial-section--lg {
+  padding-block: var(--space-editorial-lg);
+}
 
 /* === Biblioteca — variantes de tema (Logos 2030 theme switcher) === */
 /* Escolha de linguagem visual da Biblioteca, alternável no cabeçalho da página. */
-[data-biblioteca-theme='vaticana'] {
+[data-biblioteca-theme="vaticana"] {
   --biblio-accent: hsl(var(--secondary));
   --biblio-rule: var(--rule-gold-soft);
   font-family: var(--font-display);
   letter-spacing: 0.005em;
 }
-[data-biblioteca-theme='vaticana'] .editorial-display { letter-spacing: 0; }
-[data-biblioteca-theme='vaticana'] input[placeholder] { font-style: italic; }
+[data-biblioteca-theme="vaticana"] .editorial-display {
+  letter-spacing: 0;
+}
+[data-biblioteca-theme="vaticana"] input[placeholder] {
+  font-style: italic;
+}
 
-[data-biblioteca-theme='apple'] {
+[data-biblioteca-theme="apple"] {
   --biblio-accent: hsl(var(--primary));
   --biblio-rule: hsl(var(--border));
   font-family: var(--font-body);
   letter-spacing: -0.005em;
 }
-[data-biblioteca-theme='apple'] .editorial-display {
+[data-biblioteca-theme="apple"] .editorial-display {
   font-family: var(--font-body);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
-[data-biblioteca-theme='apple'] .editorial-rule { border-top-color: hsl(var(--border)); }
+[data-biblioteca-theme="apple"] .editorial-rule {
+  border-top-color: hsl(var(--border));
+}
 
-[data-biblioteca-theme='logos'] {
+[data-biblioteca-theme="logos"] {
   --biblio-accent: hsl(var(--secondary));
   --biblio-rule: var(--rule-gold-hair);
   font-family: var(--font-body);
 }
-[data-biblioteca-theme='logos'] .editorial-display {
+[data-biblioteca-theme="logos"] .editorial-display {
   font-family: var(--font-display);
   font-weight: 500;
 }
@@ -1009,14 +1188,18 @@ header:hover {
   --space-church-accent: hsl(42 62% 62%);
   --space-church-rule: hsl(42 40% 60% / 0.22);
   --space-church-shadow:
-    inset 0 1px 0 hsl(42 40% 60% / 0.08),
-    0 40px 120px -60px hsl(0 0% 0% / 0.85);
+    inset 0 1px 0 hsl(42 40% 60% / 0.08), 0 40px 120px -60px hsl(0 0% 0% / 0.85);
   --space-church-stained-glass:
     radial-gradient(600px 900px at 20% 0%, hsl(220 70% 40% / 0.18), transparent 55%),
     radial-gradient(500px 800px at 80% 10%, hsl(0 60% 40% / 0.14), transparent 55%),
-    radial-gradient(700px 900px at 50% 100%, hsl(42 70% 50% / 0.10), transparent 60%);
-  --space-church-column-shadow:
-    linear-gradient(90deg, hsl(0 0% 0% / 0.35) 0%, transparent 8%, transparent 92%, hsl(0 0% 0% / 0.35) 100%);
+    radial-gradient(700px 900px at 50% 100%, hsl(42 70% 50% / 0.1), transparent 60%);
+  --space-church-column-shadow: linear-gradient(
+    90deg,
+    hsl(0 0% 0% / 0.35) 0%,
+    transparent 8%,
+    transparent 92%,
+    hsl(0 0% 0% / 0.35) 100%
+  );
   --space-church-halo: radial-gradient(closest-side, hsl(42 80% 70% / 0.35), transparent 70%);
   --space-church-motion: 720ms cubic-bezier(0.19, 1, 0.22, 1);
 
@@ -1027,15 +1210,16 @@ header:hover {
   --space-library-accent: hsl(24 46% 32%);
   --space-library-wood: hsl(24 34% 28%);
   --space-library-rule: hsl(28 30% 40% / 0.28);
-  --space-library-shadow:
-    0 1px 0 hsl(28 30% 40% / 0.15),
-    0 30px 60px -40px hsl(28 30% 16% / 0.35);
+  --space-library-shadow: 0 1px 0 hsl(28 30% 40% / 0.15), 0 30px 60px -40px hsl(28 30% 16% / 0.35);
   --space-library-parchment:
     radial-gradient(1400px 700px at 30% 20%, hsl(38 60% 88% / 0.55), transparent 60%),
     repeating-linear-gradient(115deg, hsl(28 30% 70% / 0.04) 0 2px, transparent 2px 7px),
     repeating-linear-gradient(0deg, hsl(28 30% 60% / 0.03) 0 1px, transparent 1px 3px);
-  --space-library-shelf:
-    linear-gradient(180deg, transparent 0 calc(100% - 3px), hsl(24 34% 28% / 0.35) calc(100% - 3px) 100%);
+  --space-library-shelf: linear-gradient(
+    180deg,
+    transparent 0 calc(100% - 3px),
+    hsl(24 34% 28% / 0.35) calc(100% - 3px) 100%
+  );
   --space-library-motion: 360ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* --- CLAUSTRO — jardim interior, silêncio, continuidade espiritual --- */
@@ -1045,35 +1229,34 @@ header:hover {
   --space-cloister-accent: hsl(150 28% 38%);
   --space-cloister-rule: hsl(150 20% 60% / 0.32);
   --space-cloister-shadow:
-    0 1px 0 hsl(150 20% 60% / 0.25),
-    0 30px 80px -50px hsl(180 22% 16% / 0.28);
+    0 1px 0 hsl(150 20% 60% / 0.25), 0 30px 80px -50px hsl(180 22% 16% / 0.28);
   --space-cloister-garden:
     radial-gradient(900px 600px at 20% 100%, hsl(150 40% 70% / 0.22), transparent 60%),
-    radial-gradient(700px 500px at 100% 0%, hsl(180 30% 80% / 0.20), transparent 60%);
+    radial-gradient(700px 500px at 100% 0%, hsl(180 30% 80% / 0.2), transparent 60%);
   --space-cloister-motion: 900ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* Ativação semântica por atributo (opt-in, não retroativo) */
-[data-space='atrium'] {
+[data-space="atrium"] {
   background: var(--space-atrium-bg), var(--space-atrium-texture);
   color: var(--space-atrium-ink);
 }
-[data-space='church'] {
+[data-space="church"] {
   background: var(--space-church-bg), var(--space-church-stained-glass);
   color: var(--space-church-ink);
 }
-[data-space='library'] {
+[data-space="library"] {
   background: var(--space-library-bg), var(--space-library-parchment);
   color: var(--space-library-ink);
 }
-[data-space='cloister'] {
+[data-space="cloister"] {
   background: var(--space-cloister-bg), var(--space-cloister-garden);
   color: var(--space-cloister-ink);
 }
 
 /* O ambiente "Igreja" é sempre escuro. Os tokens Stitch precisam acompanhar,
    senão textos com `text-stitch-on-surface` ficam escuros sobre fundo escuro. */
-[data-space='church'] {
+[data-space="church"] {
   --stitch-background: 220 42% 10%;
   --stitch-on-background: 40 30% 92%;
   --stitch-surface: 222 38% 12%;
@@ -1133,29 +1316,29 @@ header:hover {
   margin-top: var(--sp-l);
 }
 /* Cada tipo de conteúdo tem identidade própria, sem cor hardcoded. */
-.cathedra-reader-article [data-prayer-voice='oracao'] p {
+.cathedra-reader-article [data-prayer-voice="oracao"] p {
   font-family: var(--font-display);
 }
-.cathedra-reader-article [data-prayer-voice='resposta'] p,
-.cathedra-reader-article [data-prayer-voice='refrao'] p {
+.cathedra-reader-article [data-prayer-voice="resposta"] p,
+.cathedra-reader-article [data-prayer-voice="refrao"] p {
   font-style: italic;
 }
 /* Salmodia: coluna mais estreita e versos respirando um a um. */
-.cathedra-reader-article [data-prayer-voice='salmo'] p {
+.cathedra-reader-article [data-prayer-voice="salmo"] p {
   font-family: var(--font-display);
   max-width: 46ch;
   line-height: 1.85;
 }
 /* Antífona: voz que abre e fecha o salmo — filete dourado discreto. */
-.cathedra-reader-article [data-prayer-voice='antifona'] {
+.cathedra-reader-article [data-prayer-voice="antifona"] {
   border-inline-start: 1px solid hsl(var(--rule-gold) / 0.45);
   padding-inline-start: var(--sp-m);
 }
-.cathedra-reader-article [data-prayer-voice='antifona'] p {
+.cathedra-reader-article [data-prayer-voice="antifona"] p {
   font-style: italic;
 }
 /* Leitura: prosa proclamada — corpo sans, medida ampla. */
-.cathedra-reader-article [data-prayer-voice='leitura'] p {
+.cathedra-reader-article [data-prayer-voice="leitura"] p {
   font-family: var(--font-body);
   font-size: 1.0625rem;
 }
@@ -1166,33 +1349,27 @@ header:hover {
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────────
  * CAT-SP4 · Lote B.2 — Refinamentos do ambiente Igreja
  * Clima litúrgico: mais respiro no Hero, filete dourado presente,
  * cards com bordas suaves e sombra quase imperceptível.
  * ───────────────────────────────────────────────────────────── */
-[data-space='church'] [data-editorial-hero-universal] {
+[data-space="church"] [data-editorial-hero-universal] {
   padding-top: calc(var(--sp-xl) * 1.15);
   padding-bottom: calc(var(--sp-xl) * 1.15);
 }
 @media (min-width: 768px) {
-  [data-space='church'] [data-editorial-hero-universal] {
+  [data-space="church"] [data-editorial-hero-universal] {
     padding-top: calc(var(--sp-xxl) * 1.12);
     padding-bottom: calc(var(--sp-xxl) * 1.12);
   }
 }
-[data-space='church'] [data-editorial-hero-universal] [role='separator'] {
+[data-space="church"] [data-editorial-hero-universal] [role="separator"] {
   max-width: 320px;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--rule-gold) / 0.9),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, hsl(var(--rule-gold) / 0.9), transparent);
 }
-[data-space='church'] [data-editorial-card-universal] {
+[data-space="church"] [data-editorial-card-universal] {
   border-color: hsl(var(--border) / 0.35);
   box-shadow:
     0 1px 0 hsl(var(--rule-gold) / 0.05),
@@ -1201,13 +1378,13 @@ header:hover {
     border-color 480ms cubic-bezier(0.19, 1, 0.22, 1),
     box-shadow 480ms cubic-bezier(0.19, 1, 0.22, 1);
 }
-[data-space='church'] [data-editorial-card-universal]:hover {
+[data-space="church"] [data-editorial-card-universal]:hover {
   border-color: hsl(var(--rule-gold) / 0.55);
   box-shadow:
     0 1px 0 hsl(var(--rule-gold) / 0.15),
     0 6px 24px hsl(220 40% 4% / 0.08);
 }
-[data-space='church'] [data-editorial-card-universal] + [data-editorial-card-universal] {
+[data-space="church"] [data-editorial-card-universal] + [data-editorial-card-universal] {
   margin-top: var(--sp-s);
 }
 
@@ -1221,13 +1398,13 @@ header:hover {
   isolation: isolate;
   /* Defaults (tema church) — sobrescritos por [data-portal-theme] */
   --portal-halo: var(--rule-gold);
-  --portal-halo-opacity: 0.10;
+  --portal-halo-opacity: 0.1;
   --portal-tint-top: transparent;
   --portal-tint-bottom: transparent;
   --portal-fil-opacity: 0.9;
 }
 [data-portal-oracao]::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -10% 10% auto 10%;
   height: 420px;
@@ -1241,68 +1418,86 @@ header:hover {
   z-index: -1;
 }
 [data-portal-oracao]::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, var(--portal-tint-top), var(--portal-tint-bottom));
   pointer-events: none;
   z-index: -1;
 }
-[data-portal-oracao] [data-editorial-hero-universal] [role='separator'] {
+[data-portal-oracao] [data-editorial-hero-universal] [role="separator"] {
   opacity: var(--portal-fil-opacity);
 }
 [data-portal-oracao] > * {
   animation: portal-rise 620ms cubic-bezier(0.19, 1, 0.22, 1) both;
 }
-[data-portal-oracao] > *:nth-child(1) { animation-delay: 60ms; }
-[data-portal-oracao] > *:nth-child(2) { animation-delay: 180ms; }
-[data-portal-oracao] > *:nth-child(3) { animation-delay: 300ms; }
-[data-portal-oracao] > *:nth-child(4) { animation-delay: 400ms; }
-[data-portal-oracao] > *:nth-child(5) { animation-delay: 500ms; }
-[data-portal-oracao] > *:nth-child(6) { animation-delay: 580ms; }
+[data-portal-oracao] > *:nth-child(1) {
+  animation-delay: 60ms;
+}
+[data-portal-oracao] > *:nth-child(2) {
+  animation-delay: 180ms;
+}
+[data-portal-oracao] > *:nth-child(3) {
+  animation-delay: 300ms;
+}
+[data-portal-oracao] > *:nth-child(4) {
+  animation-delay: 400ms;
+}
+[data-portal-oracao] > *:nth-child(5) {
+  animation-delay: 500ms;
+}
+[data-portal-oracao] > *:nth-child(6) {
+  animation-delay: 580ms;
+}
 
 /* ── Temas do Portal ── */
-[data-portal-theme='church'] {
+[data-portal-theme="church"] {
   --portal-halo: var(--rule-gold);
-  --portal-halo-opacity: 0.10;
+  --portal-halo-opacity: 0.1;
   --portal-fil-opacity: 0.9;
 }
-[data-portal-theme='passion'] {
+[data-portal-theme="passion"] {
   --portal-halo: 340 40% 45%;
   --portal-halo-opacity: 0.14;
   --portal-tint-top: hsl(340 30% 30% / 0.06);
   --portal-tint-bottom: hsl(280 25% 20% / 0.04);
   --portal-fil-opacity: 0.55;
 }
-[data-portal-theme='dawn'] {
+[data-portal-theme="dawn"] {
   --portal-halo: 32 80% 65%;
   --portal-halo-opacity: 0.16;
   --portal-tint-top: hsl(32 60% 70% / 0.05);
   --portal-fil-opacity: 0.8;
 }
-[data-portal-theme='noon'] {
+[data-portal-theme="noon"] {
   --portal-halo: 48 90% 72%;
   --portal-halo-opacity: 0.18;
   --portal-tint-top: hsl(48 70% 80% / 0.04);
   --portal-fil-opacity: 0.85;
 }
-[data-portal-theme='sunset'] {
+[data-portal-theme="sunset"] {
   --portal-halo: 18 75% 55%;
   --portal-halo-opacity: 0.16;
   --portal-tint-top: hsl(18 60% 45% / 0.06);
   --portal-tint-bottom: hsl(340 40% 30% / 0.04);
   --portal-fil-opacity: 0.75;
 }
-[data-portal-theme='night'] {
+[data-portal-theme="night"] {
   --portal-halo: 220 60% 75%;
-  --portal-halo-opacity: 0.10;
+  --portal-halo-opacity: 0.1;
   --portal-tint-top: hsl(220 40% 20% / 0.05);
   --portal-fil-opacity: 0.5;
 }
 
 @keyframes portal-rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 [data-portal-threshold] {
@@ -1310,24 +1505,45 @@ header:hover {
   inset: 0;
   z-index: 100;
   background:
-    radial-gradient(ellipse at 50% 30%, hsl(var(--portal-halo, var(--rule-gold)) / 0.14), transparent 60%),
+    radial-gradient(
+      ellipse at 50% 30%,
+      hsl(var(--portal-halo, var(--rule-gold)) / 0.14),
+      transparent 60%
+    ),
     hsl(var(--background));
   animation: portal-threshold 780ms cubic-bezier(0.4, 0, 0.2, 1) both;
   pointer-events: all;
 }
 @keyframes portal-threshold {
-  0%   { opacity: 0; }
-  25%  { opacity: 1; }
-  75%  { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-space] { transition: none !important; animation: none !important; }
-  [data-portal-oracao] > * { animation: none !important; }
+  [data-space] {
+    transition: none !important;
+    animation: none !important;
+  }
+  [data-portal-oracao] > * {
+    animation: none !important;
+  }
   [data-portal-oracao]::before,
-  [data-portal-oracao]::after { display: none; }
-  [data-portal-threshold] { animation: none !important; opacity: 0; display: none; }
+  [data-portal-oracao]::after {
+    display: none;
+  }
+  [data-portal-threshold] {
+    animation: none !important;
+    opacity: 0;
+    display: none;
+  }
 }
-
-

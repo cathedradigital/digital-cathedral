@@ -6,13 +6,13 @@
  *   import { ReaderService, type ReaderContent } from '@/core/content';
  */
 
-export * from './contracts';
-export { ReaderService, createReaderServiceWith } from './services/ReaderService';
-export type { ReaderKind, ReaderServiceInstance } from './services/ReaderService';
+export * from "./contracts";
+export { ReaderService, createReaderServiceWith } from "./services/ReaderService";
+export type { ReaderKind, ReaderServiceInstance } from "./services/ReaderService";
 export {
   BibleAdapter,
   CatechismAdapter,
   MagisteriumAdapter,
   defaultContentAdapters,
-} from './adapters';
-export type { ContentAdapter, ContentAdapters, ContentGetParams } from './adapters';
+} from "./adapters";
+export type { ContentAdapter, ContentAdapters, ContentGetParams } from "./adapters";

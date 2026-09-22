@@ -5,8 +5,8 @@
  * Puramente apresentacional. Recebe totais já computados pelo consumidor
  * (que sabe qual `useCollectionProgress` usar). Zero dependência de dados.
  */
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   completed: number;
@@ -25,7 +25,7 @@ export const CollectionProgressBar: React.FC<Props> = ({
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
-    <div className={cn('w-full space-y-spacing-2xs', className)}>
+    <div className={cn("w-full space-y-spacing-2xs", className)}>
       {!compact && (
         <div className="flex items-baseline justify-between">
           <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary/70">

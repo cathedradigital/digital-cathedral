@@ -5,22 +5,41 @@
 //   - lista de funções com etapas em falha
 //   - tendência ao longo do tempo (cobertura, ausente, falhas)
 
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Navigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Navigate } from "@/lib/rr-compat";
+import { supabase } from "@/lib/db";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, Legend,
-} from 'recharts';
-import { downloadSnapshotCsv, downloadTrendCsv, downloadFailingCsv } from '@/lib/cidComplianceCsv';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2, AlertTriangle, CheckCircle2, Download } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+import { downloadSnapshotCsv, downloadTrendCsv, downloadFailingCsv } from "@/lib/cidComplianceCsv";
 
-type Counts = { conforme: number; herdado: number; na: number; ausente: number; desconhecido?: number };
+type Counts = {
+  conforme: number;
+  herdado: number;
+  na: number;
+  ausente: number;
+  desconhecido?: number;
+};
 type Category = { total: number; cidOk: number; failed: number };
 type Snapshot = {
   captured_at: string;
@@ -36,22 +55,32 @@ type Snapshot = {
   by_category: Record<string, Category>;
   failing_functions: { name: string; category: string; failed_steps: string[] }[];
 };
-type TrendPoint = { t: string; coverage_ratio: number; total: number; ausente: number; failing: number; sha: string | null };
-type StatsResponse = { data: { latest: Snapshot | null; trend: TrendPoint[]; count: number; window_days: number }; correlation_id: string };
+type TrendPoint = {
+  t: string;
+  coverage_ratio: number;
+  total: number;
+  ausente: number;
+  failing: number;
+  sha: string | null;
+};
+type StatsResponse = {
+  data: { latest: Snapshot | null; trend: TrendPoint[]; count: number; window_days: number };
+  correlation_id: string;
+};
 
 export default function CidComplianceDashboardPage() {
   const { isAdmin, isLoading: adminLoading } = useIsAdmin();
-  const [days, setDays] = useState<'7' | '30' | '90'>('30');
+  const [days, setDays] = useState<"7" | "30" | "90">("30");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['cid-compliance-stats', days],
+    queryKey: ["cid-compliance-stats", days],
     enabled: !!isAdmin,
     queryFn: async (): Promise<StatsResponse> => {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cid-compliance-stats?days=${days}`;
       const res = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
@@ -72,7 +101,12 @@ export default function CidComplianceDashboardPage() {
       .sort((a, b) => b.failed - a.failed);
   }, [latest]);
 
-  if (adminLoading) return <div className="p-8 flex justify-center"><Loader2 className="animate-spin" /></div>;
+  if (adminLoading)
+    return (
+      <div className="p-8 flex justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
@@ -109,8 +143,10 @@ export default function CidComplianceDashboardPage() {
           >
             <Download className="h-4 w-4 mr-1" /> Tendência CSV
           </Button>
-          <Select value={days} onValueChange={(v) => setDays(v as '7' | '30' | '90')}>
-            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+          <Select value={days} onValueChange={(v) => setDays(v as "7" | "30" | "90")}>
+            <SelectTrigger className="w-32">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="7">7 dias</SelectItem>
               <SelectItem value="30">30 dias</SelectItem>
@@ -120,18 +156,24 @@ export default function CidComplianceDashboardPage() {
         </div>
       </header>
 
-      {isLoading && <div className="p-8 flex justify-center"><Loader2 className="animate-spin" /></div>}
+      {isLoading && (
+        <div className="p-8 flex justify-center">
+          <Loader2 className="animate-spin" />
+        </div>
+      )}
       {error && (
         <Card className="p-6 border-destructive">
-          <p className="text-destructive">Erro ao carregar estatísticas: {(error as Error).message}</p>
+          <p className="text-destructive">
+            Erro ao carregar estatísticas: {(error as Error).message}
+          </p>
         </Card>
       )}
 
       {!isLoading && !latest && (
         <Card className="p-6">
           <p className="text-muted-foreground">
-            Nenhum snapshot persistido ainda. Rode o workflow <code>edge-cid-smoke</code>
-            {' '}com <code>SUPABASE_SERVICE_ROLE_KEY</code> configurada para popular a tabela.
+            Nenhum snapshot persistido ainda. Rode o workflow <code>edge-cid-smoke</code> com{" "}
+            <code>SUPABASE_SERVICE_ROLE_KEY</code> configurada para popular a tabela.
           </p>
         </Card>
       )}
@@ -139,31 +181,69 @@ export default function CidComplianceDashboardPage() {
       {latest && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <StatCard label="Cobertura CID" value={latest.coverage_pct}
-              tone={latest.cid_counts.ausente === 0 ? 'ok' : 'warn'} />
+            <StatCard
+              label="Cobertura CID"
+              value={latest.coverage_pct}
+              tone={latest.cid_counts.ausente === 0 ? "ok" : "warn"}
+            />
             <StatCard label="Funções" value={String(latest.total_functions)} />
-            <StatCard label="CID ausente" value={String(latest.cid_counts.ausente)}
-              tone={latest.cid_counts.ausente === 0 ? 'ok' : 'bad'} />
-            <StatCard label="Com etapas em falha" value={String(latest.failing_functions.length)}
-              tone={latest.failing_functions.length === 0 ? 'ok' : 'bad'} />
+            <StatCard
+              label="CID ausente"
+              value={String(latest.cid_counts.ausente)}
+              tone={latest.cid_counts.ausente === 0 ? "ok" : "bad"}
+            />
+            <StatCard
+              label="Com etapas em falha"
+              value={String(latest.failing_functions.length)}
+              tone={latest.failing_functions.length === 0 ? "ok" : "bad"}
+            />
           </div>
 
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Tendência ({data!.data.window_days} dias · {trend.length} snapshots)</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Tendência ({data!.data.window_days} dias · {trend.length} snapshots)
+            </h2>
             {trend.length < 2 ? (
-              <p className="text-sm text-muted-foreground">Precisa de ao menos 2 snapshots para desenhar a tendência.</p>
+              <p className="text-sm text-muted-foreground">
+                Precisa de ao menos 2 snapshots para desenhar a tendência.
+              </p>
             ) : (
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={trend}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="t" tickFormatter={(v) => new Date(v).toLocaleDateString()} />
-                  <YAxis yAxisId="l" domain={[0, 1]} tickFormatter={(v) => `${(v * 100).toFixed(0)}%`} />
+                  <YAxis
+                    yAxisId="l"
+                    domain={[0, 1]}
+                    tickFormatter={(v) => `${(v * 100).toFixed(0)}%`}
+                  />
                   <YAxis yAxisId="r" orientation="right" />
                   <Tooltip labelFormatter={(v) => new Date(v as string).toLocaleString()} />
                   <Legend />
-                  <Line yAxisId="l" type="monotone" dataKey="coverage_ratio" name="Cobertura" stroke="#22c55e" dot={false} />
-                  <Line yAxisId="r" type="monotone" dataKey="ausente" name="CID ausente" stroke="#ef4444" dot={false} />
-                  <Line yAxisId="r" type="monotone" dataKey="failing" name="Etapas em falha" stroke="#f59e0b" dot={false} />
+                  <Line
+                    yAxisId="l"
+                    type="monotone"
+                    dataKey="coverage_ratio"
+                    name="Cobertura"
+                    stroke="#22c55e"
+                    dot={false}
+                  />
+                  <Line
+                    yAxisId="r"
+                    type="monotone"
+                    dataKey="ausente"
+                    name="CID ausente"
+                    stroke="#ef4444"
+                    dot={false}
+                  />
+                  <Line
+                    yAxisId="r"
+                    type="monotone"
+                    dataKey="failing"
+                    name="Etapas em falha"
+                    stroke="#f59e0b"
+                    dot={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -174,7 +254,12 @@ export default function CidComplianceDashboardPage() {
               <h2 className="text-lg font-semibold mb-4">Por categoria</h2>
               <table className="w-full text-sm">
                 <thead className="text-left text-muted-foreground">
-                  <tr><th>Categoria</th><th className="text-right">Total</th><th className="text-right">CID OK</th><th className="text-right">Em falha</th></tr>
+                  <tr>
+                    <th>Categoria</th>
+                    <th className="text-right">Total</th>
+                    <th className="text-right">CID OK</th>
+                    <th className="text-right">Em falha</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {failingByCategory.map((r) => (
@@ -183,9 +268,11 @@ export default function CidComplianceDashboardPage() {
                       <td className="text-right">{r.total}</td>
                       <td className="text-right">{r.cidOk}</td>
                       <td className="text-right">
-                        {r.failed > 0
-                          ? <Badge variant="destructive">{r.failed}</Badge>
-                          : <span className="text-muted-foreground">0</span>}
+                        {r.failed > 0 ? (
+                          <Badge variant="destructive">{r.failed}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground">0</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -210,7 +297,7 @@ export default function CidComplianceDashboardPage() {
                         <code className="font-mono">{f.name}</code>
                         <span className="text-muted-foreground"> · {f.category}</span>
                         <div className="text-xs text-muted-foreground">
-                          {f.failed_steps.join(' · ')}
+                          {f.failed_steps.join(" · ")}
                         </div>
                       </div>
                     </li>
@@ -222,8 +309,8 @@ export default function CidComplianceDashboardPage() {
 
           <p className="text-xs text-muted-foreground">
             Último snapshot: {new Date(latest.captured_at).toLocaleString()}
-            {latest.commit_sha ? ` · sha ${latest.commit_sha.slice(0, 7)}` : ''}
-            {latest.branch ? ` · ${latest.branch}` : ''}
+            {latest.commit_sha ? ` · sha ${latest.commit_sha.slice(0, 7)}` : ""}
+            {latest.branch ? ` · ${latest.branch}` : ""}
           </p>
         </>
       )}
@@ -231,12 +318,23 @@ export default function CidComplianceDashboardPage() {
   );
 }
 
-function StatCard({ label, value, tone }: { label: string; value: string; tone?: 'ok' | 'warn' | 'bad' }) {
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: "ok" | "warn" | "bad";
+}) {
   const cls =
-    tone === 'ok' ? 'text-green-600' :
-    tone === 'warn' ? 'text-amber-600' :
-    tone === 'bad' ? 'text-destructive' :
-    'text-foreground';
+    tone === "ok"
+      ? "text-green-600"
+      : tone === "warn"
+        ? "text-amber-600"
+        : tone === "bad"
+          ? "text-destructive"
+          : "text-foreground";
   return (
     <Card className="p-4">
       <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>

@@ -5,37 +5,32 @@
  * Consome a view `public.library_items_v1` e a RPC `public.search_library_items`.
  */
 
-export type LibraryKind =
-  | 'saint_work'
-  | 'patristic'
-  | 'doctor'
-  | 'classic'
-  | 'magisterium';
+export type LibraryKind = "saint_work" | "patristic" | "doctor" | "classic" | "magisterium";
 
 export const LIBRARY_KIND_LABELS: Record<LibraryKind, string> = {
-  saint_work: 'Escritos dos Santos',
-  patristic: 'Padres da Igreja',
-  doctor: 'Doutores da Igreja',
-  classic: 'Clássicos Católicos',
-  magisterium: 'Magistério',
+  saint_work: "Escritos dos Santos",
+  patristic: "Padres da Igreja",
+  doctor: "Doutores da Igreja",
+  classic: "Clássicos Católicos",
+  magisterium: "Magistério",
 };
 
 export const LIBRARY_KIND_DESCRIPTIONS: Record<LibraryKind, string> = {
   saint_work:
-    'Obras espirituais, autobiografias e tratados de santos canonizados — a Tradição viva da Igreja em primeira pessoa.',
+    "Obras espirituais, autobiografias e tratados de santos canonizados — a Tradição viva da Igreja em primeira pessoa.",
   patristic:
-    'Padres da Igreja e monásticos — os primeiros mestres cristãos que consolidaram a fé e a exegese.',
+    "Padres da Igreja e monásticos — os primeiros mestres cristãos que consolidaram a fé e a exegese.",
   doctor:
-    'Doutores da Igreja — teólogos e místicos reconhecidos por sua eminente sabedoria e santidade.',
+    "Doutores da Igreja — teólogos e místicos reconhecidos por sua eminente sabedoria e santidade.",
   classic:
-    'Clássicos católicos modernos — Newman, Chesterton, Guardini, Ratzinger e outras vozes que iluminam a fé no mundo contemporâneo.',
+    "Clássicos católicos modernos — Newman, Chesterton, Guardini, Ratzinger e outras vozes que iluminam a fé no mundo contemporâneo.",
   magisterium:
-    'Documentos do Magistério — encíclicas, exortações apostólicas, constituições conciliares e catequeses papais.',
+    "Documentos do Magistério — encíclicas, exortações apostólicas, constituições conciliares e catequeses papais.",
 };
 
-export type LibraryFichaCompleteness = 'stub' | 'minimal' | 'complete';
+export type LibraryFichaCompleteness = "stub" | "minimal" | "complete";
 
-export type LibraryAccessType = 'internal' | 'external' | 'summary_only';
+export type LibraryAccessType = "internal" | "external" | "summary_only";
 
 export interface LibraryItem {
   library_kind: LibraryKind;

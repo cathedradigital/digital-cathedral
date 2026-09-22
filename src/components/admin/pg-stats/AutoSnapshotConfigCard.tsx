@@ -1,13 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
-import { Save, RefreshCw, Clock, AlertTriangle, CheckCircle2, Send, ShieldCheck } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useCallback, useEffect, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import {
+  Save,
+  RefreshCw,
+  Clock,
+  AlertTriangle,
+  CheckCircle2,
+  Send,
+  ShieldCheck,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Config {
   enabled: boolean;
@@ -25,52 +33,62 @@ interface Config {
 }
 
 const PRESETS = [
-  { label: '15 min', v: 15 },
-  { label: '30 min', v: 30 },
-  { label: '1 h', v: 60 },
-  { label: '3 h', v: 180 },
-  { label: '6 h', v: 360 },
-  { label: '12 h', v: 720 },
-  { label: '24 h', v: 1440 },
+  { label: "15 min", v: 15 },
+  { label: "30 min", v: 30 },
+  { label: "1 h", v: 60 },
+  { label: "3 h", v: 180 },
+  { label: "6 h", v: 360 },
+  { label: "12 h", v: 720 },
+  { label: "24 h", v: 1440 },
 ];
 
-type ChannelKey = 'webhook' | 'slack';
+type ChannelKey = "webhook" | "slack";
 type Check = { name: string; ok: boolean; detail: string };
 type ValidationResult = { valid: boolean; reason: string; host?: string | null; checks?: Check[] };
-type FeedbackState = { kind: 'ok' | 'error'; msg: string; checks?: Check[]; host?: string };
+type FeedbackState = { kind: "ok" | "error"; msg: string; checks?: Check[]; host?: string };
 
 export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) {
   const [cfg, setCfg] = useState<Config | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [channelBusy, setChannelBusy] = useState<Record<ChannelKey, 'validate' | 'send' | null>>({ webhook: null, slack: null });
-  const [channelFeedback, setChannelFeedback] = useState<Record<ChannelKey, FeedbackState | null>>({ webhook: null, slack: null });
+  const [channelBusy, setChannelBusy] = useState<Record<ChannelKey, "validate" | "send" | null>>({
+    webhook: null,
+    slack: null,
+  });
+  const [channelFeedback, setChannelFeedback] = useState<Record<ChannelKey, FeedbackState | null>>({
+    webhook: null,
+    slack: null,
+  });
 
   const validateChannel = async (channel: ChannelKey) => {
     if (!cfg) return;
-    const url = channel === 'webhook' ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
-    setChannelBusy((s) => ({ ...s, [channel]: 'validate' }));
+    const url = channel === "webhook" ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
+    setChannelBusy((s) => ({ ...s, [channel]: "validate" }));
     setChannelFeedback((s) => ({ ...s, [channel]: null }));
     try {
-      const { data, error } = await supabase.rpc('admin_notif_validate_channel' as never, {
-        p_channel: channel, p_url: url ?? '',
-      } as never);
+      const { data, error } = await supabase.rpc(
+        "admin_notif_validate_channel" as never,
+        {
+          p_channel: channel,
+          p_url: url ?? "",
+        } as never,
+      );
       if (error) throw error;
       const res = data as unknown as ValidationResult;
       setChannelFeedback((s) => ({
         ...s,
         [channel]: {
-          kind: res.valid ? 'ok' : 'error',
+          kind: res.valid ? "ok" : "error",
           msg: res.reason,
           checks: res.checks ?? [],
           host: res.host ?? undefined,
         },
       }));
-      if (res.valid) toast.success(`URL ${channel} válida${res.host ? ` (${res.host})` : ''}`);
+      if (res.valid) toast.success(`URL ${channel} válida${res.host ? ` (${res.host})` : ""}`);
       else toast.error(`URL ${channel}: ${res.reason}`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setChannelFeedback((s) => ({ ...s, [channel]: { kind: 'error', msg } }));
+      setChannelFeedback((s) => ({ ...s, [channel]: { kind: "error", msg } }));
       toast.error(`Validação falhou: ${msg}`);
     } finally {
       setChannelBusy((s) => ({ ...s, [channel]: null }));
@@ -79,59 +97,74 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
 
   const sendTest = async (channel: ChannelKey) => {
     if (!cfg) return;
-    const url = channel === 'webhook' ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
-    setChannelBusy((s) => ({ ...s, [channel]: 'send' }));
+    const url = channel === "webhook" ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
+    setChannelBusy((s) => ({ ...s, [channel]: "send" }));
     setChannelFeedback((s) => ({ ...s, [channel]: null }));
     try {
       // 1. valida URL antes de gastar rede
-      const { data: vData, error: vErr } = await supabase.rpc('admin_notif_validate_channel' as never, {
-        p_channel: channel, p_url: url ?? '',
-      } as never);
+      const { data: vData, error: vErr } = await supabase.rpc(
+        "admin_notif_validate_channel" as never,
+        {
+          p_channel: channel,
+          p_url: url ?? "",
+        } as never,
+      );
       if (vErr) throw vErr;
       const v = vData as unknown as ValidationResult;
       if (!v.valid) {
-        setChannelFeedback((s) => ({ ...s, [channel]: { kind: 'error', msg: `URL inválida: ${v.reason}`, checks: v.checks ?? [] } }));
+        setChannelFeedback((s) => ({
+          ...s,
+          [channel]: { kind: "error", msg: `URL inválida: ${v.reason}`, checks: v.checks ?? [] },
+        }));
         toast.error(`URL inválida: ${v.reason}`);
         return;
       }
 
       // 2. dispara
-      const { data, error } = await supabase.rpc('admin_notif_send_test' as never, { p_channel: channel } as never);
+      const { data, error } = await supabase.rpc(
+        "admin_notif_send_test" as never,
+        { p_channel: channel } as never,
+      );
       if (error) throw error;
       const res = data as unknown as { notification_id: string };
-      toast.success(`Notificação de teste enfileirada (id ${res.notification_id.slice(0, 8)}). Veja o resultado no painel abaixo.`);
-      setChannelFeedback((s) => ({ ...s, [channel]: { kind: 'ok', msg: `Teste enfileirado (id ${res.notification_id.slice(0, 8)})` } }));
+      toast.success(
+        `Notificação de teste enfileirada (id ${res.notification_id.slice(0, 8)}). Veja o resultado no painel abaixo.`,
+      );
+      setChannelFeedback((s) => ({
+        ...s,
+        [channel]: { kind: "ok", msg: `Teste enfileirado (id ${res.notification_id.slice(0, 8)})` },
+      }));
       onChange?.();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setChannelFeedback((s) => ({ ...s, [channel]: { kind: 'error', msg } }));
+      setChannelFeedback((s) => ({ ...s, [channel]: { kind: "error", msg } }));
       toast.error(`Envio de teste falhou: ${msg}`);
     } finally {
       setChannelBusy((s) => ({ ...s, [channel]: null }));
     }
   };
 
-
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('admin_get_pg_stat_snapshot_config' as never);
+      const { data, error } = await supabase.rpc("admin_get_pg_stat_snapshot_config" as never);
       if (error) throw error;
       const row = data as unknown as Config | null;
-      if (row) setCfg({
-        enabled: !!row.enabled,
-        interval_minutes: row.interval_minutes ?? 60,
-        retention_days: row.retention_days ?? 30,
-        last_run_at: row.last_run_at ?? null,
-        last_success_at: row.last_success_at ?? null,
-        last_error_at: row.last_error_at ?? null,
-        last_error_message: row.last_error_message ?? null,
-        consecutive_failures: row.consecutive_failures ?? 0,
-        notify_webhook_url: row.notify_webhook_url ?? null,
-        notify_slack_webhook_url: row.notify_slack_webhook_url ?? null,
-        last_notified_at: row.last_notified_at ?? null,
-        last_notification_error: row.last_notification_error ?? null,
-      });
+      if (row)
+        setCfg({
+          enabled: !!row.enabled,
+          interval_minutes: row.interval_minutes ?? 60,
+          retention_days: row.retention_days ?? 30,
+          last_run_at: row.last_run_at ?? null,
+          last_success_at: row.last_success_at ?? null,
+          last_error_at: row.last_error_at ?? null,
+          last_error_message: row.last_error_message ?? null,
+          consecutive_failures: row.consecutive_failures ?? 0,
+          notify_webhook_url: row.notify_webhook_url ?? null,
+          notify_slack_webhook_url: row.notify_slack_webhook_url ?? null,
+          last_notified_at: row.last_notified_at ?? null,
+          last_notification_error: row.last_notification_error ?? null,
+        });
     } catch (e) {
       toast.error(`Falha ao carregar config: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
@@ -139,27 +172,34 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
     }
   }, []);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const save = async () => {
     if (!cfg) return;
     if (cfg.interval_minutes < 5 || cfg.interval_minutes > 1440) {
-      toast.error('Intervalo deve ficar entre 5 e 1440 min.'); return;
+      toast.error("Intervalo deve ficar entre 5 e 1440 min.");
+      return;
     }
     if (cfg.retention_days < 1 || cfg.retention_days > 365) {
-      toast.error('Retenção deve ficar entre 1 e 365 dias.'); return;
+      toast.error("Retenção deve ficar entre 1 e 365 dias.");
+      return;
     }
     setSaving(true);
     try {
-      const { error } = await supabase.rpc('admin_update_pg_stat_snapshot_config' as never, {
-        p_enabled: cfg.enabled,
-        p_interval_minutes: cfg.interval_minutes,
-        p_retention_days: cfg.retention_days,
-        p_notify_webhook_url: cfg.notify_webhook_url,
-        p_notify_slack_webhook_url: cfg.notify_slack_webhook_url,
-      } as never);
+      const { error } = await supabase.rpc(
+        "admin_update_pg_stat_snapshot_config" as never,
+        {
+          p_enabled: cfg.enabled,
+          p_interval_minutes: cfg.interval_minutes,
+          p_retention_days: cfg.retention_days,
+          p_notify_webhook_url: cfg.notify_webhook_url,
+          p_notify_slack_webhook_url: cfg.notify_slack_webhook_url,
+        } as never,
+      );
       if (error) throw error;
-      toast.success('Configuração salva');
+      toast.success("Configuração salva");
       await load();
       onChange?.();
     } catch (e) {
@@ -182,38 +222,49 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
           <p className="text-sm text-muted-foreground">Carregando…</p>
         ) : (
           <>
-            {cfg.last_error_at && (!cfg.last_success_at
-                || new Date(cfg.last_error_at).getTime() > new Date(cfg.last_success_at).getTime()) && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>
-                  Captura automática falhou
-                  {cfg.consecutive_failures > 1 && <> ({cfg.consecutive_failures}× consecutivas)</>}
-                </AlertTitle>
-                <AlertDescription className="space-y-1">
-                  <div className="text-xs">
-                    Última falha em <strong>{new Date(cfg.last_error_at).toLocaleString('pt-BR')}</strong>
-                    {cfg.last_success_at && (
-                      <> · último sucesso: <strong>{new Date(cfg.last_success_at).toLocaleString('pt-BR')}</strong></>
+            {cfg.last_error_at &&
+              (!cfg.last_success_at ||
+                new Date(cfg.last_error_at).getTime() >
+                  new Date(cfg.last_success_at).getTime()) && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>
+                    Captura automática falhou
+                    {cfg.consecutive_failures > 1 && (
+                      <> ({cfg.consecutive_failures}× consecutivas)</>
                     )}
-                  </div>
-                  {cfg.last_error_message && (
-                    <pre className="text-[11px] whitespace-pre-wrap break-all bg-background/40 border rounded p-2 mt-1">
-                      {cfg.last_error_message}
-                    </pre>
-                  )}
-                </AlertDescription>
-              </Alert>
-            )}
-            {cfg.enabled && cfg.last_success_at
-              && (!cfg.last_error_at
-                  || new Date(cfg.last_success_at).getTime() >= new Date(cfg.last_error_at).getTime()) && (
-              <div className="flex items-center gap-2 text-xs text-primary rounded-md border border-primary/20 bg-primary/5 p-2">
-                <CheckCircle2 className="h-4 w-4" />
-                Última captura bem-sucedida em{' '}
-                <strong>{new Date(cfg.last_success_at).toLocaleString('pt-BR')}</strong>
-              </div>
-            )}
+                  </AlertTitle>
+                  <AlertDescription className="space-y-1">
+                    <div className="text-xs">
+                      Última falha em{" "}
+                      <strong>{new Date(cfg.last_error_at).toLocaleString("pt-BR")}</strong>
+                      {cfg.last_success_at && (
+                        <>
+                          {" "}
+                          · último sucesso:{" "}
+                          <strong>{new Date(cfg.last_success_at).toLocaleString("pt-BR")}</strong>
+                        </>
+                      )}
+                    </div>
+                    {cfg.last_error_message && (
+                      <pre className="text-[11px] whitespace-pre-wrap break-all bg-background/40 border rounded p-2 mt-1">
+                        {cfg.last_error_message}
+                      </pre>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              )}
+            {cfg.enabled &&
+              cfg.last_success_at &&
+              (!cfg.last_error_at ||
+                new Date(cfg.last_success_at).getTime() >=
+                  new Date(cfg.last_error_at).getTime()) && (
+                <div className="flex items-center gap-2 text-xs text-primary rounded-md border border-primary/20 bg-primary/5 p-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Última captura bem-sucedida em{" "}
+                  <strong>{new Date(cfg.last_success_at).toLocaleString("pt-BR")}</strong>
+                </div>
+              )}
 
             <div className="flex items-center justify-between rounded-md border p-3">
               <div>
@@ -232,14 +283,22 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
               <div>
                 <Label htmlFor="interval">Intervalo (minutos)</Label>
                 <Input
-                  id="interval" type="number" min={5} max={1440}
+                  id="interval"
+                  type="number"
+                  min={5}
+                  max={1440}
                   value={cfg.interval_minutes}
-                  onChange={(e) => setCfg({ ...cfg, interval_minutes: Number(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setCfg({ ...cfg, interval_minutes: Number(e.target.value) || 0 })
+                  }
                 />
                 <div className="flex flex-wrap gap-1 mt-2">
                   {PRESETS.map((p) => (
                     <Button
-                      key={p.v} size="sm" variant="outline" className="h-6 text-xs"
+                      key={p.v}
+                      size="sm"
+                      variant="outline"
+                      className="h-6 text-xs"
                       onClick={() => setCfg({ ...cfg, interval_minutes: p.v })}
                     >
                       {p.label}
@@ -250,7 +309,10 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
               <div>
                 <Label htmlFor="retention">Retenção (dias)</Label>
                 <Input
-                  id="retention" type="number" min={1} max={365}
+                  id="retention"
+                  type="number"
+                  min={1}
+                  max={365}
                   value={cfg.retention_days}
                   onChange={(e) => setCfg({ ...cfg, retention_days: Number(e.target.value) || 0 })}
                 />
@@ -264,58 +326,84 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
               <div>
                 <p className="text-sm font-medium">Notificações de falha</p>
                 <p className="text-xs text-muted-foreground">
-                  Ao falhar, um POST JSON é enviado para as URLs configuradas (além do alerta no admin).
+                  Ao falhar, um POST JSON é enviado para as URLs configuradas (além do alerta no
+                  admin).
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {(['webhook','slack'] as ChannelKey[]).map((ch) => {
-                  const value = ch === 'webhook' ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
-                  const label = ch === 'webhook' ? 'Webhook genérico (POST JSON)' : 'Slack Incoming Webhook';
-                  const placeholder = ch === 'webhook' ? 'https://exemplo.com/hook' : 'https://hooks.slack.com/services/…';
+                {(["webhook", "slack"] as ChannelKey[]).map((ch) => {
+                  const value =
+                    ch === "webhook" ? cfg.notify_webhook_url : cfg.notify_slack_webhook_url;
+                  const label =
+                    ch === "webhook" ? "Webhook genérico (POST JSON)" : "Slack Incoming Webhook";
+                  const placeholder =
+                    ch === "webhook"
+                      ? "https://exemplo.com/hook"
+                      : "https://hooks.slack.com/services/…";
                   const fb = channelFeedback[ch];
                   const busy = channelBusy[ch];
                   const hasUrl = !!(value && value.trim());
                   return (
                     <div key={ch} className="space-y-2">
-                      <Label htmlFor={`notify-${ch}`} className="text-xs">{label}</Label>
+                      <Label htmlFor={`notify-${ch}`} className="text-xs">
+                        {label}
+                      </Label>
                       <Input
-                        id={`notify-${ch}`} type="url" placeholder={placeholder}
-                        value={value ?? ''}
-                        onChange={(e) => setCfg({
-                          ...cfg,
-                          ...(ch === 'webhook' ? { notify_webhook_url: e.target.value } : { notify_slack_webhook_url: e.target.value }),
-                        })}
+                        id={`notify-${ch}`}
+                        type="url"
+                        placeholder={placeholder}
+                        value={value ?? ""}
+                        onChange={(e) =>
+                          setCfg({
+                            ...cfg,
+                            ...(ch === "webhook"
+                              ? { notify_webhook_url: e.target.value }
+                              : { notify_slack_webhook_url: e.target.value }),
+                          })
+                        }
                       />
                       <div className="flex items-center gap-2">
                         <Button
-                          size="sm" variant="outline" className="h-7 text-xs"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
                           onClick={() => validateChannel(ch)}
                           disabled={!hasUrl || busy !== null}
                         >
-                          <ShieldCheck className={`h-3 w-3 mr-1 ${busy === 'validate' ? 'animate-spin' : ''}`} />
+                          <ShieldCheck
+                            className={`h-3 w-3 mr-1 ${busy === "validate" ? "animate-spin" : ""}`}
+                          />
                           Validar
                         </Button>
                         <Button
-                          size="sm" variant="outline" className="h-7 text-xs"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
                           onClick={() => sendTest(ch)}
                           disabled={!hasUrl || busy !== null}
                           title="Enfileira uma notificação de teste neste canal"
                         >
-                          <Send className={`h-3 w-3 mr-1 ${busy === 'send' ? 'animate-spin' : ''}`} />
+                          <Send
+                            className={`h-3 w-3 mr-1 ${busy === "send" ? "animate-spin" : ""}`}
+                          />
                           Enviar teste
                         </Button>
                       </div>
                       {fb && (
-                        <div className={`text-[11px] rounded border p-2 space-y-1 ${fb.kind === 'ok' ? 'border-primary/30 bg-primary/5 text-primary' : 'border-destructive/30 bg-destructive/5 text-destructive'}`}>
+                        <div
+                          className={`text-[11px] rounded border p-2 space-y-1 ${fb.kind === "ok" ? "border-primary/30 bg-primary/5 text-primary" : "border-destructive/30 bg-destructive/5 text-destructive"}`}
+                        >
                           <p className="font-medium">
-                            {fb.kind === 'ok' ? '✓' : '✗'} {fb.msg}
+                            {fb.kind === "ok" ? "✓" : "✗"} {fb.msg}
                             {fb.host && <span className="opacity-70"> · {fb.host}</span>}
                           </p>
                           {fb.checks && fb.checks.length > 0 && (
                             <ul className="space-y-0.5 pl-1">
                               {fb.checks.map((c) => (
                                 <li key={c.name} className="flex gap-1.5">
-                                  <span className={c.ok ? 'text-primary' : 'text-destructive'}>{c.ok ? '✓' : '✗'}</span>
+                                  <span className={c.ok ? "text-primary" : "text-destructive"}>
+                                    {c.ok ? "✓" : "✗"}
+                                  </span>
                                   <span className="font-mono opacity-80">{c.name}</span>
                                   <span className="opacity-70">— {c.detail}</span>
                                 </li>
@@ -336,7 +424,8 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
               )}
               {cfg.last_notified_at && !cfg.last_notification_error && (
                 <p className="text-[11px] text-muted-foreground">
-                  Última notificação enviada: {new Date(cfg.last_notified_at).toLocaleString('pt-BR')}
+                  Última notificação enviada:{" "}
+                  {new Date(cfg.last_notified_at).toLocaleString("pt-BR")}
                 </p>
               )}
             </div>
@@ -347,12 +436,17 @@ export function AutoSnapshotConfigCard({ onChange }: { onChange?: () => void }) 
                 Salvar
               </Button>
               <Button size="sm" variant="outline" onClick={load} disabled={loading}>
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </Button>
               <div className="ml-auto text-xs text-muted-foreground">
-                {cfg.last_run_at
-                  ? <>Última execução: <strong>{new Date(cfg.last_run_at).toLocaleString('pt-BR')}</strong></>
-                  : 'Ainda não executou.'}
+                {cfg.last_run_at ? (
+                  <>
+                    Última execução:{" "}
+                    <strong>{new Date(cfg.last_run_at).toLocaleString("pt-BR")}</strong>
+                  </>
+                ) : (
+                  "Ainda não executou."
+                )}
               </div>
             </div>
 

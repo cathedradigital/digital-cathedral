@@ -13,11 +13,11 @@
  *  - fontes: Nível 3 (Vatican.va, Aciprensa, referências oficiais)
  */
 
-import type { EditorialClosureProps } from '@/components/reader';
+import type { EditorialClosureProps } from "@/components/reader";
 
-export type FeastRank = 'memoria' | 'festa' | 'solenidade' | 'opcional';
+export type FeastRank = "memoria" | "festa" | "solenidade" | "opcional";
 
-export type SaintCategory = 'saint' | 'doctor' | 'father' | 'martyr';
+export type SaintCategory = "saint" | "doctor" | "father" | "martyr";
 
 export interface SaintHeaderData {
   name: string;
@@ -97,16 +97,16 @@ export interface SaintEditorialData {
 
 /** Identificador estável de bloco — usado por skip-if-empty e testes. */
 export type SaintBlockId =
-  | 'header'
-  | 'bio'
-  | 'reflection'
-  | 'meditation'
-  | 'legacy'
-  | 'timeline'
-  | 'virtues'
-  | 'writings'
-  | 'prayers'
-  | 'sources';
+  | "header"
+  | "bio"
+  | "reflection"
+  | "meditation"
+  | "legacy"
+  | "timeline"
+  | "virtues"
+  | "writings"
+  | "prayers"
+  | "sources";
 
 export interface SaintBlockDescriptor<T = unknown> {
   id: SaintBlockId;

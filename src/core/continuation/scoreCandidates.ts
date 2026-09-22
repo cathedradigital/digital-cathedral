@@ -9,21 +9,15 @@
  * (litúrgico, progresso, histórico) sem mudar a assinatura.
  */
 
-import type {
-  ContinuationCandidate,
-  ContinuationConfidence,
-  ScoredCandidate,
-} from './types';
+import type { ContinuationCandidate, ContinuationConfidence, ScoredCandidate } from "./types";
 
 function toConfidence(score: number): ContinuationConfidence {
-  if (score >= 75) return 'high';
-  if (score >= 45) return 'medium';
-  return 'low';
+  if (score >= 75) return "high";
+  if (score >= 45) return "medium";
+  return "low";
 }
 
-export function scoreCandidates(
-  candidates: ContinuationCandidate[],
-): ScoredCandidate[] {
+export function scoreCandidates(candidates: ContinuationCandidate[]): ScoredCandidate[] {
   return candidates.map((c) => {
     const clamped = Math.max(0, Math.min(1, c.rawWeight));
     const score = Math.round(clamped * 100);

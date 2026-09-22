@@ -1,4 +1,4 @@
-import { AppRoute } from '@/types';
+import { AppRoute } from "@/types";
 
 /**
  * Checks if the "Hoje" route should be considered active based on the current path.
@@ -6,12 +6,12 @@ import { AppRoute } from '@/types';
  */
 export const isHojeActive = (currentPath: string): boolean => {
   if (!currentPath) return false;
-  
+
   // Normalize path by removing query strings and hashes
   const path = currentPath.split(/[?#]/)[0];
-  
+
   // If it's exactly root, /hoje, or starts with /hoje/
-  return path === '/' || path === '/hoje' || path === '/hoje/' || path.startsWith('/hoje/');
+  return path === "/" || path === "/hoje" || path === "/hoje/" || path.startsWith("/hoje/");
 };
 
 /**
@@ -24,7 +24,7 @@ export const isRouteActive = (itemRoute: string, currentPath: string): boolean =
   // Clean currentPath of query strings/hashes for comparison
   const path = currentPath.split(/[?#]/)[0];
 
-  if (itemRoute === AppRoute.HOJE || itemRoute === '/') {
+  if (itemRoute === AppRoute.HOJE || itemRoute === "/") {
     return isHojeActive(path);
   }
 
@@ -32,11 +32,10 @@ export const isRouteActive = (itemRoute: string, currentPath: string): boolean =
   if (path === itemRoute) return true;
 
   // Nested route match (e.g. /bible/verse matches /bible)
-  if (itemRoute !== '/' && path.startsWith(itemRoute)) {
+  if (itemRoute !== "/" && path.startsWith(itemRoute)) {
     // Ensure it's a subpath match (e.g. /bibletest shouldn't match /bible)
-    return path.charAt(itemRoute.length) === '/' || itemRoute.endsWith('/');
+    return path.charAt(itemRoute.length) === "/" || itemRoute.endsWith("/");
   }
-
 
   return false;
 };
@@ -56,11 +55,14 @@ export const isLegitimateClick = (event: any): boolean => {
   }
 
   // Always allow keyboard events (Enter, Space) which often have detail === 0
-  const isKeyboard = event instanceof KeyboardEvent || 
-                    (event.type === 'keydown' || event.type === 'keyup') ||
-                    (event.nativeEvent && (event.nativeEvent instanceof KeyboardEvent)) ||
-                    (event.key === 'Enter' || event.key === ' ');
-  
+  const isKeyboard =
+    event instanceof KeyboardEvent ||
+    event.type === "keydown" ||
+    event.type === "keyup" ||
+    (event.nativeEvent && event.nativeEvent instanceof KeyboardEvent) ||
+    event.key === "Enter" ||
+    event.key === " ";
+
   if (isKeyboard) {
     lastNavTime = now;
     return true;
@@ -72,12 +74,16 @@ export const isLegitimateClick = (event: any): boolean => {
   }
 
   // Protection against ghost clicks (synthetic clicks triggered by mobile browsers)
-  if (event.type === 'click' && event.detail === 0) {
+  if (event.type === "click" && event.detail === 0) {
     const nativeEvent = event.nativeEvent || event;
     // If it's a pointer event, check if it was triggered by a real pointer
-    if (nativeEvent.pointerType === 'mouse' || nativeEvent.pointerType === 'touch' || nativeEvent.pointerType === 'pen') {
-       lastNavTime = now;
-       return true;
+    if (
+      nativeEvent.pointerType === "mouse" ||
+      nativeEvent.pointerType === "touch" ||
+      nativeEvent.pointerType === "pen"
+    ) {
+      lastNavTime = now;
+      return true;
     }
     // If no pointer info and not keyboard, it's likely a ghost click or accidental touch
     return false;
@@ -86,6 +92,3 @@ export const isLegitimateClick = (event: any): boolean => {
   lastNavTime = now;
   return true;
 };
-
-
-

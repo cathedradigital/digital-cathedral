@@ -9,20 +9,20 @@
  * Zero impacto em produção: em builds prod, o componente retorna null.
  * Colapsável e minimizável para não atrapalhar o layout.
  */
-import * as React from 'react';
+import * as React from "react";
 import {
   getNexusMetricsSnapshot,
   subscribeNexusMetrics,
   resetNexusMetrics,
   hitRate,
   type NexusMetricsSnapshot,
-} from '@/core/knowledge/adapters/nexusMetrics';
+} from "@/core/knowledge/adapters/nexusMetrics";
 
-const STORAGE_KEY = 'cathedra:nexus-metrics-overlay:open';
+const STORAGE_KEY = "cathedra:nexus-metrics-overlay:open";
 
 function formatMs(ms: number): string {
-  if (!Number.isFinite(ms) || ms === 0) return '—';
-  return ms < 1 ? '<1ms' : `${ms.toFixed(1)}ms`;
+  if (!Number.isFinite(ms) || ms === 0) return "—";
+  return ms < 1 ? "<1ms" : `${ms.toFixed(1)}ms`;
 }
 
 function formatPct(x: number): string {
@@ -33,7 +33,7 @@ function formatPct(x: number): string {
 function exportSnapshotAsJson(snap: NexusMetricsSnapshot): void {
   const now = new Date();
   const iso = now.toISOString();
-  const stamp = iso.replace(/[:.]/g, '-');
+  const stamp = iso.replace(/[:.]/g, "-");
   const payload = {
     generatedAt: iso,
     adapters: {
@@ -47,10 +47,10 @@ function exportSnapshotAsJson(snap: NexusMetricsSnapshot): void {
   };
   try {
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
-      type: 'application/json',
+      type: "application/json",
     });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `nexus-metrics-${stamp}.json`;
     document.body.appendChild(a);
@@ -65,12 +65,10 @@ function exportSnapshotAsJson(snap: NexusMetricsSnapshot): void {
 export const NexusMetricsOverlay: React.FC = () => {
   if (!import.meta.env.DEV) return null;
 
-  const [snap, setSnap] = React.useState<NexusMetricsSnapshot>(() =>
-    getNexusMetricsSnapshot(),
-  );
+  const [snap, setSnap] = React.useState<NexusMetricsSnapshot>(() => getNexusMetricsSnapshot());
   const [open, setOpen] = React.useState<boolean>(() => {
     try {
-      return window.localStorage.getItem(STORAGE_KEY) !== '0';
+      return window.localStorage.getItem(STORAGE_KEY) !== "0";
     } catch {
       return true;
     }
@@ -80,15 +78,15 @@ export const NexusMetricsOverlay: React.FC = () => {
 
   React.useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, open ? '1' : '0');
+      window.localStorage.setItem(STORAGE_KEY, open ? "1" : "0");
     } catch {
       /* ignore quota errors in ephemeral contexts */
     }
   }, [open]);
 
   const rows = [
-    { key: 'glossary' as const, label: 'Glossário' },
-    { key: 'journey' as const, label: 'Jornada' },
+    { key: "glossary" as const, label: "Glossário" },
+    { key: "journey" as const, label: "Jornada" },
   ];
 
   return (
@@ -107,7 +105,7 @@ export const NexusMetricsOverlay: React.FC = () => {
         <span className="font-stitch-body text-[10px] uppercase tracking-widest text-stitch-secondary">
           Nexus · dev
         </span>
-        <span aria-hidden="true">{open ? '▾' : '▸'}</span>
+        <span aria-hidden="true">{open ? "▾" : "▸"}</span>
       </button>
       {open && (
         <div id="nexus-metrics-body" className="border-t border-stitch-outline-variant/30 p-3">

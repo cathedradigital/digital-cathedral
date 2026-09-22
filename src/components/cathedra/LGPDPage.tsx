@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '../../constants';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "../../constants";
 
 /**
  * Página LGPD — descreve o cumprimento da Lei nº 13.709/2018.
@@ -21,7 +21,7 @@ const LGPDPage: React.FC = () => (
       </h1>
       <p className="text-muted-foreground text-premium-lg">
         A Cathedra Digital trata dados pessoais em conformidade com a Lei Geral de Proteção de Dados
-        brasileira. Esta página resume nossas práticas; para o detalhamento completo consulte a{' '}
+        brasileira. Esta página resume nossas práticas; para o detalhamento completo consulte a{" "}
         <Link to="/legal/privacy" className="text-primary hover:underline">
           Política de Privacidade
         </Link>
@@ -31,18 +31,28 @@ const LGPDPage: React.FC = () => (
 
     <Section title="1. Papéis e responsabilidades">
       <p>
-        A Cathedra Digital atua como <strong>controladora</strong> dos dados que coleta diretamente dos
-        usuários. Provedores de infraestrutura (autenticação, banco de dados, e-mail, pagamentos) atuam
-        como <strong>operadores</strong> sob contrato.
+        A Cathedra Digital atua como <strong>controladora</strong> dos dados que coleta diretamente
+        dos usuários. Provedores de infraestrutura (autenticação, banco de dados, e-mail,
+        pagamentos) atuam como <strong>operadores</strong> sob contrato.
       </p>
     </Section>
 
     <Section title="2. Bases legais utilizadas (art. 7º)">
       <ul className="list-disc pl-spacing-lg space-y-spacing-2xs">
-        <li><strong>Consentimento</strong> — para envio de comunicações opcionais e cookies não essenciais.</li>
-        <li><strong>Execução de contrato</strong> — para operar a conta, assinaturas PRO e pagamentos.</li>
-        <li><strong>Obrigação legal e regulatória</strong> — retenção fiscal e de segurança.</li>
-        <li><strong>Legítimo interesse</strong> — telemetria agregada, prevenção a fraude e segurança da plataforma.</li>
+        <li>
+          <strong>Consentimento</strong> — para envio de comunicações opcionais e cookies não
+          essenciais.
+        </li>
+        <li>
+          <strong>Execução de contrato</strong> — para operar a conta, assinaturas PRO e pagamentos.
+        </li>
+        <li>
+          <strong>Obrigação legal e regulatória</strong> — retenção fiscal e de segurança.
+        </li>
+        <li>
+          <strong>Legítimo interesse</strong> — telemetria agregada, prevenção a fraude e segurança
+          da plataforma.
+        </li>
       </ul>
     </Section>
 
@@ -62,25 +72,28 @@ const LGPDPage: React.FC = () => (
 
     <Section title="4. Encarregado (DPO)">
       <p>
-        Para exercer seus direitos ou tirar dúvidas sobre proteção de dados, fale com nosso encarregado
-        pelo canal oficial da{' '}
-        <Link to="/contato" className="text-primary hover:underline">página de contato</Link>. Respondemos
-        em até 15 dias corridos, conforme recomendação da ANPD.
+        Para exercer seus direitos ou tirar dúvidas sobre proteção de dados, fale com nosso
+        encarregado pelo canal oficial da{" "}
+        <Link to="/contato" className="text-primary hover:underline">
+          página de contato
+        </Link>
+        . Respondemos em até 15 dias corridos, conforme recomendação da ANPD.
       </p>
     </Section>
 
     <Section title="5. Incidentes de segurança">
       <p>
-        Em caso de incidente que possa acarretar risco relevante aos titulares, a Cathedra comunica a
-        ANPD e os titulares afetados em prazo razoável, informando a natureza dos dados envolvidos,
-        os riscos e as medidas adotadas para reverter ou mitigar os efeitos.
+        Em caso de incidente que possa acarretar risco relevante aos titulares, a Cathedra comunica
+        a ANPD e os titulares afetados em prazo razoável, informando a natureza dos dados
+        envolvidos, os riscos e as medidas adotadas para reverter ou mitigar os efeitos.
       </p>
     </Section>
 
     <Section title="6. Transferência internacional">
       <p>
-        Alguns operadores contratados podem processar dados fora do Brasil (ex.: infraestrutura de nuvem).
-        Nesses casos, exigimos garantias contratuais e técnicas equivalentes às previstas na LGPD.
+        Alguns operadores contratados podem processar dados fora do Brasil (ex.: infraestrutura de
+        nuvem). Nesses casos, exigimos garantias contratuais e técnicas equivalentes às previstas na
+        LGPD.
       </p>
     </Section>
 

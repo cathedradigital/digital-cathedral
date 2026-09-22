@@ -10,11 +10,11 @@
  * O layout é editorial (cards discretos, tema `passion`), sem depender de props
  * externas além da estação.
  */
-import React from 'react';
-import { Sparkles, Feather, BookMarked } from 'lucide-react';
-import type { ViaSacraStation } from '@/data/viaSacraStations';
-import SilenceTimer from '@/components/prayer/rosary/SilenceTimer';
-import { useContemplativeRhythm } from '@/hooks/useContemplativeRhythm';
+import React from "react";
+import { Sparkles, Feather, BookMarked } from "lucide-react";
+import type { ViaSacraStation } from "@/data/viaSacraStations";
+import SilenceTimer from "@/components/prayer/rosary/SilenceTimer";
+import { useContemplativeRhythm } from "@/hooks/useContemplativeRhythm";
 
 interface Props {
   station: ViaSacraStation;
@@ -83,10 +83,7 @@ const StationContemplation: React.FC<Props> = ({ station, contemplative = false 
               </div>
               <div className="space-y-spacing-md">
                 {station.fathers.map((f, i) => (
-                  <figure
-                    key={i}
-                    className="border-l-2 border-primary/30 pl-spacing-md"
-                  >
+                  <figure key={i} className="border-l-2 border-primary/30 pl-spacing-md">
                     <blockquote className="font-serif italic text-premium-base leading-relaxed text-foreground/85">
                       "{f.quote}"
                     </blockquote>

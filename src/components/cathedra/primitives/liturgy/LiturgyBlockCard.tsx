@@ -15,16 +15,11 @@
  * Etapa 1 da Sprint C.4 — Fundação (UI compartilhada). Não altera
  * comportamento: apenas centraliza aparência e acessibilidade.
  */
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { PrayerTTSButton } from '../../PrayerTTSButton';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { PrayerTTSButton } from "../../PrayerTTSButton";
 
-export type LiturgyBlockVariant =
-  | 'default'
-  | 'antiphon'
-  | 'preface'
-  | 'psalm'
-  | 'concluding';
+export type LiturgyBlockVariant = "default" | "antiphon" | "preface" | "psalm" | "concluding";
 
 export interface LiturgyBlockCardProps {
   kicker: string;
@@ -39,7 +34,7 @@ export interface LiturgyBlockCardProps {
   /** Renderiza botão de TTS quando há texto (Breviário usa; Missa não). */
   withTTS?: boolean;
   /** Alinhamento do texto principal (Missa centraliza antífonas). */
-  align?: 'left' | 'center';
+  align?: "left" | "center";
   className?: string;
 }
 
@@ -48,26 +43,26 @@ export const LiturgyBlockCard: React.FC<LiturgyBlockCardProps> = ({
   title,
   text,
   note,
-  variant = 'default',
+  variant = "default",
   anchorId,
   loading,
   celebrationMode,
   withTTS = false,
-  align = 'left',
+  align = "left",
   className,
 }) => {
   const containerVariant =
-    variant === 'antiphon'
-      ? 'border-primary/30 bg-primary/[0.03]'
-      : variant === 'preface'
-      ? 'border-primary/40 bg-primary/[0.04]'
-      : variant === 'concluding'
-      ? 'border-primary/40 bg-primary/[0.05]'
-      : variant === 'psalm'
-      ? 'border-border/60 bg-card/50'
-      : 'border-border/60 bg-card/60';
+    variant === "antiphon"
+      ? "border-primary/30 bg-primary/[0.03]"
+      : variant === "preface"
+        ? "border-primary/40 bg-primary/[0.04]"
+        : variant === "concluding"
+          ? "border-primary/40 bg-primary/[0.05]"
+          : variant === "psalm"
+            ? "border-border/60 bg-card/50"
+            : "border-border/60 bg-card/60";
 
-  const ttsText = text ? [title, text].filter(Boolean).join('. ') : null;
+  const ttsText = text ? [title, text].filter(Boolean).join(". ") : null;
 
   return (
     <section
@@ -75,8 +70,8 @@ export const LiturgyBlockCard: React.FC<LiturgyBlockCardProps> = ({
       data-block-id={anchorId}
       aria-label={title ?? kicker}
       className={cn(
-        'relative my-spacing-md rounded-2xl border p-spacing-md md:p-spacing-lg',
-        anchorId && 'scroll-mt-24',
+        "relative my-spacing-md rounded-2xl border p-spacing-md md:p-spacing-lg",
+        anchorId && "scroll-mt-24",
         containerVariant,
         className,
       )}
@@ -85,9 +80,7 @@ export const LiturgyBlockCard: React.FC<LiturgyBlockCardProps> = ({
         <p className="font-stitch-body text-[10px] font-black uppercase tracking-[0.3em] text-primary">
           {kicker}
         </p>
-        {withTTS && ttsText && !celebrationMode && (
-          <PrayerTTSButton text={ttsText} label="Ouvir" />
-        )}
+        {withTTS && ttsText && !celebrationMode && <PrayerTTSButton text={ttsText} label="Ouvir" />}
       </div>
 
       {title && (
@@ -104,12 +97,12 @@ export const LiturgyBlockCard: React.FC<LiturgyBlockCardProps> = ({
       ) : text ? (
         <p
           className={cn(
-            'mt-spacing-sm whitespace-pre-line font-stitch-display leading-[1.7] text-foreground',
+            "mt-spacing-sm whitespace-pre-line font-stitch-display leading-[1.7] text-foreground",
             celebrationMode
-              ? 'text-premium-xl md:text-premium-2xl'
-              : 'text-premium-base md:text-premium-lg',
-            variant === 'antiphon' && 'italic',
-            align === 'center' && 'text-center',
+              ? "text-premium-xl md:text-premium-2xl"
+              : "text-premium-base md:text-premium-lg",
+            variant === "antiphon" && "italic",
+            align === "center" && "text-center",
           )}
         >
           {text}

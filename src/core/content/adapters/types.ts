@@ -9,8 +9,8 @@
  *   - Trocar Mock → real (Sprint 2.0.5+) não muda a assinatura.
  */
 
-import type { KnowledgeNodeKind } from '@/core/knowledge';
-import type { ReaderContent, SearchResult } from '../contracts';
+import type { KnowledgeNodeKind } from "@/core/knowledge";
+import type { ReaderContent, SearchResult } from "../contracts";
 
 /** Parâmetros genéricos usados por `ContentAdapter.get()`. */
 export type ContentGetParams = Record<string, string | number>;

@@ -4,8 +4,8 @@
  * ThemeDescriptor no formato ThemeEntry esperado pelo componente.
  */
 
-import type { ThemeAdapter } from '../types';
-import { ThemeRegistry } from '@/core/navigation';
+import type { ThemeAdapter } from "../types";
+import { ThemeRegistry } from "@/core/navigation";
 
 export const ThemeAdapterMock: ThemeAdapter = {
   async getFeatured() {

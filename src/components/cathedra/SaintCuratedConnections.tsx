@@ -5,25 +5,23 @@
  * (obras, virtudes exemplificadas, santos relacionados). Reutiliza
  * `EditorialCard` e ícones Lucide — sem componentes duplicados.
  */
-import * as React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { BookOpen, ScrollText, Sparkles, Users, type LucideIcon } from 'lucide-react';
+import * as React from "react";
+import { Link } from "@/lib/rr-compat";
+import { BookOpen, ScrollText, Sparkles, Users, type LucideIcon } from "lucide-react";
 
-import type { NexusRelation } from '@/types/nexus';
-import { getSaintRelations, type SaintRelationGroups } from '@/services/saintNexusService';
-import { resolveNexusHref, extractNexusRefId } from '@/lib/nexusHref';
+import type { NexusRelation } from "@/types/nexus";
+import { getSaintRelations, type SaintRelationGroups } from "@/services/saintNexusService";
+import { resolveNexusHref, extractNexusRefId } from "@/lib/nexusHref";
 
 function RelationItem({ rel }: { rel: NexusRelation }) {
-  const id = extractNexusRefId(rel.target_ref) ?? '';
+  const id = extractNexusRefId(rel.target_ref) ?? "";
   const title = String(rel.target_ref?.title ?? id);
   const href = resolveNexusHref(rel.target_kind, rel.target_ref);
 
   const content = (
     <span className="inline-flex items-center gap-1.5">
       <span className="font-medium text-foreground">{title}</span>
-      {rel.note ? (
-        <span className="text-xs text-muted-foreground">· {rel.note}</span>
-      ) : null}
+      {rel.note ? <span className="text-xs text-muted-foreground">· {rel.note}</span> : null}
     </span>
   );
   return (
@@ -102,7 +100,7 @@ export function SaintCuratedConnections({ saintId, saintName }: SaintCuratedConn
             Nexus Theologicus
           </p>
           <h2 className="mt-1 font-serif text-lg text-foreground">
-            Conexões curadas{saintName ? ` · ${saintName}` : ''}
+            Conexões curadas{saintName ? ` · ${saintName}` : ""}
           </h2>
         </header>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -111,7 +109,6 @@ export function SaintCuratedConnections({ saintId, saintName }: SaintCuratedConn
           <Section icon={Users} title="Relacionados" relations={groups.relatedSaints} />
           <Section icon={ScrollText} title="Catecismo" relations={groups.catechism} />
         </div>
-
       </div>
     </div>
   );

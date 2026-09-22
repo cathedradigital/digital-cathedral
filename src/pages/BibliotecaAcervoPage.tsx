@@ -11,73 +11,66 @@
  *  • Lista paginada de itens vinda do adapter oficial da Biblioteca
  *  • Acessibilidade: alt, aria-label, focus visíveis, teclado
  */
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams, Navigate } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import {
-  ArrowLeft,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  Loader2,
-} from 'lucide-react';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { SafeImage } from '@/components/library/SafeImage';
-import { LibraryCard, LIBRARY_ADAPTERS } from '@/modules/biblioteca';
-import type { LibraryItem } from '@/modules/biblioteca';
-import { LIBRARY_ACERVO_BY_SLUG } from '@/config/libraryAcervos';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams, Navigate } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Filter, Loader2 } from "lucide-react";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { SafeImage } from "@/components/library/SafeImage";
+import { LibraryCard, LIBRARY_ADAPTERS } from "@/modules/biblioteca";
+import type { LibraryItem } from "@/modules/biblioteca";
+import { LIBRARY_ACERVO_BY_SLUG } from "@/config/libraryAcervos";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
 
-type SortKey = 'title-asc' | 'title-desc' | 'recent';
-type LevelKey = 'all' | 'fundamental' | 'intermediate' | 'advanced';
+type SortKey = "title-asc" | "title-desc" | "recent";
+type LevelKey = "all" | "fundamental" | "intermediate" | "advanced";
 
-const LEVEL_LABEL: Record<Exclude<LevelKey, 'all'>, string> = {
-  fundamental: 'Fundamental',
-  intermediate: 'Intermediário',
-  advanced: 'Avançado',
+const LEVEL_LABEL: Record<Exclude<LevelKey, "all">, string> = {
+  fundamental: "Fundamental",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
 };
 
 /** Heurística de nível de formação por item.
  *  Prioriza `readingMinutes`; cai para o padrão do módulo. */
-function inferLevel(item: LibraryItem): Exclude<LevelKey, 'all'> {
-  if (typeof item.readingMinutes === 'number' && item.readingMinutes > 0) {
-    if (item.readingMinutes <= 5) return 'fundamental';
-    if (item.readingMinutes <= 15) return 'intermediate';
-    return 'advanced';
+function inferLevel(item: LibraryItem): Exclude<LevelKey, "all"> {
+  if (typeof item.readingMinutes === "number" && item.readingMinutes > 0) {
+    if (item.readingMinutes <= 5) return "fundamental";
+    if (item.readingMinutes <= 15) return "intermediate";
+    return "advanced";
   }
   switch (item.module) {
-    case 'bible':
-    case 'prayers':
-    case 'saints':
-      return 'fundamental';
-    case 'glossary':
-    case 'catechism':
-    case 'liturgy':
-    case 'collections':
-    case 'journeys':
-      return 'intermediate';
-    case 'magisterium':
-    case 'patristics':
-      return 'advanced';
+    case "bible":
+    case "prayers":
+    case "saints":
+      return "fundamental";
+    case "glossary":
+    case "catechism":
+    case "liturgy":
+    case "collections":
+    case "journeys":
+      return "intermediate";
+    case "magisterium":
+    case "patristics":
+      return "advanced";
     default:
-      return 'intermediate';
+      return "intermediate";
   }
 }
 
 const BibliotecaAcervoPage: React.FC = () => {
-  const { slug = '' } = useParams<{ slug: string }>();
+  const { slug = "" } = useParams<{ slug: string }>();
   const acervo = LIBRARY_ACERVO_BY_SLUG.get(slug);
 
   const [items, setItems] = useState<LibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [category, setCategory] = useState<string>('all');
-  const [level, setLevel] = useState<LevelKey>('all');
-  const [sort, setSort] = useState<SortKey>('title-asc');
+  const [category, setCategory] = useState<string>("all");
+  const [level, setLevel] = useState<LevelKey>("all");
+  const [sort, setSort] = useState<SortKey>("title-asc");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -91,8 +84,7 @@ const BibliotecaAcervoPage: React.FC = () => {
         if (!cancelled) setItems(res);
       })
       .catch((err) => {
-        if (!cancelled)
-          setError(err?.message ?? 'Falha ao carregar o acervo.');
+        if (!cancelled) setError(err?.message ?? "Falha ao carregar o acervo.");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -110,11 +102,11 @@ const BibliotecaAcervoPage: React.FC = () => {
 
   const filtered = useMemo(() => {
     let out = items;
-    if (category !== 'all') out = out.filter((i) => i.category === category);
-    if (level !== 'all') out = out.filter((i) => inferLevel(i) === level);
+    if (category !== "all") out = out.filter((i) => i.category === category);
+    if (level !== "all") out = out.filter((i) => inferLevel(i) === level);
     out = [...out].sort((a, b) => {
-      if (sort === 'title-asc') return a.title.localeCompare(b.title, 'pt-BR');
-      if (sort === 'title-desc') return b.title.localeCompare(a.title, 'pt-BR');
+      if (sort === "title-asc") return a.title.localeCompare(b.title, "pt-BR");
+      if (sort === "title-desc") return b.title.localeCompare(a.title, "pt-BR");
       const at = a.updatedAt ? Date.parse(a.updatedAt) : 0;
       const bt = b.updatedAt ? Date.parse(b.updatedAt) : 0;
       return bt - at;
@@ -128,10 +120,7 @@ const BibliotecaAcervoPage: React.FC = () => {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const pageItems = filtered.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
-  );
+  const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   if (!acervo) {
     return <Navigate to="/biblioteca" replace />;
@@ -141,8 +130,7 @@ const BibliotecaAcervoPage: React.FC = () => {
     <div
       className="min-h-screen w-full bg-stitch-background text-stitch-on-background"
       style={{
-        backgroundImage:
-          'url("https://www.transparenttextures.com/patterns/p6.png")',
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
       }}
     >
       <Helmet>
@@ -227,10 +215,7 @@ const BibliotecaAcervoPage: React.FC = () => {
           aria-labelledby="filtros-heading"
         >
           <div className="mb-3 flex items-center gap-2">
-            <Filter
-              className="h-4 w-4 text-stitch-secondary"
-              aria-hidden
-            />
+            <Filter className="h-4 w-4 text-stitch-secondary" aria-hidden />
             <h2
               id="filtros-heading"
               className="font-stitch-display text-[15px] font-semibold text-stitch-primary"
@@ -270,13 +255,11 @@ const BibliotecaAcervoPage: React.FC = () => {
                 className="h-10 rounded-md border border-stitch-outline-variant/40 bg-stitch-background px-3 font-stitch-body text-[14px] text-stitch-primary focus:border-stitch-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2"
               >
                 <option value="all">Todos</option>
-                {(Object.keys(LEVEL_LABEL) as Array<keyof typeof LEVEL_LABEL>).map(
-                  (k) => (
-                    <option key={k} value={k}>
-                      {LEVEL_LABEL[k]}
-                    </option>
-                  ),
-                )}
+                {(Object.keys(LEVEL_LABEL) as Array<keyof typeof LEVEL_LABEL>).map((k) => (
+                  <option key={k} value={k}>
+                    {LEVEL_LABEL[k]}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -302,8 +285,8 @@ const BibliotecaAcervoPage: React.FC = () => {
             aria-live="polite"
           >
             {loading
-              ? 'Carregando itens…'
-              : `${filtered.length} resultado${filtered.length === 1 ? '' : 's'}`}
+              ? "Carregando itens…"
+              : `${filtered.length} resultado${filtered.length === 1 ? "" : "s"}`}
           </p>
         </section>
 
@@ -342,20 +325,17 @@ const BibliotecaAcervoPage: React.FC = () => {
 
         {/* Paginação */}
         {!loading && !error && totalPages > 1 ? (
-          <nav
-            aria-label="Paginação do acervo"
-            className="mt-10 flex items-center justify-between"
-          >
+          <nav aria-label="Paginação do acervo" className="mt-10 flex items-center justify-between">
             <button
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               aria-label="Página anterior"
               className={cn(
-                'inline-flex items-center gap-2 rounded-md border border-stitch-outline-variant/40 bg-stitch-surface-container-lowest px-3 py-2 font-stitch-body text-[13px] text-stitch-primary transition-colors',
-                'hover:border-stitch-secondary/60 hover:text-stitch-secondary',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2',
-                'disabled:cursor-not-allowed disabled:opacity-40',
+                "inline-flex items-center gap-2 rounded-md border border-stitch-outline-variant/40 bg-stitch-surface-container-lowest px-3 py-2 font-stitch-body text-[13px] text-stitch-primary transition-colors",
+                "hover:border-stitch-secondary/60 hover:text-stitch-secondary",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2",
+                "disabled:cursor-not-allowed disabled:opacity-40",
               )}
             >
               <ChevronLeft className="h-4 w-4" aria-hidden />
@@ -375,10 +355,10 @@ const BibliotecaAcervoPage: React.FC = () => {
               disabled={currentPage === totalPages}
               aria-label="Próxima página"
               className={cn(
-                'inline-flex items-center gap-2 rounded-md border border-stitch-outline-variant/40 bg-stitch-surface-container-lowest px-3 py-2 font-stitch-body text-[13px] text-stitch-primary transition-colors',
-                'hover:border-stitch-secondary/60 hover:text-stitch-secondary',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2',
-                'disabled:cursor-not-allowed disabled:opacity-40',
+                "inline-flex items-center gap-2 rounded-md border border-stitch-outline-variant/40 bg-stitch-surface-container-lowest px-3 py-2 font-stitch-body text-[13px] text-stitch-primary transition-colors",
+                "hover:border-stitch-secondary/60 hover:text-stitch-secondary",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2",
+                "disabled:cursor-not-allowed disabled:opacity-40",
               )}
             >
               Próxima

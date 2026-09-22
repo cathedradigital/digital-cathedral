@@ -10,63 +10,63 @@
  * - Prefetch offline: quando as leituras do dia carregam, dispara as 7 horas
  *   idempotentemente para IDB.
  */
-import React, { useMemo, useCallback, useEffect } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { useQueryClient } from '@tanstack/react-query';
-import { usePrayerHierarchy } from '@/prayer-engine/usePrayerHierarchy';
-import { usePrayers } from '@/hooks/usePrayers';
-import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';
+import React, { useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { useQueryClient } from "@tanstack/react-query";
+import { usePrayerHierarchy } from "@/prayer-engine/usePrayerHierarchy";
+import { usePrayers } from "@/hooks/usePrayers";
+import { useDailyLiturgy } from "@/hooks/useDailyLiturgy";
 import {
   useLiturgyHoursOffice,
   prefetchAllHoursForDay,
   ALL_HOUR_SLUGS,
   type HourSlug,
   type LiturgyHoursOfficeRow,
-} from '@/hooks/useLiturgyHoursOffice';
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
-import { PrayerEngineReader } from './PrayerEngineReader';
-import { BreviaryContinuousReader, type BreviaryHourBundle } from './BreviaryContinuousReader';
-import { LiturgyHoursOfficeCards } from './primitives/liturgy/LiturgyHoursOfficeCards';
-import { LiturgyDateNav } from './primitives/liturgy/LiturgyDateNav';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { Icons } from '../../constants';
-import { flattenSectionToBlocks } from '@/prayer-engine/loadPrayerHierarchy';
-import SEOHead from '@/components/SEOHead';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
-import { useReaderTypography } from '@/hooks/useReaderTypography';
-import { preloadBreviaryOfflineAssets } from '@/lib/breviaryOfflinePreload';
-import { BreviaryShareButtons } from './primitives/liturgy/BreviaryShareButtons';
-import { ReaderTypographyControl } from './primitives/liturgy/ReaderTypographyControl';
-import { HourRecommendationCard } from './primitives/liturgy/HourRecommendationCard';
-import { useRecommendedHour } from '@/hooks/useRecommendedHour';
-import { useQueries } from '@tanstack/react-query';
-import PrayerPortalStandalone from '@/components/prayer/PrayerPortalStandalone';
-import { HourSpiritCard } from './primitives/liturgy/HourSpiritCard';
-import { Sunrise, Sun, Sunset, MoonStar, type LucideIcon } from 'lucide-react';
+} from "@/hooks/useLiturgyHoursOffice";
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
+import { PrayerEngineReader } from "./PrayerEngineReader";
+import { BreviaryContinuousReader, type BreviaryHourBundle } from "./BreviaryContinuousReader";
+import { LiturgyHoursOfficeCards } from "./primitives/liturgy/LiturgyHoursOfficeCards";
+import { LiturgyDateNav } from "./primitives/liturgy/LiturgyDateNav";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Icons } from "../../constants";
+import { flattenSectionToBlocks } from "@/prayer-engine/loadPrayerHierarchy";
+import SEOHead from "@/components/SEOHead";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { useReaderTypography } from "@/hooks/useReaderTypography";
+import { preloadBreviaryOfflineAssets } from "@/lib/breviaryOfflinePreload";
+import { BreviaryShareButtons } from "./primitives/liturgy/BreviaryShareButtons";
+import { ReaderTypographyControl } from "./primitives/liturgy/ReaderTypographyControl";
+import { HourRecommendationCard } from "./primitives/liturgy/HourRecommendationCard";
+import { useRecommendedHour } from "@/hooks/useRecommendedHour";
+import { useQueries } from "@tanstack/react-query";
+import PrayerPortalStandalone from "@/components/prayer/PrayerPortalStandalone";
+import { HourSpiritCard } from "./primitives/liturgy/HourSpiritCard";
+import { Sunrise, Sun, Sunset, MoonStar, type LucideIcon } from "lucide-react";
 
-const CANONICAL_BASE = 'https://www.cathedradigital.com.br';
+const CANONICAL_BASE = "https://www.cathedradigital.com.br";
 
 const HOUR_ICON: Record<HourSlug, React.ReactNode> = {
-  oficio:    <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
-  laudes:    <Icons.Sun className="w-spacing-md h-spacing-md" />,
-  tercia:    <Icons.Clock className="w-spacing-md h-spacing-md" />,
-  sexta:     <Icons.Sun className="w-spacing-md h-spacing-md" />,
-  noa:       <Icons.Clock className="w-spacing-md h-spacing-md" />,
-  vesperas:  <Icons.Sun className="w-spacing-md h-spacing-md" />,
+  oficio: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+  laudes: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+  tercia: <Icons.Clock className="w-spacing-md h-spacing-md" />,
+  sexta: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+  noa: <Icons.Clock className="w-spacing-md h-spacing-md" />,
+  vesperas: <Icons.Sun className="w-spacing-md h-spacing-md" />,
   completas: <Icons.Moon className="w-spacing-md h-spacing-md" />,
 };
 
 function suggestedHourFor(now: Date): HourSlug {
   const h = now.getHours();
-  if (h < 6) return 'oficio';
-  if (h < 9) return 'laudes';
-  if (h < 11) return 'tercia';
-  if (h < 14) return 'sexta';
-  if (h < 17) return 'noa';
-  if (h < 20) return 'vesperas';
-  return 'completas';
+  if (h < 6) return "oficio";
+  if (h < 9) return "laudes";
+  if (h < 11) return "tercia";
+  if (h < 14) return "sexta";
+  if (h < 17) return "noa";
+  if (h < 20) return "vesperas";
+  return "completas";
 }
 
 function isHour(s: string | null): s is HourSlug {
@@ -75,7 +75,7 @@ function isHour(s: string | null): s is HourSlug {
 
 function parseDateParam(raw: string | null): Date {
   if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return new Date();
-  const [y, m, d] = raw.split('-').map(Number);
+  const [y, m, d] = raw.split("-").map(Number);
   const nd = new Date(y, m - 1, d);
   return Number.isNaN(nd.getTime()) ? new Date() : nd;
 }
@@ -96,40 +96,40 @@ function buildOfficeJsonLd(params: {
     : `${hourTitle} da Liturgia das Horas segundo o rito romano.`;
 
   const event = {
-    '@context': 'https://schema.org',
-    '@type': 'Event',
+    "@context": "https://schema.org",
+    "@type": "Event",
     name: `${hourTitle} — Liturgia das Horas`,
     alternateName: hourLatin ?? undefined,
     startDate: isoDate,
-    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
-    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
     description,
-    inLanguage: 'pt-BR',
+    inLanguage: "pt-BR",
     isAccessibleForFree: true,
     url: canonical,
     location: {
-      '@type': 'VirtualLocation',
+      "@type": "VirtualLocation",
       url: canonical,
     },
     organizer: {
-      '@type': 'Organization',
-      name: 'Cathedra Digital',
+      "@type": "Organization",
+      name: "Cathedra Digital",
       url: CANONICAL_BASE,
     },
-    about: seasonNote ?? 'Officium Divinum',
+    about: seasonNote ?? "Officium Divinum",
   };
 
   const article = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+    "@context": "https://schema.org",
+    "@type": "Article",
     headline: `${hourTitle} · Liturgia das Horas`,
-    articleSection: 'Liturgia das Horas',
-    inLanguage: 'pt-BR',
-    datePublished: office?.generated_at ?? new Date(isoDate + 'T06:00:00').toISOString(),
+    articleSection: "Liturgia das Horas",
+    inLanguage: "pt-BR",
+    datePublished: office?.generated_at ?? new Date(isoDate + "T06:00:00").toISOString(),
     dateModified: office?.generated_at ?? new Date().toISOString(),
-    author: { '@type': 'Organization', name: 'Cathedra Digital' },
-    publisher: { '@type': 'Organization', name: 'Cathedra Digital', url: CANONICAL_BASE },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    author: { "@type": "Organization", name: "Cathedra Digital" },
+    publisher: { "@type": "Organization", name: "Cathedra Digital", url: CANONICAL_BASE },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
     description,
   };
 
@@ -140,26 +140,23 @@ const BreviaryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const qc = useQueryClient();
 
-  const selectedDate = useMemo(
-    () => parseDateParam(searchParams.get('d')),
-    [searchParams],
-  );
+  const selectedDate = useMemo(() => parseDateParam(searchParams.get("d")), [searchParams]);
   const isoDate = toIsoDateKey(selectedDate);
   const todayIso = toIsoDateKey(new Date());
   const isToday = isoDate === todayIso;
 
-  const hourParam = searchParams.get('h');
+  const hourParam = searchParams.get("h");
   const selectedHour: HourSlug | null = isHour(hourParam) ? hourParam : null;
-  const dayMode = searchParams.get('mode') === 'day';
+  const dayMode = searchParams.get("mode") === "day";
 
   const suggested = useMemo(() => suggestedHourFor(new Date()), []);
 
   const setSelectedHour = useCallback(
     (h: HourSlug | null) => {
       const next = new URLSearchParams(searchParams);
-      if (h) next.set('h', h);
-      else next.delete('h');
-      next.delete('mode');
+      if (h) next.set("h", h);
+      else next.delete("h");
+      next.delete("mode");
       setSearchParams(next, { replace: false });
     },
     [searchParams, setSearchParams],
@@ -169,10 +166,10 @@ const BreviaryPage: React.FC = () => {
     (on: boolean) => {
       const next = new URLSearchParams(searchParams);
       if (on) {
-        next.set('mode', 'day');
-        next.delete('h');
+        next.set("mode", "day");
+        next.delete("h");
       } else {
-        next.delete('mode');
+        next.delete("mode");
       }
       setSearchParams(next, { replace: false });
     },
@@ -183,37 +180,47 @@ const BreviaryPage: React.FC = () => {
     (d: Date) => {
       const next = new URLSearchParams(searchParams);
       const iso = toIsoDateKey(d);
-      if (iso === todayIso) next.delete('d');
-      else next.set('d', iso);
+      if (iso === todayIso) next.delete("d");
+      else next.set("d", iso);
       setSearchParams(next, { replace: false });
     },
     [searchParams, setSearchParams, todayIso],
   );
 
   const { hierarchy, activeSection, loading } = usePrayerHierarchy(
-    'liturgia-das-horas',
+    "liturgia-das-horas",
     selectedHour ?? undefined,
   );
   const { prayers } = usePrayers();
   const prayer = useMemo(
-    () => prayers.find((p) => p.slug === 'liturgia-das-horas') ?? null,
+    () => prayers.find((p) => p.slug === "liturgia-das-horas") ?? null,
     [prayers],
   );
 
-  const { liturgy, isLoading: liturgyLoading, isError: liturgyError, isOfflineData, refresh: refreshLiturgy } = useDailyLiturgy(selectedDate);
-  const { office, isLoading: officeLoading, fromCache } = useLiturgyHoursOffice(
-    isoDate,
-    selectedHour,
+  const {
     liturgy,
-  );
+    isLoading: liturgyLoading,
+    isError: liturgyError,
+    isOfflineData,
+    refresh: refreshLiturgy,
+  } = useDailyLiturgy(selectedDate);
+  const {
+    office,
+    isLoading: officeLoading,
+    fromCache,
+  } = useLiturgyHoursOffice(isoDate, selectedHour, liturgy);
   const online = useOnlineStatus();
   const showOfflineBanner = !online && !!office && fromCache;
 
-  const liturgyStatus: 'loading' | 'ready' | 'unavailable' | 'offline' = liturgyLoading
-    ? 'loading'
+  const liturgyStatus: "loading" | "ready" | "unavailable" | "offline" = liturgyLoading
+    ? "loading"
     : liturgyError || !liturgy
-      ? (online ? 'unavailable' : 'offline')
-      : (isOfflineData && !online ? 'offline' : 'ready');
+      ? online
+        ? "unavailable"
+        : "offline"
+      : isOfflineData && !online
+        ? "offline"
+        : "ready";
 
   // Prefetch das 7 horas (offline-first, idempotente) quando o dia carrega.
   useEffect(() => {
@@ -230,9 +237,8 @@ const BreviaryPage: React.FC = () => {
   // Sprint 3 · Onda C — recomendação pela data selecionada + TZ local.
   const recommendation = useRecommendedHour(selectedDate);
 
-
   // Deep link `?b=<blockId>` — restaura posição exata do trecho.
-  const initialBlockId = searchParams.get('b');
+  const initialBlockId = searchParams.get("b");
 
   // Preferências de tipografia (persistidas cross-session, funciona offline).
   const { wrapperStyle: typographyStyle } = useReaderTypography();
@@ -240,25 +246,28 @@ const BreviaryPage: React.FC = () => {
   // ── Dia inteiro contínuo (7 horas em fluxo único) ──
   // Coleta as 7 horas via useQueries (reativo, offline-first via IDB).
   const allHourQueries = useQueries({
-    queries: (dayMode && hierarchy && prayer)
-      ? ALL_HOUR_SLUGS.map((h) => ({
-          queryKey: ['liturgy-hours-office', isoDate, h] as const,
-          queryFn: async () => null, // resolvido pelo prefetch/useLiturgyHoursOffice
-          enabled: false, // apenas lê o cache do QueryClient (populado pelo prefetch)
-          staleTime: Infinity,
-        }))
-      : [],
+    queries:
+      dayMode && hierarchy && prayer
+        ? ALL_HOUR_SLUGS.map((h) => ({
+            queryKey: ["liturgy-hours-office", isoDate, h] as const,
+            queryFn: async () => null, // resolvido pelo prefetch/useLiturgyHoursOffice
+            enabled: false, // apenas lê o cache do QueryClient (populado pelo prefetch)
+            staleTime: Infinity,
+          }))
+        : [],
   });
 
   if (dayMode && prayer && hierarchy) {
-    const orderedSections = ALL_HOUR_SLUGS
-      .map((slug) => hierarchy.sections.find((s) => s.slug === slug))
-      .filter((s): s is NonNullable<typeof s> => !!s);
+    const orderedSections = ALL_HOUR_SLUGS.map((slug) =>
+      hierarchy.sections.find((s) => s.slug === slug),
+    ).filter((s): s is NonNullable<typeof s> => !!s);
 
     const bundles: BreviaryHourBundle[] = orderedSections.map((section, idx) => {
       const slug = section.slug as HourSlug;
       const cached = qc.getQueryData<{ office: LiturgyHoursOfficeRow | null }>([
-        'liturgy-hours-office', isoDate, slug,
+        "liturgy-hours-office",
+        isoDate,
+        slug,
       ]);
       return {
         hourSlug: slug,
@@ -276,7 +285,11 @@ const BreviaryPage: React.FC = () => {
 
     return (
       <>
-        <SEOHead title={pageTitle} description={pageDescription} path={`/breviary?mode=day${isToday ? '' : `&d=${isoDate}`}`} />
+        <SEOHead
+          title={pageTitle}
+          description={pageDescription}
+          path={`/breviary?mode=day${isToday ? "" : `&d=${isoDate}`}`}
+        />
         <Helmet>
           <link rel="canonical" href={canonical} />
           <meta property="og:title" content={pageTitle} />
@@ -287,14 +300,26 @@ const BreviaryPage: React.FC = () => {
           <meta name="twitter:card" content="summary_large_image" />
         </Helmet>
         {showOfflineBanner && (
-          <div role="status" aria-live="polite" className="mb-spacing-sm mx-auto max-w-3xl flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs rounded-premium border border-border bg-muted/40 text-premium-xs text-muted-foreground">
+          <div
+            role="status"
+            aria-live="polite"
+            className="mb-spacing-sm mx-auto max-w-3xl flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs rounded-premium border border-border bg-muted/40 text-premium-xs text-muted-foreground"
+          >
             <Icons.WifiOff className="w-spacing-sm h-spacing-sm text-primary" />
-            <span className="font-serif italic">Exibindo a Liturgia a partir do cache offline.</span>
+            <span className="font-serif italic">
+              Exibindo a Liturgia a partir do cache offline.
+            </span>
           </div>
         )}
         <div className="mx-auto max-w-3xl mb-spacing-sm flex flex-wrap items-center justify-between gap-spacing-2xs px-spacing-sm">
-          <Button variant="outline" size="sm" onClick={() => setDayMode(false)} className="rounded-full text-premium-xs font-black uppercase tracking-widest">
-            <Icons.ChevronLeft className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Voltar às horas
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setDayMode(false)}
+            className="rounded-full text-premium-xs font-black uppercase tracking-widest"
+          >
+            <Icons.ChevronLeft className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Voltar às
+            horas
           </Button>
           <ReaderTypographyControl />
         </div>
@@ -314,8 +339,7 @@ const BreviaryPage: React.FC = () => {
 
   // ── Hora única contínua (Próprio injetado inline) ──
   if (selectedHour && prayer && hierarchy && activeSection) {
-    const section =
-      hierarchy.sections.find((s) => s.slug === selectedHour) ?? activeSection;
+    const section = hierarchy.sections.find((s) => s.slug === selectedHour) ?? activeSection;
     const hourBlocks = flattenSectionToBlocks(hierarchy, section);
     const canonical = `${CANONICAL_BASE}/breviary?h=${selectedHour}&d=${isoDate}`;
     const jsonLd = buildOfficeJsonLd({
@@ -328,20 +352,26 @@ const BreviaryPage: React.FC = () => {
     });
 
     const pageTitle = `${section.title} · Liturgia das Horas`;
-    const pageDescription = `Reze ${section.title}${section.subtitle ? ` (${section.subtitle})` : ''} da Liturgia das Horas — ${isoDate} — com Ordinário e Próprio do dia em fluxo contínuo.`;
+    const pageDescription = `Reze ${section.title}${section.subtitle ? ` (${section.subtitle})` : ""} da Liturgia das Horas — ${isoDate} — com Ordinário e Próprio do dia em fluxo contínuo.`;
 
-    const bundles: BreviaryHourBundle[] = [{
-      hourSlug: selectedHour,
-      title: section.title,
-      subtitle: section.subtitle ?? null,
-      ordinaryBlocks: hourBlocks,
-      office,
-      officeLoading,
-    }];
+    const bundles: BreviaryHourBundle[] = [
+      {
+        hourSlug: selectedHour,
+        title: section.title,
+        subtitle: section.subtitle ?? null,
+        ordinaryBlocks: hourBlocks,
+        office,
+        officeLoading,
+      },
+    ];
 
     return (
       <>
-        <SEOHead title={pageTitle} description={pageDescription} path={`/breviary?h=${selectedHour}${isToday ? '' : `&d=${isoDate}`}`} />
+        <SEOHead
+          title={pageTitle}
+          description={pageDescription}
+          path={`/breviary?h=${selectedHour}${isToday ? "" : `&d=${isoDate}`}`}
+        />
         <Helmet>
           <link rel="canonical" href={canonical} />
           <meta property="og:title" content={pageTitle} />
@@ -355,17 +385,33 @@ const BreviaryPage: React.FC = () => {
           <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         </Helmet>
         {showOfflineBanner && (
-          <div role="status" aria-live="polite" className="mb-spacing-sm mx-auto max-w-3xl flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs rounded-premium border border-border bg-muted/40 text-premium-xs text-muted-foreground">
+          <div
+            role="status"
+            aria-live="polite"
+            className="mb-spacing-sm mx-auto max-w-3xl flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs rounded-premium border border-border bg-muted/40 text-premium-xs text-muted-foreground"
+          >
             <Icons.WifiOff className="w-spacing-sm h-spacing-sm text-primary" />
-            <span className="font-serif italic">Exibindo a Liturgia a partir do cache offline. Reconectando…</span>
+            <span className="font-serif italic">
+              Exibindo a Liturgia a partir do cache offline. Reconectando…
+            </span>
           </div>
         )}
         <div className="mx-auto max-w-3xl mb-spacing-sm flex flex-wrap items-center justify-between gap-spacing-2xs px-spacing-sm">
           <div className="flex items-center gap-spacing-2xs">
-            <Button variant="outline" size="sm" onClick={() => setSelectedHour(null)} className="rounded-full text-premium-xs font-black uppercase tracking-widest">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedHour(null)}
+              className="rounded-full text-premium-xs font-black uppercase tracking-widest"
+            >
               <Icons.ChevronLeft className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Horas
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setDayMode(true)} className="rounded-full text-premium-xs font-black uppercase tracking-widest">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDayMode(true)}
+              className="rounded-full text-premium-xs font-black uppercase tracking-widest"
+            >
               <Icons.BookOpen className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Dia inteiro
             </Button>
           </div>
@@ -401,29 +447,72 @@ const BreviaryPage: React.FC = () => {
 
   // ── Seletor ──
   const sections = hierarchy?.sections ?? [];
-  const orderedSections = ALL_HOUR_SLUGS
-    .map((slug) => sections.find((s) => s.slug === slug))
-    .filter((s): s is NonNullable<typeof s> => !!s);
+  const orderedSections = ALL_HOUR_SLUGS.map((slug) =>
+    sections.find((s) => s.slug === slug),
+  ).filter((s): s is NonNullable<typeof s> => !!s);
 
   // B.2.5.b — Portal de Oração (limiar contemplativo antes do seletor).
-  const enterRequested = searchParams.get('enter') === '1';
+  const enterRequested = searchParams.get("enter") === "1";
   if (!enterRequested && prayer) {
     const suggestedSection = orderedSections.find((s) => s.slug === suggested);
     const suggestedTime = (suggestedSection?.meta as { time?: string } | null)?.time;
 
     // Tema derivado da hora canônica sugerida.
-    const HOUR_THEME: Record<string, { theme: 'dawn' | 'noon' | 'sunset' | 'night'; Icon: LucideIcon; quote: { text: string; ref: string } }> = {
-      'oficio-das-leituras': { theme: 'night', Icon: MoonStar, quote: { text: 'À meia-noite eu me levantava para vos louvar.', ref: 'Sl 118,62' } },
-      'invitatorio': { theme: 'night', Icon: MoonStar, quote: { text: 'Vinde, exultemos ao Senhor.', ref: 'Sl 94,1' } },
-      'laudes': { theme: 'dawn', Icon: Sunrise, quote: { text: 'De madrugada eu vos busco, ó Deus.', ref: 'Sl 62,2' } },
-      'tercia': { theme: 'noon', Icon: Sun, quote: { text: 'Sete vezes por dia eu vos louvo.', ref: 'Sl 118,164' } },
-      'sexta': { theme: 'noon', Icon: Sun, quote: { text: 'Sete vezes por dia eu vos louvo.', ref: 'Sl 118,164' } },
-      'noa': { theme: 'noon', Icon: Sun, quote: { text: 'Sete vezes por dia eu vos louvo.', ref: 'Sl 118,164' } },
-      'hora-media': { theme: 'noon', Icon: Sun, quote: { text: 'Sete vezes por dia eu vos louvo.', ref: 'Sl 118,164' } },
-      'vesperas': { theme: 'sunset', Icon: Sunset, quote: { text: 'Suba como incenso a minha oração diante de vós.', ref: 'Sl 140,2' } },
-      'completas': { theme: 'night', Icon: MoonStar, quote: { text: 'Em paz me deito e adormeço, ó Senhor.', ref: 'Sl 4,9' } },
+    const HOUR_THEME: Record<
+      string,
+      {
+        theme: "dawn" | "noon" | "sunset" | "night";
+        Icon: LucideIcon;
+        quote: { text: string; ref: string };
+      }
+    > = {
+      "oficio-das-leituras": {
+        theme: "night",
+        Icon: MoonStar,
+        quote: { text: "À meia-noite eu me levantava para vos louvar.", ref: "Sl 118,62" },
+      },
+      invitatorio: {
+        theme: "night",
+        Icon: MoonStar,
+        quote: { text: "Vinde, exultemos ao Senhor.", ref: "Sl 94,1" },
+      },
+      laudes: {
+        theme: "dawn",
+        Icon: Sunrise,
+        quote: { text: "De madrugada eu vos busco, ó Deus.", ref: "Sl 62,2" },
+      },
+      tercia: {
+        theme: "noon",
+        Icon: Sun,
+        quote: { text: "Sete vezes por dia eu vos louvo.", ref: "Sl 118,164" },
+      },
+      sexta: {
+        theme: "noon",
+        Icon: Sun,
+        quote: { text: "Sete vezes por dia eu vos louvo.", ref: "Sl 118,164" },
+      },
+      noa: {
+        theme: "noon",
+        Icon: Sun,
+        quote: { text: "Sete vezes por dia eu vos louvo.", ref: "Sl 118,164" },
+      },
+      "hora-media": {
+        theme: "noon",
+        Icon: Sun,
+        quote: { text: "Sete vezes por dia eu vos louvo.", ref: "Sl 118,164" },
+      },
+      vesperas: {
+        theme: "sunset",
+        Icon: Sunset,
+        quote: { text: "Suba como incenso a minha oração diante de vós.", ref: "Sl 140,2" },
+      },
+      completas: {
+        theme: "night",
+        Icon: MoonStar,
+        quote: { text: "Em paz me deito e adormeço, ó Senhor.", ref: "Sl 4,9" },
+      },
     };
-    const hourTheme = HOUR_THEME[suggested ?? ''] ?? HOUR_THEME['laudes'];
+    const hourTheme = HOUR_THEME[suggested ?? ""] ?? HOUR_THEME["laudes"];
 
     return (
       <PrayerPortalStandalone
@@ -437,25 +526,31 @@ const BreviaryPage: React.FC = () => {
         accentIcon={hourTheme.Icon}
         quote={hourTheme.quote}
         highlight={{
-          eyebrow: 'Hora recomendada',
-          title: suggestedSection?.title ?? 'Hora canônica',
+          eyebrow: "Hora recomendada",
+          title: suggestedSection?.title ?? "Hora canônica",
           subtitle: suggestedSection?.subtitle ?? undefined,
           meta: [
-            ...(suggestedTime ? [{ label: 'Horário sugerido', value: suggestedTime, icon: 'clock' as const }] : []),
-            ...(liturgy?.season ? [{ label: 'Tempo litúrgico', value: liturgy.season, icon: 'sparkles' as const }] : []),
-            { label: 'Sete horas', value: 'Ofício · Laudes · Tércia · Sexta · Noa · Vésperas · Completas', icon: 'church' as const },
+            ...(suggestedTime
+              ? [{ label: "Horário sugerido", value: suggestedTime, icon: "clock" as const }]
+              : []),
+            ...(liturgy?.season
+              ? [{ label: "Tempo litúrgico", value: liturgy.season, icon: "sparkles" as const }]
+              : []),
+            {
+              label: "Sete horas",
+              value: "Ofício · Laudes · Tércia · Sexta · Noa · Vésperas · Completas",
+              icon: "church" as const,
+            },
           ],
         }}
         onEnter={() => {
           const next = new URLSearchParams(searchParams);
-          next.set('enter', '1');
+          next.set("enter", "1");
           setSearchParams(next, { replace: true });
         }}
       />
     );
   }
-
-
 
   return (
     <>
@@ -487,10 +582,10 @@ const BreviaryPage: React.FC = () => {
           recommendation={recommendation}
           liturgy={liturgy ?? null}
           liturgyStatus={liturgyStatus}
-          onRetryLiturgy={() => { void refreshLiturgy(); }}
+          onRetryLiturgy={() => {
+            void refreshLiturgy();
+          }}
         />
-
-
 
         <div className="text-center space-y-spacing-sm">
           <p className="text-premium-xs font-black uppercase tracking-[0.25em] text-muted-foreground">
@@ -503,7 +598,7 @@ const BreviaryPage: React.FC = () => {
               className="px-spacing-lg py-spacing-sm bg-foreground text-background rounded-premium-full font-black uppercase text-premium-xs tracking-widest shadow-premium hover:bg-primary hover:text-primary-foreground transition-all flex items-center gap-spacing-xs"
             >
               {HOUR_ICON[suggested]}
-              Rezar {orderedSections.find((s) => s.slug === suggested)?.title ?? 'agora'}
+              Rezar {orderedSections.find((s) => s.slug === suggested)?.title ?? "agora"}
             </Button>
             <Button
               variant="outline"
@@ -519,10 +614,8 @@ const BreviaryPage: React.FC = () => {
 
         <HourSpiritCard
           hourSlug={suggested}
-          hourTitle={orderedSections.find((s) => s.slug === suggested)?.title ?? 'Hora canônica'}
+          hourTitle={orderedSections.find((s) => s.slug === suggested)?.title ?? "Hora canônica"}
         />
-
-
 
         {loading || !prayer ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-sm">
@@ -541,8 +634,8 @@ const BreviaryPage: React.FC = () => {
                   onClick={() => setSelectedHour(s.slug as HourSlug)}
                   className={`text-left p-spacing-md rounded-premium-full border transition-all group space-y-spacing-2xs ${
                     isSuggested
-                      ? 'bg-primary/5 border-primary/30 hover:bg-primary/10'
-                      : 'bg-card border-border hover:border-primary/30 hover:bg-primary/5'
+                      ? "bg-primary/5 border-primary/30 hover:bg-primary/10"
+                      : "bg-card border-border hover:border-primary/30 hover:bg-primary/5"
                   }`}
                 >
                   <div className="flex items-center justify-between">

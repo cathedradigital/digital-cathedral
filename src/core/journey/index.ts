@@ -11,8 +11,8 @@
  * - Nomenclatura de UI: "Formação" (coleção) e "Caminho" (unidade).
  */
 
-export { JourneyService } from './JourneyService';
-export type { JourneyServiceType } from './JourneyService';
+export { JourneyService } from "./JourneyService";
+export type { JourneyServiceType } from "./JourneyService";
 export type {
   Journey,
   JourneyStep,
@@ -29,4 +29,4 @@ export type {
   JourneyPatch,
   JourneyStepUpsertInput,
   ServiceResult,
-} from './types';
+} from "./types";

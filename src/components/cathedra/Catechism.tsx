@@ -5,4 +5,4 @@
  * (prefetch, App.tsx, `src/config/reader-modules.ts`). Removido em CQ-1.4
  * após 48h de observação em produção. Não adicionar lógica aqui.
  */
-export { default } from '@/modules/catequese/reader/Catechism';
+export { default } from "@/modules/catequese/reader/Catechism";

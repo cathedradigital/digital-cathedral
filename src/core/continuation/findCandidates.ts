@@ -9,7 +9,7 @@
  * `reasons[]` explícitos por aresta.
  */
 
-import type { ContinuationCandidate, ContinuationContext } from './types';
+import type { ContinuationCandidate, ContinuationContext } from "./types";
 
 export function findCandidates(_ctx: ContinuationContext): ContinuationCandidate[] {
   // Placeholder consciente. A Fase 2 substitui pela consulta real ao grafo.

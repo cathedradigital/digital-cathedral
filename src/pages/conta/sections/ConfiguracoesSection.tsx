@@ -8,11 +8,20 @@
  * Nenhuma lógica nova é introduzida; apenas orquestração.
  */
 import { useState } from "react";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { UserCircle, Palette, Type, Volume2, Sparkles, BellRing, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  UserCircle,
+  Palette,
+  Type,
+  Volume2,
+  Sparkles,
+  BellRing,
+  ShieldCheck,
+  ArrowRight,
+} from "lucide-react";
 import A11ySettingsPanel from "@/components/cathedra/A11ySettingsPanel";
 import { ReadingPreferencesPanel } from "@/components/cathedra/ReadingPreferencesPanel";
 
@@ -39,7 +48,9 @@ function SettingsCard({ icon: Icon, title, description, action }: SettingsCardPr
 function LinkAction({ href, label }: { href: string; label: string }) {
   return (
     <Button asChild variant="secondary" size="sm">
-      <Link to={href}>{label} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+      <Link to={href}>
+        {label} <ArrowRight className="ml-1 h-3.5 w-3.5" />
+      </Link>
     </Button>
   );
 }
@@ -60,13 +71,27 @@ export default function ConfiguracoesSection() {
 
       <Tabs defaultValue="aparencia" className="mt-6">
         <TabsList className="flex flex-wrap gap-1 h-auto">
-          <TabsTrigger value="conta"         className="gap-1.5"><UserCircle className="h-3.5 w-3.5" /> Conta</TabsTrigger>
-          <TabsTrigger value="aparencia"     className="gap-1.5"><Palette className="h-3.5 w-3.5" /> Aparência</TabsTrigger>
-          <TabsTrigger value="tipografia"    className="gap-1.5"><Type className="h-3.5 w-3.5" /> Tipografia</TabsTrigger>
-          <TabsTrigger value="audio"         className="gap-1.5"><Volume2 className="h-3.5 w-3.5" /> Áudio</TabsTrigger>
-          <TabsTrigger value="contemplativo" className="gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Contemplativo</TabsTrigger>
-          <TabsTrigger value="notificacoes"  className="gap-1.5"><BellRing className="h-3.5 w-3.5" /> Notificações</TabsTrigger>
-          <TabsTrigger value="privacidade"   className="gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Privacidade</TabsTrigger>
+          <TabsTrigger value="conta" className="gap-1.5">
+            <UserCircle className="h-3.5 w-3.5" /> Conta
+          </TabsTrigger>
+          <TabsTrigger value="aparencia" className="gap-1.5">
+            <Palette className="h-3.5 w-3.5" /> Aparência
+          </TabsTrigger>
+          <TabsTrigger value="tipografia" className="gap-1.5">
+            <Type className="h-3.5 w-3.5" /> Tipografia
+          </TabsTrigger>
+          <TabsTrigger value="audio" className="gap-1.5">
+            <Volume2 className="h-3.5 w-3.5" /> Áudio
+          </TabsTrigger>
+          <TabsTrigger value="contemplativo" className="gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" /> Contemplativo
+          </TabsTrigger>
+          <TabsTrigger value="notificacoes" className="gap-1.5">
+            <BellRing className="h-3.5 w-3.5" /> Notificações
+          </TabsTrigger>
+          <TabsTrigger value="privacidade" className="gap-1.5">
+            <ShieldCheck className="h-3.5 w-3.5" /> Privacidade
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="conta" className="mt-6">

@@ -5,11 +5,14 @@
  * SearchRegistry poderá delegar a este índice na Sprint 2.0.5+.
  */
 
-import { KnowledgeRegistry } from './KnowledgeRegistry';
-import type { KnowledgeNode, KnowledgeNodeKind } from './types';
+import { KnowledgeRegistry } from "./KnowledgeRegistry";
+import type { KnowledgeNode, KnowledgeNodeKind } from "./types";
 
 function normalize(s: string): string {
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 export interface KnowledgeSearchOptions {
@@ -27,7 +30,7 @@ export const KnowledgeIndex = {
       : KnowledgeRegistry.allNodes();
     return pool
       .filter((n) => {
-        const hay = `${n.label} ${n.summary ?? ''}`;
+        const hay = `${n.label} ${n.summary ?? ""}`;
         return normalize(hay).includes(q);
       })
       .slice(0, limit);

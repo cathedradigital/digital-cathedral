@@ -1,1 +1,1 @@
-export { default } from './JourneyResume';
+export { default } from "./JourneyResume";

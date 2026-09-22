@@ -5,11 +5,7 @@
  * navigation, search params and basename.
  */
 import * as React from "react";
-import {
-  useRouter,
-  useRouterState,
-  type AnyRouter,
-} from "@tanstack/react-router";
+import { useRouter, useRouterState, type AnyRouter } from "@tanstack/react-router";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -87,7 +83,10 @@ function normalizePathname(pathname: string): string {
 }
 
 /** Resolve a possibly-relative `to` against a route pathname base. */
-function resolvePath(to: string, fromPathname: string): { pathname: string; search: string; hash: string } {
+function resolvePath(
+  to: string,
+  fromPathname: string,
+): { pathname: string; search: string; hash: string } {
   const hashIdx = to.indexOf("#");
   let hash = "";
   if (hashIdx >= 0) {
@@ -152,25 +151,36 @@ function scoreSegment(segment: string): number {
 function flattenBranches(
   routes: RouteDef[],
   parentPath = "",
-  parentRoutes: BranchMeta[] = []
+  parentRoutes: BranchMeta[] = [],
 ): Array<{ score: number; routesMeta: BranchMeta[]; path: string }> {
   const branches: Array<{ score: number; routesMeta: BranchMeta[]; path: string }> = [];
   for (const route of routes) {
     const path = route.path ?? "";
     const joinedPath = path.startsWith("/") ? path : joinPaths([parentPath, path]);
-    const meta: BranchMeta[] = [...parentRoutes, { route, pathnameBase: joinedPath.replace(/\/\*$/, "") || "/" }];
+    const meta: BranchMeta[] = [
+      ...parentRoutes,
+      { route, pathnameBase: joinedPath.replace(/\/\*$/, "") || "/" },
+    ];
     if (route.children && route.children.length > 0) {
       branches.push(...flattenBranches(route.children, joinedPath, meta));
     }
-    if (route.index || (route.element != null && (!route.children || route.children.length === 0))) {
+    if (
+      route.index ||
+      (route.element != null && (!route.children || route.children.length === 0))
+    ) {
       const effectivePath = route.index ? parentPath : joinedPath;
-      const score = effectivePath
-        .split("/")
-        .filter(Boolean)
-        .reduce((acc, seg) => acc + scoreSegment(seg), 0) + (route.index ? 2 : 0);
+      const score =
+        effectivePath
+          .split("/")
+          .filter(Boolean)
+          .reduce((acc, seg) => acc + scoreSegment(seg), 0) + (route.index ? 2 : 0);
       branches.push({
         score,
-        routesMeta: route.index ? parentRoutes.length ? [...parentRoutes, { route, pathnameBase: parentPath || "/" }] : meta : meta,
+        routesMeta: route.index
+          ? parentRoutes.length
+            ? [...parentRoutes, { route, pathnameBase: parentPath || "/" }]
+            : meta
+          : meta,
         path: effectivePath || "/",
       });
     }
@@ -178,10 +188,7 @@ function flattenBranches(
   return branches;
 }
 
-function matchBranches(
-  routes: RouteDef[],
-  pathname: string
-): MatchedBranch | null {
+function matchBranches(routes: RouteDef[], pathname: string): MatchedBranch | null {
   const branches = flattenBranches(routes);
   branches.sort((a, b) => b.score - a.score);
   const target = normalizePathname(pathname);
@@ -237,7 +244,7 @@ export function BrowserRouter({
       state: routerState.state,
       key: routerState.href,
     }),
-    [pathname, routerState.searchStr, routerState.hash, routerState.state, routerState.href]
+    [pathname, routerState.searchStr, routerState.hash, routerState.state, routerState.href],
   );
 
   const navigate = React.useCallback(
@@ -249,7 +256,10 @@ export function BrowserRouter({
         return;
       }
       const resolved = resolvePath(to, pathname);
-      const href = normalizePathname(joinPaths([basename === "/" ? "" : basename, resolved.pathname])) + resolved.search + resolved.hash;
+      const href =
+        normalizePathname(joinPaths([basename === "/" ? "" : basename, resolved.pathname])) +
+        resolved.search +
+        resolved.hash;
       void router.navigate({
         to: href as never,
         replace: options?.replace,
@@ -257,12 +267,12 @@ export function BrowserRouter({
         resetScroll: true,
       });
     },
-    [router, basename, pathname]
+    [router, basename, pathname],
   );
 
   const value = React.useMemo(
     () => ({ location, basename, navigate, router }),
-    [location, basename, navigate, router]
+    [location, basename, navigate, router],
   );
 
   return <RouterCtx.Provider value={value}>{children}</RouterCtx.Provider>;
@@ -285,7 +295,9 @@ export function useNavigate(): NavigateFunction {
   return useRouterContext().navigate;
 }
 
-export function useParams<Params extends Record<string, string> = Record<string, string>>(): Params {
+export function useParams<
+  Params extends Record<string, string> = Record<string, string>,
+>(): Params {
   return React.useContext(RouteCtx).params as Params;
 }
 
@@ -295,30 +307,28 @@ export type SetURLSearchParams = (
     | string
     | Record<string, string>
     | ((prev: URLSearchParams) => URLSearchParams | string | Record<string, string>),
-  options?: NavigateOptions
+  options?: NavigateOptions,
 ) => void;
 
 export function useSearchParams(
-  defaultInit?: URLSearchParams | string
+  defaultInit?: URLSearchParams | string,
 ): [URLSearchParams, SetURLSearchParams] {
   const { location, navigate } = useRouterContext();
   const params = React.useMemo(
     () => new URLSearchParams(location.search || (defaultInit ? defaultInit.toString() : "")),
-    [location.search, defaultInit]
+    [location.search, defaultInit],
   );
   const setParams = React.useCallback<SetURLSearchParams>(
     (init, options) => {
       const resolved =
-        typeof init === "function"
-          ? init(new URLSearchParams(location.search))
-          : init;
+        typeof init === "function" ? init(new URLSearchParams(location.search)) : init;
       const next =
         typeof resolved === "string"
           ? resolved
           : new URLSearchParams(resolved as Record<string, string>).toString();
       navigate(`${location.pathname}?${next}`, options);
     },
-    [navigate, location.pathname, location.search]
+    [navigate, location.pathname, location.search],
   );
   return [params, setParams];
 }
@@ -327,7 +337,10 @@ export function useNavigationType(): string {
   return "POP";
 }
 
-export function matchPath(pattern: string, pathname: string): { params: Record<string, string> } | null {
+export function matchPath(
+  pattern: string,
+  pathname: string,
+): { params: Record<string, string> } | null {
   const end = !pattern.endsWith("*");
   const { regexp, paramNames } = compilePath(pattern, end);
   const match = normalizePathname(pathname).match(regexp);
@@ -375,12 +388,11 @@ export function Route(_props: {
 function renderMatches(
   meta: BranchMeta[],
   params: Record<string, string>,
-  fullParams: Record<string, string>
+  fullParams: Record<string, string>,
 ): React.ReactNode {
   // Render from the inside out: innermost element first.
   return meta.reduceRight<React.ReactNode>((outlet, branchMeta, index) => {
-    const element =
-      branchMeta.route.element != null ? branchMeta.route.element : <Outlet />;
+    const element = branchMeta.route.element != null ? branchMeta.route.element : <Outlet />;
     const accumulatedParams = { ...fullParams };
     void params;
     return (
@@ -406,9 +418,7 @@ export function Routes({
 }): React.ReactElement | null {
   const { location } = useRouterContext();
   const pathname =
-    typeof locationProp === "string"
-      ? locationProp
-      : locationProp?.pathname ?? location.pathname;
+    typeof locationProp === "string" ? locationProp : (locationProp?.pathname ?? location.pathname);
   const routes = readRouteDefs(children);
   const matched = matchBranches(routes, pathname);
   if (!matched) return null;
@@ -444,7 +454,11 @@ function useHrefCompat(to: string): string {
   const { pathnameBase } = React.useContext(RouteCtx);
   const from = pathnameBase === "/" ? location.pathname : pathnameBase;
   const resolved = resolvePath(to, from);
-  return normalizePathname(joinPaths([basename === "/" ? "" : basename, resolved.pathname])) + resolved.search + resolved.hash;
+  return (
+    normalizePathname(joinPaths([basename === "/" ? "" : basename, resolved.pathname])) +
+    resolved.search +
+    resolved.hash
+  );
 }
 
 export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -456,7 +470,7 @@ export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>
 
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   { to, replace, state, onClick, target, preventScrollReset, ...rest },
-  ref
+  ref,
 ) {
   const { navigate } = useRouterContext();
   const href = useHrefCompat(to);
@@ -492,12 +506,13 @@ export interface NavLinkProps extends Omit<LinkProps, "className" | "style" | "c
   style?:
     | React.CSSProperties
     | ((opts: { isActive: boolean; isPending: boolean }) => React.CSSProperties | undefined);
-  children?: React.ReactNode | ((opts: { isActive: boolean; isPending: boolean }) => React.ReactNode);
+  children?:
+    React.ReactNode | ((opts: { isActive: boolean; isPending: boolean }) => React.ReactNode);
 }
 
 export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(function NavLink(
   { to, className, style, children, end = false, caseSensitive = false, ...rest },
-  ref
+  ref,
 ) {
   const { location } = useRouterContext();
   const href = useHrefCompat(to);
@@ -506,7 +521,9 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(functio
   const targetPath = caseSensitive ? toPathname : toPathname.toLowerCase();
   const isActive =
     current === targetPath ||
-    (!end && targetPath !== "/" && current.startsWith(targetPath.endsWith("/") ? targetPath : targetPath + "/"));
+    (!end &&
+      targetPath !== "/" &&
+      current.startsWith(targetPath.endsWith("/") ? targetPath : targetPath + "/"));
   const opts = { isActive, isPending: false };
 
   const resolvedClassName = typeof className === "function" ? className(opts) : className;
@@ -514,7 +531,14 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(functio
   const resolvedChildren = typeof children === "function" ? children(opts) : children;
 
   return (
-    <Link {...rest} to={to} ref={ref} className={resolvedClassName} style={resolvedStyle} aria-current={isActive ? "page" : undefined}>
+    <Link
+      {...rest}
+      to={to}
+      ref={ref}
+      className={resolvedClassName}
+      style={resolvedStyle}
+      aria-current={isActive ? "page" : undefined}
+    >
       {resolvedChildren}
     </Link>
   );

@@ -6,15 +6,15 @@
  * AuthProvider (stub, sem rede) e ReadingSettingsProvider, além de Helmet,
  * React Query, Router e idioma.
  */
-import React from 'react';
-import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from '@/lib/rr-compat';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { HelmetProvider } from '@/lib/helmet-compat';
-import { AuthContext } from '@/hooks/useAuth';
-import { ReadingSettingsProvider } from '@/contexts/ReadingSettingsContext';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { LangProvider } from '@/contexts/LangContext';
+import React from "react";
+import { render, type RenderOptions, type RenderResult } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "@/lib/rr-compat";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "@/lib/helmet-compat";
+import { AuthContext } from "@/hooks/useAuth";
+import { ReadingSettingsProvider } from "@/contexts/ReadingSettingsContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { LangProvider } from "@/contexts/LangContext";
 
 export type TestAuthValue = Record<string, unknown>;
 
@@ -25,7 +25,7 @@ export const anonymousAuthValue: TestAuthValue = {
   loading: false,
   signOut: async () => {},
   isPremium: false,
-  userLevel: 'iniciante',
+  userLevel: "iniciante",
   refreshProfile: async () => {},
   authenticated: false,
 };
@@ -33,8 +33,8 @@ export const anonymousAuthValue: TestAuthValue = {
 /** Sessão autenticada padrão para testes de área logada. */
 export const authenticatedAuthValue: TestAuthValue = {
   ...anonymousAuthValue,
-  user: { id: 'test-user', email: 'test@cathedra.test' },
-  profile: { id: 'test-user', completed_books: [], badges: [], is_premium: true },
+  user: { id: "test-user", email: "test@cathedra.test" },
+  profile: { id: "test-user", completed_books: [], badges: [], is_premium: true },
   isPremium: true,
   authenticated: true,
 };
@@ -74,7 +74,7 @@ export const TestContexts: React.FC<{ children: React.ReactNode; auth?: TestAuth
 
 export const TestProviders: React.FC<TestProvidersProps> = ({
   children,
-  initialEntries = ['/'],
+  initialEntries = ["/"],
   routePath,
   auth = anonymousAuthValue,
   queryClient,
@@ -100,8 +100,8 @@ export const TestProviders: React.FC<TestProvidersProps> = ({
   );
 };
 
-export type RenderWithProvidersOptions = Omit<TestProvidersProps, 'children'> &
-  Omit<RenderOptions, 'wrapper'>;
+export type RenderWithProvidersOptions = Omit<TestProvidersProps, "children"> &
+  Omit<RenderOptions, "wrapper">;
 
 export function renderWithProviders(
   ui: React.ReactElement,

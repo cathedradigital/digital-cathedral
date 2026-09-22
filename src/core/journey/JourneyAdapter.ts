@@ -11,13 +11,13 @@
  *   definitiva).
  */
 
-import type { Journey, JourneyStep, JourneyStepContent } from './types';
+import type { Journey, JourneyStep, JourneyStepContent } from "./types";
 
-export const LEGACY_ID_PREFIX = 'itin:';
+export const LEGACY_ID_PREFIX = "itin:";
 
 export const JourneyAdapter = {
   isLegacyId(id: string): boolean {
-    return typeof id === 'string' && id.startsWith(LEGACY_ID_PREFIX);
+    return typeof id === "string" && id.startsWith(LEGACY_ID_PREFIX);
   },
 
   toLegacyId(rawId: string): string {
@@ -30,10 +30,10 @@ export const JourneyAdapter = {
 
   normalizeContent(content: unknown): JourneyStepContent {
     const c: JourneyStepContent =
-      content && typeof content === 'object' ? { ...(content as JourneyStepContent) } : {};
-    if (!c.interpretation && typeof c.html === 'string') {
+      content && typeof content === "object" ? { ...(content as JourneyStepContent) } : {};
+    if (!c.interpretation && typeof c.html === "string") {
       c.interpretation = c.html;
-    } else if (!c.html && typeof c.interpretation === 'string') {
+    } else if (!c.html && typeof c.interpretation === "string") {
       c.html = c.interpretation;
     }
     return c;

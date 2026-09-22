@@ -1,11 +1,11 @@
-import React, { lazy, Suspense, useEffect, useMemo } from 'react';
-import { Navigate } from '@/lib/rr-compat';
-import { useAuth } from '@/hooks/useAuth';
-import { resolveAuthHome } from '@/lib/lastRoute';
-import { hasStoredSupabaseSession } from '@/lib/storedSession';
-import { trackEvent } from '@/lib/analytics';
+import React, { lazy, Suspense, useEffect, useMemo } from "react";
+import { Navigate } from "@/lib/rr-compat";
+import { useAuth } from "@/hooks/useAuth";
+import { resolveAuthHome } from "@/lib/lastRoute";
+import { hasStoredSupabaseSession } from "@/lib/storedSession";
+import { trackEvent } from "@/lib/analytics";
 
-const PublicLanding = lazy(() => import('@/pages/PublicLanding'));
+const PublicLanding = lazy(() => import("@/pages/PublicLanding"));
 
 /**
  * Gate da rota raiz "/".
@@ -26,9 +26,9 @@ const RootGate: React.FC = () => {
   useEffect(() => {
     if (loading && !hasPersistedSession) return;
     if ((authenticated || hasPersistedSession) && target) {
-      trackEvent('atrium_redirect', { target, via: authenticated ? 'auth' : 'persisted' });
+      trackEvent("atrium_redirect", { target, via: authenticated ? "auth" : "persisted" });
     } else if (!loading && !authenticated) {
-      trackEvent('landing_view', { path: '/' });
+      trackEvent("landing_view", { path: "/" });
     }
   }, [authenticated, loading, target, hasPersistedSession]);
 

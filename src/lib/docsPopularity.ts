@@ -5,21 +5,21 @@
  * leitor. Serve como quinto fator de ranqueamento da busca: em empate, o
  * documento mais consultado sobe. Sem rede, sem rastreio de usuário.
  */
-const STORAGE_KEY = 'cathedra:docs:popularity:v1';
+const STORAGE_KEY = "cathedra:docs:popularity:v1";
 const MAX_ENTRIES = 200;
 
 type Counts = Record<string, number>;
 
 function read(): Counts {
-  if (typeof window === 'undefined') return {};
+  if (typeof window === "undefined") return {};
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
     const out: Counts = {};
     for (const [slug, value] of Object.entries(parsed as Record<string, unknown>)) {
-      if (typeof value === 'number' && Number.isFinite(value) && value > 0) out[slug] = value;
+      if (typeof value === "number" && Number.isFinite(value) && value > 0) out[slug] = value;
     }
     return out;
   } catch {
@@ -32,7 +32,7 @@ export function getDocPopularity(): Counts {
 }
 
 export function recordDocView(slug: string): void {
-  if (typeof window === 'undefined' || !slug) return;
+  if (typeof window === "undefined" || !slug) return;
   try {
     const counts = read();
     counts[slug] = (counts[slug] ?? 0) + 1;

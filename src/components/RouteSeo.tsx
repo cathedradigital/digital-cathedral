@@ -1,14 +1,14 @@
-import { Helmet } from '@/lib/helmet-compat';
-import { useLocation } from '@/lib/rr-compat';
-import { SEO_CONFIG } from '@/config/seo';
-import { resolveRouteMeta } from '@/config/routeMeta';
-import { useLang } from '@/hooks/useLang';
+import { Helmet } from "@/lib/helmet-compat";
+import { useLocation } from "@/lib/rr-compat";
+import { SEO_CONFIG } from "@/config/seo";
+import { resolveRouteMeta } from "@/config/routeMeta";
+import { useLang } from "@/hooks/useLang";
 import {
   buildHreflangAlternates,
   getLocaleDefinition,
   stripLocaleFromPath,
   withLocalePath,
-} from '@/lib/i18n/locales';
+} from "@/lib/i18n/locales";
 
 /**
  * Emite defaults padronizados de <title>, description, canonical, og:* e
@@ -21,13 +21,15 @@ export default function RouteSeo() {
   const { pathname } = useLocation();
   const { lang } = useLang();
   const meta = resolveRouteMeta(pathname);
-  const cleanPath = stripLocaleFromPath(pathname.replace(/\/+$/, '') || '/');
+  const cleanPath = stripLocaleFromPath(pathname.replace(/\/+$/, "") || "/");
   const canonicalPath = meta?.canonicalPath ?? cleanPath;
   // Canonical self-referente: inclui o prefixo do idioma ativo.
   const url = `${SEO_CONFIG.BASE_URL}${withLocalePath(canonicalPath, lang)}`;
 
-  const title = meta?.title ?? 'Cathedra Digital — Mosteiro Digital';
-  const description = meta?.description ?? 'Explore o acervo da Cathedra Digital: Bíblia, Catecismo, Magistério e vida de oração em uma experiência contemplativa.';
+  const title = meta?.title ?? "Cathedra Digital — Mosteiro Digital";
+  const description =
+    meta?.description ??
+    "Explore o acervo da Cathedra Digital: Bíblia, Catecismo, Magistério e vida de oração em uma experiência contemplativa.";
   const noindex = meta?.noindex === true;
   const localeDef = getLocaleDefinition(lang);
   const alternates = noindex ? [] : buildHreflangAlternates(canonicalPath, SEO_CONFIG.BASE_URL);
@@ -50,7 +52,7 @@ export default function RouteSeo() {
       {description && <meta name="twitter:description" content={description} />}
       <meta
         name="robots"
-        content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'}
+        content={noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
       />
     </Helmet>
   );

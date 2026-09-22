@@ -3,14 +3,14 @@
  * Mostra o post original, respostas aprovadas e formulário de resposta.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useNavigate, useParams } from '@/lib/rr-compat';
-import { ArrowLeft, Heart, MessageCircle } from 'lucide-react';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useNavigate, useParams } from "@/lib/rr-compat";
+import { ArrowLeft, Heart, MessageCircle } from "lucide-react";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
+import { toast } from "sonner";
 
 type Post = {
   id: string;
@@ -29,7 +29,7 @@ type Post = {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'agora';
+  if (mins < 1) return "agora";
   if (mins < 60) return `${mins}min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h`;
@@ -45,16 +45,16 @@ const AtriumCommunityPostPage: React.FC = () => {
   const [replies, setReplies] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [replyContent, setReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const fetch = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     const { data: p, error } = await supabase
-      .from('community_posts')
-      .select('*')
-      .eq('id', id)
+      .from("community_posts")
+      .select("*")
+      .eq("id", id)
       .maybeSingle();
     if (error || !p) {
       setNotFound(true);
@@ -62,42 +62,40 @@ const AtriumCommunityPostPage: React.FC = () => {
       return;
     }
     const { data: replyRows } = await supabase
-      .from('community_posts')
-      .select('*')
-      .eq('parent_id', id)
-      .order('created_at', { ascending: true });
+      .from("community_posts")
+      .select("*")
+      .eq("parent_id", id)
+      .order("created_at", { ascending: true });
 
-    const userIds = [
-      ...new Set([p.user_id, ...(replyRows || []).map((r) => r.user_id)]),
-    ];
+    const userIds = [...new Set([p.user_id, ...(replyRows || []).map((r) => r.user_id)])];
     const { data: profiles } = (await supabase
-      .from('public_profiles' as any)
-      .select('id, name')
-      .in('id', userIds)) as { data: { id: string; name: string }[] | null };
+      .from("public_profiles" as any)
+      .select("id, name")
+      .in("id", userIds)) as { data: { id: string; name: string }[] | null };
     const profileMap = new Map((profiles || []).map((x) => [x.id, x.name]));
 
     let userLiked = false;
     if (user) {
       const { data: like } = await supabase
-        .from('community_likes')
-        .select('post_id')
-        .eq('post_id', p.id)
-        .eq('user_id', user.id)
+        .from("community_likes")
+        .select("post_id")
+        .eq("post_id", p.id)
+        .eq("user_id", user.id)
         .maybeSingle();
       userLiked = !!like;
     }
 
     setPost({
       ...p,
-      author_name: profileMap.get(p.user_id) || 'Anônimo',
+      author_name: profileMap.get(p.user_id) || "Anônimo",
       user_liked: userLiked,
     });
     setReplies(
       (replyRows || [])
-        .filter((r) => r.status === 'approved' || r.user_id === user?.id)
+        .filter((r) => r.status === "approved" || r.user_id === user?.id)
         .map((r) => ({
           ...r,
-          author_name: profileMap.get(r.user_id) || 'Anônimo',
+          author_name: profileMap.get(r.user_id) || "Anônimo",
         })),
     );
     setLoading(false);
@@ -113,15 +111,9 @@ const AtriumCommunityPostPage: React.FC = () => {
       return;
     }
     if (post.user_liked) {
-      await supabase
-        .from('community_likes')
-        .delete()
-        .eq('post_id', post.id)
-        .eq('user_id', user.id);
+      await supabase.from("community_likes").delete().eq("post_id", post.id).eq("user_id", user.id);
     } else {
-      await supabase
-        .from('community_likes')
-        .insert({ post_id: post.id, user_id: user.id });
+      await supabase.from("community_likes").insert({ post_id: post.id, user_id: user.id });
     }
     fetch();
   };
@@ -134,20 +126,20 @@ const AtriumCommunityPostPage: React.FC = () => {
     const content = replyContent.trim();
     if (!content) return;
     setSubmitting(true);
-    const { error } = await supabase.from('community_posts').insert({
+    const { error } = await supabase.from("community_posts").insert({
       user_id: user.id,
       parent_id: post.id,
       content,
       category: post.category,
-      status: 'pending',
+      status: "pending",
     });
     setSubmitting(false);
     if (error) {
-      toast.error('Não foi possível responder');
+      toast.error("Não foi possível responder");
       return;
     }
-    toast.success('Resposta enviada para moderação');
-    setReplyContent('');
+    toast.success("Resposta enviada para moderação");
+    setReplyContent("");
     fetch();
   };
 
@@ -177,13 +169,8 @@ const AtriumCommunityPostPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {post.title ? `${post.title} — Comunidade` : 'Discussão — Comunidade'}
-        </title>
-        <meta
-          name="description"
-          content={post.content.slice(0, 155)}
-        />
+        <title>{post.title ? `${post.title} — Comunidade` : "Discussão — Comunidade"}</title>
+        <meta name="description" content={post.content.slice(0, 155)} />
       </Helmet>
 
       <section className="min-h-screen bg-background text-foreground">
@@ -202,11 +189,9 @@ const AtriumCommunityPostPage: React.FC = () => {
                 className="inline-flex items-center gap-2 hover:text-foreground"
               >
                 <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center font-bold text-foreground text-xs">
-                  {(post.author_name || 'A').charAt(0).toUpperCase()}
+                  {(post.author_name || "A").charAt(0).toUpperCase()}
                 </span>
-                <span className="font-semibold text-foreground">
-                  {post.author_name}
-                </span>
+                <span className="font-semibold text-foreground">{post.author_name}</span>
               </Link>
               <span>·</span>
               <span>{timeAgo(post.created_at)}</span>
@@ -215,13 +200,9 @@ const AtriumCommunityPostPage: React.FC = () => {
               </span>
             </div>
             {post.title && (
-              <h1 className="font-serif text-3xl md:text-4xl leading-tight">
-                {post.title}
-              </h1>
+              <h1 className="font-serif text-3xl md:text-4xl leading-tight">{post.title}</h1>
             )}
-            <p className="text-foreground/85 leading-relaxed whitespace-pre-wrap">
-              {post.content}
-            </p>
+            <p className="text-foreground/85 leading-relaxed whitespace-pre-wrap">{post.content}</p>
             <div className="pt-3 border-t border-border flex items-center gap-4">
               <button
                 onClick={toggleLike}
@@ -229,7 +210,7 @@ const AtriumCommunityPostPage: React.FC = () => {
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
               >
                 <Heart
-                  className={`w-4 h-4 ${post.user_liked ? 'fill-primary text-primary' : ''}`}
+                  className={`w-4 h-4 ${post.user_liked ? "fill-primary text-primary" : ""}`}
                 />
                 {post.likes_count}
               </button>
@@ -237,7 +218,7 @@ const AtriumCommunityPostPage: React.FC = () => {
                 <MessageCircle className="w-4 h-4" />
                 {replies.length}
               </span>
-              {post.status !== 'approved' && (
+              {post.status !== "approved" && (
                 <span className="ml-auto text-[10px] uppercase tracking-widest text-amber-600">
                   Aguardando moderação
                 </span>
@@ -250,39 +231,30 @@ const AtriumCommunityPostPage: React.FC = () => {
               Respostas
             </h2>
             {replies.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">
-                Nenhuma resposta ainda.
-              </p>
+              <p className="text-sm text-muted-foreground italic">Nenhuma resposta ainda.</p>
             ) : (
               <ul className="space-y-3">
                 {replies.map((r) => (
-                  <li
-                    key={r.id}
-                    className="rounded-2xl border border-border bg-card p-4"
-                  >
+                  <li key={r.id} className="rounded-2xl border border-border bg-card p-4">
                     <div className="flex items-center gap-2 mb-2 text-xs text-muted-foreground">
                       <Link
                         to={`/community/user/${r.user_id}`}
                         className="inline-flex items-center gap-2 hover:text-foreground"
                       >
                         <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center font-bold text-foreground text-[10px]">
-                          {(r.author_name || 'A').charAt(0).toUpperCase()}
+                          {(r.author_name || "A").charAt(0).toUpperCase()}
                         </span>
-                        <span className="font-semibold text-foreground">
-                          {r.author_name}
-                        </span>
+                        <span className="font-semibold text-foreground">{r.author_name}</span>
                       </Link>
                       <span>·</span>
                       <span>{timeAgo(r.created_at)}</span>
-                      {r.status !== 'approved' && (
+                      {r.status !== "approved" && (
                         <span className="ml-auto text-[10px] uppercase tracking-widest text-amber-600">
                           Em moderação
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-foreground/85 whitespace-pre-wrap">
-                      {r.content}
-                    </p>
+                    <p className="text-sm text-foreground/85 whitespace-pre-wrap">{r.content}</p>
                   </li>
                 ))}
               </ul>
@@ -304,7 +276,7 @@ const AtriumCommunityPostPage: React.FC = () => {
                   disabled={submitting || !replyContent.trim()}
                   className="px-4 py-2 rounded-full bg-foreground text-background text-xs font-bold uppercase tracking-widest disabled:opacity-40"
                 >
-                  {submitting ? 'Enviando…' : 'Responder'}
+                  {submitting ? "Enviando…" : "Responder"}
                 </button>
               </div>
             </div>

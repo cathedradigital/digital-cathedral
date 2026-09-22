@@ -14,23 +14,19 @@
  * Regra COS: MCP enriquece, MCP nunca controla. A UI conversa APENAS com
  * `searchLibrary()`.
  */
-import type { LibraryModule } from '../types';
-import { LIBRARY_MODULE_META, LIBRARY_MODULE_ORDER } from './moduleMeta';
-import { enrichWithNexus, type NexusSummary } from './nexusEnrich';
-import { composeHybridScore } from './ranking';
-import { MODULE_SEARCHERS, type RawHit } from './searchers';
-import { getSemanticSearcher, type SemanticHit } from './semantic/semanticClient';
+import type { LibraryModule } from "../types";
+import { LIBRARY_MODULE_META, LIBRARY_MODULE_ORDER } from "./moduleMeta";
+import { enrichWithNexus, type NexusSummary } from "./nexusEnrich";
+import { composeHybridScore } from "./ranking";
+import { MODULE_SEARCHERS, type RawHit } from "./searchers";
+import { getSemanticSearcher, type SemanticHit } from "./semantic/semanticClient";
 import {
   applySemanticEnrichment,
   buildSemanticMap,
   pickOrphanHits,
-} from './semantic/semanticMapper';
-import { inferFormationLevel } from './semantic/semanticRanking';
-import type {
-  LibraryResult,
-  LibrarySearchOptions,
-  LibrarySearchResponse,
-} from './types';
+} from "./semantic/semanticMapper";
+import { inferFormationLevel } from "./semantic/semanticRanking";
+import type { LibraryResult, LibrarySearchOptions, LibrarySearchResponse } from "./types";
 
 const EMPTY_NEXUS: NexusSummary = { total: 0, byKind: {} };
 
@@ -38,10 +34,7 @@ const keyOf = (kind: string, ref: string) => `${kind}:${ref}`;
 const keyOfHit = (h: RawHit) =>
   h.nexusRef ? keyOf(h.nexusRef.kind, h.nexusRef.ref) : `${h.type}:${h.id}`;
 
-
-export async function searchLibrary(
-  options: LibrarySearchOptions,
-): Promise<LibrarySearchResponse> {
+export async function searchLibrary(options: LibrarySearchOptions): Promise<LibrarySearchResponse> {
   const started = performance.now();
   const query = options.query.trim();
 
@@ -56,7 +49,7 @@ export async function searchLibrary(
   if (query.length < 2) return emptyResponse();
 
   const targets: LibraryModule[] =
-    !options.types || options.types === 'all' ? LIBRARY_MODULE_ORDER : options.types;
+    !options.types || options.types === "all" ? LIBRARY_MODULE_ORDER : options.types;
   const perModule = options.perModule ?? 6;
 
   // 1. Lexical + semântico em paralelo (adapter é opcional).
@@ -66,7 +59,7 @@ export async function searchLibrary(
   const semanticPromise: Promise<SemanticHit[]> = getSemanticSearcher()
     .search({ query })
     .catch((err) => {
-      if (import.meta.env.DEV) console.warn('[searchLibrary] semantic falhou', err);
+      if (import.meta.env.DEV) console.warn("[searchLibrary] semantic falhou", err);
       return [];
     });
 
@@ -74,7 +67,7 @@ export async function searchLibrary(
 
   const hits: RawHit[] = [];
   settled.forEach((res, i) => {
-    if (res.status === 'fulfilled') {
+    if (res.status === "fulfilled") {
       hits.push(...res.value);
     } else if (import.meta.env.DEV) {
       console.warn(`[searchLibrary] módulo ${targets[i]} falhou`, res.reason);
@@ -87,14 +80,15 @@ export async function searchLibrary(
   // 2. Hidratar hits semânticos órfãos (não vieram do lexical).
   //    Reaproveita o mesmo searcher do módulo alvo — nada de novo shape.
   const orphanBudget = Math.max(6, perModule);
-  const orphans = pickOrphanHits(semanticHits, lexicalKeys, orphanBudget)
-    .filter((h) => targets.includes(h.type));
+  const orphans = pickOrphanHits(semanticHits, lexicalKeys, orphanBudget).filter((h) =>
+    targets.includes(h.type),
+  );
 
   const orphanSettled = await Promise.allSettled(
     orphans.map((h) => MODULE_SEARCHERS[h.type](h.ref, 1)),
   );
   orphanSettled.forEach((res, i) => {
-    if (res.status !== 'fulfilled') return;
+    if (res.status !== "fulfilled") return;
     const orph = orphans[i];
     // Preserva match apenas quando o searcher devolveu o item exato buscado.
     for (const raw of res.value) {
@@ -107,15 +101,16 @@ export async function searchLibrary(
   });
 
   // 3. Enriquecimento Nexus (1 batch bidirecional). Falha silenciosa.
-  const nexusMap = options.withNexus !== false
-    ? await enrichWithNexus(hits).catch(() => new Map<string, NexusSummary>())
-    : new Map<string, NexusSummary>();
+  const nexusMap =
+    options.withNexus !== false
+      ? await enrichWithNexus(hits).catch(() => new Map<string, NexusSummary>())
+      : new Map<string, NexusSummary>();
 
   // 4. Compor `LibraryResult` com score híbrido + campos AI.
   const results: LibraryResult[] = hits.map((hit) => {
     const meta = LIBRARY_MODULE_META[hit.type];
     const nexKey = hit.nexusRef ? keyOf(hit.nexusRef.kind, hit.nexusRef.ref) : undefined;
-    const nexus = nexKey ? nexusMap.get(nexKey) ?? EMPTY_NEXUS : EMPTY_NEXUS;
+    const nexus = nexKey ? (nexusMap.get(nexKey) ?? EMPTY_NEXUS) : EMPTY_NEXUS;
     const semantic = nexKey ? semanticMap.get(nexKey) : undefined;
     const breakdown = composeHybridScore({
       query,
@@ -156,4 +151,3 @@ export async function searchLibrary(
     durationMs: Math.round(performance.now() - started),
   };
 }
-

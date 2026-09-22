@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { ShieldAlert } from 'lucide-react';
-import { useBibleReadGate } from '@/hooks/useBibleReadGate';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { ShieldAlert } from "lucide-react";
+import { useBibleReadGate } from "@/hooks/useBibleReadGate";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 /**
  * Banner fixo no topo do /bible quando o gate está bloqueando por dados
@@ -32,9 +32,9 @@ export const BiblePartialCoverageBanner: React.FC = () => {
         <div className="flex-1">
           <h2 className="font-medium">Bíblia em reconstrução</h2>
           <p className="text-xs opacity-90">
-            Estamos importando o cânon completo (73 livros). Apenas os livros
-            já disponíveis podem ser lidos; os demais aparecerão conforme forem
-            certificados. A busca bíblica está temporariamente desativada.
+            Estamos importando o cânon completo (73 livros). Apenas os livros já disponíveis podem
+            ser lidos; os demais aparecerão conforme forem certificados. A busca bíblica está
+            temporariamente desativada.
           </p>
         </div>
         <Link

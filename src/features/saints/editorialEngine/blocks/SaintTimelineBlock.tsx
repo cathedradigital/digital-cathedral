@@ -1,12 +1,15 @@
-import React from 'react';
-import type { SaintTimelineEvent } from '../types';
+import React from "react";
+import type { SaintTimelineEvent } from "../types";
 
 interface Props {
   events: SaintTimelineEvent[];
 }
 
 export const SaintTimelineBlock: React.FC<Props> = ({ events }) => (
-  <section aria-labelledby="saint-timeline" className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg">
+  <section
+    aria-labelledby="saint-timeline"
+    className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg"
+  >
     <h2 id="saint-timeline" className="font-serif text-premium-lg text-foreground mb-spacing-sm">
       Linha do tempo
     </h2>

@@ -6,7 +6,7 @@
  * Não altera conteúdo: é puramente experiência. O timer reinicia quando
  * `key` muda (ex.: novo bloco) para garantir contagem correta.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface Options {
   enabled: boolean;

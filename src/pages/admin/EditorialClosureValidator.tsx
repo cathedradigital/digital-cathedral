@@ -7,30 +7,35 @@
  *   - Warnings acumulados
  *   - Preview renderizado idêntico ao ReaderShell
  */
-import React from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { validateEditorialClosure } from '@/lib/editorial/closureSchema';
-import { EditorialClosure } from '@/components/reader';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import React from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { validateEditorialClosure } from "@/lib/editorial/closureSchema";
+import { EditorialClosure } from "@/components/reader";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { AlertTriangle, CheckCircle2, Info } from "lucide-react";
 
 const SAMPLE = JSON.stringify(
   {
-    reflection: 'Onde, hoje, minha inquietude ainda foge do silêncio?',
-    application: 'Reservar dez minutos de silêncio antes do último ofício do dia.',
-    prayer: 'Senhor, dai-me o repouso que só em Vós existe.\nAmém.',
-    nexus: [{ kind: 'saint', ref: 'agostinho', label: 'Santo Agostinho' }],
-    source: 'cathedra-editorial',
+    reflection: "Onde, hoje, minha inquietude ainda foge do silêncio?",
+    application: "Reservar dez minutos de silêncio antes do último ofício do dia.",
+    prayer: "Senhor, dai-me o repouso que só em Vós existe.\nAmém.",
+    nexus: [{ kind: "saint", ref: "agostinho", label: "Santo Agostinho" }],
+    source: "cathedra-editorial",
   },
   null,
   2,
 );
 
 const LEGACY_SAMPLE = JSON.stringify(
-  { reflexao: 'R legado', aplicacao: 'A legado', oracao: 'P legado', next: { title: 'Ler', url: '/glossario/graca' } },
+  {
+    reflexao: "R legado",
+    aplicacao: "A legado",
+    oracao: "P legado",
+    next: { title: "Ler", url: "/glossario/graca" },
+  },
   null,
   2,
 );
@@ -48,16 +53,13 @@ const EditorialClosureValidator: React.FC = () => {
     }
   }, [input]);
 
-  const report = React.useMemo(
-    () => validateEditorialClosure(parsedInput),
-    [parsedInput],
-  );
+  const report = React.useMemo(() => validateEditorialClosure(parsedInput), [parsedInput]);
 
-  const strategyTone: Record<string, 'default' | 'secondary' | 'destructive'> = {
-    strict: 'default',
-    aliases: 'secondary',
-    'string-fallback': 'secondary',
-    none: 'destructive',
+  const strategyTone: Record<string, "default" | "secondary" | "destructive"> = {
+    strict: "default",
+    aliases: "secondary",
+    "string-fallback": "secondary",
+    none: "destructive",
   };
 
   return (
@@ -82,10 +84,14 @@ const EditorialClosureValidator: React.FC = () => {
         <Button variant="outline" size="sm" onClick={() => setInput(LEGACY_SAMPLE)}>
           Exemplo legado (aliases)
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setInput('"Uma reflexão antiga em texto puro."')}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setInput('"Uma reflexão antiga em texto puro."')}
+        >
           String pura
         </Button>
-        <Button variant="ghost" size="sm" onClick={() => setInput('')}>
+        <Button variant="ghost" size="sm" onClick={() => setInput("")}>
           Limpar
         </Button>
       </div>
@@ -117,9 +123,7 @@ const EditorialClosureValidator: React.FC = () => {
                 )}
                 Diagnóstico
               </CardTitle>
-              <Badge variant={strategyTone[report.strategy] ?? 'default'}>
-                {report.strategy}
-              </Badge>
+              <Badge variant={strategyTone[report.strategy] ?? "default"}>{report.strategy}</Badge>
             </CardHeader>
             <CardContent className="space-y-3">
               {report.warnings.length === 0 ? (
@@ -157,8 +161,10 @@ const EditorialClosureValidator: React.FC = () => {
                   reflection={report.data.reflection || undefined}
                   application={report.data.application || undefined}
                   prayer={report.data.prayer || undefined}
-                  next={report.data.next as React.ComponentProps<typeof EditorialClosure>['next']}
-                  nexus={report.data.nexus as React.ComponentProps<typeof EditorialClosure>['nexus']}
+                  next={report.data.next as React.ComponentProps<typeof EditorialClosure>["next"]}
+                  nexus={
+                    report.data.nexus as React.ComponentProps<typeof EditorialClosure>["nexus"]
+                  }
                   source={report.data.source}
                 />
               ) : (

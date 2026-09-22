@@ -46,7 +46,10 @@ export function DevotionalIndexSheet({ open, onOpenChange, title, items }: Props
                 )}
               </div>
               {item.active && (
-                <span className="mt-1 inline-block h-2 w-2 rounded-full bg-stitch-primary" aria-hidden />
+                <span
+                  className="mt-1 inline-block h-2 w-2 rounded-full bg-stitch-primary"
+                  aria-hidden
+                />
               )}
             </button>
           </li>

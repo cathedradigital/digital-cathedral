@@ -1,15 +1,29 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Icons } from "@/constants";
+import React, { useState, useEffect } from "react";
+import { supabase } from "@/lib/db";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import * as XLSX from 'xlsx';
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import * as XLSX from "xlsx";
 
 interface Project {
   id: string;
@@ -22,7 +36,7 @@ interface Project {
 interface ConstructionData {
   id: string;
   project_id: string;
-  type: 'budget' | 'schedule';
+  type: "budget" | "schedule";
   item_name: string;
   planned_value: number | null;
   actual_value: number | null;
@@ -37,17 +51,17 @@ interface ConstructionData {
 const AdminConstructionTab: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddProjectDialogOpen, setIsAddProjectDialogOpen] = useState(false);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [uploadType, setUploadType] = useState<'budget' | 'schedule'>('budget');
+  const [uploadType, setUploadType] = useState<"budget" | "schedule">("budget");
   const [uploading, setUploading] = useState(false);
-  
+
   const [newProject, setNewProject] = useState({
-    name: '',
-    description: '',
-    status: 'em_andamento'
+    name: "",
+    description: "",
+    status: "em_andamento",
   });
 
   useEffect(() => {
@@ -58,14 +72,14 @@ const AdminConstructionTab: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('construction_projects')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("construction_projects")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setProjects(data || []);
     } catch (error: any) {
-      toast.error('Erro ao buscar obras: ' + error.message);
+      toast.error("Erro ao buscar obras: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -73,43 +87,40 @@ const AdminConstructionTab: React.FC = () => {
 
   const handleCreateProject = async () => {
     if (!newProject.name) {
-      toast.error('Nome da obra é obrigatório');
+      toast.error("Nome da obra é obrigatório");
       return;
     }
 
     try {
       const { data, error } = await supabase
-        .from('construction_projects')
+        .from("construction_projects")
         .insert([newProject])
         .select()
         .single();
 
       if (error) throw error;
-      
+
       setProjects([data, ...projects]);
-      toast.success('Obra criada com sucesso');
+      toast.success("Obra criada com sucesso");
       setIsAddProjectDialogOpen(false);
-      setNewProject({ name: '', description: '', status: 'em_andamento' });
+      setNewProject({ name: "", description: "", status: "em_andamento" });
     } catch (error: any) {
-      toast.error('Erro ao criar obra: ' + error.message);
+      toast.error("Erro ao criar obra: " + error.message);
     }
   };
 
   const handleDeleteProject = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir esta obra e todos os seus dados?')) return;
+    if (!window.confirm("Tem certeza que deseja excluir esta obra e todos os seus dados?")) return;
 
     try {
-      const { error } = await supabase
-        .from('construction_projects')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("construction_projects").delete().eq("id", id);
 
       if (error) throw error;
-      
-      setProjects(prev => prev.filter(p => p.id !== id));
-      toast.success('Obra excluída');
+
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Obra excluída");
     } catch (error: any) {
-      toast.error('Erro ao excluir obra: ' + error.message);
+      toast.error("Erro ao excluir obra: " + error.message);
     }
   };
 
@@ -119,59 +130,61 @@ const AdminConstructionTab: React.FC = () => {
 
     setUploading(true);
     const reader = new FileReader();
-    
+
     reader.onload = async (event) => {
       try {
         const data = new Uint8Array(event.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: "array" });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         if (jsonData.length === 0) {
-          toast.error('A planilha está vazia');
+          toast.error("A planilha está vazia");
           setUploading(false);
           return;
         }
 
         // Process data based on type
         const formattedData = jsonData.map((row: any) => {
-          if (uploadType === 'budget') {
+          if (uploadType === "budget") {
             return {
               project_id: selectedProjectId,
-              type: 'budget',
-              item_name: row['Item'] || row['Nome'] || row['Descrição'] || 'Sem nome',
-              planned_value: row['Previsto'] || row['Orçado'] || 0,
-              actual_value: row['Real'] || row['Gasto'] || 0,
-              category: row['Categoria'] || 'Geral'
+              type: "budget",
+              item_name: row["Item"] || row["Nome"] || row["Descrição"] || "Sem nome",
+              planned_value: row["Previsto"] || row["Orçado"] || 0,
+              actual_value: row["Real"] || row["Gasto"] || 0,
+              category: row["Categoria"] || "Geral",
             };
           } else {
             return {
               project_id: selectedProjectId,
-              type: 'schedule',
-              item_name: row['Tarefa'] || row['Atividade'] || 'Sem nome',
-              planned_start_date: row['Início Previsto'] || row['Start'] || null,
-              planned_end_date: row['Fim Previsto'] || row['End'] || null,
-              actual_start_date: row['Início Real'] || null,
-              actual_end_date: row['Fim Real'] || null,
-              progress: row['Progresso'] || row['%'] || 0,
-              category: row['Fase'] || 'Geral'
+              type: "schedule",
+              item_name: row["Tarefa"] || row["Atividade"] || "Sem nome",
+              planned_start_date: row["Início Previsto"] || row["Start"] || null,
+              planned_end_date: row["Fim Previsto"] || row["End"] || null,
+              actual_start_date: row["Início Real"] || null,
+              actual_end_date: row["Fim Real"] || null,
+              progress: row["Progresso"] || row["%"] || 0,
+              category: row["Fase"] || "Geral",
             };
           }
         });
 
         // Insert/Update in database using upsert with our new unique constraint
         const { error } = await supabase
-          .from('construction_data')
-          .upsert(formattedData, { onConflict: 'project_id,type,item_name,category' });
+          .from("construction_data")
+          .upsert(formattedData, { onConflict: "project_id,type,item_name,category" });
 
         if (error) throw error;
 
-        toast.success(`Planilha de ${uploadType === 'budget' ? 'orçamento' : 'cronograma'} processada com sucesso!`);
+        toast.success(
+          `Planilha de ${uploadType === "budget" ? "orçamento" : "cronograma"} processada com sucesso!`,
+        );
         setIsUploadDialogOpen(false);
       } catch (error: any) {
-        console.error('Upload error:', error);
-        toast.error('Erro ao processar planilha: Verifique os nomes das colunas.');
+        console.error("Upload error:", error);
+        toast.error("Erro ao processar planilha: Verifique os nomes das colunas.");
       } finally {
         setUploading(false);
       }
@@ -180,8 +193,8 @@ const AdminConstructionTab: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
-  const filteredProjects = projects.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProjects = projects.filter((p) =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -189,7 +202,9 @@ const AdminConstructionTab: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-spacing-md">
         <div>
           <h2 className="text-premium-xl font-bold">Gestão de Obras</h2>
-          <p className="text-premium-sm text-muted-foreground">Gerencie orçamentos e cronogramas de construção.</p>
+          <p className="text-premium-sm text-muted-foreground">
+            Gerencie orçamentos e cronogramas de construção.
+          </p>
         </div>
         <div className="flex gap-spacing-xs">
           <div className="relative">
@@ -209,8 +224,11 @@ const AdminConstructionTab: React.FC = () => {
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-spacing-lg">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-spacing-4xl rounded-premium bg-muted/40 animate-pulse border border-border" />
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-spacing-4xl rounded-premium bg-muted/40 animate-pulse border border-border"
+            />
           ))}
         </div>
       ) : filteredProjects.length === 0 ? (
@@ -221,7 +239,9 @@ const AdminConstructionTab: React.FC = () => {
             </div>
             <div className="space-y-spacing-2xs">
               <p className="font-semibold">Nenhuma obra cadastrada</p>
-              <p className="text-premium-sm text-muted-foreground">Comece criando uma nova obra paroquial.</p>
+              <p className="text-premium-sm text-muted-foreground">
+                Comece criando uma nova obra paroquial.
+              </p>
             </div>
             <Button onClick={() => setIsAddProjectDialogOpen(true)}>Criar Primeira Obra</Button>
           </CardContent>
@@ -229,14 +249,19 @@ const AdminConstructionTab: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-spacing-lg">
           {filteredProjects.map((project) => (
-            <Card key={project.id} className="overflow-hidden group hover:border-primary/50 transition-all">
+            <Card
+              key={project.id}
+              className="overflow-hidden group hover:border-primary/50 transition-all"
+            >
               <CardHeader className="pb-spacing-sm flex flex-row items-start justify-between">
                 <div>
                   <CardTitle className="text-premium-lg">{project.name}</CardTitle>
-                  <CardDescription className="line-clamp-spacing-2xs">{project.description || 'Sem descrição'}</CardDescription>
+                  <CardDescription className="line-clamp-spacing-2xs">
+                    {project.description || "Sem descrição"}
+                  </CardDescription>
                 </div>
-                <Badge variant={project.status === 'concluida' ? 'default' : 'secondary'}>
-                  {project.status === 'concluida' ? 'Concluída' : 'Em Andamento'}
+                <Badge variant={project.status === "concluida" ? "default" : "secondary"}>
+                  {project.status === "concluida" ? "Concluída" : "Em Andamento"}
                 </Badge>
               </CardHeader>
               <CardContent className="pb-spacing-sm space-y-spacing-md">
@@ -245,13 +270,13 @@ const AdminConstructionTab: React.FC = () => {
                     <div className="flex items-center gap-spacing-xs text-premium-xs font-bold text-muted-foreground uppercase tracking-widest">
                       <Icons.DollarSign className="w-spacing-sm h-spacing-sm" /> Orçamento
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full h-spacing-xl gap-spacing-xs text-premium-xs font-black uppercase tracking-widest"
                       onClick={() => {
                         setSelectedProjectId(project.id);
-                        setUploadType('budget');
+                        setUploadType("budget");
                         setIsUploadDialogOpen(true);
                       }}
                     >
@@ -262,13 +287,13 @@ const AdminConstructionTab: React.FC = () => {
                     <div className="flex items-center gap-spacing-xs text-premium-xs font-bold text-muted-foreground uppercase tracking-widest">
                       <Icons.Calendar className="w-spacing-sm h-spacing-sm" /> Cronograma
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full h-spacing-xl gap-spacing-xs text-premium-xs font-black uppercase tracking-widest"
                       onClick={() => {
                         setSelectedProjectId(project.id);
-                        setUploadType('schedule');
+                        setUploadType("schedule");
                         setIsUploadDialogOpen(true);
                       }}
                     >
@@ -278,8 +303,15 @@ const AdminConstructionTab: React.FC = () => {
                 </div>
               </CardContent>
               <CardFooter className="bg-muted/10 py-spacing-sm flex justify-between">
-                <span className="text-premium-xs text-muted-foreground">Criada em: {new Date(project.created_at).toLocaleDateString()}</span>
-                <Button variant="ghost" size="sm" className="h-spacing-lg text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDeleteProject(project.id)}>
+                <span className="text-premium-xs text-muted-foreground">
+                  Criada em: {new Date(project.created_at).toLocaleDateString()}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-spacing-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => handleDeleteProject(project.id)}
+                >
                   <Icons.Trash2 className="w-spacing-sm h-spacing-sm" />
                 </Button>
               </CardFooter>
@@ -298,25 +330,27 @@ const AdminConstructionTab: React.FC = () => {
           <div className="space-y-spacing-md py-spacing-xs">
             <div className="space-y-spacing-xs">
               <Label htmlFor="project-name">Nome da Obra</Label>
-              <Input 
-                id="project-name" 
-                placeholder="Ex: Reforma do Telhado da Matriz" 
+              <Input
+                id="project-name"
+                placeholder="Ex: Reforma do Telhado da Matriz"
                 value={newProject.name}
-                onChange={e => setNewProject({...newProject, name: e.target.value})}
+                onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
               />
             </div>
             <div className="space-y-spacing-xs">
               <Label htmlFor="project-desc">Descrição</Label>
-              <Input 
-                id="project-desc" 
-                placeholder="Breve descrição dos objetivos..." 
+              <Input
+                id="project-desc"
+                placeholder="Breve descrição dos objetivos..."
                 value={newProject.description}
-                onChange={e => setNewProject({...newProject, description: e.target.value})}
+                onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddProjectDialogOpen(false)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setIsAddProjectDialogOpen(false)}>
+              Cancelar
+            </Button>
             <Button onClick={handleCreateProject}>Criar Obra</Button>
           </DialogFooter>
         </DialogContent>
@@ -326,10 +360,14 @@ const AdminConstructionTab: React.FC = () => {
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Subir Planilha de {uploadType === 'budget' ? 'Orçamento' : 'Cronograma'}</DialogTitle>
+            <DialogTitle>
+              Subir Planilha de {uploadType === "budget" ? "Orçamento" : "Cronograma"}
+            </DialogTitle>
             <DialogDescription>
-              Selecione um arquivo .xlsx ou .csv. A planilha deve conter colunas como: 
-              {uploadType === 'budget' ? ' "Item", "Previsto", "Real"' : ' "Tarefa", "Início Previsto", "Fim Previsto", "Progresso"'}
+              Selecione um arquivo .xlsx ou .csv. A planilha deve conter colunas como:
+              {uploadType === "budget"
+                ? ' "Item", "Previsto", "Real"'
+                : ' "Tarefa", "Início Previsto", "Fim Previsto", "Progresso"'}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center py-spacing-xl border-2 border-dashed rounded-premium gap-spacing-md bg-muted/5">
@@ -337,17 +375,25 @@ const AdminConstructionTab: React.FC = () => {
               <Icons.FileSpreadsheet className="w-spacing-lg h-spacing-lg text-primary" />
             </div>
             <div className="text-center px-spacing-md">
-              <p className="text-premium-sm font-medium">Arraste sua planilha aqui ou clique no botão</p>
-              <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">Formato suportado: XLSX, XLS, CSV</p>
+              <p className="text-premium-sm font-medium">
+                Arraste sua planilha aqui ou clique no botão
+              </p>
+              <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">
+                Formato suportado: XLSX, XLS, CSV
+              </p>
             </div>
             <div className="relative">
               <Button disabled={uploading} className="relative z-10">
-                {uploading ? <Icons.Loader2 className="w-spacing-md h-spacing-md animate-spin mr-spacing-xs" /> : <Icons.Upload className="w-spacing-md h-spacing-md mr-spacing-xs" />}
+                {uploading ? (
+                  <Icons.Loader2 className="w-spacing-md h-spacing-md animate-spin mr-spacing-xs" />
+                ) : (
+                  <Icons.Upload className="w-spacing-md h-spacing-md mr-spacing-xs" />
+                )}
                 Selecionar Arquivo
               </Button>
-              <input 
-                type="file" 
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
+              <input
+                type="file"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                 accept=".xlsx, .xls, .csv"
                 onChange={handleFileUpload}
                 disabled={uploading}
@@ -358,11 +404,16 @@ const AdminConstructionTab: React.FC = () => {
             <Icons.AlertCircle className="w-spacing-md h-spacing-md text-amber-500 shrink-0" />
             <div className="text-premium-xs text-amber-800">
               <p className="font-bold">Atenção!</p>
-              <p>Ao subir uma nova planilha, os dados serão adicionados aos já existentes. Para atualizar um dado real, certifique-se que o nome do item é idêntico.</p>
+              <p>
+                Ao subir uma nova planilha, os dados serão adicionados aos já existentes. Para
+                atualizar um dado real, certifique-se que o nome do item é idêntico.
+              </p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>Fechar</Button>
+            <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

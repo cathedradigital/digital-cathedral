@@ -4,14 +4,14 @@
  * total, distribuição por trilha, top iniciadas, top concluídas e tempo médio.
  * Consome a RPC `collections_metrics_v1` (SECURITY DEFINER + has_role).
  */
-import React from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { ReaderShell, EditorialHero } from '@/components/reader';
-import { EditorialSurface } from '@/components/editorial';
-import { Loader2, ArrowLeft, Layers, Clock, TrendingUp, CheckCircle2 } from 'lucide-react';
+import React from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { ReaderShell, EditorialHero } from "@/components/reader";
+import { EditorialSurface } from "@/components/editorial";
+import { Loader2, ArrowLeft, Layers, Clock, TrendingUp, CheckCircle2 } from "lucide-react";
 
 interface MetricsPayload {
   total_collections: number;
@@ -24,18 +24,18 @@ interface MetricsPayload {
 }
 
 const TRACK_LABEL: Record<string, string> = {
-  'formacao-fundamental': 'Formação Fundamental',
-  'santos-espiritualidade': 'Santos e Espiritualidade',
-  liturgia: 'Liturgia',
-  'vida-crista': 'Vida Cristã',
-  sem_trilha: 'Sem trilha',
+  "formacao-fundamental": "Formação Fundamental",
+  "santos-espiritualidade": "Santos e Espiritualidade",
+  liturgia: "Liturgia",
+  "vida-crista": "Vida Cristã",
+  sem_trilha: "Sem trilha",
 };
 
 export default function CollectionsMetricsPage() {
   const { data, isLoading, error } = useQuery<MetricsPayload>({
-    queryKey: ['collections-metrics-v1'],
+    queryKey: ["collections-metrics-v1"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('collections_metrics_v1' as never);
+      const { data, error } = await supabase.rpc("collections_metrics_v1" as never);
       if (error) throw error;
       return data as unknown as MetricsPayload;
     },
@@ -106,10 +106,7 @@ export default function CollectionsMetricsPage() {
               <EditorialSurface tier="lowest" className="p-spacing-md">
                 <ul className="space-y-spacing-2xs">
                   {Object.entries(data.by_track ?? {}).map(([k, v]) => (
-                    <li
-                      key={k}
-                      className="flex items-center justify-between text-premium-sm"
-                    >
+                    <li key={k} className="flex items-center justify-between text-premium-sm">
                       <span className="text-foreground">{TRACK_LABEL[k] ?? k}</span>
                       <span className="font-mono tabular-nums text-primary">{v}</span>
                     </li>
@@ -138,15 +135,14 @@ export default function CollectionsMetricsPage() {
                 rows={data.top_completed.map((r) => ({
                   slug: r.slug,
                   title: r.title,
-                  metric:
-                    r.completion_rate == null ? '—' : `${r.completion_rate}%`,
+                  metric: r.completion_rate == null ? "—" : `${r.completion_rate}%`,
                 }))}
                 emptyLabel="Ainda sem dados de conclusão."
               />
             </section>
 
             <p className="text-premium-xs text-muted-foreground text-center pt-spacing-md">
-              Gerado em {new Date(data.generated_at).toLocaleString('pt-BR')}
+              Gerado em {new Date(data.generated_at).toLocaleString("pt-BR")}
             </p>
           </div>
         )}
@@ -168,7 +164,7 @@ const KpiCard: React.FC<KpiProps> = ({ icon: Icon, label, value }) => (
       <span className="text-[10px] font-black uppercase tracking-[0.2em]">{label}</span>
     </div>
     <div className="font-serif text-premium-2xl tabular-nums text-foreground">
-      {typeof value === 'number' ? value.toLocaleString('pt-BR') : value}
+      {typeof value === "number" ? value.toLocaleString("pt-BR") : value}
     </div>
   </EditorialSurface>
 );
@@ -185,7 +181,10 @@ const RankingList: React.FC<{ rows: RankingRow[]; emptyLabel: string }> = ({
 }) => {
   if (rows.length === 0) {
     return (
-      <EditorialSurface tier="lowest" className="p-spacing-md text-muted-foreground italic text-premium-sm">
+      <EditorialSurface
+        tier="lowest"
+        className="p-spacing-md text-muted-foreground italic text-premium-sm"
+      >
         {emptyLabel}
       </EditorialSurface>
     );
@@ -193,12 +192,9 @@ const RankingList: React.FC<{ rows: RankingRow[]; emptyLabel: string }> = ({
   return (
     <EditorialSurface tier="lowest" className="divide-y divide-border/60">
       {rows.map((row, i) => (
-        <div
-          key={row.slug}
-          className="flex items-center gap-spacing-md p-spacing-md"
-        >
+        <div key={row.slug} className="flex items-center gap-spacing-md p-spacing-md">
           <span className="text-[10px] font-mono tabular-nums text-muted-foreground w-6">
-            {String(i + 1).padStart(2, '0')}
+            {String(i + 1).padStart(2, "0")}
           </span>
           <Link
             to={`/acervo/colecoes/${row.slug}`}
@@ -206,9 +202,7 @@ const RankingList: React.FC<{ rows: RankingRow[]; emptyLabel: string }> = ({
           >
             {row.title}
           </Link>
-          <span className="font-mono tabular-nums text-premium-xs text-primary">
-            {row.metric}
-          </span>
+          <span className="font-mono tabular-nums text-premium-xs text-primary">{row.metric}</span>
         </div>
       ))}
     </EditorialSurface>

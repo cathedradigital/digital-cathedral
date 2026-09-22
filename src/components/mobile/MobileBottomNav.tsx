@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from '@/lib/rr-compat';
+import { NavLink, useLocation } from "@/lib/rr-compat";
 import { Icons } from "@/constants";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
@@ -12,10 +12,20 @@ interface MobileNavItem {
 }
 
 const DEFAULT_ITEMS: MobileNavItem[] = [
-  { to: "/bible", label: "LER", icon: Icons.BookOpen, matches: /^\/(bible|catechism|magisterium|santos)/ },
+  {
+    to: "/bible",
+    label: "LER",
+    icon: Icons.BookOpen,
+    matches: /^\/(bible|catechism|magisterium|santos)/,
+  },
   { to: "/oracao", label: "ORAR", icon: Icons.Prayer, matches: /^\/oracao/ },
   { to: "/community", label: "IGREJA", icon: Icons.Church, matches: /^\/(community|igreja)/ },
-  { to: "/biblioteca", label: "BIBLIOTECA", icon: Icons.Library, matches: /^\/(acervo|biblioteca)/ },
+  {
+    to: "/biblioteca",
+    label: "BIBLIOTECA",
+    icon: Icons.Library,
+    matches: /^\/(acervo|biblioteca)/,
+  },
   { to: "/conta", label: "PERFIL", icon: Icons.User, matches: /^\/conta|perfil/ },
 ];
 
@@ -56,9 +66,7 @@ export function MobileBottomNav({
     >
       {items.map((item) => {
         const Icon = item.icon;
-        const isActive = item.matches
-          ? item.matches.test(pathname)
-          : pathname === item.to;
+        const isActive = item.matches ? item.matches.test(pathname) : pathname === item.to;
 
         return (
           <NavLink
@@ -81,18 +89,12 @@ export function MobileBottomNav({
                   : "text-stitch-on-surface-variant group-hover:text-stitch-primary",
               )}
             >
-              <Icon
-                className="h-5 w-5"
-                strokeWidth={isActive ? 2.25 : 1.75}
-                aria-hidden="true"
-              />
+              <Icon className="h-5 w-5" strokeWidth={isActive ? 2.25 : 1.75} aria-hidden="true" />
             </span>
             <span
               className={cn(
                 "font-[var(--font-stitch-label)] text-[11px] font-bold uppercase tracking-[0.08em]",
-                isActive
-                  ? "text-stitch-primary"
-                  : "text-stitch-on-surface-variant",
+                isActive ? "text-stitch-primary" : "text-stitch-on-surface-variant",
               )}
             >
               {item.label}

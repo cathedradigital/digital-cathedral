@@ -19,22 +19,18 @@ O Content Core fornece:
 ## API pública
 
 ```ts
-import {
-  ReaderService,
-  type ReaderContent,
-  type SearchResult,
-} from '@/core/content';
+import { ReaderService, type ReaderContent, type SearchResult } from "@/core/content";
 
 // Ler um documento
-const doc: ReaderContent | null = await ReaderService.get('catechism', {
+const doc: ReaderContent | null = await ReaderService.get("catechism", {
   paragraph: 1817,
 });
 
 // Busca universal
-const hits: SearchResult[] = await ReaderService.search('esperança');
+const hits: SearchResult[] = await ReaderService.search("esperança");
 
 // Busca restrita a um domínio
-const inCic = await ReaderService.searchIn('catechism', 'graça');
+const inCic = await ReaderService.searchIn("catechism", "graça");
 ```
 
 ## Regra de ouro
@@ -75,12 +71,12 @@ src/core/content/
 
 ## Roadmap dos adapters
 
-| Sub-sprint | Adapters adicionados                      |
-| ---------- | ----------------------------------------- |
-| 2.0.4B-1   | Bible, Catechism, Magisterium (mock)      |
-| 2.0.4B-2   | Fathers, Saints (mock)                    |
-| 2.0.4B-3   | Councils, Canon (mock)                    |
-| 2.0.5+     | Substituir mocks pelas fontes reais       |
+| Sub-sprint | Adapters adicionados                 |
+| ---------- | ------------------------------------ |
+| 2.0.4B-1   | Bible, Catechism, Magisterium (mock) |
+| 2.0.4B-2   | Fathers, Saints (mock)               |
+| 2.0.4B-3   | Councils, Canon (mock)               |
+| 2.0.5+     | Substituir mocks pelas fontes reais  |
 
 A assinatura pública (`ReaderService`, `ContentAdapter`) permanece
 estável em todas as etapas.

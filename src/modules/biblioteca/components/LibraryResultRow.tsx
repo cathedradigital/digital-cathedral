@@ -8,12 +8,12 @@
  * Sem cards específicos por módulo. Sem ifs de tipo. Design tokens semânticos
  * apenas — o mesmo componente funciona em qualquer skin (default ou Stitch).
  */
-import { Link } from '@/lib/rr-compat';
-import { ArrowRight, Clock3, Network } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import IceBadge from './IceBadge';
-import { LIBRARY_MODULE_META } from '../search/moduleMeta';
-import type { LibraryResult } from '../search/types';
+import { Link } from "@/lib/rr-compat";
+import { ArrowRight, Clock3, Network } from "lucide-react";
+import { cn } from "@/lib/utils";
+import IceBadge from "./IceBadge";
+import { LIBRARY_MODULE_META } from "../search/moduleMeta";
+import type { LibraryResult } from "../search/types";
 
 export interface LibraryResultRowProps {
   result: LibraryResult;
@@ -29,7 +29,7 @@ export function LibraryResultRow({ result, onOpen, className }: LibraryResultRow
   return (
     <article
       className={cn(
-        'group relative flex gap-4 rounded-lg border border-border/60 bg-card p-4 transition hover:border-primary/40 hover:shadow-sm',
+        "group relative flex gap-4 rounded-lg border border-border/60 bg-card p-4 transition hover:border-primary/40 hover:shadow-sm",
         className,
       )}
       data-library-result={result.type}
@@ -74,7 +74,7 @@ export function LibraryResultRow({ result, onOpen, className }: LibraryResultRow
               {nexusTotal} nexus
             </span>
           ) : null}
-          {typeof result.readingMinutes === 'number' && result.readingMinutes > 0 ? (
+          {typeof result.readingMinutes === "number" && result.readingMinutes > 0 ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-muted-foreground">
               <Clock3 className="h-3 w-3" aria-hidden />
               {result.readingMinutes} min

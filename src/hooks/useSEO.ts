@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
 
 export interface SEOSettings {
   id: string;
@@ -24,14 +24,14 @@ export interface SEOSettings {
 
 export const useSEO = () => {
   return useQuery({
-    queryKey: ['seo-settings'],
+    queryKey: ["seo-settings"],
     queryFn: async () => {
       // Use the public-safe view that excludes sensitive credentials
       // (ga4_measurement_id, gsc_verification_code). Admin tooling reads
       // the underlying seo_settings table directly under RLS.
       const { data, error } = await supabase
-        .from('public_seo_settings' as any)
-        .select('*')
+        .from("public_seo_settings" as any)
+        .select("*")
         .maybeSingle();
 
       if (error) throw error;
@@ -43,13 +43,13 @@ export const useSEO = () => {
 
 export const useKeywords = () => {
   return useQuery({
-    queryKey: ['site-keywords'],
+    queryKey: ["site-keywords"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('site_keywords')
-        .select('*')
-        .eq('is_active', true)
-        .order('priority', { ascending: false });
+        .from("site_keywords")
+        .select("*")
+        .eq("is_active", true)
+        .order("priority", { ascending: false });
 
       if (error) throw error;
       return data;

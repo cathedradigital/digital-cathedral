@@ -1,14 +1,31 @@
-import { Helmet } from '@/lib/helmet-compat';
-import { CheckCircle2, XCircle, ExternalLink, Loader2, PlayCircle, History, RefreshCw, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Helmet } from "@/lib/helmet-compat";
+import {
+  CheckCircle2,
+  XCircle,
+  ExternalLink,
+  Loader2,
+  PlayCircle,
+  History,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 import { toast } from "sonner";
 
 type Status = "connected" | "disconnected" | "partial";
@@ -57,7 +74,8 @@ const integrations: Integration[] = [
     category: "Google",
     status: "connected",
     description: "Chave genérica do Google (Maps/YouTube/APIs públicas).",
-    howTo: "Secret GOOGLE_API_KEY configurado. Confirme quais APIs estão habilitadas no Google Cloud Console.",
+    howTo:
+      "Secret GOOGLE_API_KEY configurado. Confirme quais APIs estão habilitadas no Google Cloud Console.",
     docsUrl: "https://console.cloud.google.com/apis/credentials",
   },
   {
@@ -66,7 +84,8 @@ const integrations: Integration[] = [
     category: "Scraping",
     status: "partial",
     description: "Crawling e extração de páginas web.",
-    howTo: "Existe no workspace mas NÃO vinculado a este projeto. Peça 'vincular Firecrawl' para ativar.",
+    howTo:
+      "Existe no workspace mas NÃO vinculado a este projeto. Peça 'vincular Firecrawl' para ativar.",
   },
   {
     id: "google-search-console",
@@ -112,23 +131,24 @@ const integrations: Integration[] = [
   },
 ];
 
-const statusMeta: Record<Status, { label: string; className: string; icon: typeof CheckCircle2 }> = {
-  connected: {
-    label: "Conectado",
-    className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
-    icon: CheckCircle2,
-  },
-  disconnected: {
-    label: "Desconectado",
-    className: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30",
-    icon: XCircle,
-  },
-  partial: {
-    label: "Parcial",
-    className: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30",
-    icon: XCircle,
-  },
-};
+const statusMeta: Record<Status, { label: string; className: string; icon: typeof CheckCircle2 }> =
+  {
+    connected: {
+      label: "Conectado",
+      className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30",
+      icon: CheckCircle2,
+    },
+    disconnected: {
+      label: "Desconectado",
+      className: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30",
+      icon: XCircle,
+    },
+    partial: {
+      label: "Parcial",
+      className: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30",
+      icon: XCircle,
+    },
+  };
 
 type HistoryRow = {
   id: string;
@@ -179,7 +199,9 @@ export default function IntegrationsStatus() {
     setLoading((s) => ({ ...s, [id]: true }));
     let result: TestResult;
     try {
-      const { data, error } = await supabase.functions.invoke("integrations-test", { body: { id } });
+      const { data, error } = await supabase.functions.invoke("integrations-test", {
+        body: { id },
+      });
       if (error) throw error;
       result = data as TestResult;
     } catch (e) {
@@ -244,7 +266,8 @@ export default function IntegrationsStatus() {
     setPage(1);
   }, [filterIntegration, filterStatus, dateFrom, dateTo]);
 
-  const hasFilters = filterIntegration !== "all" || filterStatus !== "all" || dateFrom !== "" || dateTo !== "";
+  const hasFilters =
+    filterIntegration !== "all" || filterStatus !== "all" || dateFrom !== "" || dateTo !== "";
   const clearFilters = () => {
     setFilterIntegration("all");
     setFilterStatus("all");
@@ -261,7 +284,10 @@ export default function IntegrationsStatus() {
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <Helmet>
         <title>Status das Integrações — Admin</title>
-        <meta name="description" content="Visão geral do que está conectado, desconectado e como configurar cada integração do projeto." />
+        <meta
+          name="description"
+          content="Visão geral do que está conectado, desconectado e como configurar cada integração do projeto."
+        />
       </Helmet>
 
       <header className="mb-8">
@@ -318,7 +344,9 @@ export default function IntegrationsStatus() {
                           <p className="font-medium mb-0.5">
                             {results[item.id].ok ? "✓ Teste OK" : "✗ Falha no teste"}
                             {results[item.id].latencyMs != null && (
-                              <span className="ml-2 text-xs opacity-70">{results[item.id].latencyMs}ms</span>
+                              <span className="ml-2 text-xs opacity-70">
+                                {results[item.id].latencyMs}ms
+                              </span>
                             )}
                           </p>
                           <p className="opacity-90">{results[item.id].message}</p>
@@ -366,7 +394,11 @@ export default function IntegrationsStatus() {
             </span>
           </h2>
           <Button variant="ghost" size="sm" onClick={loadHistory} disabled={historyLoading}>
-            {historyLoading ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <RefreshCw className="mr-1 h-3 w-3" />}
+            {historyLoading ? (
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-1 h-3 w-3" />
+            )}
             Atualizar
           </Button>
         </div>
@@ -375,7 +407,10 @@ export default function IntegrationsStatus() {
           <CardContent className="p-4">
             <div className="grid gap-3 md:grid-cols-4">
               <div>
-                <Label htmlFor="flt-integration" className="text-xs uppercase tracking-wide text-muted-foreground">
+                <Label
+                  htmlFor="flt-integration"
+                  className="text-xs uppercase tracking-wide text-muted-foreground"
+                >
                   Integração
                 </Label>
                 <Select value={filterIntegration} onValueChange={setFilterIntegration}>
@@ -385,16 +420,24 @@ export default function IntegrationsStatus() {
                   <SelectContent>
                     <SelectItem value="all">Todas</SelectItem>
                     {integrations.map((i) => (
-                      <SelectItem key={i.id} value={i.id}>{i.name}</SelectItem>
+                      <SelectItem key={i.id} value={i.id}>
+                        {i.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label htmlFor="flt-status" className="text-xs uppercase tracking-wide text-muted-foreground">
+                <Label
+                  htmlFor="flt-status"
+                  className="text-xs uppercase tracking-wide text-muted-foreground"
+                >
                   Status
                 </Label>
-                <Select value={filterStatus} onValueChange={(v) => setFilterStatus(v as "all" | "ok" | "fail")}>
+                <Select
+                  value={filterStatus}
+                  onValueChange={(v) => setFilterStatus(v as "all" | "ok" | "fail")}
+                >
                   <SelectTrigger id="flt-status" className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -406,7 +449,10 @@ export default function IntegrationsStatus() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="flt-from" className="text-xs uppercase tracking-wide text-muted-foreground">
+                <Label
+                  htmlFor="flt-from"
+                  className="text-xs uppercase tracking-wide text-muted-foreground"
+                >
                   De
                 </Label>
                 <Input
@@ -418,7 +464,10 @@ export default function IntegrationsStatus() {
                 />
               </div>
               <div>
-                <Label htmlFor="flt-to" className="text-xs uppercase tracking-wide text-muted-foreground">
+                <Label
+                  htmlFor="flt-to"
+                  className="text-xs uppercase tracking-wide text-muted-foreground"
+                >
                   Até
                 </Label>
                 <Input
@@ -444,7 +493,9 @@ export default function IntegrationsStatus() {
           <CardContent className="p-0">
             {history.length === 0 ? (
               <p className="p-6 text-sm text-muted-foreground text-center">
-                {historyLoading ? "Carregando…" : "Nenhum teste registrado ainda. Clique em \"Testar conexão\" acima."}
+                {historyLoading
+                  ? "Carregando…"
+                  : 'Nenhum teste registrado ainda. Clique em "Testar conexão" acima.'}
               </p>
             ) : filteredHistory.length === 0 ? (
               <p className="p-6 text-sm text-muted-foreground text-center">
@@ -483,7 +534,11 @@ export default function IntegrationsStatus() {
                                 : "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/30"
                             }
                           >
-                            {row.ok ? <CheckCircle2 className="mr-1 h-3 w-3" /> : <XCircle className="mr-1 h-3 w-3" />}
+                            {row.ok ? (
+                              <CheckCircle2 className="mr-1 h-3 w-3" />
+                            ) : (
+                              <XCircle className="mr-1 h-3 w-3" />
+                            )}
                             {row.ok ? "OK" : "Falha"}
                           </Badge>
                         </td>
@@ -525,10 +580,8 @@ export default function IntegrationsStatus() {
               </div>
             )}
           </CardContent>
-
         </Card>
       </section>
-
 
       <footer className="mt-10 border-t pt-6 text-sm text-muted-foreground">
         <p>
@@ -542,15 +595,23 @@ export default function IntegrationsStatus() {
   );
 }
 
-function StatCard({ label, value, tone }: { label: string; value: number; tone?: "emerald" | "red" | "amber" }) {
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "emerald" | "red" | "amber";
+}) {
   const toneClass =
     tone === "emerald"
       ? "text-emerald-600 dark:text-emerald-400"
       : tone === "red"
-      ? "text-red-600 dark:text-red-400"
-      : tone === "amber"
-      ? "text-amber-600 dark:text-amber-400"
-      : "text-foreground";
+        ? "text-red-600 dark:text-red-400"
+        : tone === "amber"
+          ? "text-amber-600 dark:text-amber-400"
+          : "text-foreground";
   return (
     <Card>
       <CardContent className="p-4">

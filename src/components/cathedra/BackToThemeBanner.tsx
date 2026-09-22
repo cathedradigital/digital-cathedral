@@ -1,17 +1,17 @@
-import { Icons } from '@/constants';
-import React from 'react';
-import { useSearchParams, useNavigate } from '@/lib/rr-compat';
+import { Icons } from "@/constants";
+import React from "react";
+import { useSearchParams, useNavigate } from "@/lib/rr-compat";
 
-import { Button } from '@/components/ui/button';
-import { AppRoute } from '@/types';
+import { Button } from "@/components/ui/button";
+import { AppRoute } from "@/types";
 
 const BackToThemeBanner: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const from = searchParams.get('from');
-  const tema = searchParams.get('tema');
+  const from = searchParams.get("from");
+  const tema = searchParams.get("tema");
 
-  if (from !== 'temas' || !tema) return null;
+  if (from !== "temas" || !tema) return null;
 
   return (
     <div className="fixed top-spacing-3xl left-0 right-0 z-50 px-spacing-md py-spacing-xs bg-background  border-b border-primary/20 shadow-premium-md animate-in fade-in slide-in-from-top-spacing-xs duration-300 back-to-theme-banner">
@@ -24,7 +24,7 @@ const BackToThemeBanner: React.FC = () => {
         >
           <Icons.ArrowLeft className="w-spacing-sm h-spacing-sm" />
           <Icons.Tag className="w-spacing-sm h-spacing-sm" />
-          Voltar ao tema: {tema.replace(/-/g, ' ')}
+          Voltar ao tema: {tema.replace(/-/g, " ")}
         </Button>
       </div>
     </div>

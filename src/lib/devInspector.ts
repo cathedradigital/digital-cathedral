@@ -19,12 +19,12 @@ export type Conflict = {
   losers: MatchedRule[];
 };
 export type CssVarUsage = {
-  name: string;            // --foo
-  resolved: string;        // computed value
-  usedIn: string[];        // CSS props in winners that reference it
-  fromSelector: string | null;   // selector that defines the var
-  fromOrigin: string | null;     // origin label
-  fromElement: string | null;    // tag/path of ancestor providing it
+  name: string; // --foo
+  resolved: string; // computed value
+  usedIn: string[]; // CSS props in winners that reference it
+  fromSelector: string | null; // selector that defines the var
+  fromOrigin: string | null; // origin label
+  fromElement: string | null; // tag/path of ancestor providing it
 };
 export type LogEntry = {
   ts: string;
@@ -115,9 +115,17 @@ function cssSelector(el: Element): string {
   let cur: Element | null = el;
   while (cur && cur.nodeType === 1 && parts.length < 5) {
     let s = cur.tagName.toLowerCase();
-    if (cur.id) { parts.unshift(`${s}#${CSS.escape(cur.id)}`); break; }
+    if (cur.id) {
+      parts.unshift(`${s}#${CSS.escape(cur.id)}`);
+      break;
+    }
     if (cur.className && typeof cur.className === "string") {
-      const cls = cur.className.trim().split(/\s+/).slice(0, 2).map((c) => CSS.escape(c)).join(".");
+      const cls = cur.className
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((c) => CSS.escape(c))
+        .join(".");
       if (cls) s += "." + cls;
     }
     const parent = cur.parentElement;
@@ -163,7 +171,20 @@ export function domPath(el: Element): string {
 
 function pickStyles(el: Element): Record<string, string> {
   const cs = window.getComputedStyle(el);
-  const keys = ["font-family","font-size","font-weight","line-height","letter-spacing","color","padding","margin","text-transform","border-top-width","border-top-style","border-top-color"];
+  const keys = [
+    "font-family",
+    "font-size",
+    "font-weight",
+    "line-height",
+    "letter-spacing",
+    "color",
+    "padding",
+    "margin",
+    "text-transform",
+    "border-top-width",
+    "border-top-style",
+    "border-top-color",
+  ];
   const out: Record<string, string> = {};
   for (const k of keys) out[k] = cs.getPropertyValue(k).trim();
   return out;
@@ -198,7 +219,13 @@ export function extractCssVars(el: Element, rules: MatchedRule[]): CssVarUsage[]
         if (name in r.declarations) {
           fromSelector = r.selector;
           fromOrigin = r.origin;
-          fromElement = cur.tagName.toLowerCase() + (cur.id ? `#${cur.id}` : cur.className && typeof cur.className === "string" ? "." + cur.className.trim().split(/\s+/)[0] : "");
+          fromElement =
+            cur.tagName.toLowerCase() +
+            (cur.id
+              ? `#${cur.id}`
+              : cur.className && typeof cur.className === "string"
+                ? "." + cur.className.trim().split(/\s+/)[0]
+                : "");
           break outer;
         }
       }
@@ -206,8 +233,15 @@ export function extractCssVars(el: Element, rules: MatchedRule[]): CssVarUsage[]
     }
     if (!fromSelector) {
       // Fallback: :root via documentElement computed style
-      const rootVal = window.getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      if (rootVal) { fromSelector = ":root"; fromOrigin = "computed"; fromElement = "html"; }
+      const rootVal = window
+        .getComputedStyle(document.documentElement)
+        .getPropertyValue(name)
+        .trim();
+      if (rootVal) {
+        fromSelector = ":root";
+        fromOrigin = "computed";
+        fromElement = "html";
+      }
     }
     out.push({ name, resolved, usedIn: Array.from(props), fromSelector, fromOrigin, fromElement });
   }
@@ -236,11 +270,20 @@ function classifySelector(sel: string): "id" | "class" | "tag" | "mixed" {
   return "tag";
 }
 
-function ruleOrigin(sheet: CSSStyleSheet, fromShadow: boolean): { label: string; kind: MatchedRule["originKind"] } {
+function ruleOrigin(
+  sheet: CSSStyleSheet,
+  fromShadow: boolean,
+): { label: string; kind: MatchedRule["originKind"] } {
   if (fromShadow) return { label: "shadow-root", kind: "shadow" };
   if (sheet.href) {
-    try { return { label: new URL(sheet.href).pathname.split("/").pop() || sheet.href, kind: "stylesheet" }; }
-    catch { return { label: sheet.href, kind: "stylesheet" }; }
+    try {
+      return {
+        label: new URL(sheet.href).pathname.split("/").pop() || sheet.href,
+        kind: "stylesheet",
+      };
+    } catch {
+      return { label: sheet.href, kind: "stylesheet" };
+    }
   }
   return { label: "<style>", kind: "style-tag" };
 }
@@ -259,13 +302,16 @@ function parseDeclarations(cssText: string): Record<string, string> {
 
 function collectSheetsFor(el: Element): Array<{ sheet: CSSStyleSheet; fromShadow: boolean }> {
   const sheets: Array<{ sheet: CSSStyleSheet; fromShadow: boolean }> = [];
-  for (const s of Array.from(document.styleSheets) as CSSStyleSheet[]) sheets.push({ sheet: s, fromShadow: false });
+  for (const s of Array.from(document.styleSheets) as CSSStyleSheet[])
+    sheets.push({ sheet: s, fromShadow: false });
   const root = el.getRootNode();
   if (root instanceof ShadowRoot) {
-    for (const s of Array.from(root.styleSheets) as CSSStyleSheet[]) sheets.push({ sheet: s, fromShadow: true });
+    for (const s of Array.from(root.styleSheets) as CSSStyleSheet[])
+      sheets.push({ sheet: s, fromShadow: true });
     // adoptedStyleSheets (Constructable)
     const adopted = (root as any).adoptedStyleSheets as CSSStyleSheet[] | undefined;
-    if (Array.isArray(adopted)) for (const s of adopted) sheets.push({ sheet: s, fromShadow: true });
+    if (Array.isArray(adopted))
+      for (const s of adopted) sheets.push({ sheet: s, fromShadow: true });
   }
   return sheets;
 }
@@ -286,19 +332,30 @@ function getMatchedRules(el: Element): MatchedRule[] {
   }
   for (const { sheet, fromShadow } of collectSheetsFor(el)) {
     let rules: CSSRuleList | null = null;
-    try { rules = sheet.cssRules; } catch { continue; }
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue;
+    }
     if (!rules) continue;
     walkRules(rules, sheet, el, out, fromShadow);
     if (out.length > 300) break;
   }
   out.sort((a, b) => {
-    for (let i = 0; i < 3; i++) if (b.specificity[i] !== a.specificity[i]) return b.specificity[i] - a.specificity[i];
+    for (let i = 0; i < 3; i++)
+      if (b.specificity[i] !== a.specificity[i]) return b.specificity[i] - a.specificity[i];
     return 0;
   });
   return out.slice(0, 80);
 }
 
-function walkRules(rules: CSSRuleList, sheet: CSSStyleSheet, el: Element, out: MatchedRule[], fromShadow: boolean) {
+function walkRules(
+  rules: CSSRuleList,
+  sheet: CSSStyleSheet,
+  el: Element,
+  out: MatchedRule[],
+  fromShadow: boolean,
+) {
   const origin = ruleOrigin(sheet, fromShadow);
   for (const rule of Array.from(rules)) {
     if (rule instanceof CSSStyleRule) {
@@ -318,7 +375,9 @@ function walkRules(rules: CSSRuleList, sheet: CSSStyleSheet, el: Element, out: M
             });
             break;
           }
-        } catch { /* invalid selector */ }
+        } catch {
+          /* invalid selector */
+        }
       }
     } else if ((rule as CSSGroupingRule).cssRules) {
       walkRules((rule as CSSGroupingRule).cssRules, sheet, el, out, fromShadow);
@@ -327,7 +386,19 @@ function walkRules(rules: CSSRuleList, sheet: CSSStyleSheet, el: Element, out: M
 }
 
 function detectConflicts(rules: MatchedRule[]): Conflict[] {
-  const props = ["font-size", "line-height", "padding", "padding-top", "padding-right", "padding-bottom", "padding-left", "margin", "color", "font-weight", "font-family"];
+  const props = [
+    "font-size",
+    "line-height",
+    "padding",
+    "padding-top",
+    "padding-right",
+    "padding-bottom",
+    "padding-left",
+    "margin",
+    "color",
+    "font-weight",
+    "font-family",
+  ];
   const conflicts: Conflict[] = [];
   for (const prop of props) {
     const declarers = rules.filter((r) => prop in r.declarations);
@@ -342,7 +413,8 @@ function detectConflicts(rules: MatchedRule[]): Conflict[] {
 function getViewportInfo() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const bp = w < 640 ? "xs" : w < 768 ? "sm" : w < 1024 ? "md" : w < 1280 ? "lg" : w < 1536 ? "xl" : "2xl";
+  const bp =
+    w < 640 ? "xs" : w < 768 ? "sm" : w < 1024 ? "md" : w < 1280 ? "lg" : w < 1536 ? "xl" : "2xl";
   return { w, h, dpr: window.devicePixelRatio || 1, breakpoint: bp };
 }
 
@@ -381,7 +453,8 @@ export function initDevInspector() {
   let winnersCategory: WinnerCat = "all";
 
   function categoryOf(prop: string): Exclude<WinnerCat, "all" | "cssvars"> | "other" {
-    if (/^(font|line-height|letter-spacing|text-|white-space|word-|writing-)/.test(prop)) return "typography";
+    if (/^(font|line-height|letter-spacing|text-|white-space|word-|writing-)/.test(prop))
+      return "typography";
     if (/(^color$|background|fill|stroke|caret-color|accent-color)/.test(prop)) return "color";
     if (/^(border|outline|box-shadow|border-radius)/.test(prop)) return "border";
     return "other";
@@ -389,35 +462,60 @@ export function initDevInspector() {
 
   function computeWinners(rules: MatchedRule[]) {
     const seen = new Set<string>();
-    const winners: Array<{ prop: string; value: string; selector: string; origin: string; cat: ReturnType<typeof categoryOf> }> = [];
+    const winners: Array<{
+      prop: string;
+      value: string;
+      selector: string;
+      origin: string;
+      cat: ReturnType<typeof categoryOf>;
+    }> = [];
     for (const r of rules) {
       for (const prop of Object.keys(r.declarations)) {
         if (seen.has(prop)) continue;
         seen.add(prop);
-        winners.push({ prop, value: r.declarations[prop], selector: r.selector, origin: r.origin, cat: categoryOf(prop) });
+        winners.push({
+          prop,
+          value: r.declarations[prop],
+          selector: r.selector,
+          origin: r.origin,
+          cat: categoryOf(prop),
+        });
       }
     }
     return winners;
   }
 
-
-  function persist() { saveSession({ logs, filters, locked }); }
+  function persist() {
+    saveSession({ logs, filters, locked });
+  }
 
   function ensureOverlay() {
     if (highlight) return;
     highlight = document.createElement("div");
     Object.assign(highlight.style, {
-      position: "fixed", pointerEvents: "none", zIndex: "2147483645",
-      border: "2px solid #C8A96A", background: "rgba(200,169,106,0.10)",
-      borderRadius: "3px", transition: "all 60ms linear", display: "none",
+      position: "fixed",
+      pointerEvents: "none",
+      zIndex: "2147483645",
+      border: "2px solid #C8A96A",
+      background: "rgba(200,169,106,0.10)",
+      borderRadius: "3px",
+      transition: "all 60ms linear",
+      display: "none",
       boxShadow: "0 0 0 1px rgba(11,31,58,0.6)",
     } as CSSStyleDeclaration);
     hoverLabel = document.createElement("div");
     Object.assign(hoverLabel.style, {
-      position: "fixed", pointerEvents: "none", zIndex: "2147483646",
-      background: "#0B1F3A", color: "#fff", font: "11px/1.4 ui-monospace,monospace",
-      padding: "3px 7px", borderRadius: "3px", whiteSpace: "nowrap",
-      display: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+      position: "fixed",
+      pointerEvents: "none",
+      zIndex: "2147483646",
+      background: "#0B1F3A",
+      color: "#fff",
+      font: "11px/1.4 ui-monospace,monospace",
+      padding: "3px 7px",
+      borderRadius: "3px",
+      whiteSpace: "nowrap",
+      display: "none",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
     } as CSSStyleDeclaration);
     document.body.appendChild(highlight);
     document.body.appendChild(hoverLabel);
@@ -448,7 +546,10 @@ export function initDevInspector() {
 
   function onMove(e: MouseEvent) {
     if (!active) return;
-    if (locked && lockedEl) { moveHighlight(lockedEl); return; }
+    if (locked && lockedEl) {
+      moveHighlight(lockedEl);
+      return;
+    }
     const el = elementFromEvent(e);
     if (!el || el === highlight || el === hoverLabel || (panel && panel.contains(el))) return;
     moveHighlight(el);
@@ -494,11 +595,18 @@ export function initDevInspector() {
     if (panel) return;
     panel = document.createElement("div");
     Object.assign(panel.style, {
-      position: "fixed", right: "12px", top: "12px", width: "440px",
-      maxHeight: "calc(100vh - 24px)", overflow: "auto", zIndex: "2147483647",
-      background: "#0B1F3A", color: "#fff",
+      position: "fixed",
+      right: "12px",
+      top: "12px",
+      width: "440px",
+      maxHeight: "calc(100vh - 24px)",
+      overflow: "auto",
+      zIndex: "2147483647",
+      background: "#0B1F3A",
+      color: "#fff",
       font: "12px/1.45 ui-monospace,SFMono-Regular,monospace",
-      padding: "12px 14px", borderRadius: "8px",
+      padding: "12px 14px",
+      borderRadius: "8px",
       boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
       border: "1px solid rgba(200,169,106,0.4)",
     } as CSSStyleDeclaration);
@@ -510,19 +618,28 @@ export function initDevInspector() {
     const filteredRules = applyFilters(entry.matchedRules);
     const files = Array.from(new Set(entry.matchedRules.map((r) => r.origin)));
     const stylesRows = Object.entries(entry.styles)
-      .map(([k, v]) => `<tr><td style="opacity:.6;padding-right:8px">${k}</td><td>${escapeHtml(v)}</td></tr>`)
+      .map(
+        ([k, v]) =>
+          `<tr><td style="opacity:.6;padding-right:8px">${k}</td><td>${escapeHtml(v)}</td></tr>`,
+      )
       .join("");
     const conflictsBlock = entry.conflicts.length
-      ? entry.conflicts.map((c) => `
+      ? entry.conflicts
+          .map(
+            (c) => `
         <div style="margin-top:6px;padding:6px 8px;background:rgba(239,68,68,0.10);border-left:2px solid #ef4444;border-radius:0 4px 4px 0">
           <div style="font-size:11px;color:#fca5a5"><strong>${escapeHtml(c.prop)}</strong> · ${c.losers.length + 1} regras conflitantes</div>
           <div style="margin-top:4px;font-size:11px"><span style="color:#86efac">✓ winner</span> <code style="color:#C8A96A">${escapeHtml(c.winner.selector)}</code> → ${escapeHtml(c.winner.declarations[c.prop])} <span style="opacity:.6">(${escapeHtml(c.winner.origin)})</span></div>
           ${c.losers.map((l) => `<div style="font-size:11px;opacity:.75"><span style="color:#fca5a5">✗ loser</span> <code>${escapeHtml(l.selector)}</code> → ${escapeHtml(l.declarations[c.prop])} <span style="opacity:.6">(${escapeHtml(l.origin)})</span></div>`).join("")}
-        </div>`).join("")
+        </div>`,
+          )
+          .join("")
       : '<div style="opacity:.5;font-size:11px">Nenhum conflito detectado nas propriedades comuns.</div>';
 
     const cascadeRows = filteredRules.length
-      ? filteredRules.map((r, i) => `
+      ? filteredRules
+          .map(
+            (r, i) => `
           <div style="margin-top:6px;padding:6px 8px;border-left:2px solid #C8A96A;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0">
             <div style="display:flex;justify-content:space-between;gap:8px;font-size:10px;opacity:.7">
               <span>#${i + 1} · spec ${r.specificity.join(",")} · ${r.originKind} · ${r.selectorKind}</span>
@@ -530,7 +647,9 @@ export function initDevInspector() {
             </div>
             <div style="color:#C8A96A;word-break:break-all">${escapeHtml(r.selector)}</div>
             <div style="opacity:.85;word-break:break-all;font-size:11px">${escapeHtml(r.cssText)}</div>
-          </div>`).join("")
+          </div>`,
+          )
+          .join("")
       : '<div style="opacity:.5;font-size:11px">Nenhuma regra com os filtros atuais.</div>';
 
     const vp = entry.viewport;
@@ -575,12 +694,20 @@ export function initDevInspector() {
       </div>
 
       <div style="margin-top:10px"><div style="opacity:.5;font-size:10px;text-transform:uppercase;letter-spacing:.1em">CSS Variables (var(--…))</div>
-        ${entry.cssVars.length ? entry.cssVars.map((v) => `
+        ${
+          entry.cssVars.length
+            ? entry.cssVars
+                .map(
+                  (v) => `
           <div style="margin-top:4px;padding:5px 7px;background:rgba(255,255,255,0.04);border-left:2px solid #3b82f6;border-radius:0 4px 4px 0;font-size:11px">
             <div><code style="color:#93c5fd">${escapeHtml(v.name)}</code> → <span style="color:#C8A96A">${escapeHtml(v.resolved || "(vazio)")}</span></div>
             <div style="opacity:.65;font-size:10px">usada em: ${v.usedIn.map(escapeHtml).join(", ")}</div>
             <div style="opacity:.65;font-size:10px">origem: <code>${escapeHtml(v.fromSelector || "?")}</code> @ ${escapeHtml(v.fromOrigin || "?")} (${escapeHtml(v.fromElement || "?")})</div>
-          </div>`).join("") : '<div style="opacity:.5;font-size:11px">Nenhuma var(--…) usada pelas regras vencedoras.</div>'}
+          </div>`,
+                )
+                .join("")
+            : '<div style="opacity:.5;font-size:11px">Nenhuma var(--…) usada pelas regras vencedoras.</div>'
+        }
       </div>
 
       ${renderWinnersBlock(entry)}
@@ -588,15 +715,14 @@ export function initDevInspector() {
       <div style="margin-top:10px">
         <div style="opacity:.5;font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Cascata CSS · filtros</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
-          <label style="font-size:10px;opacity:.7">origem ${sel(filters.origin, ["all","inline","style-tag","stylesheet","shadow"], "origin")}</label>
-          <label style="font-size:10px;opacity:.7">tipo ${sel(filters.selectorKind, ["all","id","class","tag","mixed"], "selectorKind")}</label>
+          <label style="font-size:10px;opacity:.7">origem ${sel(filters.origin, ["all", "inline", "style-tag", "stylesheet", "shadow"], "origin")}</label>
+          <label style="font-size:10px;opacity:.7">tipo ${sel(filters.selectorKind, ["all", "id", "class", "tag", "mixed"], "selectorKind")}</label>
           <label style="font-size:10px;opacity:.7">arquivo ${sel(filters.file, ["all", ...files], "file")}</label>
         </div>
         ${cascadeRows}
       </div>
       <div style="margin-top:10px;opacity:.5;font-size:10px">logs: ${logs.length} · sessão salva em localStorage</div>
     `;
-
 
     panel!.querySelectorAll("[data-filter]").forEach((s) => {
       s.addEventListener("change", (e) => {
@@ -621,18 +747,36 @@ export function initDevInspector() {
         const pos = qInput.selectionStart ?? winnersQuery.length;
         renderPanel(entry, el);
         const re = panel!.querySelector("[data-winners-q]") as HTMLInputElement | null;
-        if (re) { re.focus(); try { re.setSelectionRange(pos, pos); } catch { /* noop */ } }
+        if (re) {
+          re.focus();
+          try {
+            re.setSelectionRange(pos, pos);
+          } catch {
+            /* noop */
+          }
+        }
       });
     }
 
-    panel!.querySelector('[data-act="close"]')?.addEventListener("click", () => { panel?.remove(); panel = null; });
+    panel!.querySelector('[data-act="close"]')?.addEventListener("click", () => {
+      panel?.remove();
+      panel = null;
+    });
     panel!.querySelector('[data-act="copy"]')?.addEventListener("click", () => copyEntry(entry));
-    panel!.querySelector('[data-act="package"]')?.addEventListener("click", () => copyPackage(entry));
+    panel!
+      .querySelector('[data-act="package"]')
+      ?.addEventListener("click", () => copyPackage(entry));
     panel!.querySelector('[data-act="export"]')?.addEventListener("click", exportNDJSON);
     panel!.querySelector('[data-act="html"]')?.addEventListener("click", () => downloadHTML(entry));
-    panel!.querySelector('[data-act="winners"]')?.addEventListener("click", () => downloadWinners(entry));
-    panel!.querySelector('[data-act="cascade"]')?.addEventListener("click", () => downloadCascade(entry));
-    panel!.querySelector('[data-act="compare"]')?.addEventListener("click", () => toggleCompareMode());
+    panel!
+      .querySelector('[data-act="winners"]')
+      ?.addEventListener("click", () => downloadWinners(entry));
+    panel!
+      .querySelector('[data-act="cascade"]')
+      ?.addEventListener("click", () => downloadCascade(entry));
+    panel!
+      .querySelector('[data-act="compare"]')
+      ?.addEventListener("click", () => toggleCompareMode());
     panel!.querySelector('[data-act="lock"]')?.addEventListener("click", () => {
       locked = !locked;
       lockedEntry = locked ? entry : null;
@@ -642,8 +786,14 @@ export function initDevInspector() {
       moveHighlight(el);
     });
     panel!.querySelector('[data-act="clear"]')?.addEventListener("click", () => {
-      logs.length = 0; locked = false; lockedEntry = null; lockedEl = null;
-      persist(); panel?.remove(); panel = null; hideHover();
+      logs.length = 0;
+      locked = false;
+      lockedEntry = null;
+      lockedEl = null;
+      persist();
+      panel?.remove();
+      panel = null;
+      hideHover();
     });
   }
 
@@ -657,17 +807,25 @@ export function initDevInspector() {
         </div>
         <div style="font-size:11px;opacity:.7">Clique em ${compareA ? "outro" : "um"} elemento para definir <strong>${compareA ? "B" : "A"}</strong>.${compareA ? `<br/>A: ${escapeHtml(compareA.entry.selector)}` : ""}</div>
       `;
-      panel!.querySelector('[data-act="cancel-cmp"]')?.addEventListener("click", () => exitCompareMode());
+      panel!
+        .querySelector('[data-act="cancel-cmp"]')
+        ?.addEventListener("click", () => exitCompareMode());
       return;
     }
-    const a = compareA.entry, b = compareB.entry;
+    const a = compareA.entry,
+      b = compareB.entry;
     const winners = (e: LogEntry) => {
       const seen = new Set<string>();
-      return e.matchedRules.filter((r) => {
-        const k = Object.keys(r.declarations).find((p) => !seen.has(p));
-        if (k) { Object.keys(r.declarations).forEach((p) => seen.add(p)); return true; }
-        return false;
-      }).slice(0, 10);
+      return e.matchedRules
+        .filter((r) => {
+          const k = Object.keys(r.declarations).find((p) => !seen.has(p));
+          if (k) {
+            Object.keys(r.declarations).forEach((p) => seen.add(p));
+            return true;
+          }
+          return false;
+        })
+        .slice(0, 10);
     };
     const renderSide = (e: LogEntry, label: string) => `
       <div style="flex:1;min-width:0">
@@ -675,20 +833,38 @@ export function initDevInspector() {
         <div style="font-size:11px;word-break:break-all">${escapeHtml(e.selector)}</div>
         <div style="opacity:.6;font-size:10px;margin-top:2px">${e.size.w}×${e.size.h}px${e.inShadow ? " · shadow" : ""}</div>
         <div style="margin-top:6px">
-          ${winners(e).map((r) => `
+          ${winners(e)
+            .map(
+              (r) => `
             <div style="margin-top:4px;padding:4px 6px;border-left:2px solid #C8A96A;background:rgba(255,255,255,0.04);font-size:11px">
               <div style="color:#C8A96A;word-break:break-all">${escapeHtml(r.selector)}</div>
               <div style="opacity:.8;word-break:break-all">${escapeHtml(r.cssText)}</div>
               <div style="opacity:.5;font-size:10px">${escapeHtml(r.origin)} · spec ${r.specificity.join(",")}</div>
-            </div>`).join("")}
+            </div>`,
+            )
+            .join("")}
         </div>
       </div>`;
-    const diffRows = ["font-family","font-size","font-weight","line-height","letter-spacing","color","padding","margin","text-transform"].map((k) => {
-      const va = a.styles[k] ?? "—", vb = b.styles[k] ?? "—";
-      const diff = va !== vb;
-      return `<tr style="${diff ? "background:rgba(239,68,68,0.10)" : ""}"><td style="opacity:.6;padding:2px 6px">${k}</td><td style="padding:2px 6px">${escapeHtml(va)}</td><td style="padding:2px 6px">${escapeHtml(vb)}</td></tr>`;
-    }).join("");
-    const dW = b.size.w - a.size.w, dH = b.size.h - a.size.h;
+    const diffRows = [
+      "font-family",
+      "font-size",
+      "font-weight",
+      "line-height",
+      "letter-spacing",
+      "color",
+      "padding",
+      "margin",
+      "text-transform",
+    ]
+      .map((k) => {
+        const va = a.styles[k] ?? "—",
+          vb = b.styles[k] ?? "—";
+        const diff = va !== vb;
+        return `<tr style="${diff ? "background:rgba(239,68,68,0.10)" : ""}"><td style="opacity:.6;padding:2px 6px">${k}</td><td style="padding:2px 6px">${escapeHtml(va)}</td><td style="padding:2px 6px">${escapeHtml(vb)}</td></tr>`;
+      })
+      .join("");
+    const dW = b.size.w - a.size.w,
+      dH = b.size.h - a.size.h;
     panel!.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px">
         <strong style="color:#3b82f6;font-size:11px;letter-spacing:.15em;text-transform:uppercase">Comparar A ⇄ B</strong>
@@ -705,19 +881,29 @@ export function initDevInspector() {
         <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr><th></th><th style="text-align:left;color:#3b82f6">A</th><th style="text-align:left;color:#3b82f6">B</th></tr></thead><tbody>${diffRows}</tbody></table>
       </div>
     `;
-    panel!.querySelector('[data-act="cmp-exit"]')?.addEventListener("click", () => exitCompareMode());
-    panel!.querySelector('[data-act="cmp-reset"]')?.addEventListener("click", () => { compareA = null; compareB = null; renderComparePanel(); });
+    panel!
+      .querySelector('[data-act="cmp-exit"]')
+      ?.addEventListener("click", () => exitCompareMode());
+    panel!.querySelector('[data-act="cmp-reset"]')?.addEventListener("click", () => {
+      compareA = null;
+      compareB = null;
+      renderComparePanel();
+    });
   }
 
   function toggleCompareMode() {
     compareMode = !compareMode;
-    compareA = null; compareB = null;
+    compareA = null;
+    compareB = null;
     if (compareMode) renderComparePanel();
     else if (lockedEntry && lockedEl) renderPanel(lockedEntry, lockedEl);
   }
   function exitCompareMode() {
-    compareMode = false; compareA = null; compareB = null;
-    panel?.remove(); panel = null;
+    compareMode = false;
+    compareA = null;
+    compareB = null;
+    panel?.remove();
+    panel = null;
   }
 
   function btn(primary = false) {
@@ -742,32 +928,54 @@ export function initDevInspector() {
       { k: "color", label: "Cor" },
       { k: "border", label: "Border" },
     ];
-    const chips = cats.map((c) => `<button data-winners-cat="${c.k}" style="${chip(winnersCategory === c.k)}">${c.label}</button>`).join("");
+    const chips = cats
+      .map(
+        (c) =>
+          `<button data-winners-cat="${c.k}" style="${chip(winnersCategory === c.k)}">${c.label}</button>`,
+      )
+      .join("");
 
     let body = "";
     if (winnersCategory === "cssvars") {
-      const vars = entry.cssVars.filter((v) => !q || v.name.toLowerCase().includes(q) || (v.resolved || "").toLowerCase().includes(q));
+      const vars = entry.cssVars.filter(
+        (v) =>
+          !q || v.name.toLowerCase().includes(q) || (v.resolved || "").toLowerCase().includes(q),
+      );
       body = vars.length
-        ? vars.map((v) => `
+        ? vars
+            .map(
+              (v) => `
           <div style="margin-top:4px;padding:5px 7px;background:rgba(255,255,255,0.04);border-left:2px solid #3b82f6;border-radius:0 4px 4px 0;font-size:11px">
             <div><code style="color:#93c5fd">${escapeHtml(v.name)}</code> → <span style="color:#C8A96A">${escapeHtml(v.resolved || "(vazio)")}</span></div>
             <div style="opacity:.65;font-size:10px">origem: <code>${escapeHtml(v.fromSelector || "?")}</code> @ ${escapeHtml(v.fromOrigin || "?")}</div>
-          </div>`).join("")
+          </div>`,
+            )
+            .join("")
         : '<div style="opacity:.5;font-size:11px;margin-top:6px">Nenhuma var(--…) corresponde.</div>';
     } else {
       const list = winners.filter((w) => {
         if (winnersCategory !== "all" && w.cat !== winnersCategory) return false;
-        if (q && !w.prop.toLowerCase().includes(q) && !w.value.toLowerCase().includes(q) && !w.selector.toLowerCase().includes(q)) return false;
+        if (
+          q &&
+          !w.prop.toLowerCase().includes(q) &&
+          !w.value.toLowerCase().includes(q) &&
+          !w.selector.toLowerCase().includes(q)
+        )
+          return false;
         return true;
       });
       body = list.length
         ? `<table style="width:100%;margin-top:4px;border-collapse:collapse;font-size:11px">
-            ${list.map((w) => `
+            ${list
+              .map(
+                (w) => `
               <tr style="border-top:1px solid rgba(255,255,255,0.06)">
                 <td style="padding:3px 4px;color:#93c5fd;white-space:nowrap"><code>${escapeHtml(w.prop)}</code></td>
                 <td style="padding:3px 4px;color:#C8A96A;word-break:break-all">${escapeHtml(w.value)}</td>
                 <td style="padding:3px 4px;opacity:.7;word-break:break-all"><code>${escapeHtml(w.selector)}</code></td>
-              </tr>`).join("")}
+              </tr>`,
+              )
+              .join("")}
           </table>`
         : '<div style="opacity:.5;font-size:11px;margin-top:6px">Nenhuma regra vencedora corresponde.</div>';
     }
@@ -783,24 +991,32 @@ export function initDevInspector() {
       </div>`;
   }
 
-
   function escapeHtml(s: string) {
-    return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+    return s.replace(
+      /[&<>"']/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+    );
   }
 
   async function copyToClipboard(text: string, okMsg = "Copiado ✓") {
-    try { await navigator.clipboard.writeText(text); flashPanel(okMsg); }
-    catch { flashPanel("Falha ao copiar"); }
+    try {
+      await navigator.clipboard.writeText(text);
+      flashPanel(okMsg);
+    } catch {
+      flashPanel("Falha ao copiar");
+    }
   }
 
   async function copyEntry(entry: LogEntry) {
-    await copyToClipboard([
-      `Component: ${entry.component ?? "(unknown)"}`,
-      `Source:    ${entry.source ?? "(unavailable)"}`,
-      `Route:     ${entry.route}`,
-      `Selector:  ${entry.selector}`,
-      `DOM path:  ${entry.domPath}`,
-    ].join("\n"));
+    await copyToClipboard(
+      [
+        `Component: ${entry.component ?? "(unknown)"}`,
+        `Source:    ${entry.source ?? "(unavailable)"}`,
+        `Route:     ${entry.route}`,
+        `Selector:  ${entry.selector}`,
+        `DOM path:  ${entry.domPath}`,
+      ].join("\n"),
+    );
   }
 
   /** "Pacote" = bloco markdown pronto para ticket/issue. */
@@ -819,15 +1035,23 @@ export function initDevInspector() {
       "",
     ].join("\n");
   }
-  async function copyPackage(entry: LogEntry) { await copyToClipboard(buildPackage(entry), "Pacote copiado ✓"); }
+  async function copyPackage(entry: LogEntry) {
+    await copyToClipboard(buildPackage(entry), "Pacote copiado ✓");
+  }
 
   function flashPanel(msg: string) {
     if (!panel) return;
     const tip = document.createElement("div");
     Object.assign(tip.style, {
-      position: "absolute", top: "8px", right: "12px",
-      background: "#C8A96A", color: "#0B1F3A",
-      padding: "2px 8px", borderRadius: "4px", fontSize: "10px", fontWeight: "700",
+      position: "absolute",
+      top: "8px",
+      right: "12px",
+      background: "#C8A96A",
+      color: "#0B1F3A",
+      padding: "2px 8px",
+      borderRadius: "4px",
+      fontSize: "10px",
+      fontWeight: "700",
     } as CSSStyleDeclaration);
     tip.textContent = msg;
     panel.appendChild(tip);
@@ -835,8 +1059,14 @@ export function initDevInspector() {
   }
 
   function exportNDJSON() {
-    if (!logs.length) { flashPanel("Sem logs"); return; }
-    const blob = new Blob(logs.map((l) => JSON.stringify(l) + "\n"), { type: "application/x-ndjson" });
+    if (!logs.length) {
+      flashPanel("Sem logs");
+      return;
+    }
+    const blob = new Blob(
+      logs.map((l) => JSON.stringify(l) + "\n"),
+      { type: "application/x-ndjson" },
+    );
     triggerDownload(blob, `inspector-${stamp()}.ndjson`);
   }
 
@@ -859,41 +1089,105 @@ ${entry.outerHTML}
   /** Resumo das regras vencedoras para tipografia, cor, peso e bordas — inclui var() resolvidas e source. */
   function downloadWinners(entry: LogEntry) {
     const target = [
-      "font-size","line-height","font-family","font-weight","color",
-      "padding","padding-top","padding-right","padding-bottom","padding-left",
-      "border","border-width","border-style","border-color",
-      "border-top","border-top-width","border-top-style","border-top-color",
-      "border-right","border-right-width","border-right-style","border-right-color",
-      "border-bottom","border-bottom-width","border-bottom-style","border-bottom-color",
-      "border-left","border-left-width","border-left-style","border-left-color",
+      "font-size",
+      "line-height",
+      "font-family",
+      "font-weight",
+      "color",
+      "padding",
+      "padding-top",
+      "padding-right",
+      "padding-bottom",
+      "padding-left",
+      "border",
+      "border-width",
+      "border-style",
+      "border-color",
+      "border-top",
+      "border-top-width",
+      "border-top-style",
+      "border-top-color",
+      "border-right",
+      "border-right-width",
+      "border-right-style",
+      "border-right-color",
+      "border-bottom",
+      "border-bottom-width",
+      "border-bottom-style",
+      "border-bottom-color",
+      "border-left",
+      "border-left-width",
+      "border-left-style",
+      "border-left-color",
     ];
-    const winners: Array<{ prop: string; value: string; selector: string; origin: string; source: string | null; cssText: string }> = [];
+    const winners: Array<{
+      prop: string;
+      value: string;
+      selector: string;
+      origin: string;
+      source: string | null;
+      cssText: string;
+    }> = [];
     for (const prop of target) {
       const r = entry.matchedRules.find((m) => prop in m.declarations);
-      if (r) winners.push({ prop, value: r.declarations[prop], selector: r.selector, origin: r.origin, source: entry.source, cssText: r.cssText });
+      if (r)
+        winners.push({
+          prop,
+          value: r.declarations[prop],
+          selector: r.selector,
+          origin: r.origin,
+          source: entry.source,
+          cssText: r.cssText,
+        });
     }
     const payload = {
-      ts: entry.ts, route: entry.route, selector: entry.selector, domPath: entry.domPath,
-      source: entry.source, component: entry.component, computed: entry.styles,
-      cssVars: entry.cssVars, winners,
+      ts: entry.ts,
+      route: entry.route,
+      selector: entry.selector,
+      domPath: entry.domPath,
+      source: entry.source,
+      component: entry.component,
+      computed: entry.styles,
+      cssVars: entry.cssVars,
+      winners,
     };
-    triggerDownload(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), `inspector-winners-${stamp()}.json`);
+    triggerDownload(
+      new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }),
+      `inspector-winners-${stamp()}.json`,
+    );
   }
 
   /** Exporta a cascata CSS completa (matchedRules na ordem de especificidade). */
   function downloadCascade(entry: LogEntry) {
-    const meta = { ts: entry.ts, route: entry.route, selector: entry.selector, domPath: entry.domPath, source: entry.source, component: entry.component, inShadow: entry.inShadow };
+    const meta = {
+      ts: entry.ts,
+      route: entry.route,
+      selector: entry.selector,
+      domPath: entry.domPath,
+      source: entry.source,
+      component: entry.component,
+      inShadow: entry.inShadow,
+    };
     const lines = [JSON.stringify({ kind: "meta", ...meta })];
-    entry.matchedRules.forEach((r, i) => lines.push(JSON.stringify({ kind: "rule", order: i + 1, ...r })));
-    triggerDownload(new Blob([lines.join("\n") + "\n"], { type: "application/x-ndjson" }), `inspector-cascade-${stamp()}.ndjson`);
+    entry.matchedRules.forEach((r, i) =>
+      lines.push(JSON.stringify({ kind: "rule", order: i + 1, ...r })),
+    );
+    triggerDownload(
+      new Blob([lines.join("\n") + "\n"], { type: "application/x-ndjson" }),
+      `inspector-cascade-${stamp()}.ndjson`,
+    );
   }
 
-  function stamp() { return new Date().toISOString().replace(/[:.]/g, "-"); }
+  function stamp() {
+    return new Date().toISOString().replace(/[:.]/g, "-");
+  }
 
   function triggerDownload(blob: Blob, name: string) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = name; a.click();
+    a.href = url;
+    a.download = name;
+    a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
@@ -909,7 +1203,10 @@ ${entry.outerHTML}
       const entry = buildEntry(el);
       if (!compareA) compareA = { entry, el };
       else if (!compareB) compareB = { entry, el };
-      else { compareA = { entry, el }; compareB = null; }
+      else {
+        compareA = { entry, el };
+        compareB = null;
+      }
       moveHighlight(el);
       renderComparePanel();
       return;
@@ -932,9 +1229,16 @@ ${entry.outerHTML}
   function renderDock() {
     const dock = document.createElement("div");
     Object.assign(dock.style, {
-      position: "fixed", bottom: "12px", right: "12px", zIndex: "2147483647",
-      display: "flex", gap: "6px", padding: "6px", background: "#0B1F3A",
-      borderRadius: "999px", boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
+      position: "fixed",
+      bottom: "12px",
+      right: "12px",
+      zIndex: "2147483647",
+      display: "flex",
+      gap: "6px",
+      padding: "6px",
+      background: "#0B1F3A",
+      borderRadius: "999px",
+      boxShadow: "0 6px 20px rgba(0,0,0,0.35)",
       border: "1px solid rgba(200,169,106,0.4)",
     } as CSSStyleDeclaration);
     dockToggleBtn = document.createElement("button");
@@ -951,8 +1255,17 @@ ${entry.outerHTML}
     if (locked && lockedEntry) {
       try {
         const el = document.querySelector(lockedEntry.selector);
-        if (el) { lockedEl = el; moveHighlight(el); renderPanel(lockedEntry, el); active = true; document.body.style.cursor = "crosshair"; updateDockState(); }
-      } catch { /* ignore */ }
+        if (el) {
+          lockedEl = el;
+          moveHighlight(el);
+          renderPanel(lockedEntry, el);
+          active = true;
+          document.body.style.cursor = "crosshair";
+          updateDockState();
+        }
+      } catch {
+        /* ignore */
+      }
     }
   }
 
@@ -966,7 +1279,14 @@ ${entry.outerHTML}
     active = !active;
     document.body.style.cursor = active ? "crosshair" : "";
     updateDockState();
-    if (!active) { hideHover(); panel?.remove(); panel = null; compareMode = false; compareA = null; compareB = null; }
+    if (!active) {
+      hideHover();
+      panel?.remove();
+      panel = null;
+      compareMode = false;
+      compareA = null;
+      compareB = null;
+    }
     // eslint-disable-next-line no-console
     console.log(`%c[Inspector] ${active ? "ATIVO" : "off"}`, "color:#C8A96A");
   }
@@ -975,14 +1295,24 @@ ${entry.outerHTML}
     const el = t as HTMLElement | null;
     if (!el) return false;
     const tag = el.tagName;
-    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (el as HTMLElement).isContentEditable;
+    return (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      (el as HTMLElement).isContentEditable
+    );
   }
 
   window.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i")) {
-      e.preventDefault(); toggle(); return;
+      e.preventDefault();
+      toggle();
+      return;
     }
-    if (e.key === "Escape" && active) { toggle(); return; }
+    if (e.key === "Escape" && active) {
+      toggle();
+      return;
+    }
     if (!active) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (isTypingTarget(e.target)) return;
@@ -991,9 +1321,19 @@ ${entry.outerHTML}
     if (k === "l" || k === "f") {
       // L (legado) ou F = alternar Fixar usando última seleção
       e.preventDefault();
-      if (locked) { locked = false; lockedEntry = null; lockedEl = null; }
-      else if (lastEntry) { locked = true; lockedEntry = lastEntry; /* lockedEl: tenta resolver */
-        try { lockedEl = document.querySelector(lastEntry.selector); } catch { lockedEl = null; } }
+      if (locked) {
+        locked = false;
+        lockedEntry = null;
+        lockedEl = null;
+      } else if (lastEntry) {
+        locked = true;
+        lockedEntry = lastEntry; /* lockedEl: tenta resolver */
+        try {
+          lockedEl = document.querySelector(lastEntry.selector);
+        } catch {
+          lockedEl = null;
+        }
+      }
       persist();
       if (lockedEntry && lockedEl) renderPanel(lockedEntry, lockedEl);
     } else if (k === "c") {
@@ -1015,11 +1355,21 @@ ${entry.outerHTML}
   }
 
   (window as any).__cathedraInspector = {
-    toggle, logs, exportNDJSON, filters,
-    get locked() { return locked; },
-    get compareMode() { return compareMode; },
+    toggle,
+    logs,
+    exportNDJSON,
+    filters,
+    get locked() {
+      return locked;
+    },
+    get compareMode() {
+      return compareMode;
+    },
     buildPackage,
   };
   // eslint-disable-next-line no-console
-  console.log("%c[Inspector] pronto — Ctrl/Cmd+Shift+I alterna · F fixar · C comparar · P pacote · Esc sai", "color:#C8A96A");
+  console.log(
+    "%c[Inspector] pronto — Ctrl/Cmd+Shift+I alterna · F fixar · C comparar · P pacote · Esc sai",
+    "color:#C8A96A",
+  );
 }

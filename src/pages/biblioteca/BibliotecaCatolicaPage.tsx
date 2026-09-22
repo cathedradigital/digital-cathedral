@@ -6,29 +6,17 @@
  * num único átrio, cada um filtrando o acervo unificado.
  */
 
-import React, { useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { EditorialHero, EditorialCard } from '@/components/editorial';
-import { Button } from '@/components/ui/button';
-import { Icons } from '../../constants';
-import {
-  countLibraryByKind,
-  fetchLibraryFeatured,
-} from '@/services/libraryService';
-import type { LibraryItem, LibraryKind } from '@/types/library';
-import {
-  LIBRARY_KIND_LABELS,
-  LIBRARY_KIND_DESCRIPTIONS,
-} from '@/types/library';
+import React, { useEffect, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { EditorialHero, EditorialCard } from "@/components/editorial";
+import { Button } from "@/components/ui/button";
+import { Icons } from "../../constants";
+import { countLibraryByKind, fetchLibraryFeatured } from "@/services/libraryService";
+import type { LibraryItem, LibraryKind } from "@/types/library";
+import { LIBRARY_KIND_LABELS, LIBRARY_KIND_DESCRIPTIONS } from "@/types/library";
 
-const KIND_ORDER: LibraryKind[] = [
-  'saint_work',
-  'patristic',
-  'doctor',
-  'classic',
-  'magisterium',
-];
+const KIND_ORDER: LibraryKind[] = ["saint_work", "patristic", "doctor", "classic", "magisterium"];
 
 const KIND_ICONS: Record<LibraryKind, React.ComponentType<{ className?: string }>> = {
   saint_work: Icons.BookOpen,
@@ -51,7 +39,7 @@ const BibliotecaCatolicaPage: React.FC = () => {
         setCounts(c);
         setFeatured(f);
       })
-      .catch((e) => console.error('[BibliotecaCatolica] load', e))
+      .catch((e) => console.error("[BibliotecaCatolica] load", e))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
@@ -85,7 +73,7 @@ const BibliotecaCatolicaPage: React.FC = () => {
           <p className="text-premium-md text-muted-foreground max-w-2xl leading-relaxed">
             {totalAll > 0
               ? `${totalAll} obras publicadas, todas com ficha editorial, referências e fecho contemplativo.`
-              : 'Acervo em contínua ampliação, com curadoria editorial e Nexus Theologicus.'}
+              : "Acervo em contínua ampliação, com curadoria editorial e Nexus Theologicus."}
           </p>
           <div className="flex flex-wrap justify-center gap-spacing-sm pt-spacing-xs">
             <Button asChild size="lg">
@@ -126,7 +114,7 @@ const BibliotecaCatolicaPage: React.FC = () => {
                     kicker={
                       <span className="inline-flex items-center gap-1">
                         <Icon className="w-3.5 h-3.5" aria-hidden />
-                        {count} {count === 1 ? 'obra' : 'obras'}
+                        {count} {count === 1 ? "obra" : "obras"}
                       </span>
                     }
                     title={LIBRARY_KIND_LABELS[kind]}
@@ -165,7 +153,7 @@ const BibliotecaCatolicaPage: React.FC = () => {
                   className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
                 >
                   <EditorialCard
-                    kicker={`${LIBRARY_KIND_LABELS[item.library_kind]}${item.year ? ` · c. ${item.year}` : ''}`}
+                    kicker={`${LIBRARY_KIND_LABELS[item.library_kind]}${item.year ? ` · c. ${item.year}` : ""}`}
                     title={item.title}
                     meta={item.author_label}
                     description={item.synopsis ?? undefined}

@@ -10,7 +10,7 @@
  * - `test` → `throw` · dev pipeline agressivo (fail-fast em CI de unidade).
  */
 
-export type SanitizeSeverity = 'warn' | 'strict' | 'throw';
+export type SanitizeSeverity = "warn" | "strict" | "throw";
 
 /**
  * Versão da política de sanitização. Bump obrigatório sempre que:
@@ -19,12 +19,12 @@ export type SanitizeSeverity = 'warn' | 'strict' | 'throw';
  *  - novos flags forem adicionados/removidos de `SanitizePolicy`.
  * Registrada no JSON-LD preview e nos exports para auditoria/reprodutibilidade.
  */
-export const SANITIZE_POLICY_VERSION = '1.1.0';
+export const SANITIZE_POLICY_VERSION = "1.1.0";
 
 export interface SanitizePolicy {
   /** Versão da política aplicada (semver). */
   version: string;
-  env: 'dev' | 'prod' | 'test';
+  env: "dev" | "prod" | "test";
   severity: SanitizeSeverity;
   /** Loga descartes/normalizações no console. */
   verboseLogs: boolean;
@@ -34,20 +34,20 @@ export interface SanitizePolicy {
   emitMetrics: boolean;
 }
 
-function detectEnv(): 'dev' | 'prod' | 'test' {
+function detectEnv(): "dev" | "prod" | "test" {
   // Vitest
-  if (typeof process !== 'undefined' && process.env?.VITEST) return 'test';
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'test') return 'test';
+  if (typeof process !== "undefined" && process.env?.VITEST) return "test";
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "test") return "test";
   // Vite
   try {
-    const meta: any = (import.meta as any);
-    if (meta?.env?.DEV) return 'dev';
-    if (meta?.env?.PROD) return 'prod';
+    const meta: any = import.meta as any;
+    if (meta?.env?.DEV) return "dev";
+    if (meta?.env?.PROD) return "prod";
   } catch {
     // fallthrough
   }
-  if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') return 'prod';
-  return 'dev';
+  if (typeof process !== "undefined" && process.env?.NODE_ENV === "production") return "prod";
+  return "dev";
 }
 
 let cached: SanitizePolicy | null = null;
@@ -57,20 +57,20 @@ export function getSanitizePolicy(): SanitizePolicy {
   const env = detectEnv();
   const base = { version: SANITIZE_POLICY_VERSION } as const;
   cached =
-    env === 'prod'
+    env === "prod"
       ? {
           ...base,
           env,
-          severity: 'strict',
+          severity: "strict",
           verboseLogs: false,
           exposeDevPanels: false,
           emitMetrics: true,
         }
-      : env === 'test'
+      : env === "test"
         ? {
             ...base,
             env,
-            severity: 'throw',
+            severity: "throw",
             verboseLogs: false,
             exposeDevPanels: false,
             emitMetrics: false,
@@ -78,7 +78,7 @@ export function getSanitizePolicy(): SanitizePolicy {
         : {
             ...base,
             env,
-            severity: 'warn',
+            severity: "warn",
             verboseLogs: true,
             exposeDevPanels: true,
             emitMetrics: true,
@@ -107,10 +107,10 @@ export function reportSanitizationIssue(
 ) {
   const policy = getSanitizePolicy();
   const payload = { scope, message, ...extra };
-  if (policy.severity === 'throw') {
+  if (policy.severity === "throw") {
     throw new Error(`[${scope}] ${message} :: ${JSON.stringify(extra ?? {})}`);
   }
-  if (policy.severity === 'warn') {
+  if (policy.severity === "warn") {
     console.warn(`[${scope}]`, message, payload);
     return;
   }

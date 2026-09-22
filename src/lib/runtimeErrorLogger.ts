@@ -64,9 +64,7 @@ function detectTheme(): "light" | "dark" | "unknown" {
   if (root.classList.contains("light")) return "light";
   // fallback: media query
   try {
-    return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches
-      ? "dark"
-      : "light";
+    return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
   } catch {
     return "unknown";
   }
@@ -90,7 +88,12 @@ function currentRoute(): string {
   return window.location.pathname + window.location.search + window.location.hash;
 }
 
-function record(entry: Omit<RuntimeErrorRecord, "id" | "timestamp" | "route" | "userAgent" | "theme" | "viewport" | "focused">) {
+function record(
+  entry: Omit<
+    RuntimeErrorRecord,
+    "id" | "timestamp" | "route" | "userAgent" | "theme" | "viewport" | "focused"
+  >,
+) {
   const full: RuntimeErrorRecord = {
     id: `rt_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
     timestamp: new Date().toISOString(),
@@ -139,10 +142,7 @@ function record(entry: Omit<RuntimeErrorRecord, "id" | "timestamp" | "route" | "
 
   // Console para debug local — nunca mascarar
   // eslint-disable-next-line no-console
-  console.error(
-    `[runtime-error] ${full.type} @ ${full.route}\n${full.message}`,
-    full.stack ?? "",
-  );
+  console.error(`[runtime-error] ${full.type} @ ${full.route}\n${full.message}`, full.stack ?? "");
 
   return full;
 }
@@ -167,9 +167,7 @@ export function initRuntimeErrorLogger() {
   window.addEventListener("unhandledrejection", (ev: PromiseRejectionEvent) => {
     const reason: any = ev.reason;
     const message =
-      typeof reason === "string"
-        ? reason
-        : reason?.message ?? "Unhandled promise rejection";
+      typeof reason === "string" ? reason : (reason?.message ?? "Unhandled promise rejection");
     record({
       type: "unhandledrejection",
       message,

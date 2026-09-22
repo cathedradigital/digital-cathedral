@@ -1,39 +1,37 @@
-import React, { useState } from 'react';
-import { HomeButton } from '@/components/cathedra/HomeButton';
-import { trackEvent } from '@/lib/analytics';
-import { useToast } from '@/hooks/use-toast';
-import { Icons } from '@/constants';
-import { supabase } from '@/lib/db';
+import React, { useState } from "react";
+import { HomeButton } from "@/components/cathedra/HomeButton";
+import { trackEvent } from "@/lib/analytics";
+import { useToast } from "@/hooks/use-toast";
+import { Icons } from "@/constants";
+import { supabase } from "@/lib/db";
 
 const LeadCaptureForm = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) {
+    if (!email || !email.includes("@")) {
       toast({
         title: "Erro na validação",
         description: "Por favor, insira um e-mail válido.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     setLoading(true);
-    trackEvent('conversion', { type: 'lead_capture_attempt' });
+    trackEvent("conversion", { type: "lead_capture_attempt" });
 
     try {
-      const { error } = await supabase
-        .from('landing_leads' as any)
-        .insert([{ email } as any]);
+      const { error } = await supabase.from("landing_leads" as any).insert([{ email } as any]);
 
       if (error) throw error;
-      
+
       setSubmitted(true);
-      trackEvent('conversion', { type: 'lead_capture_success' });
+      trackEvent("conversion", { type: "lead_capture_success" });
       toast({
         title: "Sucesso!",
         description: "Recebemos seu e-mail. Você receberá conteúdos exclusivos em breve.",
@@ -42,7 +40,7 @@ const LeadCaptureForm = () => {
       toast({
         title: "Erro inesperado",
         description: "Não foi possível processar sua solicitação no momento.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -56,7 +54,9 @@ const LeadCaptureForm = () => {
           <Icons.Check className="w-spacing-lg h-spacing-lg" />
         </div>
         <h3 className="text-premium-xl font-bold font-display">Bem-vindo à Irmandade!</h3>
-        <p className="text-muted-foreground font-serif">Seu e-mail foi cadastrado. Fique atento à sua caixa de entrada.</p>
+        <p className="text-muted-foreground font-serif">
+          Seu e-mail foi cadastrado. Fique atento à sua caixa de entrada.
+        </p>
       </div>
     );
   }
@@ -87,7 +87,7 @@ const LeadCaptureForm = () => {
           disabled={loading}
           className="h-spacing-3xl px-spacing-2xl flex-shrink-0"
         >
-          {loading ? 'Processando...' : 'Inscrever-me'}
+          {loading ? "Processando..." : "Inscrever-me"}
         </HomeButton>
       </form>
       <p className="text-[10px] text-center text-muted-foreground/60 uppercase tracking-widest font-bold">

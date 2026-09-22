@@ -1,17 +1,17 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion } from 'framer-motion';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Icons } from '../../constants';
-import SacredImage from './SacredImage';
-import PassageActions from '@/components/shared/PassageActions';
-import { Button } from '@/components/ui/button';
-import { CATEGORY_LABELS } from './SaintDetail.categories';
-import { type Saint } from '@/data/saints';
-import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
-import BibleVersePopover from './BibleVersePopover';
-import CatechismPopover from './CatechismPopover';
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Icons } from "../../constants";
+import SacredImage from "./SacredImage";
+import PassageActions from "@/components/shared/PassageActions";
+import { Button } from "@/components/ui/button";
+import { CATEGORY_LABELS } from "./SaintDetail.categories";
+import { type Saint } from "@/data/saints";
+import { parseTheologicalReferences } from "@/lib/theologicalRefParser";
+import BibleVersePopover from "./BibleVersePopover";
+import CatechismPopover from "./CatechismPopover";
 
 interface SantoDoDiaHeroProps {
   saint: Saint;
@@ -19,7 +19,7 @@ interface SantoDoDiaHeroProps {
   onOpen: (reflect?: boolean) => void;
 }
 
-type SectionKey = 'frase' | 'vida' | 'legado' | 'meditacao';
+type SectionKey = "frase" | "vida" | "legado" | "meditacao";
 
 /**
  * Extrai o século (ex.: "Séc. IV", "Séc. XIX–XX") a partir de campos textuais
@@ -29,12 +29,27 @@ type SectionKey = 'frase' | 'vida' | 'legado' | 'meditacao';
 function extractCentury(born?: string, died?: string): string {
   const toRoman = (n: number) => {
     const map: Array<[number, string]> = [
-      [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-      [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-      [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+      [1000, "M"],
+      [900, "CM"],
+      [500, "D"],
+      [400, "CD"],
+      [100, "C"],
+      [90, "XC"],
+      [50, "L"],
+      [40, "XL"],
+      [10, "X"],
+      [9, "IX"],
+      [5, "V"],
+      [4, "IV"],
+      [1, "I"],
     ];
-    let out = '';
-    for (const [v, s] of map) { while (n >= v) { out += s; n -= v; } }
+    let out = "";
+    for (const [v, s] of map) {
+      while (n >= v) {
+        out += s;
+        n -= v;
+      }
+    }
     return out;
   };
   const centuryOf = (year: number) => Math.ceil(Math.abs(year) / 100);
@@ -47,7 +62,7 @@ function extractCentury(born?: string, died?: string): string {
   };
   const b = pickYear(born);
   const d = pickYear(died);
-  if (!b && !d) return '—';
+  if (!b && !d) return "—";
   if (b && d) {
     const cb = centuryOf(b);
     const cd = centuryOf(d);
@@ -58,16 +73,17 @@ function extractCentury(born?: string, died?: string): string {
 }
 
 const FICHA_FALLBACK = {
-  virtude: 'Santidade',
-  padroado: 'Testemunho universal',
-  legado: 'Sua vida permanece como memória viva da Igreja, iluminando gerações que buscam a santidade no cotidiano.',
+  virtude: "Santidade",
+  padroado: "Testemunho universal",
+  legado:
+    "Sua vida permanece como memória viva da Igreja, iluminando gerações que buscam a santidade no cotidiano.",
   meditacao:
-    'Que a intercessão deste servo de Deus nos ensine a converter o ordinário em oferta, e a reconhecer que a santidade é a única grandeza que permanece.',
+    "Que a intercessão deste servo de Deus nos ensine a converter o ordinário em oferta, e a reconhecer que a santidade é a única grandeza que permanece.",
 };
 
 const renderWithRefs = (text: string, keyPrefix: string) =>
   parseTheologicalReferences(text).map((seg, i) => {
-    if (seg.type === 'bibleRef')
+    if (seg.type === "bibleRef")
       return (
         <BibleVersePopover
           key={`${keyPrefix}-${i}`}
@@ -77,34 +93,30 @@ const renderWithRefs = (text: string, keyPrefix: string) =>
           label={seg.value}
         />
       );
-    if (seg.type === 'catechismRef')
+    if (seg.type === "catechismRef")
       return <CatechismPopover key={`${keyPrefix}-${i}`} paragraph={seg.paragraph!} />;
     return <span key={`${keyPrefix}-${i}`}>{seg.value}</span>;
   });
 
 const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) => {
   const navigate = useNavigate();
-  const dateLabel = useMemo(
-    () => format(date, "d 'de' MMMM 'de' yyyy", { locale: ptBR }),
-    [date],
-  );
+  const dateLabel = useMemo(() => format(date, "d 'de' MMMM 'de' yyyy", { locale: ptBR }), [date]);
 
-  const categoria = CATEGORY_LABELS[saint.category] || 'Testemunha da Fé';
+  const categoria = CATEGORY_LABELS[saint.category] || "Testemunha da Fé";
   const virtude = saint.virtues?.[0] || FICHA_FALLBACK.virtude;
   const padroado = saint.patronOf?.[0] || FICHA_FALLBACK.padroado;
   const seculo = extractCentury(saint.born, saint.died);
-  const feast =
-    saint.feastDay || format(date, "d 'de' MMMM", { locale: ptBR });
+  const feast = saint.feastDay || format(date, "d 'de' MMMM", { locale: ptBR });
 
   // Blocos editoriais com fallback: Vida (bio/fullBio), Legado (patronOf/virtues),
   // Meditação (aplicacaoPratica) e Frase (quotes[0]).
   const vida = saint.fullBio || saint.bio || FICHA_FALLBACK.legado;
   const legado =
     (saint.patronOf && saint.patronOf.length > 0
-      ? `Padroeiro(a) de ${saint.patronOf.slice(0, 3).join(', ')}. `
-      : '') +
+      ? `Padroeiro(a) de ${saint.patronOf.slice(0, 3).join(", ")}. `
+      : "") +
     (saint.virtues && saint.virtues.length > 0
-      ? `Reconhecido(a) pela testemunha em ${saint.virtues.slice(0, 3).join(', ')}.`
+      ? `Reconhecido(a) pela testemunha em ${saint.virtues.slice(0, 3).join(", ")}.`
       : FICHA_FALLBACK.legado);
   const meditacao = (saint as any).aplicacaoPratica || FICHA_FALLBACK.meditacao;
   const frase = saint.quotes?.[0];
@@ -127,7 +139,7 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
       requestAnimationFrame(() => {
         const after = articleRef.current?.getBoundingClientRect().top ?? 0;
         const delta = after - before;
-        if (delta !== 0) window.scrollBy({ top: delta, left: 0, behavior: 'auto' });
+        if (delta !== 0) window.scrollBy({ top: delta, left: 0, behavior: "auto" });
       });
       return next;
     });
@@ -139,9 +151,9 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
         const node = sectionRefs.current[key];
         if (!node) return;
         const y = node.getBoundingClientRect().top + window.scrollY - 96;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        window.scrollTo({ top: y, behavior: "smooth" });
         // Foco acessível sem re-scroll do browser.
-        node.setAttribute('tabindex', '-1');
+        node.setAttribute("tabindex", "-1");
         (node as HTMLElement).focus({ preventScroll: true });
       };
       if (!expanded) {
@@ -154,12 +166,13 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
     [expanded],
   );
 
-  const sectionNav: Array<{ key: SectionKey; label: string; enabled: boolean; controls: string }> = [
-    { key: 'frase', label: 'Frase', enabled: Boolean(frase), controls: 'santo-do-dia-frase' },
-    { key: 'vida', label: 'Vida', enabled: true, controls: 'santo-do-dia-vida' },
-    { key: 'legado', label: 'Legado', enabled: true, controls: 'santo-do-dia-legado' },
-    { key: 'meditacao', label: 'Meditação', enabled: true, controls: 'santo-do-dia-meditacao' },
-  ];
+  const sectionNav: Array<{ key: SectionKey; label: string; enabled: boolean; controls: string }> =
+    [
+      { key: "frase", label: "Frase", enabled: Boolean(frase), controls: "santo-do-dia-frase" },
+      { key: "vida", label: "Vida", enabled: true, controls: "santo-do-dia-vida" },
+      { key: "legado", label: "Legado", enabled: true, controls: "santo-do-dia-legado" },
+      { key: "meditacao", label: "Meditação", enabled: true, controls: "santo-do-dia-meditacao" },
+    ];
 
   return (
     <motion.article
@@ -171,10 +184,22 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
       aria-labelledby="santo-do-dia-title"
     >
       {/* Molduras editoriais douradas nos cantos (Pergaminho Sacro) */}
-      <span aria-hidden="true" className="pointer-events-none absolute top-spacing-2xs left-spacing-2xs sm:top-spacing-sm sm:left-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-t-2 border-l-2 border-secondary/50 z-20" />
-      <span aria-hidden="true" className="pointer-events-none absolute top-spacing-2xs right-spacing-2xs sm:top-spacing-sm sm:right-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-t-2 border-r-2 border-secondary/50 z-20" />
-      <span aria-hidden="true" className="pointer-events-none absolute bottom-spacing-2xs left-spacing-2xs sm:bottom-spacing-sm sm:left-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-b-2 border-l-2 border-secondary/50 z-20" />
-      <span aria-hidden="true" className="pointer-events-none absolute bottom-spacing-2xs right-spacing-2xs sm:bottom-spacing-sm sm:right-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-b-2 border-r-2 border-secondary/50 z-20" />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-spacing-2xs left-spacing-2xs sm:top-spacing-sm sm:left-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-t-2 border-l-2 border-secondary/50 z-20"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-spacing-2xs right-spacing-2xs sm:top-spacing-sm sm:right-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-t-2 border-r-2 border-secondary/50 z-20"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-spacing-2xs left-spacing-2xs sm:bottom-spacing-sm sm:left-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-b-2 border-l-2 border-secondary/50 z-20"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-spacing-2xs right-spacing-2xs sm:bottom-spacing-sm sm:right-spacing-sm w-spacing-md h-spacing-md sm:w-spacing-xl sm:h-spacing-xl border-b-2 border-r-2 border-secondary/50 z-20"
+      />
       {/* Hero — imagem + overlay editorial */}
       <div className="relative">
         <div className="relative h-[38vh] min-h-[320px] md:h-[52vh] md:min-h-[420px] w-full overflow-hidden">
@@ -190,7 +215,6 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
         </div>
 
         <div className="absolute inset-x-0 bottom-0 p-spacing-md sm:p-spacing-lg md:p-spacing-2xl">
-
           <div className="max-w-3xl space-y-spacing-sm">
             <p className="text-premium-xs font-black uppercase tracking-[0.24em] sm:tracking-[0.28em] text-secondary line-clamp-2">
               Sanctorum · Santo do Dia · {dateLabel}
@@ -270,7 +294,6 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
           </Button>
         </div>
 
-
         {/* Meta-strip */}
         <dl className="grid grid-cols-2 md:grid-cols-4 gap-spacing-md border-b border-border/60 pb-spacing-lg">
           <div className="space-y-spacing-3xs">
@@ -283,25 +306,19 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
             <dt className="text-premium-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
               Nascimento
             </dt>
-            <dd className="text-premium-sm font-bold text-foreground">
-              {saint.born || '—'}
-            </dd>
+            <dd className="text-premium-sm font-bold text-foreground">{saint.born || "—"}</dd>
           </div>
           <div className="space-y-spacing-3xs">
             <dt className="text-premium-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
               Dies natalis
             </dt>
-            <dd className="text-premium-sm font-bold text-foreground">
-              {saint.died || '—'}
-            </dd>
+            <dd className="text-premium-sm font-bold text-foreground">{saint.died || "—"}</dd>
           </div>
           <div className="space-y-spacing-3xs">
             <dt className="text-premium-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
               Padroado
             </dt>
-            <dd className="text-premium-sm font-bold text-foreground truncate">
-              {padroado}
-            </dd>
+            <dd className="text-premium-sm font-bold text-foreground truncate">{padroado}</dd>
           </div>
         </dl>
 
@@ -309,12 +326,14 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
         {frase && (
           <blockquote
             id="santo-do-dia-frase"
-            ref={(el) => { sectionRefs.current.frase = el; }}
+            ref={(el) => {
+              sectionRefs.current.frase = el;
+            }}
             className="relative pl-spacing-lg border-l-2 border-primary/50 scroll-mt-32"
           >
             <Icons.Quote className="absolute -left-spacing-xs -top-spacing-xs w-spacing-md h-spacing-md text-primary/60 bg-card px-spacing-3xs" />
             <p className="font-serif italic text-premium-xl md:text-premium-2xl text-foreground leading-relaxed">
-              {renderWithRefs(frase, 'quote')}
+              {renderWithRefs(frase, "quote")}
             </p>
           </blockquote>
         )}
@@ -323,7 +342,9 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
         <div className="grid md:grid-cols-2 gap-spacing-xl">
           <section
             id="santo-do-dia-vida"
-            ref={(el) => { sectionRefs.current.vida = el; }}
+            ref={(el) => {
+              sectionRefs.current.vida = el;
+            }}
             aria-labelledby="bloco-vida"
             className="space-y-spacing-sm scroll-mt-32"
           >
@@ -335,15 +356,17 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
               Vida
             </h3>
             <p
-              className={`font-serif text-premium-base leading-[1.75] text-foreground/90 whitespace-pre-line ${expanded ? '' : 'line-clamp-[8]'}`}
+              className={`font-serif text-premium-base leading-[1.75] text-foreground/90 whitespace-pre-line ${expanded ? "" : "line-clamp-[8]"}`}
             >
-              {renderWithRefs(vida, 'vida')}
+              {renderWithRefs(vida, "vida")}
             </p>
           </section>
 
           <section
             id="santo-do-dia-legado"
-            ref={(el) => { sectionRefs.current.legado = el; }}
+            ref={(el) => {
+              sectionRefs.current.legado = el;
+            }}
             aria-labelledby="bloco-legado"
             className="space-y-spacing-sm scroll-mt-32"
           >
@@ -355,7 +378,7 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
               Legado
             </h3>
             <p className="font-serif text-premium-base leading-[1.75] text-foreground/90">
-              {renderWithRefs(legado, 'legado')}
+              {renderWithRefs(legado, "legado")}
             </p>
           </section>
         </div>
@@ -363,7 +386,9 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
         {/* Meditação — bloco de largura total, contemplativo */}
         <section
           id="santo-do-dia-meditacao"
-          ref={(el) => { sectionRefs.current.meditacao = el; }}
+          ref={(el) => {
+            sectionRefs.current.meditacao = el;
+          }}
           aria-labelledby="bloco-meditacao"
           className="rounded-[1.5rem] md:rounded-[2rem] border border-primary/15 bg-primary/5 p-spacing-lg md:p-spacing-xl space-y-spacing-sm scroll-mt-32"
         >
@@ -375,10 +400,9 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
             Meditação para hoje
           </h3>
           <p className="font-serif italic text-premium-lg leading-relaxed text-foreground/95">
-            {renderWithRefs(meditacao, 'meditacao')}
+            {renderWithRefs(meditacao, "meditacao")}
           </p>
         </section>
-
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-spacing-sm pt-spacing-xs">
@@ -387,7 +411,7 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
             className="flex-1"
             onClick={() => onOpen(false)}
             onMouseEnter={() => {
-              import('./SaintDetail');
+              import("./SaintDetail");
             }}
             aria-label={`Conhecer a história completa de ${saint.name}`}
           >
@@ -400,7 +424,7 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
             onClick={() => onOpen(true)}
             onMouseEnter={() => {
               // Apenas prefetch do componente de detalhes
-              import('./SaintDetail');
+              import("./SaintDetail");
             }}
             aria-label={`Refletir com Logos sobre ${saint.name}`}
           >
@@ -411,7 +435,7 @@ const SantoDoDiaHero: React.FC<SantoDoDiaHeroProps> = ({ saint, date, onOpen }) 
             text={frase || saint.bio || saint.name}
             reference={`${saint.name} — ${saint.title || categoria}`}
             title={saint.name}
-            url={typeof window !== 'undefined' ? window.location.href : ''}
+            url={typeof window !== "undefined" ? window.location.href : ""}
             size="sm"
           />
         </div>

@@ -1,30 +1,29 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { supabase } from '@/lib/db';
-import { CathedraCard } from './CathedraCard';
-import { CathedraButton } from './CathedraButton';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
-import { Input } from '@/components/ui/input';
-import { format } from 'date-fns';
-
+import { Icons } from "@/constants";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/lib/db";
+import { CathedraCard } from "./CathedraCard";
+import { CathedraButton } from "./CathedraButton";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate } from "@/lib/rr-compat";
+import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
 
 const TelemetryDashboard: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLogs = async () => {
       const { data, error } = await supabase
-        .from('app_metrics')
-        .select('*')
-        .order('created_at', { ascending: false })
+        .from("app_metrics")
+        .select("*")
+        .order("created_at", { ascending: false })
         .limit(100);
-      
+
       if (!error && data) setLogs(data);
       setLoading(false);
     };
@@ -32,17 +31,21 @@ const TelemetryDashboard: React.FC = () => {
     fetchLogs();
   }, []);
 
+  const downloadTelemetry = (format: "json" | "csv") => {
+    const data =
+      format === "json"
+        ? JSON.stringify(filteredLogs, null, 2)
+        : "ID,Data,Rota,Tipo,CLS,INP,TBT,Contexto\n" +
+          filteredLogs
+            .map(
+              (log) =>
+                `${log.id},${log.created_at},"${log.metadata?.route || ""}",${log.event_type},${log.metadata?.cls || ""},${log.metadata?.inp || ""},${log.metadata?.tbt || ""},"${JSON.stringify(log.metadata || {}).replace(/"/g, '""')}"`,
+            )
+            .join("\n");
 
-  const downloadTelemetry = (format: 'json' | 'csv') => {
-    const data = format === 'json' 
-      ? JSON.stringify(filteredLogs, null, 2)
-      : "ID,Data,Rota,Tipo,CLS,INP,TBT,Contexto\n" + filteredLogs.map(log => 
-          `${log.id},${log.created_at},"${log.metadata?.route || ''}",${log.event_type},${log.metadata?.cls || ''},${log.metadata?.inp || ''},${log.metadata?.tbt || ''},"${JSON.stringify(log.metadata || {}).replace(/"/g, '""')}"`
-        ).join("\n");
-    
-    const blob = new Blob([data], { type: format === 'json' ? 'application/json' : 'text/csv' });
+    const blob = new Blob([data], { type: format === "json" ? "application/json" : "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `telemetry-performance-${new Date().toISOString()}.${format}`;
     document.body.appendChild(a);
@@ -52,11 +55,9 @@ const TelemetryDashboard: React.FC = () => {
     toast.success(`Telemetria exportada em ${format.toUpperCase()}`);
   };
 
-
-  const filteredLogs = logs.filter(log => 
-    JSON.stringify(log).toLowerCase().includes(filter.toLowerCase())
+  const filteredLogs = logs.filter((log) =>
+    JSON.stringify(log).toLowerCase().includes(filter.toLowerCase()),
   );
-
 
   return (
     <div className="max-w-6xl mx-auto p-spacing-lg space-y-spacing-xl">
@@ -69,17 +70,16 @@ const TelemetryDashboard: React.FC = () => {
             <Icons.Activity className="text-primary" /> Telemetria Mobile
           </h1>
           <div className="flex items-center gap-spacing-md">
-            <CathedraButton 
-              variant="outline" 
-              size="sm" 
-              onClick={() => downloadTelemetry('csv')}
+            <CathedraButton
+              variant="outline"
+              size="sm"
+              onClick={() => downloadTelemetry("csv")}
               className="rounded-premium-full h-spacing-xl"
             >
               <Icons.Download className="w-spacing-sm h-spacing-sm mr-spacing-xs" /> CSV
             </CathedraButton>
-             <Input 
-
-              placeholder="Buscar por ID, Rota..." 
+            <Input
+              placeholder="Buscar por ID, Rota..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               className="max-w-xs rounded-premium-full"
@@ -93,24 +93,35 @@ const TelemetryDashboard: React.FC = () => {
           <table className="w-full text-left text-premium-xs">
             <thead className="bg-muted/30 border-b border-border/50 sticky top-0 z-10">
               <tr>
-                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">Data/Hora</th>
-                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">Rota</th>
-                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">Ação / Erro</th>
-                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50 text-right">Contexto</th>
+                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">
+                  Data/Hora
+                </th>
+                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">
+                  Rota
+                </th>
+                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50">
+                  Ação / Erro
+                </th>
+                <th className="p-spacing-md font-black uppercase tracking-widest opacity-50 text-right">
+                  Contexto
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/10">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-primary/[0.01] transition-colors">
                   <td className="p-spacing-md font-mono opacity-60">
-                    {format(new Date(log.created_at), 'dd/MM/yy HH:mm:ss')}
+                    {format(new Date(log.created_at), "dd/MM/yy HH:mm:ss")}
                   </td>
                   <td className="p-spacing-md font-bold text-primary/80">
-                    {log.metadata?.route || '/'}
+                    {log.metadata?.route || "/"}
                   </td>
                   <td className="p-spacing-md">
                     <div className="flex flex-col gap-1">
-                      <Badge variant={log.metric_type === 'performance_event' ? 'outline' : 'secondary'} className="rounded-premium-full w-fit">
+                      <Badge
+                        variant={log.metric_type === "performance_event" ? "outline" : "secondary"}
+                        className="rounded-premium-full w-fit"
+                      >
                         {log.metric_type}
                       </Badge>
                       {log.metadata?.cls && (
@@ -121,17 +132,22 @@ const TelemetryDashboard: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-spacing-md text-right">
-                    <CathedraButton size="sm" variant="ghost" onClick={() => console.log(log.metadata)}>
+                    <CathedraButton
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => console.log(log.metadata)}
+                    >
                       Ver Detalhes
                     </CathedraButton>
                   </td>
                 </tr>
               ))}
-
             </tbody>
           </table>
           {filteredLogs.length === 0 && !loading && (
-            <div className="p-spacing-4xl text-center opacity-40 italic">Nenhum evento encontrado.</div>
+            <div className="p-spacing-4xl text-center opacity-40 italic">
+              Nenhum evento encontrado.
+            </div>
           )}
         </ScrollArea>
       </CathedraCard>

@@ -16,7 +16,7 @@
  * Guardrail: `scripts/bible-primary-guardrail.ts` falha no CI se qualquer
  * consumidor usar padrões proibidos.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 
 export interface ActivePrimaryTranslation {
   id: string;
@@ -36,9 +36,9 @@ export async function getActivePrimaryTranslation(
   const now = Date.now();
   if (!opts.forceRefresh && _cache && _cache.expires > now) return _cache.value;
 
-  const { data, error } = await supabase.rpc('get_active_primary_translation');
+  const { data, error } = await supabase.rpc("get_active_primary_translation");
   if (error) {
-    console.warn('[getActivePrimaryTranslation] rpc error', error);
+    console.warn("[getActivePrimaryTranslation] rpc error", error);
     return null;
   }
   const row = Array.isArray(data) && data.length > 0 ? (data[0] as ActivePrimaryTranslation) : null;

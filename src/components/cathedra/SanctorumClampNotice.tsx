@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface Props {
   /** valor original recebido em ?date= (inválido) */
@@ -33,12 +33,12 @@ export const SanctorumClampNotice: React.FC<Props> = ({
       data-testid="sanctorum-clamp-notice"
       className={
         visible
-          ? 'mx-auto max-w-3xl rounded-premium-md border border-primary/30 bg-primary/5 px-spacing-md py-spacing-xs text-premium-xs font-serif italic text-foreground'
-          : 'sr-only'
+          ? "mx-auto max-w-3xl rounded-premium-md border border-primary/30 bg-primary/5 px-spacing-md py-spacing-xs text-premium-xs font-serif italic text-foreground"
+          : "sr-only"
       }
     >
-      A data recebida{received ? ` (“${received}”)` : ''} é inválida ou está fora do
-      intervalo suportado. Exibindo <strong>{replacedWith}</strong>.
+      A data recebida{received ? ` (“${received}”)` : ""} é inválida ou está fora do intervalo
+      suportado. Exibindo <strong>{replacedWith}</strong>.
     </div>
   );
 };

@@ -3,12 +3,12 @@
  * Mostra nome, avatar e posts aprovados do usuário na comunidade.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useParams } from '@/lib/rr-compat';
-import { ArrowLeft, Heart, MessageCircle } from 'lucide-react';
-import { supabase } from '@/lib/db';
-import { useAvatarUrl } from '@/lib/avatar';
+import React, { useCallback, useEffect, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useParams } from "@/lib/rr-compat";
+import { ArrowLeft, Heart, MessageCircle } from "lucide-react";
+import { supabase } from "@/lib/db";
+import { useAvatarUrl } from "@/lib/avatar";
 
 type Profile = {
   id: string;
@@ -52,9 +52,9 @@ const AtriumCommunityProfilePage: React.FC = () => {
     if (!userId) return;
     setLoading(true);
     const { data: prof } = (await supabase
-      .from('public_profiles' as any)
-      .select('id, name, avatar_url, role, is_premium, created_at')
-      .eq('id', userId)
+      .from("public_profiles" as any)
+      .select("id, name, avatar_url, role, is_premium, created_at")
+      .eq("id", userId)
       .maybeSingle()) as { data: Profile | null };
     if (!prof) {
       setNotFound(true);
@@ -63,22 +63,21 @@ const AtriumCommunityProfilePage: React.FC = () => {
     }
     setProfile(prof);
     const { data: userPosts } = await supabase
-      .from('community_posts')
-      .select('id, title, content, category, likes_count, created_at, status, parent_id')
-      .eq('user_id', userId)
-      .is('parent_id', null)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
+      .from("community_posts")
+      .select("id, title, content, category, likes_count, created_at, status, parent_id")
+      .eq("user_id", userId)
+      .is("parent_id", null)
+      .eq("status", "approved")
+      .order("created_at", { ascending: false })
       .limit(50);
     setPosts((userPosts || []) as Post[]);
 
     const { data: allPosts } = await supabase
-      .from('community_posts')
-      .select('likes_count')
-      .eq('user_id', userId);
+      .from("community_posts")
+      .select("likes_count")
+      .eq("user_id", userId);
     const totalPosts = allPosts?.length || 0;
-    const totalLikes =
-      allPosts?.reduce((acc, p: any) => acc + (p.likes_count || 0), 0) || 0;
+    const totalLikes = allPosts?.reduce((acc, p: any) => acc + (p.likes_count || 0), 0) || 0;
     setStats({ posts: totalPosts, likes: totalLikes });
     setLoading(false);
   }, [userId]);
@@ -113,7 +112,7 @@ const AtriumCommunityProfilePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{profile.name || 'Perfil'} — Comunidade Cathedra</title>
+        <title>{profile.name || "Perfil"} — Comunidade Cathedra</title>
         <meta
           name="description"
           content={`Publicações de ${profile.name} na comunidade Cathedra.`}
@@ -140,12 +139,12 @@ const AtriumCommunityProfilePage: React.FC = () => {
               />
             ) : (
               <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center font-bold text-xl text-foreground">
-                {(profile.name || 'A').charAt(0).toUpperCase()}
+                {(profile.name || "A").charAt(0).toUpperCase()}
               </div>
             )}
             <div className="flex-1 min-w-0">
               <h1 className="font-serif text-2xl md:text-3xl leading-tight truncate">
-                {profile.name || 'Anônimo'}
+                {profile.name || "Anônimo"}
               </h1>
               <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground uppercase tracking-widest">
                 <span className="inline-flex items-center gap-1">
@@ -154,9 +153,7 @@ const AtriumCommunityProfilePage: React.FC = () => {
                 <span className="inline-flex items-center gap-1">
                   <Heart className="w-3.5 h-3.5" /> {stats.likes} curtidas
                 </span>
-                {profile.is_premium && (
-                  <span className="text-primary font-bold">PRO</span>
-                )}
+                {profile.is_premium && <span className="text-primary font-bold">PRO</span>}
               </div>
             </div>
           </header>

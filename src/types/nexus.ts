@@ -5,35 +5,31 @@
  */
 
 export type NexusKind =
-  | 'bible_verse'
-  | 'catechism_paragraph'
-  | 'magisterium_doc'
-  | 'patristic'
-  | 'saint'
-  | 'saint_work'
-  | 'glossary'
-  | 'prayer'
-  | 'journey'
-  | 'liturgy'
-  | 'other';
+  | "bible_verse"
+  | "catechism_paragraph"
+  | "magisterium_doc"
+  | "patristic"
+  | "saint"
+  | "saint_work"
+  | "glossary"
+  | "prayer"
+  | "journey"
+  | "liturgy"
+  | "other";
 
 export type NexusRelationCode =
-  | 'cites'
-  | 'explains'
-  | 'contrasts'
-  | 'fulfills'
-  | 'commemorates'
-  | 'see_also'
-  | 'wrote'
-  | 'exemplifies'
-  | 'related_to'
-  | 'inspired_by';
+  | "cites"
+  | "explains"
+  | "contrasts"
+  | "fulfills"
+  | "commemorates"
+  | "see_also"
+  | "wrote"
+  | "exemplifies"
+  | "related_to"
+  | "inspired_by";
 
-export type SaintNexusRelation =
-  | 'wrote'
-  | 'exemplifies'
-  | 'related_to'
-  | 'inspired_by';
+export type SaintNexusRelation = "wrote" | "exemplifies" | "related_to" | "inspired_by";
 
 export interface NexusRef {
   id: string;

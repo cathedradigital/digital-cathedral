@@ -24,7 +24,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import { Icons } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -93,14 +93,7 @@ const PRAYER_TEXT: Record<string, { title: string; text: string }> = {
 /* Máquina de fase                                                            */
 /* -------------------------------------------------------------------------- */
 
-type PhaseKind =
-  | "intro"
-  | "announce"
-  | "our-father"
-  | "hail-mary"
-  | "glory"
-  | "fatima"
-  | "closing";
+type PhaseKind = "intro" | "announce" | "our-father" | "hail-mary" | "glory" | "fatima" | "closing";
 
 interface Phase {
   kind: PhaseKind;
@@ -109,13 +102,13 @@ interface Phase {
   beadIndex: number;
 }
 
-const STEPS_PER_MYSTERY = 1 /*announce*/ + 1 /*our-father*/ + 10 /*hail-mary*/ + 1 /*glory*/ + 1 /*fatima*/; // = 14
-const TOTAL_STEPS = 1 /*intro*/ + 5 * STEPS_PER_MYSTERY + 1 /*closing*/; // = 72
+const STEPS_PER_MYSTERY =
+  1 /*announce*/ + 1 /*our-father*/ + 10 /*hail-mary*/ + 1 /*glory*/ + 1; /*fatima*/ // = 14
+const TOTAL_STEPS = 1 /*intro*/ + 5 * STEPS_PER_MYSTERY + 1; /*closing*/ // = 72
 
 function phaseFor(stepIndex: number): Phase {
   if (stepIndex <= 0) return { kind: "intro", mysteryIndex: -1, beadIndex: 0 };
-  if (stepIndex >= TOTAL_STEPS - 1)
-    return { kind: "closing", mysteryIndex: 4, beadIndex: 0 };
+  if (stepIndex >= TOTAL_STEPS - 1) return { kind: "closing", mysteryIndex: 4, beadIndex: 0 };
 
   const within = stepIndex - 1; // 0..69
   const mysteryIndex = Math.floor(within / STEPS_PER_MYSTERY);
@@ -241,13 +234,7 @@ export const RosarySession: React.FC<Props> = ({
 
   /* ---------- Persistência ---------- */
   useEffect(() => {
-    onProgress(
-      stepIndex,
-      Math.max(0, phase.mysteryIndex),
-      mode,
-      elapsedMs(),
-      startedAtRef.current,
-    );
+    onProgress(stepIndex, Math.max(0, phase.mysteryIndex), mode, elapsedMs(), startedAtRef.current);
   }, [stepIndex, phase.mysteryIndex, mode, onProgress, elapsedMs]);
 
   /* ---------- Automático ---------- */
@@ -364,9 +351,7 @@ export const RosarySession: React.FC<Props> = ({
               key={m}
               className={cn(
                 "cursor-pointer rounded-premium-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] transition-all min-h-8",
-                mode === m
-                  ? "bg-secondary text-primary"
-                  : "text-secondary/80 hover:text-secondary",
+                mode === m ? "bg-secondary text-primary" : "text-secondary/80 hover:text-secondary",
               )}
             >
               <input
@@ -388,7 +373,13 @@ export const RosarySession: React.FC<Props> = ({
         <div className="relative px-spacing-lg py-spacing-md flex justify-center">
           <RosaryProgress
             mysteryIndex={phase.mysteryIndex}
-            beadIndex={phase.kind === "hail-mary" ? phase.beadIndex + 1 : phase.kind === "our-father" ? 0 : 10}
+            beadIndex={
+              phase.kind === "hail-mary"
+                ? phase.beadIndex + 1
+                : phase.kind === "our-father"
+                  ? 0
+                  : 10
+            }
             completed={completedMysteries}
             className="text-secondary"
           />
@@ -546,7 +537,9 @@ const PhaseContent: React.FC<PhaseContentProps> = ({
           <summary className="cursor-pointer text-[10px] font-black uppercase tracking-[0.22em] text-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary rounded">
             Ler o Credo Apostólico
           </summary>
-          <p className="mt-3 text-secondary/75 font-serif leading-relaxed">{PRAYER_TEXT.creed.text}</p>
+          <p className="mt-3 text-secondary/75 font-serif leading-relaxed">
+            {PRAYER_TEXT.creed.text}
+          </p>
         </details>
       </div>
     );
@@ -565,7 +558,11 @@ const PhaseContent: React.FC<PhaseContentProps> = ({
           to={mystery.scriptureHref}
           className="inline-block text-premium-xs font-black uppercase tracking-[0.22em] text-secondary/80 hover:text-secondary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary rounded"
           onClick={() =>
-            onCtaClick({ label: mystery.scripture, href: mystery.scriptureHref, kind: "bible-inline" })
+            onCtaClick({
+              label: mystery.scripture,
+              href: mystery.scriptureHref,
+              kind: "bible-inline",
+            })
           }
         >
           {mystery.scripture}
@@ -663,17 +660,11 @@ const PhaseContent: React.FC<PhaseContentProps> = ({
 
         {/* Continuação inteligente por mistério (não apenas no closing). */}
         {mystery && !isFinal && (
-          <MysteryContinuation
-            mystery={mystery}
-            setKey={set.key}
-            onCtaClick={onCtaClick}
-          />
+          <MysteryContinuation mystery={mystery} setKey={set.key} onCtaClick={onCtaClick} />
         )}
       </div>
     );
   }
-
-
 
   // closing
   const finalMystery = set.mysteries[4];
@@ -813,9 +804,7 @@ export const MysteryContinuation: React.FC<MysteryContinuationProps> = ({
           themeIds: mystery.themeIds,
           meta: { prayerCategory: "marianas" },
         }}
-        onCtaClick={(evt) =>
-          onCtaClick({ ...evt, kind: `reader-continuation:${mystery.id}` })
-        }
+        onCtaClick={(evt) => onCtaClick({ ...evt, kind: `reader-continuation:${mystery.id}` })}
       />
     </div>
   </section>
