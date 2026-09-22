@@ -1,0 +1,27 @@
+name: Vercel preview smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: "Protected Vercel preview URL"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Check protected Vercel preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run protected preview smoke test
+        env:
+          VERCEL_PREVIEW_URL: ${{ inputs.preview_url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: scripts/vercel-preview-smoke.sh
