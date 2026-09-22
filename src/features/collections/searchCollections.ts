@@ -6,8 +6,8 @@
  * Sem RPC dedicada: `.ilike` cobre bem o volume atual de coleções curadas
  * (dezenas). Se ultrapassar centenas, migrar para FTS `tsvector`.
  */
-import { supabase } from '@/lib/db';
-import type { Collection } from './types';
+import { supabase } from "@/lib/db";
+import type { Collection } from "./types";
 
 export interface CollectionSearchHit {
   slug: string;
@@ -22,20 +22,17 @@ export interface CollectionSearchHit {
   items_count: number | null;
 }
 
-export async function searchCollections(
-  query: string,
-  limit = 6,
-): Promise<CollectionSearchHit[]> {
+export async function searchCollections(query: string, limit = 6): Promise<CollectionSearchHit[]> {
   const q = query.trim();
   if (q.length < 2) return [];
   const pattern = `%${q.replace(/[%_]/g, (m) => `\\${m}`)}%`;
 
   const { data, error } = await supabase
-    .from('collections')
+    .from("collections")
     .select(
-      'slug,title,subtitle,description,cover,estimated_reading_time_minutes,difficulty_level,track,certificate_eligible',
+      "slug,title,subtitle,description,cover,estimated_reading_time_minutes,difficulty_level,track,certificate_eligible",
     )
-    .eq('status', 'published')
+    .eq("status", "published")
     .or(
       `title.ilike.${pattern},subtitle.ilike.${pattern},description.ilike.${pattern},track.ilike.${pattern}`,
     )
@@ -43,7 +40,7 @@ export async function searchCollections(
 
   if (error) {
     // eslint-disable-next-line no-console
-    console.warn('[searchCollections]', error.message);
+    console.warn("[searchCollections]", error.message);
     return [];
   }
 

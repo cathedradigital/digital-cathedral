@@ -6,7 +6,7 @@
  * apresente resultados heterogêneos numa única lista.
  */
 
-import type { KnowledgeNodeId, KnowledgeNodeKind } from '@/core/knowledge';
+import type { KnowledgeNodeId, KnowledgeNodeKind } from "@/core/knowledge";
 
 export interface SearchResult {
   /** ID canônico do nó correspondente (resolvível via KnowledgeGraph). */

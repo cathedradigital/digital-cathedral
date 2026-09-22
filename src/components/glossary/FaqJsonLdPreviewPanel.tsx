@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { validateFaqJsonLdLive, type FaqItem } from '@/lib/glossary/sanitizeFaq';
+import { cn } from "@/lib/utils";
+import { validateFaqJsonLdLive, type FaqItem } from "@/lib/glossary/sanitizeFaq";
 
 /**
  * Painel dev-only de preview do JSON-LD do FAQPage.
@@ -40,9 +40,9 @@ export function FaqJsonLdPreviewPanel({ slug, items }: FaqJsonLdPreviewPanelProp
       })),
       droppedIndices: live.droppedIndices,
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `faq-jsonld-${slug}-${Date.now()}.json`;
     document.body.appendChild(a);
@@ -52,25 +52,20 @@ export function FaqJsonLdPreviewPanel({ slug, items }: FaqJsonLdPreviewPanelProp
   };
 
   return (
-    <div
-      data-testid="faq-jsonld-panel"
-      className="max-w-[68ch] mx-auto mb-6 space-y-3 text-xs"
-    >
+    <div data-testid="faq-jsonld-panel" className="max-w-[68ch] mx-auto mb-6 space-y-3 text-xs">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div
           className={cn(
-            'font-mono px-2 py-1 rounded border',
+            "font-mono px-2 py-1 rounded border",
             live.ok
-              ? 'border-emerald-500/60 bg-emerald-50/60 text-emerald-900'
-              : 'border-red-500/60 bg-red-50/60 text-red-900',
+              ? "border-emerald-500/60 bg-emerald-50/60 text-emerald-900"
+              : "border-red-500/60 bg-red-50/60 text-red-900",
           )}
           data-testid="faq-jsonld-status"
         >
-          {live.ok ? '✓ JSON-LD válido' : '✗ JSON-LD inválido'}
-          {' · '}itens: {live.jsonLd?.mainEntity.length ?? 0}
-          {live.droppedIndices.length > 0 && (
-            <> · descartados: {live.droppedIndices.length}</>
-          )}
+          {live.ok ? "✓ JSON-LD válido" : "✗ JSON-LD inválido"}
+          {" · "}itens: {live.jsonLd?.mainEntity.length ?? 0}
+          {live.droppedIndices.length > 0 && <> · descartados: {live.droppedIndices.length}</>}
         </div>
         <div
           data-testid="faq-jsonld-policy"
@@ -93,26 +88,28 @@ export function FaqJsonLdPreviewPanel({ slug, items }: FaqJsonLdPreviewPanelProp
           {live.issues.map((iss, i) => (
             <li key={i} className="font-mono" data-testid={`faq-jsonld-issue-${i}`}>
               <span data-testid={`faq-jsonld-issue-path-${i}`} className="font-semibold">
-                {iss.path || '(root)'}
-              </span>{' '}
-              <span data-testid={`faq-jsonld-issue-code-${i}`}>[{iss.code}]</span>{' '}
-              {iss.message}
+                {iss.path || "(root)"}
+              </span>{" "}
+              <span data-testid={`faq-jsonld-issue-code-${i}`}>[{iss.code}]</span> {iss.message}
             </li>
           ))}
         </ul>
       )}
       {live.droppedIndices.length > 0 && (
         <div data-testid="faq-jsonld-dropped" className="rounded border p-3">
-          <span className="font-semibold">Itens removidos (índices):</span>{' '}
-          <span className="font-mono">{live.droppedIndices.join(', ')}</span>
+          <span className="font-semibold">Itens removidos (índices):</span>{" "}
+          <span className="font-mono">{live.droppedIndices.join(", ")}</span>
         </div>
       )}
-      <pre data-testid="faq-jsonld-output" className="rounded border p-3 whitespace-pre-wrap break-words max-h-[28rem] overflow-auto">
+      <pre
+        data-testid="faq-jsonld-output"
+        className="rounded border p-3 whitespace-pre-wrap break-words max-h-[28rem] overflow-auto"
+      >
         {JSON.stringify(live.jsonLd, null, 2)}
       </pre>
       {removedPaths.size > 0 && (
         <div data-testid="faq-jsonld-removed-paths" className="text-[11px] italic">
-          Paths destacados no schema: {[...removedPaths].join(' · ')}
+          Paths destacados no schema: {[...removedPaths].join(" · ")}
         </div>
       )}
     </div>

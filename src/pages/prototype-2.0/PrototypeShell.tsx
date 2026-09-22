@@ -1,6 +1,16 @@
-import React from 'react';
-import { Link, NavLink, useLocation, useNavigate } from '@/lib/rr-compat';
-import { Search, RotateCcw, User, Church, BookOpen, Flame, Compass, ArrowLeft, Info } from 'lucide-react';
+import React from "react";
+import { Link, NavLink, useLocation, useNavigate } from "@/lib/rr-compat";
+import {
+  Search,
+  RotateCcw,
+  User,
+  Church,
+  BookOpen,
+  Flame,
+  Compass,
+  ArrowLeft,
+  Info,
+} from "lucide-react";
 
 /**
  * Cathedra 2.0 — Casca do Protótipo Navegável (baixa fidelidade).
@@ -8,14 +18,14 @@ import { Search, RotateCcw, User, Church, BookOpen, Flame, Compass, ArrowLeft, I
  * Baseado em docs/cathedra-2.0/05-WIREFRAMES.md.
  */
 
-const BASE = '/prototype-2.0';
+const BASE = "/prototype-2.0";
 
 const NAV = [
-  { to: `${BASE}/atrio`, icon: Church, label: 'Átrio' },
-  { to: `${BASE}/estudar`, icon: BookOpen, label: 'Estudar' },
-  { to: `${BASE}/rezar`, icon: Flame, label: 'Rezar' },
-  { to: `${BASE}/formar-se`, icon: Compass, label: 'Formar-se' },
-  { to: `${BASE}/minha-jornada`, icon: User, label: 'Jornada' },
+  { to: `${BASE}/atrio`, icon: Church, label: "Átrio" },
+  { to: `${BASE}/estudar`, icon: BookOpen, label: "Estudar" },
+  { to: `${BASE}/rezar`, icon: Flame, label: "Rezar" },
+  { to: `${BASE}/formar-se`, icon: Compass, label: "Formar-se" },
+  { to: `${BASE}/minha-jornada`, icon: User, label: "Jornada" },
 ];
 
 interface Props {
@@ -30,7 +40,7 @@ interface Props {
 export const PrototypeShell: React.FC<Props> = ({
   title,
   back,
-  liturgicalColor = 'hsl(120 30% 35%)', // verde Tempo Comum
+  liturgicalColor = "hsl(120 30% 35%)", // verde Tempo Comum
   children,
   hideNav = false,
   showNexusToggle = false,
@@ -53,16 +63,29 @@ export const PrototypeShell: React.FC<Props> = ({
                 <ArrowLeft size={18} />
               </button>
             )}
-            <span className="font-serif text-base truncate">{title ?? 'Cathedra'}</span>
+            <span className="font-serif text-base truncate">{title ?? "Cathedra"}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Link to={`${BASE}/pesquisar`} state={{ from: location.pathname }} className="p-1.5 rounded hover:bg-muted" aria-label="Buscar">
+            <Link
+              to={`${BASE}/pesquisar`}
+              state={{ from: location.pathname }}
+              className="p-1.5 rounded hover:bg-muted"
+              aria-label="Buscar"
+            >
               <Search size={18} />
             </Link>
-            <Link to={`${BASE}/leitor?ref=jo15`} className="p-1.5 rounded hover:bg-muted" aria-label="Retomar">
+            <Link
+              to={`${BASE}/leitor?ref=jo15`}
+              className="p-1.5 rounded hover:bg-muted"
+              aria-label="Retomar"
+            >
               <RotateCcw size={18} />
             </Link>
-            <Link to={`${BASE}/minha-jornada`} className="p-1.5 rounded hover:bg-muted" aria-label="Perfil">
+            <Link
+              to={`${BASE}/minha-jornada`}
+              className="p-1.5 rounded hover:bg-muted"
+              aria-label="Perfil"
+            >
               <User size={18} />
             </Link>
           </div>
@@ -72,9 +95,7 @@ export const PrototypeShell: React.FC<Props> = ({
       </header>
 
       {/* Conteúdo */}
-      <section className="flex-1 max-w-2xl mx-auto w-full px-4 pt-4 pb-24">
-        {children}
-      </section>
+      <section className="flex-1 max-w-2xl mx-auto w-full px-4 pt-4 pb-24">{children}</section>
 
       {/* Bottom nav */}
       {!hideNav && (
@@ -86,7 +107,7 @@ export const PrototypeShell: React.FC<Props> = ({
                   to={to}
                   className={({ isActive }) =>
                     `flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] ${
-                      isActive ? 'text-primary font-semibold' : 'text-muted-foreground'
+                      isActive ? "text-primary font-semibold" : "text-muted-foreground"
                     }`
                   }
                 >

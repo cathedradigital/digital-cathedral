@@ -3,10 +3,16 @@
  * e botão para reexecutar (retry contínuo — recalcula pendências).
  */
 import { useState } from "react";
-import { Link, useParams, useNavigate } from '@/lib/rr-compat';
+import { Link, useParams, useNavigate } from "@/lib/rr-compat";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/cathedra/CathedraCard";
+import { supabase } from "@/lib/db";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/cathedra/CathedraCard";
 import { CathedraButton as Button } from "@/components/cathedra/CathedraButton";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -17,27 +23,46 @@ function downloadBlob(name: string, mime: string, data: string) {
   const blob = new Blob([data], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function toCSV(rows: Record<string, unknown>[]): string {
   if (rows.length === 0) return "";
-  const cols = Array.from(rows.reduce((s, r) => { Object.keys(r).forEach((k) => s.add(k)); return s; }, new Set<string>()));
+  const cols = Array.from(
+    rows.reduce((s, r) => {
+      Object.keys(r).forEach((k) => s.add(k));
+      return s;
+    }, new Set<string>()),
+  );
   const esc = (v: unknown) => {
     if (v === null || v === undefined) return "";
     const s = typeof v === "string" ? v : JSON.stringify(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  return [cols.join(","), ...rows.map((r) => cols.map((c) => esc((r as any)[c])).join(","))].join("\n");
+  return [cols.join(","), ...rows.map((r) => cols.map((c) => esc((r as any)[c])).join(","))].join(
+    "\n",
+  );
 }
 
 interface Job {
-  id: string; source_id: string; status: string; progress: number; total: number;
-  current_book: string | null; message: string | null; error: string | null;
-  verification: any; audit_log: any;
-  started_at: string | null; finished_at: string | null; created_at: string;
+  id: string;
+  source_id: string;
+  status: string;
+  progress: number;
+  total: number;
+  current_book: string | null;
+  message: string | null;
+  error: string | null;
+  verification: any;
+  audit_log: any;
+  started_at: string | null;
+  finished_at: string | null;
+  created_at: string;
 }
 
 async function invoke(action: string, body: Record<string, unknown> = {}) {
@@ -48,8 +73,11 @@ async function invoke(action: string, body: Record<string, unknown> = {}) {
     let detail = "";
     try {
       const ctx = (error as any).context;
-      if (ctx?.body) detail = ` — ${typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)}`;
-    } catch { /* noop */ }
+      if (ctx?.body)
+        detail = ` — ${typeof ctx.body === "string" ? ctx.body : JSON.stringify(ctx.body)}`;
+    } catch {
+      /* noop */
+    }
     throw new Error(`${error.message}${detail}`);
   }
   return data;
@@ -78,8 +106,11 @@ export default function BibleImportJobDetail() {
       if (!res?.job_id) throw new Error("Falha ao criar novo job");
       toast.success("Reexecução iniciada");
       nav(`/admin/bible-import-jobs/${res.job_id}`);
-    } catch (e: any) { toast.error(e.message); }
-    finally { setRetrying(false); }
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setRetrying(false);
+    }
   }
 
   if (q.isLoading) {
@@ -91,7 +122,11 @@ export default function BibleImportJobDetail() {
   }
   const job = q.data;
   if (!job) {
-    return <div className="container mx-auto max-w-4xl py-8 text-sm text-muted-foreground">Job não encontrado.</div>;
+    return (
+      <div className="container mx-auto max-w-4xl py-8 text-sm text-muted-foreground">
+        Job não encontrado.
+      </div>
+    );
   }
 
   const pct = job.total > 0 ? Math.min(100, Math.round((job.progress / job.total) * 100)) : 0;
@@ -102,37 +137,69 @@ export default function BibleImportJobDetail() {
     <div className="container mx-auto max-w-4xl py-8 space-y-6">
       <header className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <Link to="/admin/bible-import-jobs" className="text-xs text-primary hover:underline">← Histórico</Link>
-          <h1 className="text-2xl font-serif mt-1">Job <span className="font-mono">{job.id.slice(0, 8)}</span></h1>
-          <p className="text-sm text-muted-foreground">Criado em {new Date(job.created_at).toLocaleString("pt-BR")}</p>
+          <Link to="/admin/bible-import-jobs" className="text-xs text-primary hover:underline">
+            ← Histórico
+          </Link>
+          <h1 className="text-2xl font-serif mt-1">
+            Job <span className="font-mono">{job.id.slice(0, 8)}</span>
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Criado em {new Date(job.created_at).toLocaleString("pt-BR")}
+          </p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" onClick={() => {
-            downloadBlob(`bible-import-job-${job.id.slice(0, 8)}.json`, "application/json",
-              JSON.stringify({ generated_at: new Date().toISOString(), job }, null, 2));
-            toast.success("JSON exportado");
-          }}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              downloadBlob(
+                `bible-import-job-${job.id.slice(0, 8)}.json`,
+                "application/json",
+                JSON.stringify({ generated_at: new Date().toISOString(), job }, null, 2),
+              );
+              toast.success("JSON exportado");
+            }}
+          >
             <Download className="w-4 h-4 mr-2" /> JSON
           </Button>
-          <Button variant="outline" onClick={() => {
-            const rows = (Array.isArray(job.audit_log) ? job.audit_log : []).map((e: any) => ({
-              job_id: job.id, status: job.status, translation: (job as any)?.translation ?? "",
-              at: e.at ?? "", event: e.event ?? "book",
-              abbrev: e.abbrev ?? "", name: e.name ?? "",
-              chapters: e.chapters ?? "", chapters_written: e.chapters_written ?? "",
-              verses: e.verses ?? "", duration_ms: e.duration_ms ?? "",
-              retry_job_id: e.event === "retry_of" ? e.job_id : "",
-            }));
-            const csv = toCSV(rows);
-            downloadBlob(`bible-import-job-${job.id.slice(0, 8)}-audit.csv`, "text/csv;charset=utf-8", csv);
-            toast.success(`${rows.length} etapas exportadas`);
-          }} disabled={!Array.isArray(job.audit_log) || job.audit_log.length === 0}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              const rows = (Array.isArray(job.audit_log) ? job.audit_log : []).map((e: any) => ({
+                job_id: job.id,
+                status: job.status,
+                translation: (job as any)?.translation ?? "",
+                at: e.at ?? "",
+                event: e.event ?? "book",
+                abbrev: e.abbrev ?? "",
+                name: e.name ?? "",
+                chapters: e.chapters ?? "",
+                chapters_written: e.chapters_written ?? "",
+                verses: e.verses ?? "",
+                duration_ms: e.duration_ms ?? "",
+                retry_job_id: e.event === "retry_of" ? e.job_id : "",
+              }));
+              const csv = toCSV(rows);
+              downloadBlob(
+                `bible-import-job-${job.id.slice(0, 8)}-audit.csv`,
+                "text/csv;charset=utf-8",
+                csv,
+              );
+              toast.success(`${rows.length} etapas exportadas`);
+            }}
+            disabled={!Array.isArray(job.audit_log) || job.audit_log.length === 0}
+          >
             <Download className="w-4 h-4 mr-2" /> CSV
           </Button>
           <Button onClick={retry} disabled={!canRetry || retrying}>
-            {retrying
-              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Reexecutando…</>
-              : <><RefreshCw className="w-4 h-4 mr-2" /> Reexecutar (recalcula pendências)</>}
+            {retrying ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Reexecutando…
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" /> Reexecutar (recalcula pendências)
+              </>
+            )}
           </Button>
         </div>
       </header>
@@ -169,9 +236,22 @@ export default function BibleImportJobDetail() {
             <ul className="text-xs font-mono space-y-1 max-h-96 overflow-auto">
               {audit.map((e, idx) => (
                 <li key={idx} className="border-b border-border/40 py-1">
-                  {e.event === "retry_of"
-                    ? <span>↩ retry de <Link to={`/admin/bible-import-jobs/${e.job_id}`} className="text-primary hover:underline">{String(e.job_id).slice(0, 8)}</Link> em {new Date(e.at).toLocaleString("pt-BR")}</span>
-                    : <span><strong>{e.abbrev}</strong> · {e.chapters} caps · {e.verses ?? 0} versos</span>}
+                  {e.event === "retry_of" ? (
+                    <span>
+                      ↩ retry de{" "}
+                      <Link
+                        to={`/admin/bible-import-jobs/${e.job_id}`}
+                        className="text-primary hover:underline"
+                      >
+                        {String(e.job_id).slice(0, 8)}
+                      </Link>{" "}
+                      em {new Date(e.at).toLocaleString("pt-BR")}
+                    </span>
+                  ) : (
+                    <span>
+                      <strong>{e.abbrev}</strong> · {e.chapters} caps · {e.verses ?? 0} versos
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>

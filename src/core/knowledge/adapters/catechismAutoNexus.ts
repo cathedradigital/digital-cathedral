@@ -2,15 +2,15 @@
  * catechismAutoNexus — sugestões automáticas ao final de um parágrafo do CIC.
  */
 
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
 import {
   BUCKET_LABEL,
   buildBucketedSuggestions,
   type ReaderAutoNexus,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
+} from "./ReaderAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
 
 export interface CatechismNexusInput {
   paragraph: number;
@@ -21,20 +21,28 @@ export interface CatechismNexusInput {
 // Ordem canônica do Catecismo (Sprint Nexus 2.0):
 // bíblia → glossário → santos → padres → magistério → orações → jornadas
 const BUCKETS: readonly ReaderNexusBucket[] = [
-  'bible', 'glossary', 'saint', 'father', 'magisterium', 'prayer', 'journey',
+  "bible",
+  "glossary",
+  "saint",
+  "father",
+  "magisterium",
+  "prayer",
+  "journey",
 ];
 
 const CACHE_MAX = 64;
 const cache = new Map<string, ReaderAutoNexusOutput>();
 
 export function _fingerprintCatechism(i: CatechismNexusInput): string {
-  return `${i.paragraph}#${(i.excerpt ?? '').slice(0, 80)}`;
+  return `${i.paragraph}#${(i.excerpt ?? "").slice(0, 80)}`;
 }
 
-export function clearCatechismAutoNexusCache(): void { cache.clear(); }
+export function clearCatechismAutoNexusCache(): void {
+  cache.clear();
+}
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 export function resolveCatechismAutoNexus(input: CatechismNexusInput): ReaderAutoNexusOutput {
@@ -44,7 +52,7 @@ export function resolveCatechismAutoNexus(input: CatechismNexusInput): ReaderAut
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'catechism', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "catechism", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -58,7 +66,7 @@ export function resolveCatechismAutoNexus(input: CatechismNexusInput): ReaderAut
     selfId,
     buckets: BUCKETS,
     refs: {},
-    fallbackQueries: [input.excerpt ?? '', `Catecismo ${input.paragraph}`],
+    fallbackQueries: [input.excerpt ?? "", `Catecismo ${input.paragraph}`],
   });
 
   const result: ReaderAutoNexusOutput = {
@@ -73,12 +81,12 @@ export function resolveCatechismAutoNexus(input: CatechismNexusInput): ReaderAut
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'catechism', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "catechism", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
 export const catechismReaderAutoNexus: ReaderAutoNexus<CatechismNexusInput> = {
-  kind: 'catechism',
-  label: 'Catecismo',
+  kind: "catechism",
+  label: "Catecismo",
   buildSuggestions: resolveCatechismAutoNexus,
 };

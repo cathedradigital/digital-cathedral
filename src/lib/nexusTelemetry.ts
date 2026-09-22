@@ -11,13 +11,10 @@
  * `catechismDiagnostics.ts` e `Bible.tsx` — nenhum backend novo.
  * Silencia erros de gravação para não poluir o console de produção.
  */
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 
 export type NexusTelemetryEvent =
-  | 'nexus.shown'
-  | 'nexus.click'
-  | 'nexus.destination'
-  | 'nexus.failed';
+  "nexus.shown" | "nexus.click" | "nexus.destination" | "nexus.failed";
 
 interface NexusEventBase {
   tagId?: string;
@@ -49,10 +46,7 @@ export interface NexusFailedPayload extends NexusEventBase {
 }
 
 type NexusPayload =
-  | NexusShownPayload
-  | NexusClickPayload
-  | NexusDestinationPayload
-  | NexusFailedPayload;
+  NexusShownPayload | NexusClickPayload | NexusDestinationPayload | NexusFailedPayload;
 
 const emit = async (event: NexusTelemetryEvent, payload: NexusPayload) => {
   // Dev/E2E: log estruturado + mirror em window para asserções determinísticas.
@@ -60,7 +54,7 @@ const emit = async (event: NexusTelemetryEvent, payload: NexusPayload) => {
     // eslint-disable-next-line no-console
     console.log(`[Nexus] ${event}`, payload);
   }
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const w = window as unknown as {
       __nexusEvents__?: Array<{ event: NexusTelemetryEvent; payload: NexusPayload; t: number }>;
     };
@@ -69,14 +63,13 @@ const emit = async (event: NexusTelemetryEvent, payload: NexusPayload) => {
   }
   try {
     const { data: userData } = await supabase.auth.getUser();
-    await supabase.from('analytics_events').insert({
+    await supabase.from("analytics_events").insert({
       event_name: event,
       user_id: userData?.user?.id ?? null,
       metadata: {
         ...payload,
-        path: typeof window !== 'undefined'
-          ? window.location.pathname + window.location.search
-          : null,
+        path:
+          typeof window !== "undefined" ? window.location.pathname + window.location.search : null,
       } as any,
     } as any);
   } catch {
@@ -84,9 +77,7 @@ const emit = async (event: NexusTelemetryEvent, payload: NexusPayload) => {
   }
 };
 
-export const trackNexusShown = (p: NexusShownPayload) => emit('nexus.shown', p);
-export const trackNexusClick = (p: NexusClickPayload) => emit('nexus.click', p);
-export const trackNexusDestination = (p: NexusDestinationPayload) =>
-  emit('nexus.destination', p);
-export const trackNexusFailed = (p: NexusFailedPayload) =>
-  emit('nexus.failed', p);
+export const trackNexusShown = (p: NexusShownPayload) => emit("nexus.shown", p);
+export const trackNexusClick = (p: NexusClickPayload) => emit("nexus.click", p);
+export const trackNexusDestination = (p: NexusDestinationPayload) => emit("nexus.destination", p);
+export const trackNexusFailed = (p: NexusFailedPayload) => emit("nexus.failed", p);

@@ -1,23 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
+import React, { useEffect, useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
 import {
   RescanReportSchema,
   RescanHistorySchema,
   type RescanReport,
   type RescanHistory,
   type RescanHistoryEntry,
-} from '@/lib/securityRescanSchema';
+} from "@/lib/securityRescanSchema";
 
-const REPORT_URL = '/security-rescan-report.json';
-const HISTORY_URL = '/security-rescan-history.json';
+const REPORT_URL = "/security-rescan-report.json";
+const HISTORY_URL = "/security-rescan-history.json";
 
 const downloadJson = (data: unknown, name: string) => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = name;
   a.click();
@@ -35,7 +35,7 @@ const SecurityRescanReportCard: React.FC = () => {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((raw) => {
         const parsed = RescanReportSchema.safeParse(raw);
-        if (!parsed.success) throw new Error('Schema inválido: ' + parsed.error.issues[0]?.message);
+        if (!parsed.success) throw new Error("Schema inválido: " + parsed.error.issues[0]?.message);
         setReport(parsed.data);
       })
       .catch((e) => setReportError(e.message));
@@ -44,7 +44,7 @@ const SecurityRescanReportCard: React.FC = () => {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((raw) => {
         const parsed = RescanHistorySchema.safeParse(raw);
-        if (!parsed.success) throw new Error('Schema inválido: ' + parsed.error.issues[0]?.message);
+        if (!parsed.success) throw new Error("Schema inválido: " + parsed.error.issues[0]?.message);
         setHistory(parsed.data);
       })
       .catch((e) => setHistoryError(e.message));
@@ -58,9 +58,7 @@ const SecurityRescanReportCard: React.FC = () => {
   const blockingIds = useMemo(() => {
     if (!report) return [];
     return report.fixed_findings
-      .filter((f) =>
-        ['critical', 'high'].some((sev) => f.resolution.toLowerCase().includes(sev)),
-      )
+      .filter((f) => ["critical", "high"].some((sev) => f.resolution.toLowerCase().includes(sev)))
       .map((f) => f.internal_id);
   }, [report]);
 
@@ -76,17 +74,19 @@ const SecurityRescanReportCard: React.FC = () => {
             </CardTitle>
             <CardDescription className="font-serif italic">
               {report
-                ? `${new Date(report.scanned_at).toLocaleString('pt-BR')} · ${report.trigger}`
-                : reportError ?? 'Carregando…'}
+                ? `${new Date(report.scanned_at).toLocaleString("pt-BR")} · ${report.trigger}`
+                : (reportError ?? "Carregando…")}
             </CardDescription>
           </div>
           {report && (
             <div className="flex items-center gap-spacing-xs">
               <Badge
-                variant={gateBlocked ? 'destructive' : 'outline'}
-                className={gateBlocked ? '' : 'border-emerald-500 text-emerald-600 font-bold uppercase'}
+                variant={gateBlocked ? "destructive" : "outline"}
+                className={
+                  gateBlocked ? "" : "border-emerald-500 text-emerald-600 font-bold uppercase"
+                }
               >
-                {gateBlocked ? 'CI Bloqueado' : 'CI Liberado'}
+                {gateBlocked ? "CI Bloqueado" : "CI Liberado"}
               </Badge>
               <Button
                 size="sm"
@@ -108,14 +108,14 @@ const SecurityRescanReportCard: React.FC = () => {
           {report && (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-spacing-md">
-                {(['critical', 'high', 'warn', 'info'] as const).map((k) => {
+                {(["critical", "high", "warn", "info"] as const).map((k) => {
                   const v = report.summary[k];
                   const tone =
-                    k === 'critical' || k === 'high'
+                    k === "critical" || k === "high"
                       ? v > 0
-                        ? 'text-destructive'
-                        : 'text-emerald-600'
-                      : 'text-foreground';
+                        ? "text-destructive"
+                        : "text-emerald-600"
+                      : "text-foreground";
                   return (
                     <div
                       key={k}
@@ -134,8 +134,8 @@ const SecurityRescanReportCard: React.FC = () => {
               <div
                 className={`rounded-premium border p-spacing-md ${
                   gateBlocked
-                    ? 'bg-destructive/5 border-destructive/30'
-                    : 'bg-emerald-500/5 border-emerald-500/30'
+                    ? "bg-destructive/5 border-destructive/30"
+                    : "bg-emerald-500/5 border-emerald-500/30"
                 }`}
               >
                 <div className="flex items-center gap-spacing-xs">
@@ -145,7 +145,7 @@ const SecurityRescanReportCard: React.FC = () => {
                     <Icons.CheckCircle className="text-emerald-600 w-spacing-md h-spacing-md" />
                   )}
                   <span className="text-premium-sm font-bold uppercase tracking-widest">
-                    {gateBlocked ? 'Build falhou' : 'Build OK'}
+                    {gateBlocked ? "Build falhou" : "Build OK"}
                   </span>
                 </div>
                 <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">
@@ -184,7 +184,9 @@ const SecurityRescanReportCard: React.FC = () => {
                     <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">
                       {f.resolution}
                     </p>
-                    <p className="text-[10px] font-mono opacity-50 mt-spacing-2xs">{f.internal_id}</p>
+                    <p className="text-[10px] font-mono opacity-50 mt-spacing-2xs">
+                      {f.internal_id}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -201,11 +203,16 @@ const SecurityRescanReportCard: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-premium-xs font-mono">{w.id}</span>
-                        <Badge variant="outline" className="border-amber-500 text-amber-600 text-[10px]">
+                        <Badge
+                          variant="outline"
+                          className="border-amber-500 text-amber-600 text-[10px]"
+                        >
                           {w.count}× {w.level}
                         </Badge>
                       </div>
-                      <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">{w.note}</p>
+                      <p className="text-premium-xs text-muted-foreground mt-spacing-2xs">
+                        {w.note}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -233,7 +240,9 @@ const SecurityRescanReportCard: React.FC = () => {
             </div>
           )}
           {history && history.runs.length === 0 && (
-            <p className="text-premium-sm text-muted-foreground italic">Sem execuções registradas.</p>
+            <p className="text-premium-sm text-muted-foreground italic">
+              Sem execuções registradas.
+            </p>
           )}
           {history && history.runs.length > 0 && (
             <div className="divide-y divide-border/40">
@@ -245,31 +254,32 @@ const SecurityRescanReportCard: React.FC = () => {
                   <div className="space-y-spacing-2xs">
                     <div className="flex items-center gap-spacing-xs">
                       <Badge
-                        variant={run.gate.blocked ? 'destructive' : 'outline'}
+                        variant={run.gate.blocked ? "destructive" : "outline"}
                         className={
                           run.gate.blocked
-                            ? ''
-                            : 'border-emerald-500 text-emerald-600 text-[10px] uppercase'
+                            ? ""
+                            : "border-emerald-500 text-emerald-600 text-[10px] uppercase"
                         }
                       >
-                        {run.gate.blocked ? 'Falhou' : 'OK'}
+                        {run.gate.blocked ? "Falhou" : "OK"}
                       </Badge>
                       <span className="text-premium-sm font-bold">{run.scan_id}</span>
                     </div>
                     <p className="text-premium-xs text-muted-foreground">
-                      {new Date(run.scanned_at).toLocaleString('pt-BR')} · {run.trigger}
-                      {run.commit ? ` · ${run.commit.substring(0, 7)}` : ''}
-                      {run.pr ? ` · PR #${run.pr}` : ''}
+                      {new Date(run.scanned_at).toLocaleString("pt-BR")} · {run.trigger}
+                      {run.commit ? ` · ${run.commit.substring(0, 7)}` : ""}
+                      {run.pr ? ` · PR #${run.pr}` : ""}
                     </p>
                     <p className="text-[10px] font-mono opacity-60">
-                      crit:{run.summary.critical} · high:{run.summary.high} · warn:{run.summary.warn}
+                      crit:{run.summary.critical} · high:{run.summary.high} · warn:
+                      {run.summary.warn}
                     </p>
                   </div>
                   <Button
                     size="sm"
                     variant="outline"
                     className="rounded-premium-full gap-spacing-xs"
-                    onClick={() => window.open(run.report_url, '_blank')}
+                    onClick={() => window.open(run.report_url, "_blank")}
                   >
                     <Icons.Download className="w-spacing-sm h-spacing-sm" /> Baixar
                   </Button>

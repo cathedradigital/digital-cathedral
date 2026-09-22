@@ -30,7 +30,12 @@ export default defineTool({
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     if (!data)
       return {
-        content: [{ type: "text", text: `Missal não disponível para ${iso}. Acesse /liturgia/missa para gerar.` }],
+        content: [
+          {
+            type: "text",
+            text: `Missal não disponível para ${iso}. Acesse /liturgia/missa para gerar.`,
+          },
+        ],
         isError: true,
       };
     return {

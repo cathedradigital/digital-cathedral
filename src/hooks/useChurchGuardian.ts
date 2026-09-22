@@ -1,4 +1,4 @@
-import { useChurchContext } from './useChurchContext';
+import { useChurchContext } from "./useChurchContext";
 
 /**
  * Hook centralizado para monitorar se a plataforma está consumindo a Fonte Única de Verdade (SSoT).
@@ -10,10 +10,10 @@ export function useChurchGuardian() {
   // Auditoria em tempo real para dev/logs
   if (context.isToday && !context.isLoading) {
     if (!context.currentPope) {
-      console.error('[GUARDIAN] P0: Papa atual não identificado na Fonte Única!');
+      console.error("[GUARDIAN] P0: Papa atual não identificado na Fonte Única!");
     }
     if (!context.todaySaint) {
-      console.warn('[GUARDIAN] Santo do dia não identificado. Verificando fallback...');
+      console.warn("[GUARDIAN] Santo do dia não identificado. Verificando fallback...");
     }
   }
 

@@ -1,24 +1,24 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import PrototypeShell from '../PrototypeShell';
-import { ChevronRight } from 'lucide-react';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import PrototypeShell from "../PrototypeShell";
+import { ChevronRight } from "lucide-react";
 
-const BASE = '/prototype-2.0';
+const BASE = "/prototype-2.0";
 
 const OFICIO = [
-  { label: 'Missa', ref: 'laudes' },
-  { label: 'Laudes', ref: 'laudes' },
-  { label: 'Meio-dia', ref: 'laudes' },
-  { label: 'Vésperas', ref: 'laudes' },
-  { label: 'Completas', ref: 'laudes' },
+  { label: "Missa", ref: "laudes" },
+  { label: "Laudes", ref: "laudes" },
+  { label: "Meio-dia", ref: "laudes" },
+  { label: "Vésperas", ref: "laudes" },
+  { label: "Completas", ref: "laudes" },
 ];
 
 const DEVOCOES = [
-  { label: 'Rosário', ref: 'laudes' },
-  { label: 'Via-Sacra', ref: 'laudes' },
-  { label: 'Ladainhas', ref: 'laudes' },
-  { label: 'Lectio Divina', ref: 'jo15' },
-  { label: 'Exame de consciência', ref: 'laudes' },
+  { label: "Rosário", ref: "laudes" },
+  { label: "Via-Sacra", ref: "laudes" },
+  { label: "Ladainhas", ref: "laudes" },
+  { label: "Lectio Divina", ref: "jo15" },
+  { label: "Exame de consciência", ref: "laudes" },
 ];
 
 const Rezar: React.FC = () => {
@@ -41,7 +41,9 @@ const Rezar: React.FC = () => {
       </section>
 
       <section className="mt-6">
-        <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">Devoções</p>
+        <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
+          Devoções
+        </p>
         <ul className="border border-border rounded divide-y divide-border">
           {DEVOCOES.map((d) => (
             <li key={d.label}>

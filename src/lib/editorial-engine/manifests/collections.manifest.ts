@@ -24,20 +24,20 @@ export const collectionsManifest: EntityManifest = {
     version: "0.1",
     status: "developing",
     certification: false,
-    migration: 0.30,
+    migration: 0.3,
   },
   fields: [
     // — Identidade —
-    { key: "title",       label: "Título",           group: "meta",      required: true,  weight: 1 },
-    { key: "category",    label: "Categoria",        group: "meta",      required: true,  weight: 1 },
+    { key: "title", label: "Título", group: "meta", required: true, weight: 1 },
+    { key: "category", label: "Categoria", group: "meta", required: true, weight: 1 },
 
     // — Núcleo editorial —
-    { key: "subtitle",    label: "Subtítulo",        group: "editorial", required: true,  weight: 1 },
-    { key: "description", label: "Descrição",        group: "editorial", required: true,  weight: 3 },
-    { key: "cover",       label: "Capa (imagem)",    group: "editorial", required: true,  weight: 2 },
+    { key: "subtitle", label: "Subtítulo", group: "editorial", required: true, weight: 1 },
+    { key: "description", label: "Descrição", group: "editorial", required: true, weight: 3 },
+    { key: "cover", label: "Capa (imagem)", group: "editorial", required: true, weight: 2 },
 
     // — Núcleo Nexus —
-    { key: "nexus_refs",  label: "Referências Nexus",group: "nexus",     required: true,  weight: 2 },
-    { key: "items_count", label: "Itens curados",    group: "nexus",     required: true,  weight: 3 },
+    { key: "nexus_refs", label: "Referências Nexus", group: "nexus", required: true, weight: 2 },
+    { key: "items_count", label: "Itens curados", group: "nexus", required: true, weight: 3 },
   ],
 };

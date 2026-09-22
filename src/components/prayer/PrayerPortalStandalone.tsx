@@ -5,11 +5,11 @@
  * Constrói um objeto `Prayer` sintético mínimo e desabilita a seção de
  * sessão (Continuar/Recomeçar) — que só faz sentido dentro do Engine.
  */
-import React from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import type { LucideIcon } from 'lucide-react';
-import PrayerPortal, { type PortalHighlight, type PrayerPortalTheme } from './PrayerPortal';
-import type { Prayer } from '@/hooks/usePrayers';
+import React from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import type { LucideIcon } from "lucide-react";
+import PrayerPortal, { type PortalHighlight, type PrayerPortalTheme } from "./PrayerPortal";
+import type { Prayer } from "@/hooks/usePrayers";
 
 interface Props {
   slug: string;
@@ -26,7 +26,7 @@ interface Props {
   accentIcon?: LucideIcon;
 }
 
-const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
 const PrayerPortalStandalone: React.FC<Props> = ({
   slug,
@@ -48,13 +48,13 @@ const PrayerPortalStandalone: React.FC<Props> = ({
     slug,
     title,
     subtitle: null,
-    kind: 'devotional',
+    kind: "devotional",
     estimated_seconds: estimatedSeconds ?? null,
   } as unknown as Prayer;
 
   const defaultOnEnter = () => {
     const next = new URLSearchParams(searchParams);
-    next.set('enter', '1');
+    next.set("enter", "1");
     setSearchParams(next, { replace: true });
   };
 
@@ -75,4 +75,3 @@ const PrayerPortalStandalone: React.FC<Props> = ({
 };
 
 export default PrayerPortalStandalone;
-

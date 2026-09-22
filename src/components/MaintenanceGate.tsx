@@ -1,5 +1,5 @@
 import React from "react";
-import { Helmet, HelmetProvider } from '@/lib/helmet-compat';
+import { Helmet, HelmetProvider } from "@/lib/helmet-compat";
 
 /**
  * Gate de manutenção SEO-safe.
@@ -26,7 +26,10 @@ function readFlag(): boolean {
   try {
     if (window.localStorage.getItem("cathedra:maintenance:bypass") === "1") return false;
   } catch {}
-  if (import.meta.env.VITE_MAINTENANCE_MODE === "1" || import.meta.env.VITE_MAINTENANCE_MODE === "true") {
+  if (
+    import.meta.env.VITE_MAINTENANCE_MODE === "1" ||
+    import.meta.env.VITE_MAINTENANCE_MODE === "true"
+  ) {
     return true;
   }
   try {
@@ -70,12 +73,10 @@ export function MaintenanceGate({ children }: { children: React.ReactNode }) {
             Cathedra em manutenção
           </h1>
           <p className="text-sm text-muted-foreground">
-            Estamos realizando uma manutenção breve. Em instantes, o silêncio dará lugar
-            à leitura. Obrigado pela paciência.
+            Estamos realizando uma manutenção breve. Em instantes, o silêncio dará lugar à leitura.
+            Obrigado pela paciência.
           </p>
-          <p className="text-xs text-muted-foreground/70">
-            Tente novamente em alguns minutos.
-          </p>
+          <p className="text-xs text-muted-foreground/70">Tente novamente em alguns minutos.</p>
         </div>
       </main>
     </HelmetProvider>

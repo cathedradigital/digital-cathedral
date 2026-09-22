@@ -9,26 +9,20 @@
  * "Voltar à Biblioteca"). Respeita tokens Logos 2030 (Cormorant + Karla,
  * borda dourada fina), tap targets ≥44px e foco visível.
  */
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { cn } from "@/lib/utils";
 import {
   resolveContinuation,
   type ContinuationSuggestion,
   type KnowledgeNodeId,
-} from '@/core/knowledge';
-import { INTENT_ICON, KIND_GRAPH_TITLE } from './ReaderContinuation.presets';
-import { telemetry } from '@/utils/navigation-telemetry';
+} from "@/core/knowledge";
+import { INTENT_ICON, KIND_GRAPH_TITLE } from "./ReaderContinuation.presets";
+import { telemetry } from "@/utils/navigation-telemetry";
 
 export type ReaderContinuationKind =
-  | 'bible'
-  | 'catechism'
-  | 'magisterium'
-  | 'saint'
-  | 'journey-step'
-  | 'prayer'
-  | 'glossary-term';
+  "bible" | "catechism" | "magisterium" | "saint" | "journey-step" | "prayer" | "glossary-term";
 
 export interface ReaderContinuationContext {
   kind: ReaderContinuationKind;
@@ -64,7 +58,7 @@ interface Suggestion {
   description?: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
-  variant: 'primary' | 'secondary';
+  variant: "primary" | "secondary";
   onClick?: () => void;
 }
 
@@ -73,7 +67,7 @@ function buildSuggestions(ctx: ReaderContinuationContext): Suggestion[] {
   const { kind, meta = {} } = ctx;
 
   switch (kind) {
-    case 'bible': {
+    case "bible": {
       const { bookAbbr, chapter, totalChapters, paragraph } = meta;
       if (bookAbbr && chapter && (!totalChapters || chapter < totalChapters)) {
         out.push({
@@ -81,154 +75,154 @@ function buildSuggestions(ctx: ReaderContinuationContext): Suggestion[] {
           description: `${bookAbbr.toUpperCase()} ${chapter + 1}`,
           href: `/bible?book=${bookAbbr}&chapter=${chapter + 1}`,
           icon: Icons.ChevronRight,
-          variant: 'primary',
+          variant: "primary",
         });
       }
       if (paragraph) {
         out.push({
-          label: 'Abrir no Catecismo',
+          label: "Abrir no Catecismo",
           description: `§${paragraph}`,
           href: `/catechism?p=${paragraph}`,
           icon: Icons.Church,
-          variant: 'secondary',
+          variant: "secondary",
         });
       }
       out.push({
-        label: 'Rezar agora',
-        description: 'Levar a leitura à oração',
-        href: '/oracao',
+        label: "Rezar agora",
+        description: "Levar a leitura à oração",
+        href: "/oracao",
         icon: Icons.Flame,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
-    case 'catechism': {
+    case "catechism": {
       const { paragraph, nextParagraph } = meta;
       const next = nextParagraph ?? (paragraph ? paragraph + 1 : undefined);
       if (next) {
         out.push({
-          label: 'Próximo parágrafo',
+          label: "Próximo parágrafo",
           description: `§${next}`,
           href: `/catechism?p=${next}`,
           icon: Icons.ChevronRight,
-          variant: 'primary',
+          variant: "primary",
         });
       }
       out.push({
-        label: 'Ver na Bíblia',
-        description: 'Referências da Sagrada Escritura',
-        href: '/bible',
+        label: "Ver na Bíblia",
+        description: "Referências da Sagrada Escritura",
+        href: "/bible",
         icon: Icons.Book,
-        variant: 'secondary',
+        variant: "secondary",
       });
       out.push({
-        label: 'Aprofundar em jornada',
-        description: 'Estudo guiado sobre este tema',
-        href: '/jornadas',
+        label: "Aprofundar em jornada",
+        description: "Estudo guiado sobre este tema",
+        href: "/jornadas",
         icon: Icons.Map,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
-    case 'magisterium': {
+    case "magisterium": {
       out.push({
-        label: 'Aprofundar em jornada',
-        description: 'Estudos guiados relacionados',
-        href: '/jornadas',
+        label: "Aprofundar em jornada",
+        description: "Estudos guiados relacionados",
+        href: "/jornadas",
         icon: Icons.Map,
-        variant: 'primary',
+        variant: "primary",
       });
       out.push({
-        label: 'Explorar temas',
-        description: 'Buscar assuntos deste documento',
-        href: meta.theme ? `/buscar?q=${encodeURIComponent(meta.theme)}` : '/buscar',
+        label: "Explorar temas",
+        description: "Buscar assuntos deste documento",
+        href: meta.theme ? `/buscar?q=${encodeURIComponent(meta.theme)}` : "/buscar",
         icon: Icons.Search,
-        variant: 'secondary',
+        variant: "secondary",
       });
       out.push({
-        label: 'Rezar agora',
-        description: 'Meditar a doutrina em oração',
-        href: '/oracao',
+        label: "Rezar agora",
+        description: "Meditar a doutrina em oração",
+        href: "/oracao",
         icon: Icons.Flame,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
-    case 'saint': {
+    case "saint": {
       out.push({
-        label: 'Próximo santo',
-        description: 'Continuar pelo santoral',
-        href: '/santos',
+        label: "Próximo santo",
+        description: "Continuar pelo santoral",
+        href: "/santos",
         icon: Icons.ChevronRight,
-        variant: 'primary',
+        variant: "primary",
       });
       out.push({
-        label: 'Rezar com este santo',
-        description: 'Orações da tradição',
-        href: '/oracao',
+        label: "Rezar com este santo",
+        description: "Orações da tradição",
+        href: "/oracao",
         icon: Icons.Flame,
-        variant: 'secondary',
+        variant: "secondary",
       });
       out.push({
-        label: 'Vidas relacionadas',
-        description: 'Padres e mestres espirituais',
-        href: '/santos',
+        label: "Vidas relacionadas",
+        description: "Padres e mestres espirituais",
+        href: "/santos",
         icon: Icons.User,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
-    case 'journey-step': {
+    case "journey-step": {
       const { journeyId, nextStepId } = meta;
       if (journeyId && nextStepId) {
         out.push({
-          label: 'Próxima etapa',
-          description: 'Continuar o itinerário',
+          label: "Próxima etapa",
+          description: "Continuar o itinerário",
           href: `/jornadas/${journeyId}/step?step=${nextStepId}`,
           icon: Icons.ChevronRight,
-          variant: 'primary',
+          variant: "primary",
         });
       }
       out.push({
-        label: 'Jornadas relacionadas',
-        description: 'Outros caminhos de formação',
-        href: '/jornadas',
+        label: "Jornadas relacionadas",
+        description: "Outros caminhos de formação",
+        href: "/jornadas",
         icon: Icons.Map,
-        variant: 'secondary',
+        variant: "secondary",
       });
       out.push({
-        label: 'Rezar agora',
-        description: 'Recolher-se em oração',
-        href: '/oracao',
+        label: "Rezar agora",
+        description: "Recolher-se em oração",
+        href: "/oracao",
         icon: Icons.Flame,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
-    case 'prayer': {
+    case "prayer": {
       const { nextPrayerSlug } = meta;
       if (nextPrayerSlug) {
         out.push({
-          label: 'Próxima oração',
-          description: 'Continuar no Livro de Orações',
+          label: "Próxima oração",
+          description: "Continuar no Livro de Orações",
           href: `/oracao/${nextPrayerSlug}`,
           icon: Icons.ChevronRight,
-          variant: 'primary',
+          variant: "primary",
         });
       }
       out.push({
-        label: 'Voltar ao índice',
-        description: 'Livro de Orações',
-        href: '/oracao',
+        label: "Voltar ao índice",
+        description: "Livro de Orações",
+        href: "/oracao",
         icon: Icons.Book,
-        variant: 'secondary',
+        variant: "secondary",
       });
       out.push({
-        label: 'Meditar na Escritura',
-        description: 'Buscar passagens relacionadas',
-        href: '/bible',
+        label: "Meditar na Escritura",
+        description: "Buscar passagens relacionadas",
+        href: "/bible",
         icon: Icons.Flame,
-        variant: 'secondary',
+        variant: "secondary",
       });
       break;
     }
@@ -238,18 +232,18 @@ function buildSuggestions(ctx: ReaderContinuationContext): Suggestion[] {
   if (out.length === 0) {
     out.push(
       {
-        label: 'Continuar Jornada',
-        description: 'Retomar o estudo',
-        href: '/jornadas',
+        label: "Continuar Jornada",
+        description: "Retomar o estudo",
+        href: "/jornadas",
         icon: Icons.Map,
-        variant: 'primary',
+        variant: "primary",
       },
       {
-        label: 'Voltar à Biblioteca',
-        description: 'Explorar outros conteúdos',
-        href: '/biblioteca',
+        label: "Voltar à Biblioteca",
+        description: "Explorar outros conteúdos",
+        href: "/biblioteca",
         icon: Icons.Library,
-        variant: 'secondary',
+        variant: "secondary",
       },
     );
   }
@@ -258,23 +252,23 @@ function buildSuggestions(ctx: ReaderContinuationContext): Suggestion[] {
 }
 
 const KIND_TITLE: Record<ReaderContinuationKind, string> = {
-  bible: 'Continuar seu estudo',
-  catechism: 'Próximo passo',
-  magisterium: 'Aprofundar a contemplação',
-  saint: 'Continuar pela comunhão dos santos',
-  'journey-step': 'Se você está lendo isto, provavelmente deveria continuar por aqui...',
-  prayer: 'Continuar na oração',
-  'glossary-term': 'Aprofundar no Léxico',
+  bible: "Continuar seu estudo",
+  catechism: "Próximo passo",
+  magisterium: "Aprofundar a contemplação",
+  saint: "Continuar pela comunhão dos santos",
+  "journey-step": "Se você está lendo isto, provavelmente deveria continuar por aqui...",
+  prayer: "Continuar na oração",
+  "glossary-term": "Aprofundar no Léxico",
 };
 
 const KIND_EPIGRAPH: Record<ReaderContinuationKind, string> = {
-  bible: '“A tua palavra é lâmpada para os meus pés.” — Sl 119,105',
-  catechism: '“A leitura busca, a meditação encontra.” — Guigo, o Cartuxo',
-  magisterium: '“Fides quaerens intellectum.” — Sto. Anselmo',
-  saint: '“Ide, e fazei o mesmo.” — Lc 10,37',
-  'journey-step': '“Corramos com perseverança a prova que nos está proposta.” — Hb 12,1',
-  prayer: '“Orai sem cessar.” — 1Ts 5,17',
-  'glossary-term': '“Da abundância do coração fala a boca.” — Mt 12,34',
+  bible: "“A tua palavra é lâmpada para os meus pés.” — Sl 119,105",
+  catechism: "“A leitura busca, a meditação encontra.” — Guigo, o Cartuxo",
+  magisterium: "“Fides quaerens intellectum.” — Sto. Anselmo",
+  saint: "“Ide, e fazei o mesmo.” — Lc 10,37",
+  "journey-step": "“Corramos com perseverança a prova que nos está proposta.” — Hb 12,1",
+  prayer: "“Orai sem cessar.” — 1Ts 5,17",
+  "glossary-term": "“Da abundância do coração fala a boca.” — Mt 12,34",
 };
 
 export interface ReaderContinuationProps {
@@ -295,17 +289,14 @@ export interface ReaderContinuationProps {
  * Adapta uma sugestão vinda do KnowledgeGraph para o formato interno
  * de render. Mantém a mesma UI dos CTAs de fallback (zero divergência).
  */
-function fromGraphSuggestion(
-  s: ContinuationSuggestion,
-  index: number,
-): Suggestion {
+function fromGraphSuggestion(s: ContinuationSuggestion, index: number): Suggestion {
   const Icon = INTENT_ICON[s.intent] ?? Icons.ChevronRight;
   return {
     label: s.label,
     description: s.eyebrow,
-    href: s.target.url ?? '#',
+    href: s.target.url ?? "#",
     icon: Icon,
-    variant: index === 0 ? 'primary' : 'secondary',
+    variant: index === 0 ? "primary" : "secondary",
   };
 }
 
@@ -325,9 +316,9 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
       return [];
     }
     // 'glossary-term' ainda não é resolvido pelo KnowledgeGraph — cai no fallback editorial.
-    if (context.kind === 'glossary-term') return [];
+    if (context.kind === "glossary-term") return [];
     return resolveContinuation({
-      currentKind: context.kind === 'journey-step' ? 'journey-step' : context.kind,
+      currentKind: context.kind === "journey-step" ? "journey-step" : context.kind,
       currentId: context.graphNodeId,
       themeIds: context.themeIds,
     });
@@ -342,15 +333,15 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
   }, [usedGraph, graphSuggestions, context]);
 
   const title = usedGraph
-    ? KIND_GRAPH_TITLE[context.kind] ?? KIND_TITLE[context.kind]
+    ? (KIND_GRAPH_TITLE[context.kind] ?? KIND_TITLE[context.kind])
     : KIND_TITLE[context.kind];
   const epigraph = KIND_EPIGRAPH[context.kind];
 
   // 3) Telemetria: `shown` uma vez por conjunto de sugestões.
   React.useEffect(() => {
-    telemetry.log('reader.continuation.shown', 'info', {
+    telemetry.log("reader.continuation.shown", "info", {
       kind: context.kind,
-      source: usedGraph ? 'graph' : 'fallback',
+      source: usedGraph ? "graph" : "fallback",
       count: suggestions.length,
       intents: usedGraph ? graphSuggestions.map((g) => g.intent) : undefined,
     });
@@ -362,11 +353,11 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
     <aside
       aria-label="Próximos passos de leitura"
       data-reader-continuation={context.kind}
-      data-source={usedGraph ? 'graph' : 'fallback'}
+      data-source={usedGraph ? "graph" : "fallback"}
       className={cn(
-        'reader-continuation w-full max-w-[70ch] mx-auto',
-        'mt-spacing-3xl pt-spacing-2xl',
-        'border-t border-secondary/30',
+        "reader-continuation w-full max-w-[70ch] mx-auto",
+        "mt-spacing-3xl pt-spacing-2xl",
+        "border-t border-secondary/30",
         className,
       )}
     >
@@ -374,18 +365,15 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
         <p className="text-[10px] font-black uppercase tracking-[0.28em] text-secondary/80">
           Itinerarium
         </p>
-        <h3 className="mt-spacing-xs font-display text-premium-xl text-foreground">
-          {title}
-        </h3>
+        <h3 className="mt-spacing-xs font-display text-premium-xl text-foreground">{title}</h3>
         <p className="mt-spacing-xs text-premium-xs italic text-muted-foreground font-serif">
           {epigraph}
         </p>
-        
+
         {/* Sprint 5 — Guided Walk Text */}
         {context.id && (
           <p className="mt-spacing-md text-premium-sm text-foreground/80 leading-relaxed max-w-[50ch] mx-auto animate-fade-in">
             A sua leitura de agora não é um fim, mas um convite.
-
           </p>
         )}
       </header>
@@ -393,16 +381,16 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
       <ul className="flex flex-col gap-spacing-sm" role="list">
         {suggestions.map((s, idx) => {
           const Icon = s.icon;
-          const isPrimary = s.variant === 'primary';
+          const isPrimary = s.variant === "primary";
           const graphIntent = usedGraph ? graphSuggestions[idx]?.intent : undefined;
           return (
             <li key={`${s.label}-${s.href}`}>
               <Link
                 to={s.href}
                 onClick={() => {
-                  telemetry.log('reader.continuation.click', 'info', {
+                  telemetry.log("reader.continuation.click", "info", {
                     kind: context.kind,
-                    source: usedGraph ? 'graph' : 'fallback',
+                    source: usedGraph ? "graph" : "fallback",
                     intent: graphIntent,
                     href: s.href,
                     position: idx,
@@ -410,19 +398,19 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
                   onCtaClick?.({ label: s.label, href: s.href, kind: context.kind });
                 }}
                 className={cn(
-                  'group flex items-center gap-spacing-md',
-                  'min-h-[44px] px-spacing-lg py-spacing-md rounded-premium-lg',
-                  'transition-all duration-200',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  "group flex items-center gap-spacing-md",
+                  "min-h-[44px] px-spacing-lg py-spacing-md rounded-premium-lg",
+                  "transition-all duration-200",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   isPrimary
-                    ? 'bg-primary text-primary-foreground shadow-premium hover:brightness-110'
-                    : 'border border-primary/10 bg-background/60 text-foreground hover:border-secondary/40 hover:bg-secondary/5',
+                    ? "bg-primary text-primary-foreground shadow-premium hover:brightness-110"
+                    : "border border-primary/10 bg-background/60 text-foreground hover:border-secondary/40 hover:bg-secondary/5",
                 )}
               >
                 <span
                   className={cn(
-                    'flex items-center justify-center w-11 h-11 rounded-premium-full flex-shrink-0',
-                    isPrimary ? 'bg-primary-foreground/10' : 'bg-primary/5 text-secondary',
+                    "flex items-center justify-center w-11 h-11 rounded-premium-full flex-shrink-0",
+                    isPrimary ? "bg-primary-foreground/10" : "bg-primary/5 text-secondary",
                   )}
                   aria-hidden="true"
                 >
@@ -431,8 +419,8 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
                 <span className="flex flex-col min-w-0 flex-1 text-left">
                   <span
                     className={cn(
-                      'text-premium-sm font-bold uppercase tracking-[0.14em]',
-                      isPrimary ? 'text-primary-foreground' : 'text-foreground',
+                      "text-premium-sm font-bold uppercase tracking-[0.14em]",
+                      isPrimary ? "text-primary-foreground" : "text-foreground",
                     )}
                   >
                     {s.label}
@@ -440,8 +428,8 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
                   {s.description && (
                     <span
                       className={cn(
-                        'text-premium-xs font-serif italic truncate',
-                        isPrimary ? 'text-primary-foreground/80' : 'text-muted-foreground',
+                        "text-premium-xs font-serif italic truncate",
+                        isPrimary ? "text-primary-foreground/80" : "text-muted-foreground",
                       )}
                     >
                       {s.description}
@@ -450,8 +438,8 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
                 </span>
                 <Icons.ChevronRight
                   className={cn(
-                    'w-4 h-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5',
-                    isPrimary ? 'text-primary-foreground/70' : 'text-muted-foreground',
+                    "w-4 h-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5",
+                    isPrimary ? "text-primary-foreground/70" : "text-muted-foreground",
                   )}
                   aria-hidden="true"
                 />

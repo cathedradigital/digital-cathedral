@@ -11,8 +11,8 @@
  * no path legado é bloqueada — admin edita apenas `journeys` reais.
  */
 
-import { supabase } from '@/lib/db';
-import { JourneyAdapter } from './JourneyAdapter';
+import { supabase } from "@/lib/db";
+import { JourneyAdapter } from "./JourneyAdapter";
 import type {
   Journey,
   JourneyCreateInput,
@@ -26,7 +26,7 @@ import type {
   JourneyStep,
   JourneyStepUpsertInput,
   ServiceResult,
-} from './types';
+} from "./types";
 
 type SB = typeof supabase;
 
@@ -39,21 +39,21 @@ function fail<T>(error: unknown): ServiceResult<T> {
 }
 
 const LEGACY_WRITE_ERROR = new Error(
-  '[JourneyService] Escrita bloqueada em conteúdo legado (itineraria). Migre para journeys antes de editar.',
+  "[JourneyService] Escrita bloqueada em conteúdo legado (itineraria). Migre para journeys antes de editar.",
 );
 
 async function fetchJourneyById(id: string): Promise<Journey | null> {
   if (JourneyAdapter.isLegacyId(id)) {
     const raw = JourneyAdapter.fromLegacyId(id);
     const { data, error } = await (supabase as SB)
-      .from('itineraria' as any)
-      .select('*')
-      .eq('id', raw)
+      .from("itineraria" as any)
+      .select("*")
+      .eq("id", raw)
       .maybeSingle();
     if (error) throw error;
     return data ? JourneyAdapter.fromItineraria(data as any) : null;
   }
-  const { data, error } = await supabase.from('journeys').select('*').eq('id', id).maybeSingle();
+  const { data, error } = await supabase.from("journeys").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data ? JourneyAdapter.fromJourneyRow(data as any) : null;
 }
@@ -63,14 +63,14 @@ export const JourneyService = {
 
   async list(filters: JourneyListFilters = {}): Promise<ServiceResult<Journey[]>> {
     try {
-      let q = supabase.from('journeys').select('*');
-      if (filters.category) q = q.eq('category', filters.category);
-      if (filters.difficulty) q = q.eq('difficulty', filters.difficulty);
-      if (typeof filters.is_premium === 'boolean') q = q.eq('is_premium', filters.is_premium);
-      if (typeof filters.is_active === 'boolean') q = q.eq('is_active', filters.is_active);
-      if (filters.tags?.length) q = q.overlaps('tags', filters.tags);
-      if (filters.search) q = q.ilike('title', `%${filters.search}%`);
-      q = q.order('sort_order', { ascending: true });
+      let q = supabase.from("journeys").select("*");
+      if (filters.category) q = q.eq("category", filters.category);
+      if (filters.difficulty) q = q.eq("difficulty", filters.difficulty);
+      if (typeof filters.is_premium === "boolean") q = q.eq("is_premium", filters.is_premium);
+      if (typeof filters.is_active === "boolean") q = q.eq("is_active", filters.is_active);
+      if (filters.tags?.length) q = q.overlaps("tags", filters.tags);
+      if (filters.search) q = q.ilike("title", `%${filters.search}%`);
+      q = q.order("sort_order", { ascending: true });
       if (filters.limit) q = q.limit(filters.limit);
       if (filters.offset) q = q.range(filters.offset, filters.offset + (filters.limit ?? 50) - 1);
 
@@ -105,18 +105,18 @@ export const JourneyService = {
       if (JourneyAdapter.isLegacyId(journeyId)) {
         const raw = JourneyAdapter.fromLegacyId(journeyId);
         const { data, error } = await (supabase as SB)
-          .from('itineraria_steps' as any)
-          .select('*')
-          .eq('itinerarium_id', raw)
-          .order('step_order', { ascending: true });
+          .from("itineraria_steps" as any)
+          .select("*")
+          .eq("itinerarium_id", raw)
+          .order("step_order", { ascending: true });
         if (error) throw error;
         return ok((data ?? []).map((r) => JourneyAdapter.fromItinerariaStep(r as any)));
       }
       const { data, error } = await supabase
-        .from('journey_steps')
-        .select('*')
-        .eq('journey_id', journeyId)
-        .order('step_order', { ascending: true });
+        .from("journey_steps")
+        .select("*")
+        .eq("journey_id", journeyId)
+        .order("step_order", { ascending: true });
       if (error) throw error;
       return ok((data ?? []).map((r) => JourneyAdapter.fromJourneyStepRow(r as any)));
     } catch (e) {
@@ -129,19 +129,19 @@ export const JourneyService = {
       if (JourneyAdapter.isLegacyId(journeyId)) {
         const raw = JourneyAdapter.fromLegacyId(journeyId);
         const { data, error } = await (supabase as SB)
-          .from('itineraria_steps' as any)
-          .select('*')
-          .eq('itinerarium_id', raw)
-          .eq('step_order', order)
+          .from("itineraria_steps" as any)
+          .select("*")
+          .eq("itinerarium_id", raw)
+          .eq("step_order", order)
           .maybeSingle();
         if (error) throw error;
         return ok(data ? JourneyAdapter.fromItinerariaStep(data as any) : (null as any));
       }
       const { data, error } = await supabase
-        .from('journey_steps')
-        .select('*')
-        .eq('journey_id', journeyId)
-        .eq('step_order', order)
+        .from("journey_steps")
+        .select("*")
+        .eq("journey_id", journeyId)
+        .eq("step_order", order)
         .maybeSingle();
       if (error) throw error;
       return ok(data ? JourneyAdapter.fromJourneyStepRow(data as any) : (null as any));
@@ -159,12 +159,12 @@ export const JourneyService = {
       const { data: base } = await JourneyService.getById(journeyId);
       if (!base) return ok([]);
       let q = supabase
-        .from('journeys')
-        .select('*')
-        .eq('is_active', true)
-        .neq('id', JourneyAdapter.isLegacyId(journeyId) ? '' : journeyId)
+        .from("journeys")
+        .select("*")
+        .eq("is_active", true)
+        .neq("id", JourneyAdapter.isLegacyId(journeyId) ? "" : journeyId)
         .limit(limit);
-      if (base.category) q = q.eq('category', base.category);
+      if (base.category) q = q.eq("category", base.category);
       const { data, error } = await q;
       if (error) throw error;
       return ok((data ?? []).map((r) => JourneyAdapter.fromJourneyRow(r as any)));
@@ -175,18 +175,15 @@ export const JourneyService = {
 
   // ─────────────────────────── Progresso ───────────────────────────
 
-  async getProgress(
-    userId: string,
-    journeyId: string,
-  ): Promise<ServiceResult<JourneyProgress[]>> {
+  async getProgress(userId: string, journeyId: string): Promise<ServiceResult<JourneyProgress[]>> {
     try {
       if (JourneyAdapter.isLegacyId(journeyId)) {
         const raw = JourneyAdapter.fromLegacyId(journeyId);
         const { data, error } = await (supabase as SB)
-          .from('itineraria_progress' as any)
-          .select('*')
-          .eq('user_id', userId)
-          .eq('itinerarium_id', raw);
+          .from("itineraria_progress" as any)
+          .select("*")
+          .eq("user_id", userId)
+          .eq("itinerarium_id", raw);
         if (error) throw error;
         return ok(
           (data ?? []).map((r: any) => ({
@@ -200,10 +197,10 @@ export const JourneyService = {
         );
       }
       const { data, error } = await supabase
-        .from('journey_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('journey_id', journeyId);
+        .from("journey_progress")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("journey_id", journeyId);
       if (error) throw error;
       return ok((data ?? []) as JourneyProgress[]);
     } catch (e) {
@@ -211,15 +208,12 @@ export const JourneyService = {
     }
   },
 
-  async startJourney(
-    userId: string,
-    journeyId: string,
-  ): Promise<ServiceResult<JourneyProgress>> {
+  async startJourney(userId: string, journeyId: string): Promise<ServiceResult<JourneyProgress>> {
     try {
       if (JourneyAdapter.isLegacyId(journeyId)) return fail(LEGACY_WRITE_ERROR);
       const { data: first } = await JourneyService.getFirstStep(journeyId);
       const { data, error } = await supabase
-        .from('journey_progress')
+        .from("journey_progress")
         .insert({
           user_id: userId,
           journey_id: journeyId,
@@ -245,7 +239,7 @@ export const JourneyService = {
       const { data: step } = await JourneyService.getStep(journeyId, stepOrder);
       if (!step) throw new Error(`Passo ${stepOrder} não encontrado`);
       const { data, error } = await supabase
-        .from('journey_progress')
+        .from("journey_progress")
         .insert({
           user_id: userId,
           journey_id: journeyId,
@@ -261,10 +255,7 @@ export const JourneyService = {
     }
   },
 
-  async resumeJourney(
-    userId: string,
-    journeyId: string,
-  ): Promise<ServiceResult<JourneyStep>> {
+  async resumeJourney(userId: string, journeyId: string): Promise<ServiceResult<JourneyStep>> {
     try {
       const { data: progress } = await JourneyService.getProgress(userId, journeyId);
       const { data: steps } = await JourneyService.listSteps(journeyId);
@@ -280,13 +271,13 @@ export const JourneyService = {
   async listUserJourneys(userId: string): Promise<ServiceResult<Journey[]>> {
     try {
       const { data, error } = await supabase
-        .from('journey_progress')
-        .select('journey_id')
-        .eq('user_id', userId);
+        .from("journey_progress")
+        .select("journey_id")
+        .eq("user_id", userId);
       if (error) throw error;
       const ids = Array.from(new Set((data ?? []).map((r: any) => r.journey_id).filter(Boolean)));
       if (ids.length === 0) return ok([]);
-      const { data: js, error: e2 } = await supabase.from('journeys').select('*').in('id', ids);
+      const { data: js, error: e2 } = await supabase.from("journeys").select("*").in("id", ids);
       if (e2) throw e2;
       return ok((js ?? []).map((r) => JourneyAdapter.fromJourneyRow(r as any)));
     } catch (e) {
@@ -298,10 +289,10 @@ export const JourneyService = {
     try {
       if (JourneyAdapter.isLegacyId(journeyId)) return fail(LEGACY_WRITE_ERROR);
       const { error } = await supabase
-        .from('journey_progress')
+        .from("journey_progress")
         .delete()
-        .eq('user_id', userId)
-        .eq('journey_id', journeyId);
+        .eq("user_id", userId)
+        .eq("journey_id", journeyId);
       if (error) throw error;
       return ok(true);
     } catch (e) {
@@ -313,7 +304,7 @@ export const JourneyService = {
 
   async createJourney(input: JourneyCreateInput): Promise<ServiceResult<Journey>> {
     try {
-      const { data, error } = await supabase.from('journeys').insert(input).select().maybeSingle();
+      const { data, error } = await supabase.from("journeys").insert(input).select().maybeSingle();
       if (error) throw error;
       return ok(JourneyAdapter.fromJourneyRow(data as any));
     } catch (e) {
@@ -325,9 +316,9 @@ export const JourneyService = {
     try {
       if (JourneyAdapter.isLegacyId(id)) return fail(LEGACY_WRITE_ERROR);
       const { data, error } = await supabase
-        .from('journeys')
+        .from("journeys")
         .update(patch)
-        .eq('id', id)
+        .eq("id", id)
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -345,7 +336,7 @@ export const JourneyService = {
       if (JourneyAdapter.isLegacyId(journeyId)) return fail(LEGACY_WRITE_ERROR);
       const payload = { ...step, journey_id: journeyId };
       const { data, error } = await supabase
-        .from('journey_steps')
+        .from("journey_steps")
         .upsert(payload as any)
         .select()
         .maybeSingle();
@@ -359,7 +350,7 @@ export const JourneyService = {
   async deleteJourney(id: string): Promise<ServiceResult<true>> {
     try {
       if (JourneyAdapter.isLegacyId(id)) return fail(LEGACY_WRITE_ERROR);
-      const { error } = await supabase.from('journeys').delete().eq('id', id);
+      const { error } = await supabase.from("journeys").delete().eq("id", id);
       if (error) throw error;
       return ok(true);
     } catch (e) {
@@ -384,9 +375,9 @@ export const JourneyService = {
         });
       }
       const { data, error } = await supabase
-        .from('journey_progress')
-        .select('user_id, step_id')
-        .eq('journey_id', journeyId);
+        .from("journey_progress")
+        .select("user_id, step_id")
+        .eq("journey_id", journeyId);
       if (error) throw error;
       const rows = data ?? [];
       const users_started = new Set(rows.map((r: any) => r.user_id)).size;
@@ -417,8 +408,8 @@ export const JourneyService = {
   async getGlobalStats(): Promise<ServiceResult<JourneyGlobalStats>> {
     try {
       const [j, p] = await Promise.all([
-        supabase.from('journeys').select('id', { count: 'exact', head: true }),
-        supabase.from('journey_progress').select('user_id, id'),
+        supabase.from("journeys").select("id", { count: "exact", head: true }),
+        supabase.from("journey_progress").select("user_id, id"),
       ]);
       if (j.error) throw j.error;
       if (p.error) throw p.error;
@@ -442,15 +433,15 @@ export const JourneyService = {
     try {
       const rawId = JourneyAdapter.fromLegacyId(stepId);
       const { data, error } = await (supabase as SB)
-        .from('nexus_relations' as any)
-        .select('*')
+        .from("nexus_relations" as any)
+        .select("*")
         .or(`source_id.eq.${rawId},target_id.eq.${rawId}`)
         .limit(50);
       if (error) throw error;
       return ok(
         (data ?? []).map((r: any) => ({
           step_id: stepId,
-          target_type: r.target_type ?? r.relation_type ?? 'unknown',
+          target_type: r.target_type ?? r.relation_type ?? "unknown",
           target_id: r.target_id ?? r.source_id,
           label: r.label ?? undefined,
         })),
@@ -467,9 +458,9 @@ export const JourneyService = {
       const seen = new Set((mine ?? []).map((j) => j.id));
       const categories = Array.from(new Set((mine ?? []).map((j) => j.category).filter(Boolean)));
       const { data, error } = await supabase
-        .from('journeys')
-        .select('*')
-        .eq('is_active', true)
+        .from("journeys")
+        .select("*")
+        .eq("is_active", true)
         .limit(20);
       if (error) throw error;
       const all = (data ?? []).map((r) => JourneyAdapter.fromJourneyRow(r as any));
@@ -480,9 +471,8 @@ export const JourneyService = {
           reason:
             j.category && categories.includes(j.category)
               ? `Continua sua formação em ${j.category}`
-              : 'Novo caminho recomendado',
-          score:
-            (j.category && categories.includes(j.category) ? 2 : 0) + (j.is_premium ? 0 : 1),
+              : "Novo caminho recomendado",
+          score: (j.category && categories.includes(j.category) ? 2 : 0) + (j.is_premium ? 0 : 1),
         }))
         .sort((a, b) => b.score - a.score)
         .slice(0, limit);

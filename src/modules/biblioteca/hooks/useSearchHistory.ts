@@ -8,11 +8,11 @@
  * Sem tabela nova por design (princípio de simplicidade). Migração para
  * Supabase acontece na Sprint B.1.5 (recomendações personalizadas).
  */
-import { useCallback, useEffect, useState } from 'react';
-import type { LibraryModule } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import type { LibraryModule } from "../types";
 
-const KEY_SEARCHES = 'library:recent-searches';
-const KEY_OPENS = 'library:recent-opens';
+const KEY_SEARCHES = "library:recent-searches";
+const KEY_OPENS = "library:recent-opens";
 const MAX_SEARCHES = 8;
 const MAX_OPENS = 12;
 
@@ -53,13 +53,16 @@ export function useSearchHistory() {
     const q = raw.trim();
     if (q.length < 2) return;
     setSearches((prev) => {
-      const next = [q, ...prev.filter((s) => s.toLowerCase() !== q.toLowerCase())].slice(0, MAX_SEARCHES);
+      const next = [q, ...prev.filter((s) => s.toLowerCase() !== q.toLowerCase())].slice(
+        0,
+        MAX_SEARCHES,
+      );
       writeJSON(KEY_SEARCHES, next);
       return next;
     });
   }, []);
 
-  const rememberOpen = useCallback((entry: Omit<RecentOpen, 'openedAt'>) => {
+  const rememberOpen = useCallback((entry: Omit<RecentOpen, "openedAt">) => {
     setOpens((prev) => {
       const next = [
         { ...entry, openedAt: new Date().toISOString() },

@@ -22,10 +22,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import {
-  EditorialSection,
-  EditorialHeader,
-} from "@/components/editorial";
+import { EditorialSection, EditorialHeader } from "@/components/editorial";
 import { TESTIMONIALS, type Testimonial } from "@/data/testimonials";
 import { cn } from "@/lib/utils";
 
@@ -39,10 +36,7 @@ interface Props {
   id?: string;
 }
 
-const TestimonialsSection = ({
-  items = TESTIMONIALS,
-  id = "depoimentos",
-}: Props) => {
+const TestimonialsSection = ({ items = TESTIMONIALS, id = "depoimentos" }: Props) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const count = items.length;
@@ -173,9 +167,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
     <figure
       className={cn(
         "h-full rounded-3xl border p-8 md:p-10 flex flex-col gap-6",
-        isPatristic
-          ? "border-secondary/40 bg-primary/[0.03]"
-          : "border-border/40 bg-background",
+        isPatristic ? "border-secondary/40 bg-primary/[0.03]" : "border-border/40 bg-background",
       )}
     >
       <div className="flex items-center gap-3 text-secondary">
@@ -193,9 +185,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => {
 
       <figcaption className="border-t border-border/40 pt-4">
         <cite className="not-italic">
-          <span className="block font-serif text-base text-primary">
-            {testimonial.author}
-          </span>
+          <span className="block font-serif text-base text-primary">{testimonial.author}</span>
           <span className="block text-sm text-muted-foreground">
             {testimonial.source}
             {testimonial.period ? ` · ${testimonial.period}` : ""}

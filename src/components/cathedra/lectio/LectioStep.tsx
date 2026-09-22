@@ -1,13 +1,13 @@
-import { Icons } from '@/constants';
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { STEPS, Step } from './constants';
-import { Button } from '@/components/ui/button';
-import ShareButton from '../ShareButton';
+import { STEPS, Step } from "./constants";
+import { Button } from "@/components/ui/button";
+import ShareButton from "../ShareButton";
 
 interface LectioStepProps {
-  currentStep: Exclude<Step, 'intro' | 'conclusio'>;
+  currentStep: Exclude<Step, "intro" | "conclusio">;
   selectedPassage: string;
   notes: Record<string, string>;
   onNotesChange: (notes: Record<string, string>) => void;
@@ -19,14 +19,24 @@ interface LectioStepProps {
   onStepChange: (step: Step) => void;
 }
 
-const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+const formatTime = (s: number) =>
+  `${Math.floor(s / 60)
+    .toString()
+    .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
 const LectioStep: React.FC<LectioStepProps> = ({
-  currentStep, selectedPassage, notes, onNotesChange,
-  seconds, bibleText, isBibleLoading, bibleError,
-  onBack, onStepChange
+  currentStep,
+  selectedPassage,
+  notes,
+  onNotesChange,
+  seconds,
+  bibleText,
+  isBibleLoading,
+  bibleError,
+  onBack,
+  onStepChange,
 }) => {
-  const stepIndex = STEPS.findIndex(s => s.id === currentStep);
+  const stepIndex = STEPS.findIndex((s) => s.id === currentStep);
   const activeStep = STEPS[stepIndex];
 
   if (!activeStep) return null;
@@ -35,7 +45,12 @@ const LectioStep: React.FC<LectioStepProps> = ({
     <div className="w-full space-y-spacing-xl pb-spacing-2xl">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center gap-spacing-lg px-spacing-xs">
-        <Button variant="outline" size="icon" onClick={onBack} className="rounded-premium-full shadow-premium-md self-start md:self-center">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onBack}
+          className="rounded-premium-full shadow-premium-md self-start md:self-center"
+        >
           <Icons.ArrowLeft className="w-spacing-lg h-spacing-lg text-foreground" />
         </Button>
         <div className="flex-1 space-y-spacing-2xs">
@@ -43,7 +58,9 @@ const LectioStep: React.FC<LectioStepProps> = ({
             <Icons.Feather className="w-spacing-sm h-spacing-sm" />
             Lectio Divina
           </div>
-          <h2 className="text-premium-3xl md:text-premium-4xl font-serif font-bold text-foreground leading-tight">{selectedPassage}</h2>
+          <h2 className="text-premium-3xl md:text-premium-4xl font-serif font-bold text-foreground leading-tight">
+            {selectedPassage}
+          </h2>
         </div>
         <div className="flex items-center gap-spacing-sm">
           <ShareButton
@@ -52,7 +69,9 @@ const LectioStep: React.FC<LectioStepProps> = ({
           />
           <div className="flex items-center gap-spacing-sm px-spacing-md py-spacing-sm rounded-premium bg-card border border-border shadow-premium-md">
             <Icons.Timer className="w-spacing-md h-spacing-md text-primary/85" />
-            <span className="font-mono text-premium-lg font-bold text-foreground tabular-nums">{formatTime(seconds)}</span>
+            <span className="font-mono text-premium-lg font-bold text-foreground tabular-nums">
+              {formatTime(seconds)}
+            </span>
           </div>
         </div>
       </div>
@@ -65,7 +84,9 @@ const LectioStep: React.FC<LectioStepProps> = ({
               key={step.id}
               onClick={() => onStepChange(step.id)}
               className={`flex-1 h-spacing-xs rounded-premium-full transition-all duration-500 ${
-                i <= stepIndex ? 'bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]' : 'bg-border'
+                i <= stepIndex
+                  ? "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                  : "bg-border"
               }`}
             />
           ))}
@@ -77,13 +98,19 @@ const LectioStep: React.FC<LectioStepProps> = ({
               key={step.id}
               onClick={() => onStepChange(step.id)}
               className={`flex items-center gap-spacing-xs px-spacing-md py-spacing-xs rounded-premium-full transition-all whitespace-nowrap border ${
-                step.id === currentStep 
-                  ? 'bg-primary border-primary text-white shadow-premium' 
-                  : i <= stepIndex ? 'bg-card border-border text-foreground/80' : 'bg-transparent border-transparent text-muted-foreground/40'
+                step.id === currentStep
+                  ? "bg-primary border-primary text-white shadow-premium"
+                  : i <= stepIndex
+                    ? "bg-card border-border text-foreground/80"
+                    : "bg-transparent border-transparent text-muted-foreground/40"
               }`}
             >
-              <step.icon className={`w-spacing-md h-spacing-md ${step.id === currentStep ? 'text-white' : i <= stepIndex ? 'text-primary' : ''}`} />
-              <span className="text-premium-xs font-black uppercase tracking-widest">{step.latin}</span>
+              <step.icon
+                className={`w-spacing-md h-spacing-md ${step.id === currentStep ? "text-white" : i <= stepIndex ? "text-primary" : ""}`}
+              />
+              <span className="text-premium-xs font-black uppercase tracking-widest">
+                {step.latin}
+              </span>
             </Button>
           ))}
         </div>
@@ -104,56 +131,76 @@ const LectioStep: React.FC<LectioStepProps> = ({
           </div>
 
           <div className="relative text-center space-y-spacing-md">
-            <motion.div 
+            <motion.div
               className={`w-spacing-3xl h-spacing-3xl rounded-[2rem] flex items-center justify-center mx-auto shadow-premium-hover border-4 border-background ${activeStep.color}`}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
+              transition={{ type: "spring", stiffness: 300, delay: 0.2 }}
             >
               <activeStep.icon className="w-spacing-xl h-spacing-xl" />
             </motion.div>
             <div className="space-y-spacing-2xs">
-              <h2 className="text-premium-3xl md:text-premium-5xl font-serif font-bold text-foreground tracking-tight">{activeStep.title}</h2>
-              <p className="text-premium-base font-serif italic text-primary opacity-80">{activeStep.latin} — {activeStep.duration}</p>
+              <h2 className="text-premium-3xl md:text-premium-5xl font-serif font-bold text-foreground tracking-tight">
+                {activeStep.title}
+              </h2>
+              <p className="text-premium-base font-serif italic text-primary opacity-80">
+                {activeStep.latin} — {activeStep.duration}
+              </p>
             </div>
           </div>
-          
+
           <div className="relative space-y-spacing-xl w-full mx-auto">
             <div className="bg-muted/50 rounded-[2.5rem] p-spacing-xl md:p-spacing-2xl border border-border/50 space-y-spacing-lg">
               {isBibleLoading ? (
                 <div className="space-y-spacing-md py-spacing-md">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-spacing-md bg-primary/10 rounded animate-pulse" style={{ width: `${75 + Math.random() * 25}%` }} />
+                    <div
+                      key={i}
+                      className="h-spacing-md bg-primary/10 rounded animate-pulse"
+                      style={{ width: `${75 + Math.random() * 25}%` }}
+                    />
                   ))}
                 </div>
               ) : bibleError ? (
-                <p className="text-muted-foreground italic text-center text-premium-lg font-serif">{bibleError}</p>
+                <p className="text-muted-foreground italic text-center text-premium-lg font-serif">
+                  {bibleError}
+                </p>
               ) : bibleText.length > 0 ? (
                 <div className="space-y-spacing-lg">
                   <div className="flex items-center gap-spacing-xs justify-center opacity-40">
                     <Icons.Book className="w-spacing-md h-spacing-md" />
-                    <p className="text-premium-xs font-black uppercase tracking-[0.2em]">{selectedPassage}</p>
+                    <p className="text-premium-xs font-black uppercase tracking-[0.2em]">
+                      {selectedPassage}
+                    </p>
                   </div>
                   <div className="font-serif leading-relaxed text-premium-xl text-foreground/90 text-center">
                     {bibleText.map((v, i) => (
                       <span key={i} className="inline-block font-serif mb-spacing-2xs">
-                        <sup className="text-primary font-bold mr-spacing-2xs text-premium-xs select-none">{v.number}</sup>
-                        {v.text}{' '}
+                        <sup className="text-primary font-bold mr-spacing-2xs text-premium-xs select-none">
+                          {v.number}
+                        </sup>
+                        {v.text}{" "}
                       </span>
                     ))}
                   </div>
                 </div>
               ) : (
                 <div className="text-center space-y-spacing-lg">
-                  <p className="text-premium-xl text-foreground/90 leading-relaxed font-serif italic">"{activeStep.instruction}"</p>
+                  <p className="text-premium-xl text-foreground/90 leading-relaxed font-serif italic">
+                    "{activeStep.instruction}"
+                  </p>
                 </div>
               )}
             </div>
-            
+
             <div className="space-y-spacing-xl">
               <div className="text-center space-y-spacing-sm">
-                <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40">Oração do Coração</h3>
-                <p className="text-premium-lg md:text-premium-xl font-serif font-bold text-primary italic leading-relaxed">"{activeStep.prompt}"</p>
+                <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40">
+                  Oração do Coração
+                </h3>
+                <p className="text-premium-lg md:text-premium-xl font-serif font-bold text-primary italic leading-relaxed">
+                  "{activeStep.prompt}"
+                </p>
               </div>
 
               <div className="space-y-spacing-md group">
@@ -161,8 +208,8 @@ const LectioStep: React.FC<LectioStepProps> = ({
                   <Icons.PenTool className="w-spacing-sm h-spacing-sm" /> Sua Reflexão
                 </div>
                 <textarea
-                  value={notes[activeStep.id] || ''}
-                  onChange={e => onNotesChange({ ...notes, [activeStep.id]: e.target.value })}
+                  value={notes[activeStep.id] || ""}
+                  onChange={(e) => onNotesChange({ ...notes, [activeStep.id]: e.target.value })}
                   rows={6}
                   placeholder="Deixe a alma falar... Escreva aqui suas reflexões, luzes e resoluções."
                   className="w-full px-spacing-xl py-spacing-xl rounded-[2rem] border border-border bg-background text-premium-lg md:text-premium-xl font-serif text-foreground resize-none focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all shadow-premium-md leading-relaxed"
@@ -183,7 +230,7 @@ const LectioStep: React.FC<LectioStepProps> = ({
         >
           <Icons.ChevronLeft className="w-spacing-md h-spacing-md" /> Anterior
         </Button>
-        
+
         {stepIndex < STEPS.length - 1 ? (
           <Button
             onClick={() => onStepChange(STEPS[stepIndex + 1].id)}
@@ -193,7 +240,7 @@ const LectioStep: React.FC<LectioStepProps> = ({
           </Button>
         ) : (
           <Button
-            onClick={() => onStepChange('conclusio')}
+            onClick={() => onStepChange("conclusio")}
             className="flex-1 h-spacing-2xl rounded-premium-full bg-primary text-primary-foreground shadow-premium-hover shadow-primary/20"
           >
             <Icons.CheckCircle2 className="w-spacing-md h-spacing-md" /> Concluir

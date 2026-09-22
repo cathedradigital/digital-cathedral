@@ -11,10 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  EditorialSection,
-  EditorialHeader,
-} from "@/components/editorial";
+import { EditorialSection, EditorialHeader } from "@/components/editorial";
 
 export const LANDING_FAQS: Array<{ question: string; answer: string }> = [
   {
@@ -68,11 +65,7 @@ const LandingFAQ = () => {
         className="max-w-3xl divide-y divide-border/50 rounded-2xl border border-border/40 bg-primary/[0.02]"
       >
         {LANDING_FAQS.map((faq, idx) => (
-          <AccordionItem
-            key={faq.question}
-            value={`faq-${idx}`}
-            className="border-none px-6"
-          >
+          <AccordionItem key={faq.question} value={`faq-${idx}`} className="border-none px-6">
             <AccordionTrigger className="py-5 text-left font-serif text-lg text-primary hover:no-underline">
               {faq.question}
             </AccordionTrigger>

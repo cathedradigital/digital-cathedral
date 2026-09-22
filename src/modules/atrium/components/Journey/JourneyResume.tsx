@@ -1,14 +1,14 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { useResume } from '../../hooks';
+import React from "react";
+import { ArrowRight } from "lucide-react";
+import { useResume } from "../../hooks";
 
 const KIND_LABEL: Record<string, string> = {
-  reading: 'Leitura',
-  study: 'Estudo',
-  formation: 'Formação',
-  lectio: 'Lectio',
-  note: 'Nota',
-  prayer: 'Oração',
+  reading: "Leitura",
+  study: "Estudo",
+  formation: "Formação",
+  lectio: "Lectio",
+  note: "Nota",
+  prayer: "Oração",
 };
 
 const JourneyResume: React.FC = () => {
@@ -17,7 +17,10 @@ const JourneyResume: React.FC = () => {
 
   return (
     <section data-atrium-block="P0" aria-labelledby="atrium-resume">
-      <h2 id="atrium-resume" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-resume"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Continuar minha caminhada
       </h2>
       <ul className="flex flex-col gap-2">
@@ -32,7 +35,7 @@ const JourneyResume: React.FC = () => {
                   {KIND_LABEL[it.kind] ?? it.kind}
                 </span>
                 <span className="text-sm font-medium truncate">{it.label}</span>
-                {typeof it.progressPct === 'number' && (
+                {typeof it.progressPct === "number" && (
                   <div className="mt-1 h-[2px] bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-foreground/70"

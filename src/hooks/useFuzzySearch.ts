@@ -14,10 +14,10 @@
  *     secondaryField: 'title',
  *   });
  */
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { useDebounce } from './useDebounce';
-import { combinedSimilarity } from '@/lib/similarity';
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/db";
+import { useDebounce } from "./useDebounce";
+import { combinedSimilarity } from "@/lib/similarity";
 
 /**
  * Names of the RPCs that follow the `search_*_fuzzy(search_query, result_limit)`
@@ -25,11 +25,11 @@ import { combinedSimilarity } from '@/lib/similarity';
  * letting callers pass the function name as a value.
  */
 export type FuzzyRpcName =
-  | 'search_saints_fuzzy'
-  | 'search_glossary_fuzzy'
-  | 'search_community_posts_fuzzy'
-  | 'search_tags_fuzzy'
-  | 'search_journeys_fuzzy';
+  | "search_saints_fuzzy"
+  | "search_glossary_fuzzy"
+  | "search_community_posts_fuzzy"
+  | "search_tags_fuzzy"
+  | "search_journeys_fuzzy";
 
 export interface UseFuzzySearchOptions<TRow> {
   /** Name of the Postgres RPC. Must match the FuzzyRpcName union. */
@@ -103,10 +103,12 @@ export function useFuzzySearch<TRow>(
     setError(null);
 
     (async () => {
-      const { data, error: rpcError } = await (supabase.rpc as unknown as (
-        fn: string,
-        args: { search_query: string; result_limit: number },
-      ) => Promise<{ data: TRow[] | null; error: Error | null }>)(rpc, {
+      const { data, error: rpcError } = await (
+        supabase.rpc as unknown as (
+          fn: string,
+          args: { search_query: string; result_limit: number },
+        ) => Promise<{ data: TRow[] | null; error: Error | null }>
+      )(rpc, {
         search_query: trimmed,
         result_limit: resultLimit,
       });
@@ -118,14 +120,14 @@ export function useFuzzySearch<TRow>(
         setError(rpcError);
         setResults(null);
       } else {
-        const rows = (data ?? []).map(row => {
+        const rows = (data ?? []).map((row) => {
           const r = row as Record<string, unknown>;
           return {
             ...row,
             similarityScore: combinedSimilarity(
               trimmed,
-              String(r[primaryField as string] ?? ''),
-              secondaryField ? String(r[secondaryField as string] ?? '') : undefined,
+              String(r[primaryField as string] ?? ""),
+              secondaryField ? String(r[secondaryField as string] ?? "") : undefined,
               secondaryWeight,
             ),
           };
@@ -139,7 +141,16 @@ export function useFuzzySearch<TRow>(
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rpc, trimmed, primaryField, secondaryField, secondaryWeight, minLength, resultLimit, retryTick]);
+  }, [
+    rpc,
+    trimmed,
+    primaryField,
+    secondaryField,
+    secondaryWeight,
+    minLength,
+    resultLimit,
+    retryTick,
+  ]);
 
-  return { results, isSearching, isPending, error, refetch: () => setRetryTick(t => t + 1) };
+  return { results, isSearching, isPending, error, refetch: () => setRetryTick((t) => t + 1) };
 }

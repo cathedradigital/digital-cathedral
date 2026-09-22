@@ -12,49 +12,52 @@
  * C0.3.a — Prayer Engine unificado ao Reader Template Master.
  * Zero uso de EditorialReaderChrome; toda leitura passa por ReaderShell.
  */
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useParams, useSearchParams } from '@/lib/rr-compat';
-import { Loader2, Star, Clock, BookOpen, Church, ArrowLeft, Minus, Plus } from 'lucide-react';
-import { ReaderShell, ReaderContinuation } from '@/components/reader';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import { Button } from '@/components/ui/button';
-import { usePrayer, usePrayers, PRAYER_CATEGORY_LABEL } from '@/hooks/usePrayers';
-import { useDevotionalFavorites } from '@/hooks/useDevotionalFavorites';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
-import PrayerEngineReader from '@/components/cathedra/PrayerEngineReader';
-import { usePrayerHierarchy } from '@/prayer-engine/usePrayerHierarchy';
-import BreviaryHourInline from '@/components/cathedra/BreviaryHourInline';
-import { EditorialHero } from '@/components/editorial/harmony';
-import PrayerPortal from '@/components/prayer/PrayerPortal';
-import { resolvePortalTheme } from '@/lib/prayer/portalTheme';
-import PoenitentiaPage from '@/components/cathedra/PoenitentiaPage';
-import PrayerErrorBoundary from '@/components/prayer/PrayerErrorBoundary';
-import { useAuth } from '@/hooks/useAuth';
-import { logPrayerDiagnostics, serializeSearchParams, type PrayerErrorContext } from '@/lib/prayer/telemetry';
-
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams, useSearchParams } from "@/lib/rr-compat";
+import { Loader2, Star, Clock, BookOpen, Church, ArrowLeft, Minus, Plus } from "lucide-react";
+import { ReaderShell, ReaderContinuation } from "@/components/reader";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { Button } from "@/components/ui/button";
+import { usePrayer, usePrayers, PRAYER_CATEGORY_LABEL } from "@/hooks/usePrayers";
+import { useDevotionalFavorites } from "@/hooks/useDevotionalFavorites";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import PrayerEngineReader from "@/components/cathedra/PrayerEngineReader";
+import { usePrayerHierarchy } from "@/prayer-engine/usePrayerHierarchy";
+import BreviaryHourInline from "@/components/cathedra/BreviaryHourInline";
+import { EditorialHero } from "@/components/editorial/harmony";
+import PrayerPortal from "@/components/prayer/PrayerPortal";
+import { resolvePortalTheme } from "@/lib/prayer/portalTheme";
+import PoenitentiaPage from "@/components/cathedra/PoenitentiaPage";
+import PrayerErrorBoundary from "@/components/prayer/PrayerErrorBoundary";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  logPrayerDiagnostics,
+  serializeSearchParams,
+  type PrayerErrorContext,
+} from "@/lib/prayer/telemetry";
 
 const FONT_STEPS = [
-  { key: 'sm', label: 'A', textClass: 'text-xl md:text-[22px]', latinClass: 'text-lg' },
-  { key: 'md', label: 'A', textClass: 'text-2xl md:text-[26px]', latinClass: 'text-xl' },
-  { key: 'lg', label: 'A', textClass: 'text-[28px] md:text-[30px]', latinClass: 'text-2xl' },
-  { key: 'xl', label: 'A', textClass: 'text-[32px] md:text-[34px]', latinClass: 'text-[26px]' },
+  { key: "sm", label: "A", textClass: "text-xl md:text-[22px]", latinClass: "text-lg" },
+  { key: "md", label: "A", textClass: "text-2xl md:text-[26px]", latinClass: "text-xl" },
+  { key: "lg", label: "A", textClass: "text-[28px] md:text-[30px]", latinClass: "text-2xl" },
+  { key: "xl", label: "A", textClass: "text-[32px] md:text-[34px]", latinClass: "text-[26px]" },
 ] as const;
-type FontStepKey = typeof FONT_STEPS[number]['key'];
-const FONT_STORAGE_KEY = 'cathedra:prayer:font-size';
+type FontStepKey = (typeof FONT_STEPS)[number]["key"];
+const FONT_STORAGE_KEY = "cathedra:prayer:font-size";
 
 const PrayerDetailPageInner: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
   const { prayer, loading, error } = usePrayer(slug);
   const { prayers } = usePrayers();
-  const { items: favorites, toggle } = useDevotionalFavorites('prayer');
-  const sectionSlug = searchParams.get('set') ?? undefined;
+  const { items: favorites, toggle } = useDevotionalFavorites("prayer");
+  const sectionSlug = searchParams.get("set") ?? undefined;
   const hierarchy = usePrayerHierarchy(slug, sectionSlug);
   const { user } = useAuth();
 
-  const [fontKey, setFontKey] = useState<FontStepKey>('md');
+  const [fontKey, setFontKey] = useState<FontStepKey>("md");
   useEffect(() => {
     const stored = localStorage.getItem(FONT_STORAGE_KEY) as FontStepKey | null;
     if (stored && FONT_STEPS.some((s) => s.key === stored)) setFontKey(stored);
@@ -67,7 +70,7 @@ const PrayerDetailPageInner: React.FC = () => {
     localStorage.setItem(FONT_STORAGE_KEY, next.key);
   };
 
-  const fromLiturgia = searchParams.get('from') === 'liturgia';
+  const fromLiturgia = searchParams.get("from") === "liturgia";
 
   const isFavorite = useMemo(
     () => (prayer ? favorites.some((f) => f.content_id === prayer.id) : false),
@@ -86,18 +89,18 @@ const PrayerDetailPageInner: React.FC = () => {
     if (!prayer) return;
     try {
       await toggle({
-        contentType: 'prayer',
+        contentType: "prayer",
         contentId: prayer.id,
         title: prayer.title,
         content: prayer.content,
         url: `/oracao/${prayer.slug}`,
         metadata: { category: prayer.category },
       });
-      toast.success(isFavorite ? 'Removida dos favoritos' : 'Adicionada aos favoritos');
+      toast.success(isFavorite ? "Removida dos favoritos" : "Adicionada aos favoritos");
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Erro ao atualizar favorito';
-      if (msg === 'auth-required') {
-        toast.error('Entre para salvar favoritos.');
+      const msg = e instanceof Error ? e.message : "Erro ao atualizar favorito";
+      if (msg === "auth-required") {
+        toast.error("Entre para salvar favoritos.");
       } else {
         toast.error(msg);
       }
@@ -117,7 +120,7 @@ const PrayerDetailPageInner: React.FC = () => {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <p className="font-stitch-body text-sm text-destructive">
-          {error ?? 'Oração não encontrada.'}
+          {error ?? "Oração não encontrada."}
         </p>
         <Link
           to="/oracao"
@@ -133,11 +136,11 @@ const PrayerDetailPageInner: React.FC = () => {
 
   // Sprint 1.0 — Prayer Engine v2: conteúdo servido 100% pelo banco hierárquico.
   const engineV2 = (prayer as { engine_version?: number }).engine_version === 2;
-  const isLegacy = searchParams.get('legacy') === '1';
+  const isLegacy = searchParams.get("legacy") === "1";
 
   // Sprint 3 — Onda B: orações `breviario-*` injetam Próprio do dia inline.
   const prayerMeta = (prayer as unknown as { meta?: { auto_injects_proper?: boolean } }).meta;
-  if (!isLegacy && prayer.slug.startsWith('breviario-') && prayerMeta?.auto_injects_proper) {
+  if (!isLegacy && prayer.slug.startsWith("breviario-") && prayerMeta?.auto_injects_proper) {
     return <BreviaryHourInline prayer={prayer} />;
   }
 
@@ -157,12 +160,12 @@ const PrayerDetailPageInner: React.FC = () => {
 
       // B.2.5.d — Portal de Oração universal. Todas orações v2 passam pelo
       // limiar contemplativo (`?enter=1`) com tema/ícone/quote resolvidos.
-      const enterRequested = searchParams.get('enter') === '1';
+      const enterRequested = searchParams.get("enter") === "1";
       const themeInfo = resolvePortalTheme(prayer.slug);
       // Rosário mantém propriedade especial (mistérios + activeSection);
       // demais orações usam o portal genérico com highlight de duração.
       if (!enterRequested) {
-        if (prayer.slug === 'rosario') {
+        if (prayer.slug === "rosario") {
           return (
             <PrayerPortal
               prayer={prayer}
@@ -189,9 +192,9 @@ const PrayerDetailPageInner: React.FC = () => {
               subtitle: prayer.subtitle ?? undefined,
               meta: [
                 {
-                  label: 'Duração',
+                  label: "Duração",
                   value: `${Math.max(1, Math.round(prayer.estimated_seconds / 60))} min`,
-                  icon: 'clock',
+                  icon: "clock",
                 },
               ],
             }}
@@ -199,10 +202,9 @@ const PrayerDetailPageInner: React.FC = () => {
         );
       }
 
-
       // Reader especializado: Exame de Consciência preserva a tela guiada
       // interativa (checkboxes por passo) mesmo entrando pelo Portal v2.
-      if (prayer.slug === 'exame-de-consciencia') {
+      if (prayer.slug === "exame-de-consciencia") {
         return <PoenitentiaPage prayer={prayer} kicker={engineKicker} />;
       }
 
@@ -221,9 +223,6 @@ const PrayerDetailPageInner: React.FC = () => {
   // Fallback estático (texto/latim/explicação) para orações ainda não migradas
   // ao Prayer Engine v2. Sem persistência local: apenas leitura contínua.
 
-
-
-
   return (
     <>
       <MobileTopBar kicker={kicker} title={prayer.title} showBack />
@@ -234,9 +233,7 @@ const PrayerDetailPageInner: React.FC = () => {
           <EditorialHero align="center" as="header">
             <EditorialHero.Eyebrow>{kicker}</EditorialHero.Eyebrow>
             <EditorialHero.Title>{prayer.title}</EditorialHero.Title>
-            {prayer.subtitle && (
-              <EditorialHero.Subtitle>{prayer.subtitle}</EditorialHero.Subtitle>
-            )}
+            {prayer.subtitle && <EditorialHero.Subtitle>{prayer.subtitle}</EditorialHero.Subtitle>}
             <EditorialHero.Meta>
               <span className="inline-flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" aria-hidden />
@@ -246,13 +243,13 @@ const PrayerDetailPageInner: React.FC = () => {
             <EditorialHero.Actions>
               <Button
                 type="button"
-                variant={isFavorite ? 'pill-toned' : 'pill'}
+                variant={isFavorite ? "pill-toned" : "pill"}
                 size="pill"
                 onClick={toggleFavorite}
                 aria-pressed={isFavorite}
               >
-                <Star className={cn('h-3.5 w-3.5', isFavorite && 'fill-current')} aria-hidden />
-                {isFavorite ? 'Favorita' : 'Favoritar'}
+                <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} aria-hidden />
+                {isFavorite ? "Favorita" : "Favoritar"}
               </Button>
               {fromLiturgia && (
                 <Button asChild variant="pill" size="pill">
@@ -302,7 +299,7 @@ const PrayerDetailPageInner: React.FC = () => {
         continuation={
           <ReaderContinuation
             context={{
-              kind: 'prayer',
+              kind: "prayer",
               id: prayer.slug,
               meta: {
                 nextPrayerSlug: nextInCategory?.slug,
@@ -318,32 +315,48 @@ const PrayerDetailPageInner: React.FC = () => {
             Texto da oração
           </h2>
           <ol className="space-y-6 list-none">
-            {prayer.content.split(/\n\s*\n/).filter((p) => p.trim().length > 0).map((paragraph, i) => (
-              <li key={i} className="group relative pl-10">
-                <span
-                  aria-hidden
-                  className="absolute left-0 top-1 select-none font-stitch-body text-[11px] font-bold uppercase tracking-widest text-stitch-secondary/60"
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <p className={cn('whitespace-pre-line font-stitch-display leading-[1.55] text-stitch-on-surface', fontStep.textClass)}>
-                  {paragraph}
-                </p>
-              </li>
-            ))}
+            {prayer.content
+              .split(/\n\s*\n/)
+              .filter((p) => p.trim().length > 0)
+              .map((paragraph, i) => (
+                <li key={i} className="group relative pl-10">
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-1 select-none font-stitch-body text-[11px] font-bold uppercase tracking-widest text-stitch-secondary/60"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p
+                    className={cn(
+                      "whitespace-pre-line font-stitch-display leading-[1.55] text-stitch-on-surface",
+                      fontStep.textClass,
+                    )}
+                  >
+                    {paragraph}
+                  </p>
+                </li>
+              ))}
           </ol>
         </section>
 
         {/* Latim */}
         {prayer.content_latin && (
-          <section aria-labelledby="prayer-latin" className="border-t border-stitch-outline-variant/30 pt-8">
+          <section
+            aria-labelledby="prayer-latin"
+            className="border-t border-stitch-outline-variant/30 pt-8"
+          >
             <h2
               id="prayer-latin"
               className="mb-3 font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary"
             >
               Em latim
             </h2>
-            <p className={cn('whitespace-pre-line font-stitch-display italic leading-[1.55] text-stitch-on-surface-variant', fontStep.latinClass)}>
+            <p
+              className={cn(
+                "whitespace-pre-line font-stitch-display italic leading-[1.55] text-stitch-on-surface-variant",
+                fontStep.latinClass,
+              )}
+            >
               {prayer.content_latin}
             </p>
           </section>
@@ -351,7 +364,10 @@ const PrayerDetailPageInner: React.FC = () => {
 
         {/* Explicação */}
         {prayer.explanation && (
-          <section aria-labelledby="prayer-expl" className="border-t border-stitch-outline-variant/30 pt-8">
+          <section
+            aria-labelledby="prayer-expl"
+            className="border-t border-stitch-outline-variant/30 pt-8"
+          >
             <h2
               id="prayer-expl"
               className="mb-3 font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary"
@@ -366,7 +382,10 @@ const PrayerDetailPageInner: React.FC = () => {
 
         {/* Meditação */}
         {prayer.meditation && (
-          <section aria-labelledby="prayer-med" className="border-t border-stitch-outline-variant/30 pt-8">
+          <section
+            aria-labelledby="prayer-med"
+            className="border-t border-stitch-outline-variant/30 pt-8"
+          >
             <h2
               id="prayer-med"
               className="mb-3 font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary"
@@ -383,7 +402,10 @@ const PrayerDetailPageInner: React.FC = () => {
         {(prayer.related_bible.length > 0 ||
           prayer.related_catechism.length > 0 ||
           prayer.source_ref) && (
-          <section aria-labelledby="prayer-refs" className="border-t border-stitch-outline-variant/30 pt-8">
+          <section
+            aria-labelledby="prayer-refs"
+            className="border-t border-stitch-outline-variant/30 pt-8"
+          >
             <h2
               id="prayer-refs"
               className="mb-4 font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary"
@@ -394,7 +416,10 @@ const PrayerDetailPageInner: React.FC = () => {
               {prayer.related_bible.map((ref) => (
                 <li key={`b-${ref}`} className="flex items-center gap-2 text-stitch-on-surface">
                   <BookOpen className="h-4 w-4 text-stitch-on-surface-variant" aria-hidden />
-                  <Link to={`/bible?q=${encodeURIComponent(ref)}`} className="hover:text-stitch-secondary hover:underline">
+                  <Link
+                    to={`/bible?q=${encodeURIComponent(ref)}`}
+                    className="hover:text-stitch-secondary hover:underline"
+                  >
                     {ref}
                   </Link>
                 </li>
@@ -402,7 +427,10 @@ const PrayerDetailPageInner: React.FC = () => {
               {prayer.related_catechism.map((n) => (
                 <li key={`c-${n}`} className="flex items-center gap-2 text-stitch-on-surface">
                   <Church className="h-4 w-4 text-stitch-on-surface-variant" aria-hidden />
-                  <Link to={`/catechism?p=${n}`} className="hover:text-stitch-secondary hover:underline">
+                  <Link
+                    to={`/catechism?p=${n}`}
+                    className="hover:text-stitch-secondary hover:underline"
+                  >
                     Catecismo §{n}
                   </Link>
                 </li>
@@ -435,13 +463,13 @@ const PrayerDetailPage: React.FC = () => {
       slug: slug ?? null,
       searchParams: serializeSearchParams(searchParams),
       userId: user?.id ?? null,
-      route: typeof window !== 'undefined' ? window.location.pathname : undefined,
+      route: typeof window !== "undefined" ? window.location.pathname : undefined,
     }),
     [slug, searchParams, user?.id],
   );
 
   useEffect(() => {
-    logPrayerDiagnostics('PrayerDetailPage:mount', context);
+    logPrayerDiagnostics("PrayerDetailPage:mount", context);
   }, [context]);
 
   return (

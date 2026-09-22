@@ -8,15 +8,15 @@
  *  - Tap targets ≥ 44px. Mobile-first.
  */
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion } from 'framer-motion';
-import { toast } from 'sonner';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
-import { JourneyService } from '@/core/journey';
-import type { Journey, JourneyProgress, JourneyStep } from '@/core/journey';
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { JourneyService } from "@/core/journey";
+import type { Journey, JourneyProgress, JourneyStep } from "@/core/journey";
 
 interface ActiveJourneyState {
   journey: Journey;
@@ -61,9 +61,7 @@ const FormacaoHero: React.FC = () => {
           }
         }
         // Sem jornada ativa (deslogado, sem progresso, ou concluída) → sugestão
-        const { data: rec } = user
-          ? await JourneyService.recommend(user.id, 1)
-          : { data: null };
+        const { data: rec } = user ? await JourneyService.recommend(user.id, 1) : { data: null };
         if (rec && rec.length > 0) {
           if (!cancelled) setSuggested(rec[0].journey);
         } else {
@@ -72,7 +70,7 @@ const FormacaoHero: React.FC = () => {
         }
         if (!cancelled) setState(null);
       } catch (err) {
-        console.error('[FormacaoHero] load failed', err);
+        console.error("[FormacaoHero] load failed", err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -112,11 +110,9 @@ const FormacaoHero: React.FC = () => {
     try {
       const { error } = await JourneyService.resetProgress(user.id, state.journey.id);
       if (error) throw error;
-      toast.success('Caminho reiniciado.');
+      toast.success("Caminho reiniciado.");
       // Recarrega estado local
-      const [{ data: steps }] = await Promise.all([
-        JourneyService.listSteps(state.journey.id),
-      ]);
+      const [{ data: steps }] = await Promise.all([JourneyService.listSteps(state.journey.id)]);
       setState({
         journey: state.journey,
         steps: steps ?? [],
@@ -124,7 +120,7 @@ const FormacaoHero: React.FC = () => {
         nextStep: (steps ?? [])[0] ?? null,
       });
     } catch (err: any) {
-      toast.error(err?.message ?? 'Não foi possível reiniciar.');
+      toast.error(err?.message ?? "Não foi possível reiniciar.");
     } finally {
       setResetting(false);
     }
@@ -133,7 +129,7 @@ const FormacaoHero: React.FC = () => {
   const handleStartSuggested = () => {
     if (!suggested) return;
     if (!user) {
-      navigate('/auth');
+      navigate("/auth");
       return;
     }
     navigate(`/jornadas/${suggested.id}`);
@@ -171,10 +167,10 @@ const FormacaoHero: React.FC = () => {
           className="font-display leading-[1.05] text-foreground mb-spacing-md !tracking-normal break-words hyphens-auto"
           style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: 'clamp(2rem, 7vw, 3.75rem)',
+            fontSize: "clamp(2rem, 7vw, 3.75rem)",
           }}
         >
-          {suggested?.title ?? 'Escolha um caminho'}
+          {suggested?.title ?? "Escolha um caminho"}
         </h1>
         {suggested?.subtitle && (
           <p className="font-serif italic text-lg md:text-xl text-muted-foreground mb-spacing-md">
@@ -191,7 +187,7 @@ const FormacaoHero: React.FC = () => {
           disabled={!suggested}
           className="min-h-11 min-w-11 px-spacing-lg text-sm font-semibold uppercase tracking-[0.15em] bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          {user ? 'Começar caminho' : 'Entrar e começar'}
+          {user ? "Começar caminho" : "Entrar e começar"}
           <Icons.ChevronRight className="w-4 h-4 ml-2" />
         </Button>
       </motion.section>
@@ -217,7 +213,7 @@ const FormacaoHero: React.FC = () => {
         className="font-display leading-[1.05] text-foreground mb-spacing-sm !tracking-normal break-words hyphens-auto"
         style={{
           fontFamily: "'Cormorant Garamond', serif",
-          fontSize: 'clamp(2rem, 7vw, 3.75rem)',
+          fontSize: "clamp(2rem, 7vw, 3.75rem)",
         }}
       >
         {journey.title}

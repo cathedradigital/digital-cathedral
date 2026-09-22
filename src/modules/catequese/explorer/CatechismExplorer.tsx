@@ -1,15 +1,15 @@
-import React, { useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CATECHISM_LOCAL_DATA } from '@/data/catechism';
-import { Icons } from '@/constants';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate, useSearchParams } from '@/lib/rr-compat';
-import SEOHead from '@/components/SEOHead';
-import { isCatechism } from '@/lib/catechismValidation';
+import React, { useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CATECHISM_LOCAL_DATA } from "@/data/catechism";
+import { Icons } from "@/constants";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate, useSearchParams } from "@/lib/rr-compat";
+import SEOHead from "@/components/SEOHead";
+import { isCatechism } from "@/lib/catechismValidation";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -18,10 +18,13 @@ const CatechismExplorer: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // URL Persistence State
-  const searchQuery = searchParams.get('q') || '';
-  const selectedTags = useMemo(() => searchParams.get('tags')?.split(',').filter(Boolean) || [], [searchParams]);
-  const currentPage = parseInt(searchParams.get('page') || '1');
-  const sortBy = (searchParams.get('sort') as 'number-asc' | 'number-desc') || 'number-asc';
+  const searchQuery = searchParams.get("q") || "";
+  const selectedTags = useMemo(
+    () => searchParams.get("tags")?.split(",").filter(Boolean) || [],
+    [searchParams],
+  );
+  const currentPage = parseInt(searchParams.get("page") || "1");
+  const sortBy = (searchParams.get("sort") as "number-asc" | "number-desc") || "number-asc";
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams);
@@ -37,8 +40,8 @@ const CatechismExplorer: React.FC = () => {
   // Global Tag Counts (for the sidebar)
   const globalTagCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    allParagraphs.forEach(p => {
-      p.tags.forEach(tag => {
+    allParagraphs.forEach((p) => {
+      p.tags.forEach((tag) => {
         counts[tag] = (counts[tag] || 0) + 1;
       });
     });
@@ -47,24 +50,23 @@ const CatechismExplorer: React.FC = () => {
 
   // Filter and sort
   const filteredParagraphs = useMemo(() => {
-    const result = allParagraphs.filter(p => {
+    const result = allParagraphs.filter((p) => {
       // Security/Validation check: must be catechism type
       if (!isCatechism(p)) return false;
 
-      const matchesSearch = 
-        p.titulo.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch =
+        p.titulo.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.conteudo.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.paragraph.toString().includes(searchQuery);
-      
-      const matchesTags = 
-        selectedTags.length === 0 || 
-        selectedTags.every(tag => p.tags.includes(tag));
-      
+
+      const matchesTags =
+        selectedTags.length === 0 || selectedTags.every((tag) => p.tags.includes(tag));
+
       return matchesSearch && matchesTags;
     });
 
     result.sort((a, b) => {
-      if (sortBy === 'number-asc') return a.paragraph - b.paragraph;
+      if (sortBy === "number-asc") return a.paragraph - b.paragraph;
       return b.paragraph - a.paragraph;
     });
 
@@ -74,8 +76,8 @@ const CatechismExplorer: React.FC = () => {
   // Dynamic Tag Counts (matches within current filtered set)
   const dynamicTagCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    filteredParagraphs.forEach(p => {
-      p.tags.forEach(tag => {
+    filteredParagraphs.forEach((p) => {
+      p.tags.forEach((tag) => {
         counts[tag] = (counts[tag] || 0) + 1;
       });
     });
@@ -90,18 +92,18 @@ const CatechismExplorer: React.FC = () => {
   }, [filteredParagraphs, currentPage]);
 
   const toggleTag = (tag: string) => {
-    const nextTags = selectedTags.includes(tag) 
-      ? selectedTags.filter(t => t !== tag) 
+    const nextTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
       : [...selectedTags, tag];
-    
-    updateParams({ 
-      tags: nextTags.length > 0 ? nextTags.join(',') : null,
-      page: '1'
+
+    updateParams({
+      tags: nextTags.length > 0 ? nextTags.join(",") : null,
+      page: "1",
     });
   };
 
   const handleSearchChange = (val: string) => {
-    updateParams({ q: val || null, page: '1' });
+    updateParams({ q: val || null, page: "1" });
   };
 
   const handlePageChange = (newPage: number) => {
@@ -109,7 +111,7 @@ const CatechismExplorer: React.FC = () => {
   };
 
   const toggleSort = () => {
-    updateParams({ sort: sortBy === 'number-asc' ? 'number-desc' : 'number-asc' });
+    updateParams({ sort: sortBy === "number-asc" ? "number-desc" : "number-asc" });
   };
 
   const clearAll = () => {
@@ -118,8 +120,8 @@ const CatechismExplorer: React.FC = () => {
 
   return (
     <div className="p-spacing-md md:p-spacing-xl space-y-spacing-md md:space-y-spacing-xl min-h-screen pb-spacing-xl md:pb-spacing-3xl">
-      <SEOHead 
-        title="Explorador do Catecismo | Cathedra" 
+      <SEOHead
+        title="Explorador do Catecismo | Cathedra"
         description="Navegue pelos parágrafos do Catecismo da Igreja Católica com filtros inteligentes e temas."
         path="/catechism/explorer"
       />
@@ -147,8 +149,8 @@ const CatechismExplorer: React.FC = () => {
             <div className="flex items-center gap-spacing-xs text-primary font-bold uppercase text-premium-xs tracking-widest">
               <Icons.Search className="w-spacing-sm h-spacing-sm" /> Busca Rápida
             </div>
-            <Input 
-              placeholder="Ex: §142, fé, pecado..." 
+            <Input
+              placeholder="Ex: §142, fé, pecado..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="bg-card border-border/50"
@@ -171,15 +173,18 @@ const CatechismExplorer: React.FC = () => {
                       disabled={currentCount === 0 && !isSelected}
                       className={`group flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs rounded-premium-full text-premium-small transition-all border ${
                         isSelected
-                          ? 'bg-primary border-primary text-primary-foreground'
-                          : currentCount === 0 
-                            ? 'opacity-40 cursor-not-allowed bg-muted/20 border-transparent text-muted-foreground'
-                            : 'bg-card border-border hover:border-primary/50 text-muted-foreground hover:text-foreground'
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : currentCount === 0
+                            ? "opacity-40 cursor-not-allowed bg-muted/20 border-transparent text-muted-foreground"
+                            : "bg-card border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       <span>{tag}</span>
                       <div className="flex items-center gap-spacing-2xs">
-                        <Badge variant="secondary" className={`px-spacing-2xs h-spacing-sm min-w-[14px] flex items-center justify-center ${isSelected ? 'bg-white/20 text-white' : ''}`}>
+                        <Badge
+                          variant="secondary"
+                          className={`px-spacing-2xs h-spacing-sm min-w-[14px] flex items-center justify-center ${isSelected ? "bg-white/20 text-white" : ""}`}
+                        >
                           {currentCount}
                         </Badge>
                         {!isSelected && currentCount !== totalCount && (
@@ -201,14 +206,16 @@ const CatechismExplorer: React.FC = () => {
               {filteredParagraphs.length} resultados encontrados
             </div>
             <div className="flex items-center gap-spacing-xs">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={toggleSort}
                 className="text-premium-xs font-black uppercase tracking-widest h-spacing-xl"
               >
-                <Icons.ArrowDown className={`w-spacing-sm h-spacing-sm mr-spacing-xs transition-transform ${sortBy === 'number-desc' ? 'rotate-180' : ''}`} />
-                {sortBy === 'number-asc' ? 'Crescente' : 'Decrescente'}
+                <Icons.ArrowDown
+                  className={`w-spacing-sm h-spacing-sm mr-spacing-xs transition-transform ${sortBy === "number-desc" ? "rotate-180" : ""}`}
+                />
+                {sortBy === "number-asc" ? "Crescente" : "Decrescente"}
               </Button>
             </div>
           </div>
@@ -224,7 +231,7 @@ const CatechismExplorer: React.FC = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card 
+                  <Card
                     className="p-spacing-md md:p-spacing-lg cursor-pointer hover:border-primary/20 transition-all group bg-background/50 backdrop-blur-sm"
                     onClick={() => navigate(`/catechism?p=${p.paragraph}`)}
                   >
@@ -238,8 +245,12 @@ const CatechismExplorer: React.FC = () => {
                           {p.conteudo}
                         </p>
                         <div className="flex flex-wrap gap-spacing-xs pt-spacing-xs">
-                          {p.tags.map(tag => (
-                            <Badge key={tag} variant="secondary" className="font-bold uppercase tracking-wider bg-muted/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/5 transition-all">
+                          {p.tags.map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="secondary"
+                              className="font-bold uppercase tracking-wider bg-muted/50 text-muted-foreground group-hover:text-primary group-hover:bg-primary/5 transition-all"
+                            >
                               {tag}
                             </Badge>
                           ))}
@@ -267,9 +278,9 @@ const CatechismExplorer: React.FC = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-spacing-xs pt-spacing-xl">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
               >
@@ -278,9 +289,9 @@ const CatechismExplorer: React.FC = () => {
               <div className="text-premium-small font-bold px-spacing-md">
                 Página {currentPage} de {totalPages}
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
               >

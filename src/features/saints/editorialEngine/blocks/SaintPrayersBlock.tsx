@@ -1,14 +1,17 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Sparkles } from 'lucide-react';
-import type { SaintPrayerRef } from '../types';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { Sparkles } from "lucide-react";
+import type { SaintPrayerRef } from "../types";
 
 interface Props {
   prayers: SaintPrayerRef[];
 }
 
 export const SaintPrayersBlock: React.FC<Props> = ({ prayers }) => (
-  <section aria-labelledby="saint-prayers" className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg">
+  <section
+    aria-labelledby="saint-prayers"
+    className="rounded-2xl border border-border/60 bg-card/40 p-spacing-lg"
+  >
     <h2 id="saint-prayers" className="font-serif text-premium-lg text-foreground mb-spacing-sm">
       Orações associadas
     </h2>

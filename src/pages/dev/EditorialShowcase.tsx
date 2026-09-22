@@ -7,7 +7,7 @@
  * migração de página. Nenhuma lógica de domínio.
  */
 
-import React from 'react';
+import React from "react";
 import {
   EditorialShell,
   EditorialHero,
@@ -33,12 +33,9 @@ import {
   EditorialBookCover,
   EditorialTimeline,
   EditorialChapterCard,
-} from '@/components/editorial';
+} from "@/components/editorial";
 
-const Block: React.FC<{ label: string; children: React.ReactNode }> = ({
-  label,
-  children,
-}) => (
+const Block: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <section className="py-10 border-t border-stitch-outline-variant/40">
     <p className="font-stitch-label text-stitch-label-sm uppercase tracking-[0.32em] text-stitch-secondary mb-6">
       {label}
@@ -53,7 +50,11 @@ const EditorialShowcase: React.FC = () => {
       <EditorialHero
         meta="Sprint E1 · fundação"
         kicker="Design System"
-        title={<>Editorial<span className="italic"> Primitives</span></>}
+        title={
+          <>
+            Editorial<span className="italic"> Primitives</span>
+          </>
+        }
         subtitle="Storybook mínimo de todas as primitivas visuais. Consumo apenas de tokens stitch-*."
         action={<EditorialCTA>Ver documentação</EditorialCTA>}
       />
@@ -97,9 +98,9 @@ const EditorialShowcase: React.FC = () => {
       <Block label="Breadcrumb">
         <EditorialBreadcrumb
           items={[
-            { label: 'Biblioteca', href: '#' },
-            { label: 'Sagrada Escritura', href: '#' },
-            { label: 'João 6' },
+            { label: "Biblioteca", href: "#" },
+            { label: "Sagrada Escritura", href: "#" },
+            { label: "João 6" },
           ]}
         />
       </Block>
@@ -107,7 +108,9 @@ const EditorialShowcase: React.FC = () => {
       <Block label="CTA">
         <div className="flex flex-wrap gap-8 items-center">
           <EditorialCTA>Retomar leitura</EditorialCTA>
-          <EditorialCTA as="a" href="/acervo">Explorar acervo</EditorialCTA>
+          <EditorialCTA as="a" href="/acervo">
+            Explorar acervo
+          </EditorialCTA>
         </div>
       </Block>
 
@@ -132,9 +135,8 @@ const EditorialShowcase: React.FC = () => {
             footer={<EditorialCTA>Abrir referência</EditorialCTA>}
           >
             <p>
-              O discurso eucarístico de João 6 dialoga com o Êxodo 16, o
-              Catecismo §§1333-1336 e o tratado <em>Corpus Christi</em> de
-              São Tomás de Aquino.
+              O discurso eucarístico de João 6 dialoga com o Êxodo 16, o Catecismo §§1333-1336 e o
+              tratado <em>Corpus Christi</em> de São Tomás de Aquino.
             </p>
           </EditorialPanel>
         </div>
@@ -185,7 +187,11 @@ const EditorialShowcase: React.FC = () => {
       <Block label="Existentes (regressão visual)">
         <EditorialReaderHeader
           kicker="Sagrada Escritura · Evangelho"
-          title={<>João · <span className="italic">Capítulo 6</span></>}
+          title={
+            <>
+              João · <span className="italic">Capítulo 6</span>
+            </>
+          }
           subtitle="Novo Testamento · São João Apóstolo"
           meta="§ 1 – 71 · 40 min"
         />
@@ -219,12 +225,7 @@ const EditorialShowcase: React.FC = () => {
         <div className="mt-10">
           <EditorialShelf itemMinWidth="180px">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <EditorialBookCover
-                key={n}
-                size="md"
-                title={`Volume ${n}`}
-                author="Autor"
-              />
+              <EditorialBookCover key={n} size="md" title={`Volume ${n}`} author="Autor" />
             ))}
           </EditorialShelf>
         </div>

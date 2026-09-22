@@ -23,7 +23,9 @@ export type BibleTextInvalidPayload = z.infer<typeof BibleTextInvalidPayloadSche
 export { classifyError };
 
 /** Helper de uso no frontend: extrai a mensagem descritiva de um payload 404. */
-export function describeBibleTextError(data: unknown): { title: string; description: string } | null {
+export function describeBibleTextError(
+  data: unknown,
+): { title: string; description: string } | null {
   const parsed = BibleTextErrorSchema.safeParse(data);
   if (!parsed.success) return null;
   const { error, reason, received_abbrev, correlationId } = parsed.data;

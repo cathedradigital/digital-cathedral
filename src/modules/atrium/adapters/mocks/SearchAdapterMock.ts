@@ -5,8 +5,8 @@
  * exposta quando o componente evoluir).
  */
 
-import type { SearchAdapter } from '../types';
-import { SearchRegistry } from '@/core/navigation';
+import type { SearchAdapter } from "../types";
+import { SearchRegistry } from "@/core/navigation";
 
 export const SearchAdapterMock: SearchAdapter = {
   async getSuggestions() {

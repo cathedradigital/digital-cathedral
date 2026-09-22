@@ -1,11 +1,11 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 /**
  * Polyfills de ambiente jsdom usados amplamente pelos componentes do Cathedra
  * (responsividade, animações, virtualização e scroll).
  */
 if (!window.matchMedia) {
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(window, "matchMedia", {
     writable: true,
     value: (query: string) => ({
       matches: false,
@@ -36,7 +36,7 @@ if (!(globalThis as unknown as { ResizeObserver?: unknown }).ResizeObserver) {
   (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = MockObserver;
 }
 if (!window.scrollTo) {
-  Object.defineProperty(window, 'scrollTo', { writable: true, value: () => {} });
+  Object.defineProperty(window, "scrollTo", { writable: true, value: () => {} });
 }
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => {};

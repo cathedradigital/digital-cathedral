@@ -1,1 +1,1 @@
-export { default } from './UniversalSearch';
+export { default } from "./UniversalSearch";

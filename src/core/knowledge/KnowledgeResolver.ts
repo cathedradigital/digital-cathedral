@@ -6,9 +6,9 @@
  * Componentes/adapters usam apenas `resolve()` — nunca constroem URL.
  */
 
-import { KnowledgeRegistry } from './KnowledgeRegistry';
-import type { KnowledgeNodeId, ResolvedNode } from './types';
-import { RouteRegistry } from '@/core/navigation';
+import { KnowledgeRegistry } from "./KnowledgeRegistry";
+import type { KnowledgeNodeId, ResolvedNode } from "./types";
+import { RouteRegistry } from "@/core/navigation";
 
 function urlFor(node: ReturnType<typeof KnowledgeRegistry.getNode>): string | null {
   if (!node?.route) return null;
@@ -27,8 +27,6 @@ export const KnowledgeResolver = {
     return { node, url: urlFor(node) };
   },
   resolveMany(ids: KnowledgeNodeId[]): ResolvedNode[] {
-    return ids
-      .map((id) => this.resolve(id))
-      .filter((x): x is ResolvedNode => Boolean(x));
+    return ids.map((id) => this.resolve(id)).filter((x): x is ResolvedNode => Boolean(x));
   },
 };

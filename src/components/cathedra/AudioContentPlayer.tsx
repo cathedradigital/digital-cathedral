@@ -1,28 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/db';
-import { Button } from '@/components/ui/button';
-import { Icons } from '../../constants';
+import React, { useState, useRef, useEffect } from "react";
+import { supabase } from "@/lib/db";
+import { Button } from "@/components/ui/button";
+import { Icons } from "../../constants";
 
-import { useAuth } from '@/hooks/useAuth';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
-import { toast } from 'sonner';
+import { useAuth } from "@/hooks/useAuth";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+import { toast } from "sonner";
 
 interface AudioContentPlayerProps {
   text: string;
   voiceId?: string; // Default Rachel: 21m00Tcm4lJC7Gz71S1T
   title?: string;
   className?: string;
-  variant?: 'outline' | 'default' | 'ghost' | 'secondary';
+  variant?: "outline" | "default" | "ghost" | "secondary";
   showTitle?: boolean;
 }
 
-const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({ 
-  text, 
-  voiceId = "21m00Tcm4lJC7Gz71S1T", 
+const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
+  text,
+  voiceId = "21m00Tcm4lJC7Gz71S1T",
   title = "Ouvir conteúdo",
   className = "",
   variant = "outline",
-  showTitle = true
+  showTitle = true,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +58,12 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
       // Resume if it was playing before silence mode was activated
       if (audioRef.current) {
         audioRef.current.currentTime = lastPosition;
-        audioRef.current.play().then(() => {
-          setIsPlaying(true);
-        }).catch(err => console.error("Error resuming audio:", err));
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => console.error("Error resuming audio:", err));
       }
       setWasPlayingBeforeSilence(false);
     }
@@ -80,10 +83,10 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
 
     // Prepare text: strip markdown, HTML tags, and theological refs
     const cleanText = text
-      .replace(/<[^>]*>?/gm, '') // Remove HTML
-      .replace(/\[RECOMMENDATION:.*?\]/g, '') // Remove recommendations
-      .replace(/\*\*/g, '') // Remove bold
-      .replace(/#/g, '') // Remove headers
+      .replace(/<[^>]*>?/gm, "") // Remove HTML
+      .replace(/\[RECOMMENDATION:.*?\]/g, "") // Remove recommendations
+      .replace(/\*\*/g, "") // Remove bold
+      .replace(/#/g, "") // Remove headers
       .trim();
 
     if (!cleanText) {
@@ -93,19 +96,24 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
 
     setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-          'Content-Type': 'application/json',
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: cleanText,
+            voice_id: voiceId,
+          }),
         },
-        body: JSON.stringify({ 
-          text: cleanText,
-          voice_id: voiceId 
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -115,10 +123,10 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
-      
+
       const audio = new Audio(url);
       audioRef.current = audio;
-      
+
       audio.onended = () => setIsPlaying(false);
       audio.onerror = () => {
         setIsPlaying(false);
@@ -155,7 +163,7 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
         variant={variant}
         size="sm"
         className={`rounded-premium-full flex items-center gap-spacing-xs transition-all ${
-          isPlaying ? 'bg-primary/10 text-primary border-primary/30' : ''
+          isPlaying ? "bg-primary/10 text-primary border-primary/30" : ""
         }`}
       >
         {isLoading ? (
@@ -170,11 +178,13 @@ const AudioContentPlayer: React.FC<AudioContentPlayerProps> = ({
         ) : (
           <Icons.Headphones className="w-spacing-md h-spacing-md" />
         )}
-        {showTitle && <span className="text-premium-xs font-black uppercase tracking-widest">{title}</span>}
+        {showTitle && (
+          <span className="text-premium-xs font-black uppercase tracking-widest">{title}</span>
+        )}
       </Button>
-      
+
       {isPlaying && (
-        <Button 
+        <Button
           onClick={resetAudio}
           className="p-spacing-xs text-muted-foreground hover:text-foreground transition-colors"
           title="Reiniciar"

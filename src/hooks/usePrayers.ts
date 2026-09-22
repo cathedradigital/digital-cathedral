@@ -4,11 +4,11 @@
  * Sprint CAT-12 item 2 — refatoração de Orações.
  * Não invente dados. Todo conteúdo vive na tabela `prayers`.
  */
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { supabase } from '@/lib/db';
-import type { Database } from '@/lib/db';
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { supabase } from "@/lib/db";
+import type { Database } from "@/lib/db";
 
-export type PrayerCategory = Database['public']['Enums']['prayer_category'];
+export type PrayerCategory = Database["public"]["Enums"]["prayer_category"];
 
 export interface Prayer {
   id: string;
@@ -35,7 +35,7 @@ export interface Prayer {
   duration_min?: number | null;
   bible_refs?: unknown;
   catechism_refs?: number[];
-  content_status?: 'stub' | 'partial' | 'complete';
+  content_status?: "stub" | "partial" | "complete";
   /** Sprint 1.0 — v2 = hierarquia em prayer_sections/mysteries/blocks. */
   engine_version?: number;
   /** Sprint 3 — metadados extensíveis (hour_slug, window_start/end, etc.). */
@@ -43,27 +43,27 @@ export interface Prayer {
 }
 
 export const PRAYER_CATEGORY_LABEL: Record<PrayerCategory, string> = {
-  fundamentais: 'Fundamentais',
-  marianas: 'Marianas',
-  espirito_santo: 'Espírito Santo',
-  santos: 'Aos Santos',
-  antes_depois: 'Antes e depois',
-  protecao: 'Proteção',
-  momentos_do_dia: 'Momentos do dia',
-  eucaristica: 'Eucarística',
-  confissao_defuntos: 'Confissão e defuntos',
+  fundamentais: "Fundamentais",
+  marianas: "Marianas",
+  espirito_santo: "Espírito Santo",
+  santos: "Aos Santos",
+  antes_depois: "Antes e depois",
+  protecao: "Proteção",
+  momentos_do_dia: "Momentos do dia",
+  eucaristica: "Eucarística",
+  confissao_defuntos: "Confissão e defuntos",
 };
 
 export const PRAYER_CATEGORY_ORDER: PrayerCategory[] = [
-  'fundamentais',
-  'marianas',
-  'espirito_santo',
-  'santos',
-  'antes_depois',
-  'protecao',
-  'momentos_do_dia',
-  'eucaristica',
-  'confissao_defuntos',
+  "fundamentais",
+  "marianas",
+  "espirito_santo",
+  "santos",
+  "antes_depois",
+  "protecao",
+  "momentos_do_dia",
+  "eucaristica",
+  "confissao_defuntos",
 ];
 
 /** Lista completa (publicadas), ordenada por categoria + order_index. */
@@ -76,11 +76,11 @@ export function usePrayers() {
     setLoading(true);
     setError(null);
     const { data, error } = await supabase
-      .from('prayers')
-      .select('*')
-      .eq('is_published', true)
-      .order('category', { ascending: true })
-      .order('order_index', { ascending: true });
+      .from("prayers")
+      .select("*")
+      .eq("is_published", true)
+      .order("category", { ascending: true })
+      .order("order_index", { ascending: true });
     if (error) setError(error.message);
     setData((data ?? []) as Prayer[]);
     setLoading(false);
@@ -116,10 +116,10 @@ export function usePrayer(slug: string | undefined) {
       setLoading(true);
       setError(null);
       const { data, error } = await supabase
-        .from('prayers')
-        .select('*')
-        .eq('slug', slug)
-        .eq('is_published', true)
+        .from("prayers")
+        .select("*")
+        .eq("slug", slug)
+        .eq("is_published", true)
         .maybeSingle();
       if (!alive) return;
       if (error) setError(error.message);

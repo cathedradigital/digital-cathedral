@@ -1,11 +1,11 @@
-import React from 'react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import React from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export interface LiturgyDateNavProps {
   date: Date;
@@ -29,7 +29,10 @@ function nextSunday(d: Date): Date {
 
 export const LiturgyDateNav: React.FC<LiturgyDateNavProps> = ({ date, onChange, isToday }) => {
   return (
-    <div className="flex flex-col items-center gap-spacing-xs" aria-label="Navegação de data litúrgica">
+    <div
+      className="flex flex-col items-center gap-spacing-xs"
+      aria-label="Navegação de data litúrgica"
+    >
       <div className="flex items-center gap-spacing-md">
         <Button
           variant="outline"
@@ -46,8 +49,8 @@ export const LiturgyDateNav: React.FC<LiturgyDateNavProps> = ({ date, onChange, 
             <Button
               variant="outline"
               className={cn(
-                'rounded-premium-full h-spacing-2xl px-spacing-lg gap-spacing-xs text-premium-sm font-bold text-primary',
-                'min-w-[220px] justify-center',
+                "rounded-premium-full h-spacing-2xl px-spacing-lg gap-spacing-xs text-premium-sm font-bold text-primary",
+                "min-w-[220px] justify-center",
               )}
               aria-label="Escolher data no calendário"
             >
@@ -64,7 +67,7 @@ export const LiturgyDateNav: React.FC<LiturgyDateNavProps> = ({ date, onChange, 
               onSelect={(d) => d && onChange(d)}
               locale={ptBR}
               initialFocus
-              className={cn('p-3 pointer-events-auto')}
+              className={cn("p-3 pointer-events-auto")}
             />
           </PopoverContent>
         </Popover>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Skeleton do SantoDoDiaHero — mantém a mesma silhueta (hero + ficha em blocos)
@@ -77,10 +77,7 @@ const SantoDoDiaHeroSkeleton: React.FC = () => {
         </div>
 
         {/* CTAs — placeholders visuais; CTAs reais só aparecem após load */}
-        <div
-          className="flex flex-col sm:flex-row gap-spacing-sm pt-spacing-xs"
-          aria-hidden="true"
-        >
+        <div className="flex flex-col sm:flex-row gap-spacing-sm pt-spacing-xs" aria-hidden="true">
           <div className="flex-1 h-spacing-2xl rounded-premium-full cathedra-shimmer" />
           <div className="flex-1 h-spacing-2xl rounded-premium-full cathedra-shimmer" />
           <div className="h-spacing-2xl w-[120px] rounded-premium-full cathedra-shimmer" />
@@ -90,9 +87,7 @@ const SantoDoDiaHeroSkeleton: React.FC = () => {
   );
 };
 
-export const SantoDoDiaSecondaryListSkeleton: React.FC<{ count?: number }> = ({
-  count = 4,
-}) => (
+export const SantoDoDiaSecondaryListSkeleton: React.FC<{ count?: number }> = ({ count = 4 }) => (
   <section
     data-testid="santo-do-dia-secondary-skeleton"
     aria-hidden="true"
@@ -105,10 +100,7 @@ export const SantoDoDiaSecondaryListSkeleton: React.FC<{ count?: number }> = ({
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-spacing-md">
       {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="premium-card overflow-hidden flex"
-        >
+        <div key={i} className="premium-card overflow-hidden flex">
           <div className="w-spacing-4xl h-spacing-4xl shrink-0 cathedra-shimmer" />
           <div className="flex-1 p-spacing-md space-y-spacing-2xs">
             <div className="h-spacing-xs w-[50%] rounded-premium cathedra-shimmer" />

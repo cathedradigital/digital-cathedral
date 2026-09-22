@@ -1,27 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import type {
-  CollectionProgressRow,
-  CollectionProgressStatus,
-} from './types';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import type { CollectionProgressRow, CollectionProgressStatus } from "./types";
 
 type ProgressMap = Record<string, CollectionProgressRow>;
 
 export function useCollectionProgress(collectionId: string | undefined) {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const key = ['collection-progress', collectionId, user?.id];
+  const key = ["collection-progress", collectionId, user?.id];
 
   const query = useQuery<ProgressMap>({
     queryKey: key,
     enabled: !!collectionId && !!user?.id,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('collection_progress')
-        .select('*')
-        .eq('collection_id', collectionId!)
-        .eq('user_id', user!.id);
+        .from("collection_progress")
+        .select("*")
+        .eq("collection_id", collectionId!)
+        .eq("user_id", user!.id);
       if (error) throw error;
       const map: ProgressMap = {};
       for (const row of (data ?? []) as unknown as CollectionProgressRow[]) {
@@ -38,7 +35,7 @@ export function useCollectionProgress(collectionId: string | undefined) {
       status: CollectionProgressStatus;
       lastPosition?: Record<string, unknown>;
     }) => {
-      if (!user?.id || !collectionId) throw new Error('Requer sessão.');
+      if (!user?.id || !collectionId) throw new Error("Requer sessão.");
       const now = new Date().toISOString();
       const payload = {
         user_id: user.id,
@@ -46,12 +43,12 @@ export function useCollectionProgress(collectionId: string | undefined) {
         item_id: params.itemId,
         status: params.status,
         last_position: (params.lastPosition ?? {}) as never,
-        started_at: params.status !== 'not_started' ? now : null,
-        completed_at: params.status === 'completed' ? now : null,
+        started_at: params.status !== "not_started" ? now : null,
+        completed_at: params.status === "completed" ? now : null,
       } as never;
       const { data, error } = await supabase
-        .from('collection_progress')
-        .upsert(payload, { onConflict: 'user_id,item_id' })
+        .from("collection_progress")
+        .upsert(payload, { onConflict: "user_id,item_id" })
         .select()
         .single();
       if (error) throw error;
@@ -83,13 +80,11 @@ export function useCollectionProgress(collectionId: string | undefined) {
   return {
     progress: query.data ?? {},
     isLoading: query.isLoading,
-    startItem: (itemId: string) =>
-      upsert.mutateAsync({ itemId, status: 'reading' }),
-    completeItem: (itemId: string) =>
-      upsert.mutateAsync({ itemId, status: 'completed' }),
+    startItem: (itemId: string) => upsert.mutateAsync({ itemId, status: "reading" }),
+    completeItem: (itemId: string) => upsert.mutateAsync({ itemId, status: "completed" }),
     resumeItem: (itemId: string, lastPosition?: Record<string, unknown>) =>
-      upsert.mutateAsync({ itemId, status: 'reading', lastPosition }),
+      upsert.mutateAsync({ itemId, status: "reading", lastPosition }),
     getStatus: (itemId: string): CollectionProgressStatus =>
-      query.data?.[itemId]?.status ?? 'not_started',
+      query.data?.[itemId]?.status ?? "not_started",
   };
 }

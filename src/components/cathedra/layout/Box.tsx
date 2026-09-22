@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { cn } from "@/lib/utils";
 
-type Spacing = '0' | '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+type Spacing = "0" | "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 
 interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
   p?: Spacing;
@@ -14,16 +14,24 @@ interface BoxProps extends React.HTMLAttributes<HTMLDivElement> {
   m?: Spacing;
   mx?: Spacing;
   my?: Spacing;
-  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'premium' | 'full';
-  shadow?: 'none' | 'sm' | 'md' | 'premium' | 'premium-hover';
+  rounded?: "none" | "sm" | "md" | "lg" | "premium" | "full";
+  shadow?: "none" | "sm" | "md" | "premium" | "premium-hover";
   className?: string;
   children?: React.ReactNode;
   asChild?: boolean;
 }
 
 export const Box = ({
-  p, px, py, pt, pb, pl, pr,
-  m, mx, my,
+  p,
+  px,
+  py,
+  pt,
+  pb,
+  pl,
+  pr,
+  m,
+  mx,
+  my,
   rounded,
   shadow,
   className,
@@ -41,9 +49,9 @@ export const Box = ({
     m && `m-spacing-${m}`,
     mx && `mx-spacing-${mx}`,
     my && `my-spacing-${my}`,
-    rounded && `rounded-premium${rounded === 'premium' ? '' : `-${rounded}`}`,
-    shadow && `shadow-premium${shadow === 'premium' ? '' : `-${shadow}`}`,
-    className
+    rounded && `rounded-premium${rounded === "premium" ? "" : `-${rounded}`}`,
+    shadow && `shadow-premium${shadow === "premium" ? "" : `-${shadow}`}`,
+    className,
   );
 
   return (

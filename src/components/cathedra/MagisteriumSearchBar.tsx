@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState, type RefObject } from 'react';
-import { Icons } from '@/constants';
-import { useDocumentSearch } from '@/hooks/useDocumentSearch';
+import React, { useEffect, useRef, useState, type RefObject } from "react";
+import { Icons } from "@/constants";
+import { useDocumentSearch } from "@/hooks/useDocumentSearch";
 
 interface MagisteriumSearchBarProps {
   containerRef: RefObject<HTMLElement | null>;
@@ -20,8 +20,8 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
   open,
   onClose,
 }) => {
-  const [rawQuery, setRawQuery] = useState('');
-  const [debounced, setDebounced] = useState('');
+  const [rawQuery, setRawQuery] = useState("");
+  const [debounced, setDebounced] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -31,8 +31,8 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
 
   // Zera busca ao trocar de documento
   useEffect(() => {
-    setRawQuery('');
-    setDebounced('');
+    setRawQuery("");
+    setDebounced("");
   }, [contentVersion]);
 
   useEffect(() => {
@@ -44,17 +44,17 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
 
   const { total, current, goNext, goPrev } = useDocumentSearch(
     containerRef,
-    open ? debounced : '',
+    open ? debounced : "",
     contentVersion,
   );
 
   if (!open) return null;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       e.preventDefault();
       onClose();
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       if (e.shiftKey) goPrev();
       else goNext();
@@ -62,8 +62,8 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
   };
 
   const clear = () => {
-    setRawQuery('');
-    setDebounced('');
+    setRawQuery("");
+    setDebounced("");
     inputRef.current?.focus();
   };
 
@@ -74,7 +74,10 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
       className="sticky top-[52px] z-30 mx-auto w-full max-w-[70ch] px-spacing-md md:px-spacing-0 mb-spacing-md"
     >
       <div className="flex items-center gap-spacing-2xs rounded-premium-full border border-primary/20 bg-background/95 backdrop-blur-md px-spacing-md py-spacing-2xs shadow-premium">
-        <Icons.Search className="w-spacing-md h-spacing-md text-primary/60 shrink-0" aria-hidden="true" />
+        <Icons.Search
+          className="w-spacing-md h-spacing-md text-primary/60 shrink-0"
+          aria-hidden="true"
+        />
         <input
           ref={inputRef}
           type="search"
@@ -93,7 +96,7 @@ const MagisteriumSearchBar: React.FC<MagisteriumSearchBarProps> = ({
             aria-live="polite"
             className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap"
           >
-            {total > 0 ? `${current} / ${total}` : '0 ocorrências'}
+            {total > 0 ? `${current} / ${total}` : "0 ocorrências"}
           </span>
         )}
         <div className="flex items-center gap-spacing-3xs">

@@ -6,17 +6,12 @@
  * `ContinuationSuggestion` pronta para render usando os presets editoriais.
  */
 
-import { INTENT_EYEBROW } from './presets';
-import type {
-  ContinuationSuggestion,
-  ScoredCandidate,
-} from './types';
+import { INTENT_EYEBROW } from "./presets";
+import type { ContinuationSuggestion, ScoredCandidate } from "./types";
 
 const MAX_SUGGESTIONS = 3;
 
-export function chooseSuggestions(
-  scored: ScoredCandidate[],
-): ContinuationSuggestion[] {
+export function chooseSuggestions(scored: ScoredCandidate[]): ContinuationSuggestion[] {
   // Ordena decrescente por score.
   const sorted = [...scored].sort((a, b) => b.score - a.score);
 
@@ -25,7 +20,7 @@ export function chooseSuggestions(
   const picked: ScoredCandidate[] = [];
   for (const c of sorted) {
     if (picked.length >= MAX_SUGGESTIONS) break;
-    if (c.confidence === 'low') continue;
+    if (c.confidence === "low") continue;
     if (taken.has(c.intent)) continue;
     taken.add(c.intent);
     picked.push(c);
@@ -36,7 +31,7 @@ export function chooseSuggestions(
     for (const c of sorted) {
       if (picked.length >= MAX_SUGGESTIONS) break;
       if (picked.includes(c)) continue;
-      if (c.confidence === 'low') continue;
+      if (c.confidence === "low") continue;
       picked.push(c);
     }
   }
@@ -52,6 +47,6 @@ export function chooseSuggestions(
       score: c.score,
       confidence: c.confidence,
       reasons: c.reasons,
-      source: 'graph',
+      source: "graph",
     }));
 }

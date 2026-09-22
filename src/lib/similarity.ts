@@ -1,4 +1,4 @@
-import { normalizeText } from './utils';
+import { normalizeText } from "./utils";
 
 /**
  * Shared similarity helpers for search UX (Saints, Glossary, Community...).
@@ -30,7 +30,9 @@ export const computeSimilarity = (query: string, target: string): number => {
   const a = trigrams(q);
   const b = trigrams(t);
   let shared = 0;
-  a.forEach(g => { if (b.has(g)) shared++; });
+  a.forEach((g) => {
+    if (b.has(g)) shared++;
+  });
   return shared / (a.size + b.size - shared || 1);
 };
 
@@ -45,8 +47,8 @@ export const combinedSimilarity = (
   secondaryWeight = 0.7,
 ): number =>
   Math.max(
-    computeSimilarity(query, primary || ''),
-    computeSimilarity(query, secondary || '') * secondaryWeight,
+    computeSimilarity(query, primary || ""),
+    computeSimilarity(query, secondary || "") * secondaryWeight,
   );
 
 export interface ScoreToneTokens {
@@ -61,13 +63,13 @@ export interface ScoreToneTokens {
  * Thresholds calibrated to actual pg_trgm scores (partial matches ≈ 0.25–0.5).
  */
 export const scoreToTone = (score: number | undefined | null): ScoreToneTokens | null => {
-  if (typeof score !== 'number' || score <= 0) return null;
+  if (typeof score !== "number" || score <= 0) return null;
   const pct = Math.round(Math.min(1, score) * 100);
   const classes =
     pct >= 50
-      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
       : pct >= 25
-        ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30'
-        : 'bg-muted text-muted-foreground border-border';
+        ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+        : "bg-muted text-muted-foreground border-border";
   return { classes, pct };
 };

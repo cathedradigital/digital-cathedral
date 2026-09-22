@@ -14,19 +14,19 @@
  *
  * Fonte única: o banco (janelas) + provedor litúrgico (Próprio). Nada hardcoded.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
-import { usePrayers, type Prayer } from './usePrayers';
+import { useEffect, useMemo, useState } from "react";
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
+import { usePrayers, type Prayer } from "./usePrayers";
 
 export type RecommendedHour = {
   prayer: Prayer;
   hourSlug: string;
-  reason: 'in-window' | 'nearest';
+  reason: "in-window" | "nearest";
   minutesUntilOpen: number; // 0 se já aberta
-  windowLabel: string;      // ex.: "05:00 → 10:00"
-  isoDate: string;          // data de referência (YYYY-MM-DD, TZ local)
+  windowLabel: string; // ex.: "05:00 → 10:00"
+  isoDate: string; // data de referência (YYYY-MM-DD, TZ local)
   isToday: boolean;
-  timeZone: string;         // IANA (ex.: "America/Sao_Paulo")
+  timeZone: string; // IANA (ex.: "America/Sao_Paulo")
 };
 
 interface PrayerMeta {
@@ -38,22 +38,19 @@ interface PrayerMeta {
 
 function toMinutes(hhmm?: string): number | null {
   if (!hhmm || !/^\d{2}:\d{2}$/.test(hhmm)) return null;
-  const [h, m] = hhmm.split(':').map(Number);
+  const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
 }
 
 function resolveTimeZone(): string {
   try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
   } catch {
-    return 'UTC';
+    return "UTC";
   }
 }
 
-export function useRecommendedHour(
-  date?: Date,
-  pollMs = 60_000,
-): RecommendedHour | null {
+export function useRecommendedHour(date?: Date, pollMs = 60_000): RecommendedHour | null {
   const { prayers } = usePrayers();
   const timeZone = useMemo(resolveTimeZone, []);
 
@@ -75,7 +72,7 @@ export function useRecommendedHour(
   }, [pollMs]);
 
   return useMemo(() => {
-    const breviario = prayers.filter((p) => p.slug.startsWith('breviario-'));
+    const breviario = prayers.filter((p) => p.slug.startsWith("breviario-"));
     if (breviario.length === 0) return null;
 
     const refDate = date ?? new Date();
@@ -95,14 +92,14 @@ export function useRecommendedHour(
       const end = toMinutes(meta.window_end);
       if (start == null || end == null) continue;
       const windowLabel = `${meta.window_start} → ${meta.window_end}`;
-      const hourSlug = meta.hour_slug ?? p.slug.replace(/^breviario-/, '');
+      const hourSlug = meta.hour_slug ?? p.slug.replace(/^breviario-/, "");
 
       const inWindow = pivotMin >= start && pivotMin <= end;
       if (inWindow) {
         return {
           prayer: p,
           hourSlug,
-          reason: 'in-window',
+          reason: "in-window",
           minutesUntilOpen: 0,
           windowLabel,
           isoDate,
@@ -116,7 +113,7 @@ export function useRecommendedHour(
         best = {
           prayer: p,
           hourSlug,
-          reason: 'nearest',
+          reason: "nearest",
           minutesUntilOpen: delta,
           windowLabel,
           isoDate,
@@ -128,4 +125,3 @@ export function useRecommendedHour(
     return best;
   }, [prayers, nowMin, date, timeZone]);
 }
-

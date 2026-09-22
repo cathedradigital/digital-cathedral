@@ -1,11 +1,18 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Mail, Calendar, Loader2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Mail, Calendar, Loader2 } from "lucide-react";
 
 interface Lead {
   id: string;
@@ -21,14 +28,14 @@ export function LeadsDashboard() {
     async function fetchLeads() {
       try {
         const { data, error } = await supabase
-          .from('landing_leads' as any)
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("landing_leads" as any)
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setLeads((data as any) || []);
       } catch (err) {
-        console.error('Error fetching leads:', err);
+        console.error("Error fetching leads:", err);
       } finally {
         setLoading(false);
       }
@@ -58,14 +65,21 @@ export function LeadsDashboard() {
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow>
-                <TableHead className="w-[100px] uppercase text-[10px] tracking-widest font-bold">Data</TableHead>
-                <TableHead className="uppercase text-[10px] tracking-widest font-bold">E-mail</TableHead>
+                <TableHead className="w-[100px] uppercase text-[10px] tracking-widest font-bold">
+                  Data
+                </TableHead>
+                <TableHead className="uppercase text-[10px] tracking-widest font-bold">
+                  E-mail
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {leads.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={2} className="text-center py-spacing-2xl text-muted-foreground font-serif">
+                  <TableCell
+                    colSpan={2}
+                    className="text-center py-spacing-2xl text-muted-foreground font-serif"
+                  >
                     Nenhum lead capturado ainda.
                   </TableCell>
                 </TableRow>
@@ -75,7 +89,7 @@ export function LeadsDashboard() {
                     <TableCell className="text-premium-xs font-mono text-muted-foreground whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-3 w-3" />
-                        {format(new Date(lead.created_at), 'dd/MM/yy HH:mm', { locale: ptBR })}
+                        {format(new Date(lead.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
                       </div>
                     </TableCell>
                     <TableCell className="text-premium-sm font-serif">

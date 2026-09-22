@@ -5,7 +5,7 @@
  * intencionalmente estático nesta onda; na B.1.5 será alimentado por
  * `nexus_relations` + histórico do usuário.
  */
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import {
   BookOpen,
   Church,
@@ -16,8 +16,8 @@ import {
   Sparkles,
   Users,
   type LucideIcon,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Theme {
   label: string;
@@ -26,14 +26,14 @@ interface Theme {
 }
 
 const THEMES: Theme[] = [
-  { label: 'Trindade',    query: 'Trindade',   icon: Sparkles },
-  { label: 'Sacramentos', query: 'Sacramento', icon: Cross },
-  { label: 'Santos',      query: 'Santo',      icon: Users },
-  { label: 'Moral',       query: 'Virtude',    icon: HeartHandshake },
-  { label: 'Liturgia',    query: 'Liturgia',   icon: Church },
-  { label: 'Oração',      query: 'Oração',     icon: Flame },
-  { label: 'Bíblia',      query: 'Bíblia',     icon: BookOpen },
-  { label: 'Magistério',  query: 'Encíclica',  icon: ScrollText },
+  { label: "Trindade", query: "Trindade", icon: Sparkles },
+  { label: "Sacramentos", query: "Sacramento", icon: Cross },
+  { label: "Santos", query: "Santo", icon: Users },
+  { label: "Moral", query: "Virtude", icon: HeartHandshake },
+  { label: "Liturgia", query: "Liturgia", icon: Church },
+  { label: "Oração", query: "Oração", icon: Flame },
+  { label: "Bíblia", query: "Bíblia", icon: BookOpen },
+  { label: "Magistério", query: "Encíclica", icon: ScrollText },
 ];
 
 export interface LibraryThemesBlockProps {
@@ -42,9 +42,12 @@ export interface LibraryThemesBlockProps {
   hrefBase?: string;
 }
 
-export function LibraryThemesBlock({ className, hrefBase = '/biblioteca' }: LibraryThemesBlockProps) {
+export function LibraryThemesBlock({
+  className,
+  hrefBase = "/biblioteca",
+}: LibraryThemesBlockProps) {
   return (
-    <div className={cn('grid grid-cols-2 gap-3 sm:grid-cols-4', className)}>
+    <div className={cn("grid grid-cols-2 gap-3 sm:grid-cols-4", className)}>
       {THEMES.map(({ label, query, icon: Icon }) => (
         <Link
           key={label}

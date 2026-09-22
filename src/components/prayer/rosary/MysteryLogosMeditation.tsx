@@ -2,10 +2,10 @@
  * MysteryLogosMeditation — Reflexão contemplativa antes da 1ª Ave-Maria.
  * Conteúdo vem exclusivamente do banco (prayer_mysteries.meta.logos_meditation).
  */
-import React from 'react';
-import { Sparkles } from 'lucide-react';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta } from './mysteryMeta';
+import React from "react";
+import { Sparkles } from "lucide-react";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta } from "./mysteryMeta";
 
 const MysteryLogosMeditation: React.FC<{ mystery: DBMystery }> = ({ mystery }) => {
   const meta = readMysteryMeta(mystery);

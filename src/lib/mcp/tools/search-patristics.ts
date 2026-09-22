@@ -22,7 +22,9 @@ export default defineTool({
       sb
         .from("saints")
         .select("id,name,title,feast_day,bio,category")
-        .or(`name.ilike.${like},bio.ilike.${like},title.ilike.${like},category.ilike.%padre%,category.ilike.%patrist%`)
+        .or(
+          `name.ilike.${like},bio.ilike.${like},title.ilike.${like},category.ilike.%padre%,category.ilike.%patrist%`,
+        )
         .limit(max),
       sb
         .from("glossary")

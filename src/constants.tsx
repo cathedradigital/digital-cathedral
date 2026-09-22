@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react';
-import { 
+import React, { forwardRef } from "react";
+import {
   Activity,
   AlertCircle,
   AlertTriangle,
@@ -180,81 +180,100 @@ import {
   XCircle,
   Youtube,
   Zap,
-  ZapOff
-} from 'lucide-react';
+  ZapOff,
+} from "lucide-react";
 
-
-import { cn } from './lib/utils';
-import { AppRoute } from './types';
+import { cn } from "./lib/utils";
+import { AppRoute } from "./types";
 
 export const COLORS = {
-  primary: '#0F172A',
-  secondary: '#D4AF37',
-  background: '#F8F5EE',
-  text: '#0F172A',
-  accent: '#D4AF37',
+  primary: "#0F172A",
+  secondary: "#D4AF37",
+  background: "#F8F5EE",
+  text: "#0F172A",
+  accent: "#D4AF37",
 };
 
 export const NAV_ITEMS = (t: (key: string) => string, lang: string) => [
-  { label: lang === 'pt' ? 'Início' : 'Home', icon: 'Home', route: '/' },
-  { label: lang === 'pt' ? 'Bíblia' : 'Bible', icon: 'Bible', route: AppRoute.BIBLE },
-  { label: lang === 'pt' ? 'Catecismo' : 'Catechism', icon: 'Catechism', route: AppRoute.CATECHISM },
-  { label: lang === 'pt' ? 'Santos' : 'Saints', icon: 'Saints', route: AppRoute.SAINTS },
-  { label: t('menu') || 'Menu', icon: 'Menu', isMenu: true },
+  { label: lang === "pt" ? "Início" : "Home", icon: "Home", route: "/" },
+  { label: lang === "pt" ? "Bíblia" : "Bible", icon: "Bible", route: AppRoute.BIBLE },
+  {
+    label: lang === "pt" ? "Catecismo" : "Catechism",
+    icon: "Catechism",
+    route: AppRoute.CATECHISM,
+  },
+  { label: lang === "pt" ? "Santos" : "Saints", icon: "Saints", route: AppRoute.SAINTS },
+  { label: t("menu") || "Menu", icon: "Menu", isMenu: true },
 ];
 
-import cathedraLogo from './assets/cathedra-logo.webp';
+import cathedraLogo from "./assets/cathedra-logo.webp";
 
-export const Logo = forwardRef<HTMLDivElement, { className?: string, variant?: 'gold' | 'light' | 'dark' | 'blue' }>(({ 
-  className = "w-spacing-2xl h-spacing-2xl", 
-  variant = 'gold' 
-}, ref) => {
+export const Logo = forwardRef<
+  HTMLDivElement,
+  { className?: string; variant?: "gold" | "light" | "dark" | "blue" }
+>(({ className = "w-spacing-2xl h-spacing-2xl", variant = "gold" }, ref) => {
   return (
-    <div ref={ref} className={cn(
-      "relative flex items-center justify-center group overflow-hidden", 
-      variant === 'blue' && "bg-primary rounded-premium-full p-spacing-xs border border-primary/10 dark:bg-primary/20",
-      className
-    )}>
-      <img 
-        src={cathedraLogo} 
-        alt="Cathedra - Digital Sanctuarium" 
+    <div
+      ref={ref}
+      className={cn(
+        "relative flex items-center justify-center group overflow-hidden",
+        variant === "blue" &&
+          "bg-primary rounded-premium-full p-spacing-xs border border-primary/10 dark:bg-primary/20",
+        className,
+      )}
+    >
+      <img
+        src={cathedraLogo}
+        alt="Cathedra - Digital Sanctuarium"
         loading="lazy"
         width="64"
         height="64"
         className={cn(
           "w-full h-full object-contain transition-all duration-1000 group-hover:scale-105",
-          variant === 'light' && "brightness-0 invert opacity-80",
-          variant === 'dark' && "brightness-0 opacity-80",
-          variant === 'blue' && "brightness-0 invert"
+          variant === "light" && "brightness-0 invert opacity-80",
+          variant === "dark" && "brightness-0 opacity-80",
+          variant === "blue" && "brightness-0 invert",
         )}
       />
-      {variant === 'gold' && (
+      {variant === "gold" && (
         <div className="absolute inset-0 bg-secondary/5 rounded-premium-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
       )}
     </div>
   );
 });
 
-Logo.displayName = 'Logo';
+Logo.displayName = "Logo";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number | string;
   strokeWidth?: number;
 }
 
-const createIcon = (IconComponent: any) => 
-  forwardRef<SVGSVGElement, IconProps>(({ className, strokeWidth, size, 'aria-hidden': ariaHidden, 'aria-label': ariaLabel, ...props }, ref) => (
-    <IconComponent 
-      ref={ref} 
-      strokeWidth={strokeWidth || 1.2} 
-      size={size || 20}
-      className={cn("transition-all duration-1000 shrink-0", className)}
-      aria-hidden={ariaHidden ?? (ariaLabel ? undefined : "true")}
-      aria-label={ariaLabel}
-      role={ariaLabel ? "img" : undefined}
-      {...props} 
-    />
-  ));
+const createIcon = (IconComponent: any) =>
+  forwardRef<SVGSVGElement, IconProps>(
+    (
+      {
+        className,
+        strokeWidth,
+        size,
+        "aria-hidden": ariaHidden,
+        "aria-label": ariaLabel,
+        ...props
+      },
+      ref,
+    ) => (
+      <IconComponent
+        ref={ref}
+        strokeWidth={strokeWidth || 1.2}
+        size={size || 20}
+        className={cn("transition-all duration-1000 shrink-0", className)}
+        aria-hidden={ariaHidden ?? (ariaLabel ? undefined : "true")}
+        aria-label={ariaLabel}
+        role={ariaLabel ? "img" : undefined}
+        {...props}
+      />
+    ),
+  );
 
 const IconsInternal = {
   Logo: Logo,
@@ -438,13 +457,12 @@ const IconsInternal = {
   XCircle: createIcon(XCircle),
   Youtube: createIcon(Youtube),
   Zap: createIcon(Zap),
-  ZapOff: createIcon(ZapOff)
+  ZapOff: createIcon(ZapOff),
 };
-
 
 export const Icons = {
   ...IconsInternal,
-  
+
   // Semantic Aliases & Compatibility
   Dashboard: IconsInternal.LayoutGrid,
   Creator: IconsInternal.Crown,
@@ -490,7 +508,7 @@ export const Icons = {
   Whatsapp: IconsInternal.MessageCircle,
   Google: IconsInternal.Globe,
   Apple: IconsInternal.Smartphone,
-  PanelLeft: IconsInternal.Layout, 
+  PanelLeft: IconsInternal.Layout,
   ImageIcon: IconsInternal.Image,
   Stop: IconsInternal.StopCircle,
   StopCircle: IconsInternal.StopCircle,
@@ -500,6 +518,6 @@ if (import.meta.env.DEV) {
   const iconKeys = Object.keys(Icons);
   const duplicates = iconKeys.filter((key, index) => iconKeys.indexOf(key) !== index);
   if (duplicates.length > 0) {
-    console.warn('Duplicate icon keys found in constants:', duplicates);
+    console.warn("Duplicate icon keys found in constants:", duplicates);
   }
 }

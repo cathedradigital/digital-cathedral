@@ -6,30 +6,34 @@
  * `NexusPanel` e para o `ReaderContinuation` já existentes.
  */
 
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { resolveCatechismAutoNexus } from '@/core/knowledge/adapters/catechismAutoNexus';
+import { resolveCatechismAutoNexus } from "@/core/knowledge/adapters/catechismAutoNexus";
 import {
   mergeCuratedEdges,
   type CuratedNexusEdge,
-} from '@/core/knowledge/adapters/nexusGraphMerge';
-import type { ReaderNexusBucket } from '@/core/knowledge/adapters/ReaderAutoNexus';
-import { getCatechismCuratedEdges } from '@/services/catechismNexusService';
+} from "@/core/knowledge/adapters/nexusGraphMerge";
+import type { ReaderNexusBucket } from "@/core/knowledge/adapters/ReaderAutoNexus";
+import { getCatechismCuratedEdges } from "@/services/catechismNexusService";
 
 /** Ordem canônica do Catecismo (mesma do adapter). */
 const ORDER: readonly ReaderNexusBucket[] = [
-  'bible', 'glossary', 'saint', 'father', 'magisterium', 'prayer', 'journey', 'liturgy',
+  "bible",
+  "glossary",
+  "saint",
+  "father",
+  "magisterium",
+  "prayer",
+  "journey",
+  "liturgy",
 ];
 
-export function useCatechismNexus(
-  paragraph: number,
-  range: readonly [number, number],
-) {
+export function useCatechismNexus(paragraph: number, range: readonly [number, number]) {
   const [from, to] = range;
 
   const { data: edges } = useQuery<CuratedNexusEdge[]>({
-    queryKey: ['catechism-nexus', from, to],
+    queryKey: ["catechism-nexus", from, to],
     queryFn: () => getCatechismCuratedEdges(from, to),
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,

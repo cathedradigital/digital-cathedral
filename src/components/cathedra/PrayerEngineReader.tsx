@@ -11,8 +11,8 @@
  * - Bookmarks reais (favorites) + lista "Meus marcadores"
  * - Reinício seguro com confirmação
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from '@/lib/rr-compat';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "@/lib/rr-compat";
 import {
   ArrowLeft,
   ArrowRight,
@@ -26,22 +26,22 @@ import {
   X,
   PlayCircle,
   Heart, // Use Heart as a placeholder if HandsPraying is not available
-} from 'lucide-react';
-import SacredImage from './SacredImage';
+} from "lucide-react";
+import SacredImage from "./SacredImage";
 
 const Icons = {
   BookOpen,
   Church,
   Prayer: Heart,
 };
-import ContemplativeSettingsDialog from '@/components/prayer/rosary/ContemplativeSettingsDialog';
-import { useContemplativeRhythm } from '@/hooks/useContemplativeRhythm';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import ContemplativeSettingsDialog from "@/components/prayer/rosary/ContemplativeSettingsDialog";
+import { useContemplativeRhythm } from "@/hooks/useContemplativeRhythm";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-import PrayerTTSButton from '@/components/cathedra/PrayerTTSButton';
-import PrayerModeSelector, { type PrayerMode } from '@/components/prayer/PrayerModeSelector';
-import PrayerAudioPlayer from '@/components/prayer/PrayerAudioPlayer';
+import PrayerTTSButton from "@/components/cathedra/PrayerTTSButton";
+import PrayerModeSelector, { type PrayerMode } from "@/components/prayer/PrayerModeSelector";
+import PrayerAudioPlayer from "@/components/prayer/PrayerAudioPlayer";
 import {
   ReaderShell,
   EditorialHero,
@@ -49,25 +49,25 @@ import {
   NexusPanel,
   ReaderContinuation,
   ReferencePopover,
-} from '@/components/reader';
+} from "@/components/reader";
 
-import { resolvePrayerAutoNexus } from '@/core/knowledge/adapters/prayerAutoNexus';
-import { resolveMysteryAutoNexus } from '@/core/knowledge/adapters/mysteryAutoNexus';
-import { usePrayerAutoAdvance } from '@/hooks/usePrayerAutoAdvance';
-import { usePrayerEngineSession } from '@/prayer-engine/usePrayerEngineSession';
-import MysteryHero from '@/components/prayer/rosary/MysteryHero';
-import MysteryLogosMeditation from '@/components/prayer/rosary/MysteryLogosMeditation';
-import SpiritualFruitBadge from '@/components/prayer/rosary/SpiritualFruitBadge';
-import ContemplationInvitation from '@/components/prayer/rosary/ContemplationInvitation';
+import { resolvePrayerAutoNexus } from "@/core/knowledge/adapters/prayerAutoNexus";
+import { resolveMysteryAutoNexus } from "@/core/knowledge/adapters/mysteryAutoNexus";
+import { usePrayerAutoAdvance } from "@/hooks/usePrayerAutoAdvance";
+import { usePrayerEngineSession } from "@/prayer-engine/usePrayerEngineSession";
+import MysteryHero from "@/components/prayer/rosary/MysteryHero";
+import MysteryLogosMeditation from "@/components/prayer/rosary/MysteryLogosMeditation";
+import SpiritualFruitBadge from "@/components/prayer/rosary/SpiritualFruitBadge";
+import ContemplationInvitation from "@/components/prayer/rosary/ContemplationInvitation";
 
-import MysteryClosingCard from '@/components/prayer/rosary/MysteryClosingCard';
-import SpiritualProgressDots from '@/components/prayer/rosary/SpiritualProgressDots';
-import { resolveMysteryPalette } from '@/components/prayer/rosary/sectionPalette';
-import { readMysteryMeta } from '@/components/prayer/rosary/mysteryMeta';
-import { resolveMysteryImage } from '@/components/prayer/rosary/mysteryImages';
-import type { PrayerBlock } from '@/types/prayer';
-import type { Prayer } from '@/hooks/usePrayers';
-import type { DBMystery, DBSection } from '@/prayer-engine/loadPrayerHierarchy';
+import MysteryClosingCard from "@/components/prayer/rosary/MysteryClosingCard";
+import SpiritualProgressDots from "@/components/prayer/rosary/SpiritualProgressDots";
+import { resolveMysteryPalette } from "@/components/prayer/rosary/sectionPalette";
+import { readMysteryMeta } from "@/components/prayer/rosary/mysteryMeta";
+import { resolveMysteryImage } from "@/components/prayer/rosary/mysteryImages";
+import type { PrayerBlock } from "@/types/prayer";
+import type { Prayer } from "@/hooks/usePrayers";
+import type { DBMystery, DBSection } from "@/prayer-engine/loadPrayerHierarchy";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,8 +77,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { toast } from 'sonner';
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Props {
   prayer: Prayer;
@@ -111,14 +111,14 @@ interface Props {
 }
 
 const KIND_LABEL: Record<string, string> = {
-  mystery: 'Mistério',
-  decade: 'Ave-Maria',
-  station: 'Estação',
-  hour: 'Hora Litúrgica',
-  meditation: 'Meditação',
-  prayer: 'Oração',
-  closing: 'Encerramento',
-  intro: 'Introdução',
+  mystery: "Mistério",
+  decade: "Ave-Maria",
+  station: "Estação",
+  hour: "Hora Litúrgica",
+  meditation: "Meditação",
+  prayer: "Oração",
+  closing: "Encerramento",
+  intro: "Introdução",
 };
 
 /**
@@ -127,18 +127,17 @@ const KIND_LABEL: Record<string, string> = {
  * (definido em index.css) — sem cor hardcoded, sem CSS duplicado.
  */
 const PRAYER_VOICE: Record<string, string> = {
-  psalm: 'salmo',
-  salmo: 'salmo',
-  antiphon: 'antifona',
-  antifona: 'antifona',
-  response: 'resposta',
-  responsorio: 'resposta',
-  refrain: 'refrao',
-  reading: 'leitura',
-  ave_maria: 'refrao',
-  gloria: 'refrao',
+  psalm: "salmo",
+  salmo: "salmo",
+  antiphon: "antifona",
+  antifona: "antifona",
+  response: "resposta",
+  responsorio: "resposta",
+  refrain: "refrao",
+  reading: "leitura",
+  ave_maria: "refrao",
+  gloria: "refrao",
 };
-
 
 function bodyForTTS(b: PrayerBlock): string {
   const parts: string[] = [b.title];
@@ -146,7 +145,7 @@ function bodyForTTS(b: PrayerBlock): string {
   if (b.body) parts.push(b.body);
   if (b.meditation) parts.push(`Meditação: ${b.meditation}`);
   if (b.repeat?.text) parts.push(b.repeat.text);
-  return parts.join('. ');
+  return parts.join(". ");
 }
 
 export const PrayerEngineReader: React.FC<Props> = ({
@@ -174,17 +173,16 @@ export const PrayerEngineReader: React.FC<Props> = ({
 
   const [dismissedResume, setDismissedResume] = useState(false);
   const [focus, setFocus] = useState(false);
-  const [mode, setMode] = useState<PrayerMode>('guided');
+  const [mode, setMode] = useState<PrayerMode>("guided");
   const [autoIntervalMs, setAutoIntervalMs] = useState(30000);
   const [confirmReset, setConfirmReset] = useState(false);
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [heroConfirmed, setHeroConfirmed] = useState<Set<string>>(() => new Set());
 
   const current = blocks[cursorIndex];
-  const isRosary = prayer.slug === 'rosario';
+  const isRosary = prayer.slug === "rosario";
   const palette = resolveMysteryPalette(activeSection?.slug);
-  const contemplative = mode === 'contemplative';
-
+  const contemplative = mode === "contemplative";
 
   const mysteriesInSection = useMemo(
     () =>
@@ -212,26 +210,24 @@ export const PrayerEngineReader: React.FC<Props> = ({
   }, [blocks]);
 
   const currentMystery = current?.mysteryId
-    ? mysteriesInSection.find((m) => m.id === current.mysteryId) ?? null
+    ? (mysteriesInSection.find((m) => m.id === current.mysteryId) ?? null)
     : null;
   const currentMysteryIndex = currentMystery
     ? mysteriesInSection.findIndex((m) => m.id === currentMystery.id)
     : -1;
-  const currentMysteryBlocks = currentMystery
-    ? blocksByMystery.get(currentMystery.id) ?? []
-    : [];
+  const currentMysteryBlocks = currentMystery ? (blocksByMystery.get(currentMystery.id) ?? []) : [];
   const blockInMysteryIndex = current
     ? currentMysteryBlocks.findIndex((b) => b.id === current.id)
     : -1;
 
   const aveCount = useMemo(
-    () => currentMysteryBlocks.filter((b) => b.sourceType === 'ave_maria').length,
+    () => currentMysteryBlocks.filter((b) => b.sourceType === "ave_maria").length,
     [currentMysteryBlocks],
   );
   const aveCurrentIdx = useMemo(() => {
-    if (!current || current.sourceType !== 'ave_maria') return -1;
+    if (!current || current.sourceType !== "ave_maria") return -1;
     return currentMysteryBlocks
-      .filter((b) => b.sourceType === 'ave_maria')
+      .filter((b) => b.sourceType === "ave_maria")
       .findIndex((b) => b.id === current.id);
   }, [current, currentMysteryBlocks]);
 
@@ -264,41 +260,40 @@ export const PrayerEngineReader: React.FC<Props> = ({
     if (!nextMystery) return;
     // Save-Data ou 2G/slow-2g → não pré-carregar imagem (respeita economia).
     const conn = (navigator as any).connection as
-      | { saveData?: boolean; effectiveType?: string }
-      | undefined;
+      { saveData?: boolean; effectiveType?: string } | undefined;
     if (conn?.saveData) return;
     if (conn?.effectiveType && /^(slow-)?2g$/.test(conn.effectiveType)) return;
 
     const nextMeta = readMysteryMeta(nextMystery);
-    const href = resolveMysteryImage(nextMeta.image_slug ?? nextMeta.hero_image_path, nextMeta.image_collection);
+    const href = resolveMysteryImage(
+      nextMeta.image_slug ?? nextMeta.hero_image_path,
+      nextMeta.image_collection,
+    );
     if (!href) return;
     const selector = `link[rel="preload"][data-mystery-preload="${nextMystery.id}"]`;
     if (document.head.querySelector(selector)) return;
 
     // Margem adaptativa: redes rápidas antecipam mais o preload.
     const rootMargin =
-      conn?.effectiveType === '4g' ? '600px'
-      : conn?.effectiveType === '3g' ? '250px'
-      : '400px';
+      conn?.effectiveType === "4g" ? "600px" : conn?.effectiveType === "3g" ? "250px" : "400px";
 
     const injectPreload = () => {
       if (document.head.querySelector(selector)) return;
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
       link.href = href;
-      link.setAttribute('fetchpriority', 'low');
-      link.setAttribute('data-mystery-preload', nextMystery.id);
+      link.setAttribute("fetchpriority", "low");
+      link.setAttribute("data-mystery-preload", nextMystery.id);
       document.head.appendChild(link);
     };
 
     const nearEnd =
-      isLastOfMystery ||
-      (aveCount > 0 && aveCurrentIdx >= 0 && aveCurrentIdx >= aveCount - 2);
+      isLastOfMystery || (aveCount > 0 && aveCurrentIdx >= 0 && aveCurrentIdx >= aveCount - 2);
 
     let io: IntersectionObserver | null = null;
     const el = prefetchSentinelRef.current;
-    if (el && typeof IntersectionObserver !== 'undefined') {
+    if (el && typeof IntersectionObserver !== "undefined") {
       io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
@@ -342,9 +337,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
     const mysteryBlockIds = current.mysteryId
       ? (blocksByMystery.get(current.mysteryId) ?? []).map((b) => b.id)
       : undefined;
-    const sectionMysteryIds = activeSection
-      ? mysteriesInSection.map((m) => m.id)
-      : undefined;
+    const sectionMysteryIds = activeSection ? mysteriesInSection.map((m) => m.id) : undefined;
     session.advance({
       blockId: current.id,
       mysteryId: current.mysteryId ?? null,
@@ -375,9 +368,12 @@ export const PrayerEngineReader: React.FC<Props> = ({
   // Não afeta o auto-avanço, que já é temporizado por `usePrayerAutoAdvance`.
   const [isTransitioning, setIsTransitioning] = useState(false);
   const transitionTimerRef = useRef<number | null>(null);
-  useEffect(() => () => {
-    if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (transitionTimerRef.current) window.clearTimeout(transitionTimerRef.current);
+    },
+    [],
+  );
   const goNextRhythmed = useCallback(() => {
     if (rhythm.pauseMs <= 0) {
       goNext();
@@ -404,7 +400,11 @@ export const PrayerEngineReader: React.FC<Props> = ({
     if (!session.session || blocks.length === 0) return;
     let target: string | null = initialBlockId ?? null;
     if (!target) {
-      try { target = localStorage.getItem(cursorStorageKey); } catch { /* silent */ }
+      try {
+        target = localStorage.getItem(cursorStorageKey);
+      } catch {
+        /* silent */
+      }
     }
     restoredContextRef.current = contextKey;
     if (!target || target === session.session.current_block_uuid) return;
@@ -422,18 +422,22 @@ export const PrayerEngineReader: React.FC<Props> = ({
     if (!cursorStorageKey) return;
     const uuid = session.session?.current_block_uuid;
     if (!uuid) return;
-    try { localStorage.setItem(cursorStorageKey, uuid); } catch { /* silent */ }
+    try {
+      localStorage.setItem(cursorStorageKey, uuid);
+    } catch {
+      /* silent */
+    }
   }, [cursorStorageKey, session.session?.current_block_uuid]);
 
   // Modo contemplativo = foco.
   useEffect(() => {
-    if (mode === 'contemplative') setFocus(true);
-    else if (mode !== 'guided') setFocus(false);
+    if (mode === "contemplative") setFocus(true);
+    else if (mode !== "guided") setFocus(false);
   }, [mode]);
 
   // Auto-avanço.
   usePrayerAutoAdvance({
-    enabled: mode === 'auto',
+    enabled: mode === "auto",
     intervalMs: autoIntervalMs,
     onAdvance: goNext,
     key: `${cursorIndex}-${autoIntervalMs}`,
@@ -443,39 +447,39 @@ export const PrayerEngineReader: React.FC<Props> = ({
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
-      if (t?.tagName === 'INPUT' || t?.tagName === 'TEXTAREA') return;
-      if (e.key === 'f' || e.key === 'F') {
+      if (t?.tagName === "INPUT" || t?.tagName === "TEXTAREA") return;
+      if (e.key === "f" || e.key === "F") {
         e.preventDefault();
         setFocus((f) => !f);
-      } else if (e.key === 'ArrowRight' || e.key === 'j') {
+      } else if (e.key === "ArrowRight" || e.key === "j") {
         e.preventDefault();
         goNextRhythmed();
-      } else if (e.key === 'ArrowLeft' || e.key === 'k') {
+      } else if (e.key === "ArrowLeft" || e.key === "k") {
         e.preventDefault();
         goPrev();
-      } else if (e.key === 'Escape' && focus) {
+      } else if (e.key === "Escape" && focus) {
         setFocus(false);
       }
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, [goNextRhythmed, goPrev, focus]);
 
   const bookmarks = session.session?.bookmarks ?? [];
   const isFavoriteCurrent =
-    !!current && bookmarks.some((b) => b.block_id === current.id && b.kind === 'favorite');
+    !!current && bookmarks.some((b) => b.block_id === current.id && b.kind === "favorite");
 
   const toggleFavorite = () => {
     if (!current) return;
-    session.addBookmark(current.id, 'favorite', current.title);
-    toast.success(isFavoriteCurrent ? 'Marcador removido' : 'Oração salva');
+    session.addBookmark(current.id, "favorite", current.title);
+    toast.success(isFavoriteCurrent ? "Marcador removido" : "Oração salva");
   };
 
   const handleReset = async () => {
     setConfirmReset(false);
     await session.reset();
     setDismissedResume(true);
-    toast.success('Rosário reiniciado');
+    toast.success("Rosário reiniciado");
   };
 
   const chromeKicker = kicker ?? `Cathedra · ${prayer.title}`;
@@ -490,10 +494,10 @@ export const PrayerEngineReader: React.FC<Props> = ({
 
   if (showResumeCard) {
     const label = currentMystery
-      ? `${activeSection?.title ?? 'Seção'} • ${currentMystery.title}`
-      : activeSection?.title ?? 'Continuar de onde parou';
+      ? `${activeSection?.title ?? "Seção"} • ${currentMystery.title}`
+      : (activeSection?.title ?? "Continuar de onde parou");
     const detail =
-      current?.sourceType === 'ave_maria' && aveCurrentIdx >= 0 && aveCount > 0
+      current?.sourceType === "ave_maria" && aveCurrentIdx >= 0 && aveCount > 0
         ? `Última oração: Ave-Maria ${aveCurrentIdx + 1}/${aveCount}`
         : current
           ? `Última oração: ${current.title}`
@@ -591,23 +595,24 @@ export const PrayerEngineReader: React.FC<Props> = ({
   const showMysteryHero =
     isRosary &&
     !!currentMystery &&
-    current?.sourceType === 'announce' &&
+    current?.sourceType === "announce" &&
     !heroConfirmed.has(currentMystery.id);
 
-  const heroContent = showMysteryHero && currentMystery ? (
-    <div className="mx-auto w-full max-w-[860px] px-4 pb-16 pt-6 md:px-8 md:pt-10">
-      <MysteryHero
-        mystery={currentMystery}
-        onStart={() => {
-          setHeroConfirmed((prev) => {
-            const next = new Set(prev);
-            next.add(currentMystery.id);
-            return next;
-          });
-        }}
-      />
-    </div>
-  ) : null;
+  const heroContent =
+    showMysteryHero && currentMystery ? (
+      <div className="mx-auto w-full max-w-[860px] px-4 pb-16 pt-6 md:px-8 md:pt-10">
+        <MysteryHero
+          mystery={currentMystery}
+          onStart={() => {
+            setHeroConfirmed((prev) => {
+              const next = new Set(prev);
+              next.add(currentMystery.id);
+              return next;
+            });
+          }}
+        />
+      </div>
+    ) : null;
 
   // ============ READER ============
   const content = (
@@ -623,10 +628,9 @@ export const PrayerEngineReader: React.FC<Props> = ({
         transition: isTransitioning ? `opacity ${rhythm.fadeMs}ms ease-out` : undefined,
       }}
       className={cn(
-        'cathedra-reader-article mx-auto w-full max-w-[60ch] px-[var(--sp-m)] pb-32 pt-[var(--sp-l)] md:px-0 md:pt-[var(--sp-xl)] animate-in fade-in motion-reduce:animate-none',
-        contemplative && 'max-w-[64ch] [&_h2]:text-4xl md:[&_h2]:text-5xl [&_p]:leading-[1.8]',
+        "cathedra-reader-article mx-auto w-full max-w-[60ch] px-[var(--sp-m)] pb-32 pt-[var(--sp-l)] md:px-0 md:pt-[var(--sp-xl)] animate-in fade-in motion-reduce:animate-none",
+        contemplative && "max-w-[64ch] [&_h2]:text-4xl md:[&_h2]:text-5xl [&_p]:leading-[1.8]",
       )}
-
     >
       {/* Barra de progresso — hierárquica ou simples conforme o tipo de oração */}
       {isSimple ? (
@@ -681,7 +685,8 @@ export const PrayerEngineReader: React.FC<Props> = ({
           )}
           {currentMystery && (
             <div className="mt-2 font-stitch-body text-xs text-stitch-on-surface-variant">
-              {currentMystery.title} · Mistério {currentMysteryIndex + 1} de {mysteriesInSection.length}
+              {currentMystery.title} · Mistério {currentMysteryIndex + 1} de{" "}
+              {mysteriesInSection.length}
             </div>
           )}
           <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-stitch-outline-variant/30">
@@ -699,7 +704,6 @@ export const PrayerEngineReader: React.FC<Props> = ({
       {/* Cabeçalho do bloco */}
       <header className="mb-8 text-center">
         <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary">
-
           {KIND_LABEL[current.kind] ?? current.kind}
         </p>
         <h2 className="mt-3 font-stitch-display text-3xl md:text-4xl leading-tight text-stitch-on-surface">
@@ -714,13 +718,17 @@ export const PrayerEngineReader: React.FC<Props> = ({
           <PrayerTTSButton text={bodyForTTS(current)} />
           <Button
             type="button"
-            variant={isFavoriteCurrent ? 'pill-toned' : 'pill'}
+            variant={isFavoriteCurrent ? "pill-toned" : "pill"}
             size="pill"
             onClick={toggleFavorite}
             aria-pressed={isFavoriteCurrent}
           >
-            {isFavoriteCurrent ? <Star className="fill-current" aria-hidden /> : <StarOff aria-hidden />}
-            {isFavoriteCurrent ? 'Salva' : 'Salvar'}
+            {isFavoriteCurrent ? (
+              <Star className="fill-current" aria-hidden />
+            ) : (
+              <StarOff aria-hidden />
+            )}
+            {isFavoriteCurrent ? "Salva" : "Salvar"}
           </Button>
           <Button
             type="button"
@@ -731,16 +739,11 @@ export const PrayerEngineReader: React.FC<Props> = ({
             aria-label="Alternar modo foco (F)"
           >
             {focus ? <X aria-hidden /> : <Focus aria-hidden />}
-            {focus ? 'Sair do foco' : 'Modo foco'}
+            {focus ? "Sair do foco" : "Modo foco"}
           </Button>
           <ContemplativeSettingsDialog />
           {!isSimple && (
-            <Button
-              type="button"
-              variant="pill"
-              size="pill"
-              onClick={() => setConfirmReset(true)}
-            >
+            <Button type="button" variant="pill" size="pill" onClick={() => setConfirmReset(true)}>
               <RotateCcw aria-hidden />
               Recomeçar
             </Button>
@@ -755,13 +758,12 @@ export const PrayerEngineReader: React.FC<Props> = ({
               onIntervalChange={setAutoIntervalMs}
             />
             <PrayerAudioPlayer audioUrl={prayer.audio_url} label={`Áudio: ${prayer.title}`} />
-
           </div>
         )}
       </header>
 
       {/* Slots contemplativos (Rosário) — Meditação Logos + Nexus automático + Convite à Contemplação */}
-      {isRosary && currentMystery && current.sourceType === 'announce' && (
+      {isRosary && currentMystery && current.sourceType === "announce" && (
         <>
           <MysteryLogosMeditation mystery={currentMystery} />
           <div className="text-center">
@@ -783,7 +785,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
 
       {/* Corpo — voz principal da oração */}
       {current.body && (
-        <section data-prayer-voice={PRAYER_VOICE[current.sourceType ?? ''] ?? 'oracao'}>
+        <section data-prayer-voice={PRAYER_VOICE[current.sourceType ?? ""] ?? "oracao"}>
           <p className="whitespace-pre-line font-stitch-display text-[1.4rem] md:text-[1.6rem] text-stitch-on-surface">
             {current.body}
           </p>
@@ -815,7 +817,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
         </section>
       )}
 
-      {(current.kind === 'mystery' || current.kind === 'decade') && current.repeat && (
+      {(current.kind === "mystery" || current.kind === "decade") && current.repeat && (
         <section
           data-prayer-voice="refrao"
           className="rounded-premium border border-stitch-outline-variant/25 bg-stitch-surface-container-lowest/50 px-[var(--sp-l)] py-[var(--sp-l)]"
@@ -857,7 +859,6 @@ export const PrayerEngineReader: React.FC<Props> = ({
         </section>
       )}
 
-
       {/* Encerramento ritual da dezena (Rosário) — Fruto + Pequena Oração + Ação Concreta + Próximo mistério */}
       {mysteryJustCompleted && !focus && currentMystery && isRosary && (
         <MysteryClosingCard
@@ -877,10 +878,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
           <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary">
             Mistério concluído
           </p>
-          <h3
-            id="mystery-done"
-            className="mt-2 font-stitch-display text-xl text-stitch-on-surface"
-          >
+          <h3 id="mystery-done" className="mt-2 font-stitch-display text-xl text-stitch-on-surface">
             {currentMystery.title}
           </h3>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -960,11 +958,11 @@ export const PrayerEngineReader: React.FC<Props> = ({
       {/* Navegação */}
       <nav
         className={cn(
-          'mt-[var(--sp-xxl)] flex items-center justify-between gap-4',
+          "mt-[var(--sp-xxl)] flex items-center justify-between gap-4",
           // Mobile: ancorado ao alcance do polegar, sem cobrir o texto.
-          'sticky bottom-[calc(var(--bottom-nav-height)+var(--sp-s))] z-20 rounded-full',
-          'border border-stitch-outline-variant/25 bg-stitch-surface/90 px-2 py-2 backdrop-blur',
-          'md:static md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none',
+          "sticky bottom-[calc(var(--bottom-nav-height)+var(--sp-s))] z-20 rounded-full",
+          "border border-stitch-outline-variant/25 bg-stitch-surface/90 px-2 py-2 backdrop-blur",
+          "md:static md:border-0 md:bg-transparent md:px-0 md:py-0 md:backdrop-blur-none",
         )}
         aria-label="Navegação da oração"
       >
@@ -986,11 +984,10 @@ export const PrayerEngineReader: React.FC<Props> = ({
           onClick={goNextRhythmed}
           className="min-h-11"
         >
-          {isLastOverall ? 'Concluir' : 'Próximo'}
+          {isLastOverall ? "Concluir" : "Próximo"}
           {isLastOverall ? null : <ArrowRight aria-hidden />}
         </Button>
       </nav>
-
 
       {/* Meus marcadores */}
       {bookmarks.length > 0 && !focus && (
@@ -1003,7 +1000,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
           >
             <span>Meus marcadores ({bookmarks.length})</span>
             <ChevronRight
-              className={cn('h-3 w-3 transition-transform', showBookmarks && 'rotate-90')}
+              className={cn("h-3 w-3 transition-transform", showBookmarks && "rotate-90")}
               aria-hidden
             />
           </button>
@@ -1011,7 +1008,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
             <ul className="mt-3 space-y-1 font-stitch-body text-sm">
               {bookmarks.map((bm) => {
                 const target = blocks.findIndex((b) => b.id === bm.block_id);
-                const title = target >= 0 ? blocks[target].title : bm.text ?? 'Bloco';
+                const title = target >= 0 ? blocks[target].title : (bm.text ?? "Bloco");
                 return (
                   <li key={bm.id} className="flex items-center justify-between gap-2">
                     <button
@@ -1043,26 +1040,23 @@ export const PrayerEngineReader: React.FC<Props> = ({
     </article>
   );
 
-
   if (focus) {
     return (
       <>
         <div
           className={cn(
-            'fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden text-stitch-on-surface transition-colors duration-500',
-            contemplative
-              ? 'bg-black text-white'
-              : 'bg-stitch-surface',
+            "fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden text-stitch-on-surface transition-colors duration-500",
+            contemplative ? "bg-black text-white" : "bg-stitch-surface",
           )}
           role="dialog"
-          aria-label={contemplative ? 'Modo contemplação' : 'Modo foco de oração'}
+          aria-label={contemplative ? "Modo contemplação" : "Modo foco de oração"}
         >
           {contemplative && (
             <>
               <div
                 aria-hidden
                 className={cn(
-                  'pointer-events-none absolute inset-0 bg-gradient-to-b',
+                  "pointer-events-none absolute inset-0 bg-gradient-to-b",
                   palette.overlayGradient,
                 )}
               />
@@ -1074,7 +1068,10 @@ export const PrayerEngineReader: React.FC<Props> = ({
           </div>
           <button
             type="button"
-            onClick={() => { setMode('guided'); setFocus(false); }}
+            onClick={() => {
+              setMode("guided");
+              setFocus(false);
+            }}
             className="absolute right-4 top-4 z-20 rounded-full border border-white/20 bg-black/30 px-3 py-1 font-stitch-body text-[11px] uppercase tracking-widest text-white/80 backdrop-blur transition hover:border-white/40 hover:text-white"
             aria-label="Sair do modo contemplação"
           >
@@ -1122,22 +1119,34 @@ export const PrayerEngineReader: React.FC<Props> = ({
       {/* Desktop Sidebar: Sacred Visuals for Prayer */}
       {!focus && (
         <div className="hidden md:flex md:w-[40%] sticky top-0 h-screen overflow-hidden bg-primary/5 border-r border-primary/5">
-          <SacredImage 
-            src={sacredImage || (currentMystery ? resolveMysteryImage(readMysteryMeta(currentMystery).image_slug, readMysteryMeta(currentMystery).image_collection) : undefined)} 
-            className="w-full h-full object-cover opacity-60 mix-blend-multiply" 
-            alt={prayer.title} 
+          <SacredImage
+            src={
+              sacredImage ||
+              (currentMystery
+                ? resolveMysteryImage(
+                    readMysteryMeta(currentMystery).image_slug,
+                    readMysteryMeta(currentMystery).image_collection,
+                  )
+                : undefined)
+            }
+            className="w-full h-full object-cover opacity-60 mix-blend-multiply"
+            alt={prayer.title}
           />
           <div className="absolute inset-0 bg-gradient-to-l from-background via-transparent to-transparent" />
           <div className="absolute inset-0 flex flex-col items-center justify-center p-spacing-xl text-center space-y-spacing-lg">
-           <div className="w-spacing-4xl h-spacing-4xl mx-auto rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/20 shadow-premium">
-             <Icons.Prayer className="w-spacing-xl h-spacing-xl text-secondary" />
-           </div>
-             <div className="space-y-spacing-xs">
-               <h2 className="font-display text-4xl text-primary/40 tracking-widest uppercase italic">{prayer.title}</h2>
-               {activeSection && (
-                 <p className="text-[10px] uppercase tracking-[0.4em] text-secondary/60 font-bold">{activeSection.title}</p>
-               )}
-             </div>
+            <div className="w-spacing-4xl h-spacing-4xl mx-auto rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/20 shadow-premium">
+              <Icons.Prayer className="w-spacing-xl h-spacing-xl text-secondary" />
+            </div>
+            <div className="space-y-spacing-xs">
+              <h2 className="font-display text-4xl text-primary/40 tracking-widest uppercase italic">
+                {prayer.title}
+              </h2>
+              {activeSection && (
+                <p className="text-[10px] uppercase tracking-[0.4em] text-secondary/60 font-bold">
+                  {activeSection.title}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -1158,14 +1167,10 @@ export const PrayerEngineReader: React.FC<Props> = ({
               category={prayer.category ?? undefined}
               station={
                 currentMystery
-                  ? `${activeSection?.title ? activeSection.title + ' · ' : ''}${currentMystery.title}`
+                  ? `${activeSection?.title ? activeSection.title + " · " : ""}${currentMystery.title}`
                   : undefined
               }
-              step={
-                !isSimple
-                  ? `${cursorIndex + 1} de ${blocks.length}`
-                  : undefined
-              }
+              step={!isSimple ? `${cursorIndex + 1} de ${blocks.length}` : undefined}
             />
           }
           contentMaxWidth="max-w-[720px]"
@@ -1175,7 +1180,7 @@ export const PrayerEngineReader: React.FC<Props> = ({
             isLastOverall && prayerNexus.suggestions.length > 0 ? (
               <ReaderContinuation
                 context={{
-                  kind: 'prayer',
+                  kind: "prayer",
                   id: prayer.slug,
                   graphNodeId: prayerNexus.selfId ?? undefined,
                   meta: { prayerCategory: prayer.category },

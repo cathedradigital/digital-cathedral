@@ -9,7 +9,12 @@ export default defineTool({
     "Cria uma nova entrada no Diário Espiritual do usuário autenticado. Requer login (OAuth).",
   inputSchema: {
     content: z.string().trim().min(1).max(20000).describe("Texto da meditação/entrada."),
-    mood: z.string().trim().max(60).optional().describe("Estado interior (ex.: 'consolação', 'aridez')."),
+    mood: z
+      .string()
+      .trim()
+      .max(60)
+      .optional()
+      .describe("Estado interior (ex.: 'consolação', 'aridez')."),
     entry_date: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)

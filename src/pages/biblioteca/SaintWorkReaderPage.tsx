@@ -5,37 +5,36 @@
  * Usa o ReaderShell (Reader Architecture Rule) com EditorialHero e navegação.
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, Link, useNavigate, useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import {
-  getWorkBySlug,
-  getChapter,
-  listChapters,
-} from '@/services/saintWorksService';
-import type { SaintWork, SaintWorkChapter } from '@/types/saintWorks';
-import { SAINT_WORK_CATEGORY_LABELS } from '@/types/saintWorks';
-import { ReaderShell } from '@/components/reader';
-import { EditorialHero } from '@/components/editorial';
-import { EditorialCredits } from '@/components/biblioteca/EditorialCredits';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import { EditorialClosure } from '@/components/reader';
-import { resolveEditorialClosure } from '@/lib/editorial/resolveClosure';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useParams, Link, useNavigate, useSearchParams } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { getWorkBySlug, getChapter, listChapters } from "@/services/saintWorksService";
+import type { SaintWork, SaintWorkChapter } from "@/types/saintWorks";
+import { SAINT_WORK_CATEGORY_LABELS } from "@/types/saintWorks";
+import { ReaderShell } from "@/components/reader";
+import { EditorialHero } from "@/components/editorial";
+import { EditorialCredits } from "@/components/biblioteca/EditorialCredits";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import { EditorialClosure } from "@/components/reader";
+import { resolveEditorialClosure } from "@/lib/editorial/resolveClosure";
 
-type ChapterSummary = Pick<SaintWorkChapter, 'id' | 'order' | 'title' | 'subtitle' | 'reading_minutes'>;
+type ChapterSummary = Pick<
+  SaintWorkChapter,
+  "id" | "order" | "title" | "subtitle" | "reading_minutes"
+>;
 
 /** Escapa regex e divide o termo em tokens (>=2 chars, sem stopwords triviais). */
 function buildHighlightRegex(raw: string): RegExp | null {
   const tokens = raw
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // remove acentos p/ comparar
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos p/ comparar
     .toLowerCase()
     .split(/\s+/)
     .filter((t) => t.length >= 2)
-    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   if (tokens.length === 0) return null;
-  return new RegExp(`(${tokens.join('|')})`, 'gi');
+  return new RegExp(`(${tokens.join("|")})`, "gi");
 }
 
 /** Percorre nós de texto sob `root` e envolve matches em <mark data-search-hit>. */
@@ -47,7 +46,7 @@ function applyHighlight(root: HTMLElement, term: string): number {
       const parent = (node as Text).parentElement;
       if (!parent) return NodeFilter.FILTER_REJECT;
       const tag = parent.tagName;
-      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'MARK') return NodeFilter.FILTER_REJECT;
+      if (tag === "SCRIPT" || tag === "STYLE" || tag === "MARK") return NodeFilter.FILTER_REJECT;
       return node.nodeValue && node.nodeValue.trim().length > 0
         ? NodeFilter.FILTER_ACCEPT
         : NodeFilter.FILTER_REJECT;
@@ -61,9 +60,9 @@ function applyHighlight(root: HTMLElement, term: string): number {
   }
   let hits = 0;
   for (const textNode of targets) {
-    const text = textNode.nodeValue ?? '';
+    const text = textNode.nodeValue ?? "";
     // Trabalha em variante sem acento para casar acentuadas também.
-    const noAcc = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const noAcc = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     if (!re.test(noAcc)) {
       re.lastIndex = 0;
       continue;
@@ -76,9 +75,9 @@ function applyHighlight(root: HTMLElement, term: string): number {
       const start = m.index;
       const end = start + m[0].length;
       if (start > last) frag.appendChild(document.createTextNode(text.slice(last, start)));
-      const mark = document.createElement('mark');
-      mark.setAttribute('data-search-hit', '');
-      mark.className = 'bg-primary/25 text-foreground rounded-sm px-0.5';
+      const mark = document.createElement("mark");
+      mark.setAttribute("data-search-hit", "");
+      mark.className = "bg-primary/25 text-foreground rounded-sm px-0.5";
       mark.textContent = text.slice(start, end);
       frag.appendChild(mark);
       last = end;
@@ -95,9 +94,9 @@ const SaintWorkReaderPage: React.FC = () => {
   const { autor, obra, ordem } = useParams<{ autor: string; obra: string; ordem: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const highlight = searchParams.get('highlight')?.trim() ?? '';
+  const highlight = searchParams.get("highlight")?.trim() ?? "";
   const articleRef = useRef<HTMLElement | null>(null);
-  const currentOrder = Math.max(1, parseInt(ordem ?? '1', 10) || 1);
+  const currentOrder = Math.max(1, parseInt(ordem ?? "1", 10) || 1);
 
   const [work, setWork] = useState<SaintWork | null>(null);
   const [chapter, setChapter] = useState<SaintWorkChapter | null>(null);
@@ -120,10 +119,7 @@ const SaintWorkReaderPage: React.FC = () => {
         return;
       }
       setWork(w);
-      const [ch, chs] = await Promise.all([
-        getChapter(w.id, currentOrder),
-        listChapters(w.id),
-      ]);
+      const [ch, chs] = await Promise.all([getChapter(w.id, currentOrder), listChapters(w.id)]);
       if (!alive) return;
       if (!ch) {
         setNotFound(true);
@@ -134,7 +130,7 @@ const SaintWorkReaderPage: React.FC = () => {
       setChapters(chs);
       setLoading(false);
       // Scroll to top on chapter change
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, behavior: "auto" });
     })();
 
     return () => {
@@ -159,8 +155,8 @@ const SaintWorkReaderPage: React.FC = () => {
     const raf = requestAnimationFrame(() => {
       const hits = applyHighlight(root, highlight);
       if (hits > 0) {
-        const first = root.querySelector<HTMLElement>('mark[data-search-hit]');
-        first?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const first = root.querySelector<HTMLElement>("mark[data-search-hit]");
+        first?.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     });
     return () => cancelAnimationFrame(raf);
@@ -194,9 +190,7 @@ const SaintWorkReaderPage: React.FC = () => {
         <meta
           name="description"
           content={
-            chapter.body_plain
-              ?.replace(/\s+/g, ' ')
-              .slice(0, 155) ??
+            chapter.body_plain?.replace(/\s+/g, " ").slice(0, 155) ??
             `Capítulo ${chapter.order} de ${work.title}.`
           }
         />
@@ -226,8 +220,9 @@ const SaintWorkReaderPage: React.FC = () => {
         continuation={
           <div className="flex flex-col gap-spacing-2xl">
             {(() => {
-              const closure = resolveEditorialClosure(chapter as unknown as { editorial_closure?: unknown })
-                ?? resolveEditorialClosure(work as unknown as { editorial_closure?: unknown });
+              const closure =
+                resolveEditorialClosure(chapter as unknown as { editorial_closure?: unknown }) ??
+                resolveEditorialClosure(work as unknown as { editorial_closure?: unknown });
               return closure ? <EditorialClosure {...closure} /> : null;
             })()}
             <div className="max-w-[68ch] mx-auto flex items-center justify-between gap-spacing-md">

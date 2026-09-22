@@ -6,8 +6,8 @@
  * Se existir um `#main-content` scrollável (layout com scroll interno),
  * ele é resetado; caso contrário, cai em `window`.
  */
-import { useEffect } from 'react';
-import { useLocation, useNavigationType } from '@/lib/rr-compat';
+import { useEffect } from "react";
+import { useLocation, useNavigationType } from "@/lib/rr-compat";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -18,7 +18,7 @@ const ScrollToTop = () => {
     if (hash) return;
 
     // Voltar/avançar: preserva scroll (comportamento nativo do navegador).
-    if (navType === 'POP') return;
+    if (navType === "POP") return;
 
     // Reseta window + qualquer container de scroll interno conhecido.
     // Feito no próximo frame para depois do layout do novo route.
@@ -31,7 +31,7 @@ const ScrollToTop = () => {
           '#main-content, [data-scroll-container], main, [role="main"]',
         )
         .forEach((el) => {
-          if (typeof el.scrollTo === 'function') el.scrollTo(0, 0);
+          if (typeof el.scrollTo === "function") el.scrollTo(0, 0);
           else el.scrollTop = 0;
         });
     };

@@ -7,18 +7,18 @@
  * é preservada, então nenhum componente muda.
  */
 
-import type { AtriumBlock, AtriumProfile, AtriumExit } from '../types';
-import { EnvironmentRegistry, RouteRegistry } from '@/core/navigation';
+import type { AtriumBlock, AtriumProfile, AtriumExit } from "../types";
+import { EnvironmentRegistry, RouteRegistry } from "@/core/navigation";
 
 /** §6c — ordem base P0 → P6. */
 export const BLOCK_PRIORITY: AtriumBlock[] = [
-  'continue_journey',   // P0
-  'universal_search',   // P1
-  'theme_entry',        // P2
-  'daily_liturgy',      // P3
-  'five_environments',  // P4
-  'recommendations',    // P5
-  'announcements',      // P6
+  "continue_journey", // P0
+  "universal_search", // P1
+  "theme_entry", // P2
+  "daily_liturgy", // P3
+  "five_environments", // P4
+  "recommendations", // P5
+  "announcements", // P6
 ];
 
 /**
@@ -27,48 +27,48 @@ export const BLOCK_PRIORITY: AtriumBlock[] = [
  */
 export const PROFILE_BLOCK_ORDER: Record<AtriumProfile, AtriumBlock[]> = {
   visitor: [
-    'universal_search',
-    'daily_liturgy',
-    'theme_entry',
-    'five_environments',
-    'recommendations',
-    'announcements',
+    "universal_search",
+    "daily_liturgy",
+    "theme_entry",
+    "five_environments",
+    "recommendations",
+    "announcements",
   ],
   recurrent: [
-    'continue_journey',
-    'universal_search',
-    'recommendations',
-    'theme_entry',
-    'daily_liturgy',
-    'five_environments',
-    'announcements',
+    "continue_journey",
+    "universal_search",
+    "recommendations",
+    "theme_entry",
+    "daily_liturgy",
+    "five_environments",
+    "announcements",
   ],
   catechist: [
-    'continue_journey',
-    'universal_search',
-    'theme_entry',
-    'daily_liturgy',
-    'five_environments',
-    'recommendations',
-    'announcements',
+    "continue_journey",
+    "universal_search",
+    "theme_entry",
+    "daily_liturgy",
+    "five_environments",
+    "recommendations",
+    "announcements",
   ],
   priest: [
-    'continue_journey',
-    'universal_search',
-    'daily_liturgy',
-    'theme_entry',
-    'five_environments',
-    'recommendations',
-    'announcements',
+    "continue_journey",
+    "universal_search",
+    "daily_liturgy",
+    "theme_entry",
+    "five_environments",
+    "recommendations",
+    "announcements",
   ],
   seminarian: [
-    'continue_journey',
-    'universal_search',
-    'theme_entry',
-    'recommendations',
-    'daily_liturgy',
-    'five_environments',
-    'announcements',
+    "continue_journey",
+    "universal_search",
+    "theme_entry",
+    "recommendations",
+    "daily_liturgy",
+    "five_environments",
+    "announcements",
   ],
 };
 
@@ -80,4 +80,3 @@ export const PROFILE_BLOCK_ORDER: Record<AtriumProfile, AtriumBlock[]> = {
 export const ENVIRONMENT_ROUTES: Record<AtriumExit, string> = Object.fromEntries(
   EnvironmentRegistry.all().map((e) => [e.key, RouteRegistry.resolve(e.route)]),
 ) as Record<AtriumExit, string>;
-

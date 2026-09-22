@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { toast } from 'sonner';
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 interface ShareData {
   title: string;
@@ -17,7 +17,7 @@ export const useShare = () => {
         await navigator.share({ title, text, url: shareUrl });
         return;
       } catch (err: any) {
-        if (err.name === 'AbortError') return; // user cancelled
+        if (err.name === "AbortError") return; // user cancelled
       }
     }
 
@@ -25,9 +25,9 @@ export const useShare = () => {
     const fullText = `${title}\n\n${text}\n\n${shareUrl}`;
     try {
       await navigator.clipboard.writeText(fullText);
-      toast.success('Copiado para a área de transferência!');
+      toast.success("Copiado para a área de transferência!");
     } catch {
-      toast.error('Não foi possível compartilhar.');
+      toast.error("Não foi possível compartilhar.");
     }
   }, []);
 

@@ -23,12 +23,12 @@ export const CathedraOverlay: React.FC<CathedraOverlayProps> = ({
 
   React.useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -43,15 +43,17 @@ export const CathedraOverlay: React.FC<CathedraOverlayProps> = ({
             onClick={onClose}
             className="absolute inset-0 bg-background/60 backdrop-blur-xl"
           />
-          
+
           <motion.div
-            initial={settings.reduceAnimations ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20 }}
+            initial={
+              settings.reduceAnimations ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20 }
+            }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
               "relative w-full bg-card border border-primary/5 rounded-premium shadow-premium p-spacing-xl md:p-spacing-3xl max-h-[90dvh] overflow-y-auto",
-              className
+              className,
             )}
           >
             {showClose && (

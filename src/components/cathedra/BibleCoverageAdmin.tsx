@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { BIBLE_CANON, type BibleBook } from '@/lib/bibleCanon';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Loader2, Database, Cloud } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { BIBLE_CANON, type BibleBook } from "@/lib/bibleCanon";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Loader2, Database, Cloud } from "lucide-react";
 
 interface CoverageRow {
   book: BibleBook;
   chapters: number;
   verses: number;
-  source: 'local' | 'fallback';
+  source: "local" | "fallback";
 }
 
 /**
@@ -22,16 +22,20 @@ interface CoverageRow {
 export default function BibleCoverageAdmin() {
   const [rows, setRows] = useState<CoverageRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
-        const [{ data: books, error: e1 }, { data: chapters, error: e2 }, { data: verses, error: e3 }] = await Promise.all([
-          supabase.from('bible_books').select('id, abbrev, name'),
-          supabase.from('bible_chapters').select('id, book_id'),
-          supabase.from('bible_verses').select('chapter_id'),
+        const [
+          { data: books, error: e1 },
+          { data: chapters, error: e2 },
+          { data: verses, error: e3 },
+        ] = await Promise.all([
+          supabase.from("bible_books").select("id, abbrev, name"),
+          supabase.from("bible_chapters").select("id, book_id"),
+          supabase.from("bible_verses").select("chapter_id"),
         ]);
         if (e1 || e2 || e3) throw e1 || e2 || e3;
 
@@ -49,21 +53,23 @@ export default function BibleCoverageAdmin() {
 
         const result: CoverageRow[] = BIBLE_CANON.map((book) => {
           const dbBook = booksByAbbr.get(book.abbr);
-          const chapterIds = dbBook ? chaptersByBook.get(dbBook.id) ?? new Set() : new Set<string>();
+          const chapterIds = dbBook
+            ? (chaptersByBook.get(dbBook.id) ?? new Set())
+            : new Set<string>();
           const verseCount = Array.from(chapterIds).reduce(
             (sum, cid) => sum + (versesByChapter.get(cid) ?? 0),
-            0
+            0,
           );
           return {
             book,
             chapters: chapterIds.size,
             verses: verseCount,
-            source: chapterIds.size > 0 ? 'local' : 'fallback',
+            source: chapterIds.size > 0 ? "local" : "fallback",
           };
         });
         if (active) setRows(result);
       } catch (e: any) {
-        if (active) setError(e?.message ?? 'Falha ao carregar cobertura');
+        if (active) setError(e?.message ?? "Falha ao carregar cobertura");
       }
     })();
     return () => {
@@ -75,12 +81,14 @@ export default function BibleCoverageAdmin() {
     if (!rows) return null;
     const q = filter.trim().toLowerCase();
     if (!q) return rows;
-    return rows.filter((r) => r.book.name.toLowerCase().includes(q) || r.book.abbr.toLowerCase().includes(q));
+    return rows.filter(
+      (r) => r.book.name.toLowerCase().includes(q) || r.book.abbr.toLowerCase().includes(q),
+    );
   }, [rows, filter]);
 
   const stats = useMemo(() => {
     if (!rows) return null;
-    const local = rows.filter((r) => r.source === 'local').length;
+    const local = rows.filter((r) => r.source === "local").length;
     return {
       total: rows.length,
       local,
@@ -92,11 +100,15 @@ export default function BibleCoverageAdmin() {
   return (
     <div className="container mx-auto py-spacing-xl px-spacing-md max-w-6xl">
       <header className="mb-spacing-xl">
-        <p className="text-xs uppercase tracking-[0.18em] text-secondary mb-spacing-xs">Bíblia · Operações</p>
-        <h1 className="font-serif text-3xl md:text-4xl text-primary">Cobertura local da Escritura</h1>
+        <p className="text-xs uppercase tracking-[0.18em] text-secondary mb-spacing-xs">
+          Bíblia · Operações
+        </p>
+        <h1 className="font-serif text-3xl md:text-4xl text-primary">
+          Cobertura local da Escritura
+        </h1>
         <p className="text-muted-foreground mt-spacing-xs max-w-2xl">
-          Quantos capítulos e versículos vivem no banco local versus quantos ainda dependem
-          do fallback público (bolls.life · NAA).
+          Quantos capítulos e versículos vivem no banco local versus quantos ainda dependem do
+          fallback público (bolls.life · NAA).
         </p>
       </header>
 
@@ -105,7 +117,7 @@ export default function BibleCoverageAdmin() {
           <StatCard label="Livros canônicos" value={stats.total} />
           <StatCard label="Locais" value={stats.local} tone="local" />
           <StatCard label="Fallback Bolls" value={stats.fallback} tone="fallback" />
-          <StatCard label="Versículos locais" value={stats.verses.toLocaleString('pt-BR')} />
+          <StatCard label="Versículos locais" value={stats.verses.toLocaleString("pt-BR")} />
         </div>
       )}
 
@@ -131,7 +143,10 @@ export default function BibleCoverageAdmin() {
             <tbody>
               {!filtered && !error && (
                 <tr>
-                  <td colSpan={5} className="px-spacing-md py-spacing-xl text-center text-muted-foreground">
+                  <td
+                    colSpan={5}
+                    className="px-spacing-md py-spacing-xl text-center text-muted-foreground"
+                  >
                     <Loader2 className="inline w-4 h-4 mr-spacing-xs animate-spin" />
                     Carregando cobertura…
                   </td>
@@ -139,7 +154,12 @@ export default function BibleCoverageAdmin() {
               )}
               {error && (
                 <tr>
-                  <td colSpan={5} className="px-spacing-md py-spacing-xl text-center text-destructive">{error}</td>
+                  <td
+                    colSpan={5}
+                    className="px-spacing-md py-spacing-xl text-center text-destructive"
+                  >
+                    {error}
+                  </td>
                 </tr>
               )}
               {filtered?.map((r) => (
@@ -150,14 +170,22 @@ export default function BibleCoverageAdmin() {
                   <td className="px-spacing-md py-spacing-xs.5 font-medium text-primary">
                     {r.book.name}
                     {r.book.deuterocanonical && (
-                      <span className="ml-spacing-xs text-[10px] uppercase tracking-wide text-secondary">deutero</span>
+                      <span className="ml-spacing-xs text-[10px] uppercase tracking-wide text-secondary">
+                        deutero
+                      </span>
                     )}
                   </td>
-                  <td className="px-spacing-md py-spacing-xs.5 text-muted-foreground tabular-nums">{r.book.abbr}</td>
-                  <td className="px-spacing-md py-spacing-xs.5 text-right tabular-nums">{r.chapters}</td>
-                  <td className="px-spacing-md py-spacing-xs.5 text-right tabular-nums">{r.verses}</td>
+                  <td className="px-spacing-md py-spacing-xs.5 text-muted-foreground tabular-nums">
+                    {r.book.abbr}
+                  </td>
+                  <td className="px-spacing-md py-spacing-xs.5 text-right tabular-nums">
+                    {r.chapters}
+                  </td>
+                  <td className="px-spacing-md py-spacing-xs.5 text-right tabular-nums">
+                    {r.verses}
+                  </td>
                   <td className="px-spacing-md py-spacing-xs.5 text-right">
-                    {r.source === 'local' ? (
+                    {r.source === "local" ? (
                       <Badge variant="secondary" className="gap-spacing-xs">
                         <Database className="w-3 h-3" /> local
                       </Badge>
@@ -177,13 +205,21 @@ export default function BibleCoverageAdmin() {
   );
 }
 
-function StatCard({ label, value, tone }: { label: string; value: number | string; tone?: 'local' | 'fallback' }) {
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number | string;
+  tone?: "local" | "fallback";
+}) {
   const accent =
-    tone === 'local'
-      ? 'border-secondary/40 bg-secondary/5'
-      : tone === 'fallback'
-      ? 'border-muted-foreground/30 bg-muted/30'
-      : 'border-primary/10 bg-card';
+    tone === "local"
+      ? "border-secondary/40 bg-secondary/5"
+      : tone === "fallback"
+        ? "border-muted-foreground/30 bg-muted/30"
+        : "border-primary/10 bg-card";
   return (
     <Card className={`p-spacing-md ${accent}`}>
       <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>

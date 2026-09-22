@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { supabase } from '@/lib/db';
+import { useCallback, useEffect, useState } from "react";
+import { supabase } from "@/lib/db";
 
 export interface SnapshotHistoryRow {
   id: string;
@@ -31,18 +31,25 @@ export function useSnapshotHistory(limit = 100) {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase as unknown as {
-        from: (t: string) => {
-          select: (c: string) => {
-            order: (col: string, opts: { ascending: boolean }) => {
-              limit: (n: number) => Promise<{ data: SnapshotHistoryRow[] | null; error: unknown }>;
+      const { data, error } = await (
+        supabase as unknown as {
+          from: (t: string) => {
+            select: (c: string) => {
+              order: (
+                col: string,
+                opts: { ascending: boolean },
+              ) => {
+                limit: (
+                  n: number,
+                ) => Promise<{ data: SnapshotHistoryRow[] | null; error: unknown }>;
+              };
             };
           };
-        };
-      })
-        .from('pg_stat_snapshots')
-        .select('id,taken_at,label,note,window_seconds,total_calls,total_exec_ms,row_count,rows')
-        .order('taken_at', { ascending: false })
+        }
+      )
+        .from("pg_stat_snapshots")
+        .select("id,taken_at,label,note,window_seconds,total_calls,total_exec_ms,row_count,rows")
+        .order("taken_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
       setSnapshots((data as SnapshotHistoryRow[]) || []);
@@ -51,7 +58,9 @@ export function useSnapshotHistory(limit = 100) {
     }
   }, [limit]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   return { snapshots, loading, reload: load };
 }

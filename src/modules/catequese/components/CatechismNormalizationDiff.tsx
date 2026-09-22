@@ -1,5 +1,5 @@
-import React from 'react';
-import type { NormalizationReport, NormalizationChanges } from '@/lib/catechismTextNormalizer';
+import React from "react";
+import type { NormalizationReport, NormalizationChanges } from "@/lib/catechismTextNormalizer";
 
 interface Props {
   paragraph: number;
@@ -8,33 +8,33 @@ interface Props {
 }
 
 const LABELS: Record<keyof NormalizationChanges, string> = {
-  invisibleCharsRemoved: 'Invisíveis removidos',
-  nbspReplaced: 'NBSP → espaço',
-  multiSpacesCollapsed: 'Espaços múltiplos',
-  crlfReplaced: 'CRLF → LF',
-  excessBreaksCollapsed: 'Quebras excessivas',
-  bulletsExtracted: 'Marcadores extraídos',
-  numberedExtracted: 'Numerados extraídos',
-  missingSpacesAfterPunct: 'Espaço após pontuação',
-  spacesBeforePunctRemoved: 'Espaço antes de pontuação',
-  footnotesSeparated: 'Notas de rodapé',
-  quotesConverted: 'Aspas convertidas',
+  invisibleCharsRemoved: "Invisíveis removidos",
+  nbspReplaced: "NBSP → espaço",
+  multiSpacesCollapsed: "Espaços múltiplos",
+  crlfReplaced: "CRLF → LF",
+  excessBreaksCollapsed: "Quebras excessivas",
+  bulletsExtracted: "Marcadores extraídos",
+  numberedExtracted: "Numerados extraídos",
+  missingSpacesAfterPunct: "Espaço após pontuação",
+  spacesBeforePunctRemoved: "Espaço antes de pontuação",
+  footnotesSeparated: "Notas de rodapé",
+  quotesConverted: "Aspas convertidas",
 };
 
 /** Diff linha-a-linha simples (LCS-lite baseado em índice). */
-function lineDiff(a: string, b: string): Array<{ kind: 'same' | 'del' | 'add'; text: string }> {
-  const aLines = a.split('\n');
-  const bLines = b.split('\n');
-  const out: Array<{ kind: 'same' | 'del' | 'add'; text: string }> = [];
+function lineDiff(a: string, b: string): Array<{ kind: "same" | "del" | "add"; text: string }> {
+  const aLines = a.split("\n");
+  const bLines = b.split("\n");
+  const out: Array<{ kind: "same" | "del" | "add"; text: string }> = [];
   const max = Math.max(aLines.length, bLines.length);
   for (let i = 0; i < max; i++) {
     const al = aLines[i];
     const bl = bLines[i];
     if (al === bl) {
-      if (al !== undefined) out.push({ kind: 'same', text: al });
+      if (al !== undefined) out.push({ kind: "same", text: al });
     } else {
-      if (al !== undefined) out.push({ kind: 'del', text: al });
-      if (bl !== undefined) out.push({ kind: 'add', text: bl });
+      if (al !== undefined) out.push({ kind: "del", text: al });
+      if (bl !== undefined) out.push({ kind: "add", text: bl });
     }
   }
   return out;
@@ -47,11 +47,11 @@ function lineDiff(a: string, b: string): Array<{ kind: 'same' | 'del' | 'add'; t
  */
 function isDebugEnabled(): boolean {
   if (import.meta.env.DEV) return true;
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
   try {
     const params = new URLSearchParams(window.location.search);
-    const v = params.get('debug');
-    return v === 'normalizer' || v === 'all' || v === '1';
+    const v = params.get("debug");
+    return v === "normalizer" || v === "all" || v === "1";
   } catch {
     return false;
   }
@@ -60,7 +60,7 @@ function isDebugEnabled(): boolean {
 function downloadBlob(filename: string, mime: string, content: string) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
@@ -84,30 +84,30 @@ function buildJsonReport(paragraph: number, original: string, report: Normalizat
       normalized: report.text,
     },
     null,
-    2
+    2,
   );
 }
 
 function buildCsvReport(paragraph: number, report: NormalizationReport): string {
   const header = [
-    'paragraph',
-    'generated_at',
-    'duration_ms',
-    'changed',
-    'original_length',
-    'normalized_length',
+    "paragraph",
+    "generated_at",
+    "duration_ms",
+    "changed",
+    "original_length",
+    "normalized_length",
     ...Object.keys(report.changes),
   ];
   const row = [
     paragraph,
     new Date().toISOString(),
     report.durationMs.toFixed(4),
-    report.changed ? 'true' : 'false',
+    report.changed ? "true" : "false",
     report.originalLength,
     report.normalizedLength,
     ...Object.values(report.changes),
   ];
-  return `${header.join(',')}\n${row.join(',')}`;
+  return `${header.join(",")}\n${row.join(",")}`;
 }
 
 export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, original, report }) => {
@@ -116,13 +116,14 @@ export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, origina
 
   const diff = React.useMemo(
     () => (enabled && report.changed ? lineDiff(original, report.text) : []),
-    [enabled, original, report.text, report.changed]
+    [enabled, original, report.text, report.changed],
   );
 
   if (!enabled || !report.changed) return null;
 
-  const changeEntries = (Object.entries(report.changes) as Array<[keyof NormalizationChanges, number]>)
-    .filter(([, v]) => v > 0);
+  const changeEntries = (
+    Object.entries(report.changes) as Array<[keyof NormalizationChanges, number]>
+  ).filter(([, v]) => v > 0);
   const total = changeEntries.reduce((s, [, v]) => s + v, 0);
 
   return (
@@ -133,7 +134,7 @@ export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, origina
       data-testid={`catechism-normalization-diff-${paragraph}`}
     >
       <summary className="cursor-pointer select-none px-spacing-sm py-spacing-2xs text-amber-900 dark:text-amber-200">
-        [DEBUG] Normalizador alterou §{paragraph} — {total} correções ·{' '}
+        [DEBUG] Normalizador alterou §{paragraph} — {total} correções ·{" "}
         {report.durationMs.toFixed(2)}ms · {report.originalLength}→{report.normalizedLength} chars
       </summary>
 
@@ -155,8 +156,8 @@ export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, origina
             onClick={() =>
               downloadBlob(
                 `catechism-normalizer-${paragraph}.json`,
-                'application/json',
-                buildJsonReport(paragraph, original, report)
+                "application/json",
+                buildJsonReport(paragraph, original, report),
               )
             }
             className="rounded border border-amber-500/40 px-2 py-0.5 text-[10px] hover:bg-amber-500/10"
@@ -169,8 +170,8 @@ export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, origina
             onClick={() =>
               downloadBlob(
                 `catechism-normalizer-${paragraph}.csv`,
-                'text/csv',
-                buildCsvReport(paragraph, report)
+                "text/csv",
+                buildCsvReport(paragraph, report),
               )
             }
             className="rounded border border-amber-500/40 px-2 py-0.5 text-[10px] hover:bg-amber-500/10"
@@ -185,17 +186,17 @@ export const CatechismNormalizationDiff: React.FC<Props> = ({ paragraph, origina
             <div
               key={i}
               className={
-                d.kind === 'del'
-                  ? 'bg-red-500/10 text-red-700 dark:text-red-300 px-2'
-                  : d.kind === 'add'
-                    ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-2'
-                    : 'text-muted-foreground px-2'
+                d.kind === "del"
+                  ? "bg-red-500/10 text-red-700 dark:text-red-300 px-2"
+                  : d.kind === "add"
+                    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-2"
+                    : "text-muted-foreground px-2"
               }
             >
               <span className="opacity-50 mr-2">
-                {d.kind === 'del' ? '-' : d.kind === 'add' ? '+' : ' '}
+                {d.kind === "del" ? "-" : d.kind === "add" ? "+" : " "}
               </span>
-              {d.text || '\u00A0'}
+              {d.text || "\u00A0"}
             </div>
           ))}
         </div>

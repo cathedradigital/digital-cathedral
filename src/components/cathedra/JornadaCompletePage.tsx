@@ -6,11 +6,11 @@
  * ao padrão stitch-* usado em /jornadas e no leitor de passo.
  */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate, Link } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { motion } from 'framer-motion';
-import { toast } from 'sonner';
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate, Link } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowRight,
@@ -24,7 +24,7 @@ import {
   Sparkles,
   Star,
   Zap,
-} from 'lucide-react';
+} from "lucide-react";
 
 import {
   Dialog,
@@ -33,13 +33,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
-import { checkNewBadges, getBadgeById, BadgeContext } from '@/lib/badges';
-import { useNextPath } from '@/hooks/useNextPath';
-import NextPathPanel from '@/components/cathedra/NextPathPanel';
+} from "@/components/ui/dialog";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
+import { checkNewBadges, getBadgeById, BadgeContext } from "@/lib/badges";
+import { useNextPath } from "@/hooks/useNextPath";
+import NextPathPanel from "@/components/cathedra/NextPathPanel";
 
 const JornadaCompletePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,7 +47,9 @@ const JornadaCompletePage: React.FC = () => {
   const { user } = useAuth();
 
   const [journey, setJourney] = useState<any>(null);
-  const [reflections, setReflections] = useState<{ title: string; reflection: string; completed_at: string }[]>([]);
+  const [reflections, setReflections] = useState<
+    { title: string; reflection: string; completed_at: string }[]
+  >([]);
 
   const [loading, setLoading] = useState(true);
   const [sharing, setSharing] = useState(false);
@@ -80,22 +82,21 @@ const JornadaCompletePage: React.FC = () => {
       : null,
     user?.id,
   );
-  const hasCertificateData = !!(journey?.title);
+  const hasCertificateData = !!journey?.title;
   const canShareCertificate = hasCertificateData && isJourneyComplete;
 
   useEffect(() => {
     if (id && user) loadData();
-     
   }, [id, user]);
 
   useEffect(() => {
     if (!loading && journey) {
-      import('canvas-confetti').then((mod) => {
+      import("canvas-confetti").then((mod) => {
         mod.default({
           particleCount: 180,
           spread: 110,
           origin: { y: 0.4 },
-          colors: ['#c9a84c', '#e8c547', '#b8860b', '#0B1F3A'],
+          colors: ["#c9a84c", "#e8c547", "#b8860b", "#0B1F3A"],
         });
       });
     }
@@ -105,17 +106,17 @@ const JornadaCompletePage: React.FC = () => {
     setLoading(true);
     try {
       const [journeyRes, progressRes, totalRes] = await Promise.all([
-        supabase.from('journeys').select('*').eq('id', id!).single(),
+        supabase.from("journeys").select("*").eq("id", id!).single(),
         supabase
-          .from('journey_progress')
-          .select('reflection, completed_at, step_id')
-          .eq('user_id', user!.id)
-          .eq('journey_id', id!)
-          .order('completed_at', { ascending: true }),
+          .from("journey_progress")
+          .select("reflection, completed_at, step_id")
+          .eq("user_id", user!.id)
+          .eq("journey_id", id!)
+          .order("completed_at", { ascending: true }),
         supabase
-          .from('journey_steps')
-          .select('*', { count: 'exact', head: true })
-          .eq('journey_id', id!),
+          .from("journey_steps")
+          .select("*", { count: "exact", head: true })
+          .eq("journey_id", id!),
       ]);
 
       if (journeyRes.data) setJourney(journeyRes.data);
@@ -124,10 +125,10 @@ const JornadaCompletePage: React.FC = () => {
 
       // Buscar TODAS as etapas para calcular pendentes + títulos das reflexões
       const { data: allSteps } = await supabase
-        .from('journey_steps')
-        .select('id, title, step_order')
-        .eq('journey_id', id!)
-        .order('step_order', { ascending: true });
+        .from("journey_steps")
+        .select("id, title, step_order")
+        .eq("journey_id", id!)
+        .order("step_order", { ascending: true });
 
       const doneIds = new Set(progressRes.data?.map((p) => p.step_id) || []);
       if (allSteps) {
@@ -140,13 +141,12 @@ const JornadaCompletePage: React.FC = () => {
           progressRes.data
             .filter((p) => p.reflection)
             .map((p) => ({
-              title: stepMap.get(p.step_id) || 'Etapa',
+              title: stepMap.get(p.step_id) || "Etapa",
               reflection: p.reflection!,
               completed_at: p.completed_at,
             })),
         );
       }
-
     } catch (err) {
       console.error(err);
     } finally {
@@ -158,7 +158,6 @@ const JornadaCompletePage: React.FC = () => {
     if (!loading && journey && user && !rewardsProcessed) {
       processRewards();
     }
-     
   }, [loading, journey, user, rewardsProcessed]);
 
   const processRewards = async () => {
@@ -166,26 +165,29 @@ const JornadaCompletePage: React.FC = () => {
     setRewardsProcessed(true);
     try {
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('xp, badges, streak, completed_books, total_minutes_read')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("xp, badges, streak, completed_books, total_minutes_read")
+        .eq("id", user.id)
         .single();
       if (!profile) return;
 
-      const { data: allJourneys } = await supabase.from('journeys').select('id').eq('is_active', true);
+      const { data: allJourneys } = await supabase
+        .from("journeys")
+        .select("id")
+        .eq("is_active", true);
 
       let completedJourneyCount = 0;
       if (allJourneys) {
         for (const j of allJourneys) {
           const { count: totalSteps } = await supabase
-            .from('journey_steps')
-            .select('*', { count: 'exact', head: true })
-            .eq('journey_id', j.id);
+            .from("journey_steps")
+            .select("*", { count: "exact", head: true })
+            .eq("journey_id", j.id);
           const { count: doneSteps } = await supabase
-            .from('journey_progress')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .eq('journey_id', j.id);
+            .from("journey_progress")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
+            .eq("journey_id", j.id);
           if (totalSteps && doneSteps && doneSteps >= totalSteps) {
             completedJourneyCount++;
           }
@@ -208,7 +210,10 @@ const JornadaCompletePage: React.FC = () => {
       setNewBadges(earned);
 
       const updatedBadges = [...(profile.badges || []), ...earned];
-      await supabase.from('profiles').update({ xp: newXp, badges: updatedBadges }).eq('id', user.id);
+      await supabase
+        .from("profiles")
+        .update({ xp: newXp, badges: updatedBadges })
+        .eq("id", user.id);
 
       earned.forEach((badgeId) => {
         const badge = getBadgeById(badgeId);
@@ -220,7 +225,7 @@ const JornadaCompletePage: React.FC = () => {
         }
       });
     } catch (err) {
-      console.error('Rewards error:', err);
+      console.error("Rewards error:", err);
     }
   };
 
@@ -229,26 +234,26 @@ const JornadaCompletePage: React.FC = () => {
     if (!canShareCertificate) {
       toast.error(
         !hasCertificateData
-          ? 'Dados da jornada indisponíveis.'
-          : 'Conclua todas as etapas antes de compartilhar o certificado.',
+          ? "Dados da jornada indisponíveis."
+          : "Conclua todas as etapas antes de compartilhar o certificado.",
       );
       return;
     }
     setSharing(true);
     try {
-      const { default: html2canvas } = await import('html2canvas');
+      const { default: html2canvas } = await import("html2canvas");
       const canvas = await html2canvas(certificateRef.current, {
         backgroundColor: null,
         scale: 2,
         useCORS: true,
       });
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-      if (!blob) throw new Error('Failed to generate image');
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("Failed to generate image");
 
       const file = new File(
         [blob],
-        `cathedra-certificado-${journey.title.replace(/\s+/g, '-').toLowerCase()}.png`,
-        { type: 'image/png' },
+        `cathedra-certificado-${journey.title.replace(/\s+/g, "-").toLowerCase()}.png`,
+        { type: "image/png" },
       );
 
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
@@ -259,16 +264,16 @@ const JornadaCompletePage: React.FC = () => {
         });
       } else {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = file.name;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success('Certificado salvo como imagem.');
+        toast.success("Certificado salvo como imagem.");
       }
     } catch (err: any) {
-      if (err?.name !== 'AbortError') {
-        toast.error('Erro ao compartilhar certificado');
+      if (err?.name !== "AbortError") {
+        toast.error("Erro ao compartilhar certificado");
       }
     } finally {
       setSharing(false);
@@ -289,10 +294,10 @@ const JornadaCompletePage: React.FC = () => {
 
   if (!journey) return null;
 
-  const completionDate = new Date().toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const completionDate = new Date().toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 
   return (
@@ -331,11 +336,11 @@ const JornadaCompletePage: React.FC = () => {
         <div className="mt-8 max-w-[520px]" role="group" aria-label="Progresso da jornada">
           <div className="flex items-baseline justify-between font-stitch-body text-[11px] font-bold uppercase tracking-[0.24em] text-stitch-on-surface-variant">
             <span>Progresso</span>
-            <span className={isJourneyComplete ? 'text-stitch-secondary' : 'text-destructive'}>
+            <span className={isJourneyComplete ? "text-stitch-secondary" : "text-destructive"}>
               {totalSteps > 0
                 ? `${Math.round((completedSteps / totalSteps) * 100)}% · ${completedSteps}/${totalSteps}`
-                : '—'}
-              {isJourneyComplete ? ' · Completa' : ''}
+                : "—"}
+              {isJourneyComplete ? " · Completa" : ""}
             </span>
           </div>
           <div
@@ -348,21 +353,17 @@ const JornadaCompletePage: React.FC = () => {
             <motion.div
               initial={{ width: 0 }}
               animate={{
-                width: totalSteps > 0 ? `${(completedSteps / totalSteps) * 100}%` : '0%',
+                width: totalSteps > 0 ? `${(completedSteps / totalSteps) * 100}%` : "0%",
               }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               className="h-full bg-stitch-secondary"
             />
           </div>
           {!isJourneyComplete && totalSteps > 0 && (
-            <p
-              role="alert"
-              className="mt-3 font-stitch-body text-[12px] italic text-destructive"
-            >
+            <p role="alert" className="mt-3 font-stitch-body text-[12px] italic text-destructive">
               Você ainda tem {totalSteps - completedSteps} etapa
-              {totalSteps - completedSteps === 1 ? '' : 's'} pendente
-              {totalSteps - completedSteps === 1 ? '' : 's'}. Conclua-as para liberar o
-              certificado.
+              {totalSteps - completedSteps === 1 ? "" : "s"} pendente
+              {totalSteps - completedSteps === 1 ? "" : "s"}. Conclua-as para liberar o certificado.
             </p>
           )}
         </div>
@@ -390,7 +391,7 @@ const JornadaCompletePage: React.FC = () => {
                     aria-label={`Ir para etapa ${s.step_order}: ${s.title}`}
                   >
                     <span className="font-stitch-display text-[18px] italic leading-none text-stitch-secondary/60">
-                      {String(s.step_order).padStart(2, '0')}
+                      {String(s.step_order).padStart(2, "0")}
                     </span>
                     <span className="flex-1 font-stitch-body text-[14px] text-stitch-on-surface">
                       {s.title}
@@ -455,8 +456,8 @@ const JornadaCompletePage: React.FC = () => {
                 if (!canShareCertificate) {
                   toast.error(
                     !hasCertificateData
-                      ? 'Dados da jornada indisponíveis.'
-                      : 'Conclua todas as etapas antes de compartilhar o certificado.',
+                      ? "Dados da jornada indisponíveis."
+                      : "Conclua todas as etapas antes de compartilhar o certificado.",
                   );
                   return;
                 }
@@ -466,13 +467,13 @@ const JornadaCompletePage: React.FC = () => {
               aria-disabled={!canShareCertificate}
               aria-label={
                 canShareCertificate
-                  ? 'Visualizar e compartilhar certificado'
-                  : 'Conclua todas as etapas para compartilhar o certificado'
+                  ? "Visualizar e compartilhar certificado"
+                  : "Conclua todas as etapas para compartilhar o certificado"
               }
               title={
                 canShareCertificate
-                  ? 'Visualizar antes de compartilhar'
-                  : 'Conclua todas as etapas para liberar'
+                  ? "Visualizar antes de compartilhar"
+                  : "Conclua todas as etapas para liberar"
               }
               className="inline-flex items-center gap-2 border border-stitch-outline-variant/40 px-5 py-2.5 font-stitch-body text-[12px] font-bold uppercase tracking-[0.2em] text-stitch-primary transition-colors hover:border-stitch-secondary hover:text-stitch-secondary disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -550,7 +551,7 @@ const JornadaCompletePage: React.FC = () => {
                 <BookOpen className="h-4 w-4 text-stitch-secondary" /> Suas Reflexões
               </h2>
               <span className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.2em] text-stitch-on-surface-variant">
-                {reflections.length} registro{reflections.length === 1 ? '' : 's'}
+                {reflections.length} registro{reflections.length === 1 ? "" : "s"}
               </span>
             </div>
             <div className="space-y-3">
@@ -587,7 +588,6 @@ const JornadaCompletePage: React.FC = () => {
             <NextPathPanel recommendations={nextPath} className="mt-14" />
           </motion.div>
         )}
-
 
         {/* ─── Ações ─────────────────────────────────── */}
         <motion.section
@@ -657,15 +657,17 @@ const JornadaCompletePage: React.FC = () => {
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-stitch-on-surface-variant">Etapas</dt>
-                <dd className="text-stitch-primary">{completedSteps}/{totalSteps}</dd>
+                <dd className="text-stitch-primary">
+                  {completedSteps}/{totalSteps}
+                </dd>
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-stitch-on-surface-variant">XP conquistado</dt>
-                <dd className="text-stitch-primary">{xpAwarded > 0 ? `+${xpAwarded}` : '—'}</dd>
+                <dd className="text-stitch-primary">{xpAwarded > 0 ? `+${xpAwarded}` : "—"}</dd>
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-stitch-on-surface-variant">Distintivos</dt>
-                <dd className="text-stitch-primary">{newBadges.length || '—'}</dd>
+                <dd className="text-stitch-primary">{newBadges.length || "—"}</dd>
               </div>
             </dl>
           </div>
@@ -690,7 +692,7 @@ const JornadaCompletePage: React.FC = () => {
               ) : (
                 <Share2 className="h-3 w-3" />
               )}
-              {sharing ? 'Gerando…' : 'Compartilhar'}
+              {sharing ? "Gerando…" : "Compartilhar"}
             </button>
           </DialogFooter>
         </DialogContent>

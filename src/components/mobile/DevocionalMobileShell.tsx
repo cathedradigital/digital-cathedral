@@ -64,7 +64,9 @@ function ShellChrome({ kicker, title, children }: Props) {
       toast.success(isFav ? "Removido dos favoritos" : "Adicionado aos favoritos");
     } catch (e) {
       const msg = (e as Error).message;
-      toast.error(msg === "auth-required" ? "Faça login para favoritar" : "Erro ao salvar favorito");
+      toast.error(
+        msg === "auth-required" ? "Faça login para favoritar" : "Erro ao salvar favorito",
+      );
     }
   };
 

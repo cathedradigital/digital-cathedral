@@ -10,40 +10,38 @@
 
 type TraceDbFn = <T>(queryId: string, fn: () => Promise<T>) => Promise<T>;
 
-const enabled = import.meta.env.VITE_OTEL_ENABLED === '1';
+const enabled = import.meta.env.VITE_OTEL_ENABLED === "1";
 
 let tracer: any = null;
 
 export async function initOtel(): Promise<void> {
-  if (!enabled || typeof window === 'undefined') return;
+  if (!enabled || typeof window === "undefined") return;
   try {
     // Import dinâmico: só resolve se as libs foram instaladas.
     const dyn = (m: string) =>
-      (new Function('m', 'return import(m)') as (m: string) => Promise<any>)(m);
-    const api = await dyn('@opentelemetry/api');
-    const web = await dyn('@opentelemetry/sdk-trace-web');
-    const otlp = await dyn('@opentelemetry/exporter-trace-otlp-http');
+      (new Function("m", "return import(m)") as (m: string) => Promise<any>)(m);
+    const api = await dyn("@opentelemetry/api");
+    const web = await dyn("@opentelemetry/sdk-trace-web");
+    const otlp = await dyn("@opentelemetry/exporter-trace-otlp-http");
 
     const provider = new web.WebTracerProvider({
       resource: {
         attributes: {
-          'service.name':
-            import.meta.env.VITE_OTEL_SERVICE_NAME ?? 'cathedra-web',
+          "service.name": import.meta.env.VITE_OTEL_SERVICE_NAME ?? "cathedra-web",
         },
       },
     });
-    const endpoint =
-      import.meta.env.VITE_OTEL_ENDPOINT ?? 'http://localhost:4318/v1/traces';
+    const endpoint = import.meta.env.VITE_OTEL_ENDPOINT ?? "http://localhost:4318/v1/traces";
     provider.addSpanProcessor(
       new web.BatchSpanProcessor(new otlp.OTLPTraceExporter({ url: endpoint })),
     );
     provider.register();
-    tracer = api.trace.getTracer('cathedra-web');
+    tracer = api.trace.getTracer("cathedra-web");
     // eslint-disable-next-line no-console
-    console.info('[otel] inicializado →', endpoint);
+    console.info("[otel] inicializado →", endpoint);
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.warn('[otel] libs ausentes ou falha no init; seguindo sem tracing.', e);
+    console.warn("[otel] libs ausentes ou falha no init; seguindo sem tracing.", e);
   }
 }
 
@@ -62,8 +60,8 @@ export const traceDb: TraceDbFn = async (queryId, fn) => {
   if (!tracer) return fn();
   const span = tracer.startSpan(`db:${queryId}`, {
     attributes: {
-      'db.system': 'postgresql',
-      'db.query_id': queryId,
+      "db.system": "postgresql",
+      "db.query_id": queryId,
     },
   });
   const started = performance.now();
@@ -72,8 +70,8 @@ export const traceDb: TraceDbFn = async (queryId, fn) => {
     const rows = Array.isArray((res as any)?.data)
       ? (res as any).data.length
       : ((res as any)?.count ?? undefined);
-    if (rows !== undefined) span.setAttribute('db.rows_returned', rows);
-    span.setAttribute('perf.duration_ms', performance.now() - started);
+    if (rows !== undefined) span.setAttribute("db.rows_returned", rows);
+    span.setAttribute("perf.duration_ms", performance.now() - started);
     span.end();
     return res;
   } catch (err) {

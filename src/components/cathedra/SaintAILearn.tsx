@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Icons } from '../../constants';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/db';
-import { toast } from 'sonner';
-import type { Saint, SaintAIReflection } from '@/data/saints';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Icons } from "../../constants";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/db";
+import { toast } from "sonner";
+import type { Saint, SaintAIReflection } from "@/data/saints";
 
 interface Props {
   saint: Saint;
@@ -16,13 +16,15 @@ interface Props {
  * Cacheada em saints.ai_reflection pela Edge Function `saint-ai-reflection`.
  */
 const SaintAILearn: React.FC<Props> = ({ saint }) => {
-  const [reflection, setReflection] = useState<SaintAIReflection | null>(saint.aiReflection ?? null);
+  const [reflection, setReflection] = useState<SaintAIReflection | null>(
+    saint.aiReflection ?? null,
+  );
   const [loading, setLoading] = useState(false);
 
   const generate = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('saint-ai-reflection', {
+      const { data, error } = await supabase.functions.invoke("saint-ai-reflection", {
         body: { saint_id: saint.id },
       });
       if (error) throw error;
@@ -32,8 +34,8 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
         toast.error(data.error);
       }
     } catch (err: any) {
-      console.error('saint-ai-reflection error', err);
-      toast.error('Não foi possível gerar a reflexão agora.', {
+      console.error("saint-ai-reflection error", err);
+      toast.error("Não foi possível gerar a reflexão agora.", {
         description: err?.message,
       });
     } finally {
@@ -59,8 +61,8 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
       {!reflection ? (
         <div className="space-y-spacing-md">
           <p className="text-premium-sm text-muted-foreground font-serif italic leading-relaxed">
-            Gere uma reflexão espiritual — resumo, ensinamentos, meditação e
-            oração — inspirada nos escritos e testemunho de {saint.name}.
+            Gere uma reflexão espiritual — resumo, ensinamentos, meditação e oração — inspirada nos
+            escritos e testemunho de {saint.name}.
           </p>
           <Button
             onClick={generate}
@@ -92,19 +94,30 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
 
           {reflection.summary && (
             <div className="space-y-spacing-2xs">
-              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">Resumo espiritual</h4>
-              <p className="text-premium-sm leading-relaxed text-foreground">{reflection.summary}</p>
+              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">
+                Resumo espiritual
+              </h4>
+              <p className="text-premium-sm leading-relaxed text-foreground">
+                {reflection.summary}
+              </p>
             </div>
           )}
 
           {reflection.teachings?.length > 0 && (
             <div className="space-y-spacing-sm">
-              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">Principais ensinamentos</h4>
+              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">
+                Principais ensinamentos
+              </h4>
               <ul className="space-y-spacing-sm">
                 {reflection.teachings.map((t, i) => (
-                  <li key={i} className="rounded-premium border border-border/60 bg-background/40 p-spacing-md">
+                  <li
+                    key={i}
+                    className="rounded-premium border border-border/60 bg-background/40 p-spacing-md"
+                  >
                     <p className="text-premium-sm font-bold text-foreground">{t.title}</p>
-                    <p className="text-premium-xs text-muted-foreground leading-relaxed mt-spacing-2xs">{t.body}</p>
+                    <p className="text-premium-xs text-muted-foreground leading-relaxed mt-spacing-2xs">
+                      {t.body}
+                    </p>
                     {t.source && (
                       <p className="mt-spacing-xs text-premium-xs text-primary/80 italic border-l-2 border-primary/30 pl-spacing-sm">
                         Base: <span className="not-italic">“{t.source}”</span>
@@ -118,7 +131,9 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
 
           {reflection.meditation && (
             <div className="space-y-spacing-2xs">
-              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">Meditação</h4>
+              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">
+                Meditação
+              </h4>
               <p className="text-premium-sm leading-relaxed text-foreground whitespace-pre-line font-serif">
                 {reflection.meditation}
               </p>
@@ -129,7 +144,10 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
                   </p>
                   <ul className="space-y-spacing-2xs">
                     {reflection.meditation_sources.map((s, i) => (
-                      <li key={i} className="text-premium-xs text-foreground/80 italic leading-relaxed">
+                      <li
+                        key={i}
+                        className="text-premium-xs text-foreground/80 italic leading-relaxed"
+                      >
                         “{s}”
                       </li>
                     ))}
@@ -141,7 +159,9 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
 
           {reflection.prayer && (
             <div className="space-y-spacing-2xs rounded-premium border border-primary/20 bg-background/60 p-spacing-md">
-              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">Oração inspirada</h4>
+              <h4 className="text-premium-xs font-black uppercase tracking-widest text-primary">
+                Oração inspirada
+              </h4>
               <p className="text-premium-sm leading-relaxed italic font-serif text-foreground whitespace-pre-line">
                 {reflection.prayer}
               </p>
@@ -162,7 +182,14 @@ const SaintAILearn: React.FC<Props> = ({ saint }) => {
                     <span className="italic">“{c.text}”</span>
                     {c.used_in && (
                       <span className="ml-spacing-2xs text-muted-foreground">
-                        → {c.used_in === 'summary' ? 'resumo' : c.used_in === 'teaching' ? 'ensinamento' : c.used_in === 'meditation' ? 'meditação' : 'oração'}
+                        →{" "}
+                        {c.used_in === "summary"
+                          ? "resumo"
+                          : c.used_in === "teaching"
+                            ? "ensinamento"
+                            : c.used_in === "meditation"
+                              ? "meditação"
+                              : "oração"}
                       </span>
                     )}
                   </li>

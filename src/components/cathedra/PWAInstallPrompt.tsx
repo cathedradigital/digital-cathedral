@@ -1,9 +1,9 @@
-import { Icons } from '@/constants';
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Icons } from "@/constants";
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
-import { supabase } from '@/lib/db';
-import { toast } from 'sonner';
+import { supabase } from "@/lib/db";
+import { toast } from "sonner";
 
 export const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -14,61 +14,61 @@ export const PWAInstallPrompt = () => {
       e.preventDefault();
       setDeferredPrompt(e);
       // Icons.Check if user has already dismissed it or if it's already installed
-      const dismissed = localStorage.getItem('pwa-prompt-dismissed');
+      const dismissed = localStorage.getItem("pwa-prompt-dismissed");
       if (!dismissed) {
         setShowPrompt(true);
       }
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener("beforeinstallprompt", handler);
 
-    window.addEventListener('appinstalled', async () => {
+    window.addEventListener("appinstalled", async () => {
       setDeferredPrompt(null);
       setShowPrompt(false);
-      console.log('PWA installed successfully');
-      
+      console.log("PWA installed successfully");
+
       // Track PWA install in Supabase if needed
       try {
-        await supabase.from('app_metrics').insert({
-          metric_type: 'pwa_install',
-          metadata: { timestamp: new Date().toISOString() }
+        await supabase.from("app_metrics").insert({
+          metric_type: "pwa_install",
+          metadata: { timestamp: new Date().toISOString() },
         });
       } catch (err) {
-        console.error('Error tracking PWA install:', err);
+        console.error("Error tracking PWA install:", err);
       }
-      
-      toast.success('Aplicativo instalado com sucesso! Verifique sua tela de início.');
+
+      toast.success("Aplicativo instalado com sucesso! Verifique sua tela de início.");
     });
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
-    
+
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the PWA install');
+
+    if (outcome === "accepted") {
+      console.log("User accepted the PWA install");
     } else {
-      console.log('User dismissed the PWA install');
+      console.log("User dismissed the PWA install");
     }
-    
+
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    localStorage.setItem('pwa-prompt-dismissed', 'true');
+    localStorage.setItem("pwa-prompt-dismissed", "true");
   };
 
   if (!showPrompt) return null;
 
   return (
     <div className="fixed bottom-spacing-3xl left-spacing-md right-spacing-md md:left-auto md:right-spacing-xl md:bottom-spacing-xl md:w-spacing-4xl bg-background border border-primary/20 p-spacing-md rounded-premium shadow-premium-hover z-50 animate-in fade-in slide-in-from-bottom-spacing-md duration-300">
-      <Button 
+      <Button
         onClick={handleDismiss}
         className="absolute top-spacing-xs right-spacing-xs text-muted-foreground hover:text-foreground"
       >
@@ -79,15 +79,26 @@ export const PWAInstallPrompt = () => {
           <Icons.Download className="h-spacing-lg w-spacing-lg text-primary" />
         </div>
         <div>
-          <h2 className="text-premium-sm font-bold text-primary leading-none mb-spacing-2xs">Instalar Cathedra</h2>
+          <h2 className="text-premium-sm font-bold text-primary leading-none mb-spacing-2xs">
+            Instalar Cathedra
+          </h2>
           <p className="text-premium-xs text-muted-foreground mb-spacing-sm">
             Acesse a Bíblia e suas orações com um toque, mesmo offline.
           </p>
           <div className="flex gap-spacing-xs">
-            <Button size="sm" onClick={handleInstallClick} className="h-spacing-xl text-premium-xs px-spacing-md">
+            <Button
+              size="sm"
+              onClick={handleInstallClick}
+              className="h-spacing-xl text-premium-xs px-spacing-md"
+            >
               Instalar agora
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleDismiss} className="h-spacing-xl text-premium-xs">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleDismiss}
+              className="h-spacing-xl text-premium-xs"
+            >
               Agora não
             </Button>
           </div>

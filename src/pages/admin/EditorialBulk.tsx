@@ -9,13 +9,19 @@
  * hardcoded em glossary). Aqui vive o fluxo genérico de bulk generation.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams, Link } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
+import { useSearchParams, Link } from "@/lib/rr-compat";
+import { supabase } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { Sparkles, Pause, Play, Square, ArrowLeft, Loader2 } from "lucide-react";
 
@@ -52,20 +58,22 @@ type Task = { slug: string; term: string; field: string };
 type Result = Task & { ok: boolean; error?: string };
 
 const FIELD_MAP: Array<{ key: keyof PriorityRow; field: string; label: string }> = [
-  { key: "missing_deep",    field: "deep_interpretation",    label: "Interpretação profunda" },
-  { key: "missing_faq",     field: "faq",                    label: "FAQ" },
-  { key: "missing_logos",   field: "logos_meditation",       label: "Meditação Logos" },
-  { key: "missing_bible",   field: "bible_verses",           label: "Bíblia" },
-  { key: "missing_cic",     field: "catechism_references",   label: "CIC" },
-  { key: "missing_fathers", field: "fathers_refs",           label: "Patrística" },
+  { key: "missing_deep", field: "deep_interpretation", label: "Interpretação profunda" },
+  { key: "missing_faq", field: "faq", label: "FAQ" },
+  { key: "missing_logos", field: "logos_meditation", label: "Meditação Logos" },
+  { key: "missing_bible", field: "bible_verses", label: "Bíblia" },
+  { key: "missing_cic", field: "catechism_references", label: "CIC" },
+  { key: "missing_fathers", field: "fathers_refs", label: "Patrística" },
 ];
 
 export default function EditorialBulk() {
   const [params, setParams] = useSearchParams();
-  const entity = ((params.get("entity") ?? "catechism") as Entity);
+  const entity = (params.get("entity") ?? "catechism") as Entity;
   const [rows, setRows] = useState<PriorityRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [bucket, setBucket] = useState<"quick_win" | "red" | "orange" | "yellow" | "all">("quick_win");
+  const [bucket, setBucket] = useState<"quick_win" | "red" | "orange" | "yellow" | "all">(
+    "quick_win",
+  );
   const [limit, setLimit] = useState(5);
 
   const [queue, setQueue] = useState<Task[]>([]);
@@ -90,11 +98,19 @@ export default function EditorialBulk() {
         }
         setLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [entity]);
 
   const buckets = useMemo(() => {
-    const out = { quick_win: [] as PriorityRow[], red: [] as PriorityRow[], orange: [] as PriorityRow[], yellow: [] as PriorityRow[], all: [] as PriorityRow[] };
+    const out = {
+      quick_win: [] as PriorityRow[],
+      red: [] as PriorityRow[],
+      orange: [] as PriorityRow[],
+      yellow: [] as PriorityRow[],
+      all: [] as PriorityRow[],
+    };
     for (const r of rows) {
       const p = (r.priority ?? "").toLowerCase();
       out.all.push(r);
@@ -110,7 +126,8 @@ export default function EditorialBulk() {
     const src = buckets[bucket].slice(0, limit);
     const tasks: Task[] = [];
     for (const r of src) {
-      for (const m of FIELD_MAP) if (r[m.key]) tasks.push({ slug: r.slug, term: r.term, field: m.field });
+      for (const m of FIELD_MAP)
+        if (r[m.key]) tasks.push({ slug: r.slug, term: r.term, field: m.field });
     }
     return { entries: src, tasks };
   }, [buckets, bucket, limit]);
@@ -118,12 +135,24 @@ export default function EditorialBulk() {
   const run = useCallback(async () => {
     if (running) return;
     const tasks = preview.tasks;
-    if (tasks.length === 0) { toast.info("Nada a gerar neste bucket."); return; }
-    if (!window.confirm(`Gerar ${tasks.length} campo(s) em ${preview.entries.length} verbete(s) via IA?`)) return;
+    if (tasks.length === 0) {
+      toast.info("Nada a gerar neste bucket.");
+      return;
+    }
+    if (
+      !window.confirm(
+        `Gerar ${tasks.length} campo(s) em ${preview.entries.length} verbete(s) via IA?`,
+      )
+    )
+      return;
     ctrl.current = { paused: false, cancelled: false };
-    setQueue(tasks); setDone(0); setResults([]); setRunning(true);
+    setQueue(tasks);
+    setDone(0);
+    setResults([]);
+    setRunning(true);
     for (let i = 0; i < tasks.length; i++) {
-      while (ctrl.current.paused && !ctrl.current.cancelled) await new Promise(r => setTimeout(r, 300));
+      while (ctrl.current.paused && !ctrl.current.cancelled)
+        await new Promise((r) => setTimeout(r, 300));
       if (ctrl.current.cancelled) break;
       const t = tasks[i];
       setCurrent(t);
@@ -133,56 +162,77 @@ export default function EditorialBulk() {
         });
         if (error) throw error;
         if ((data as any)?.error) throw new Error((data as any).error);
-        setResults(prev => [...prev, { ...t, ok: true }]);
+        setResults((prev) => [...prev, { ...t, ok: true }]);
       } catch (e: any) {
         const msg = e?.message ?? String(e);
-        setResults(prev => [...prev, { ...t, ok: false, error: msg }]);
+        setResults((prev) => [...prev, { ...t, ok: false, error: msg }]);
         if (msg?.includes("429")) toast.error("Rate limit — aguarde e continue.");
-        if (msg?.includes("402")) { toast.error("Créditos IA esgotados."); ctrl.current.cancelled = true; }
+        if (msg?.includes("402")) {
+          toast.error("Créditos IA esgotados.");
+          ctrl.current.cancelled = true;
+        }
       }
       setDone(i + 1);
     }
-    setCurrent(null); setRunning(false);
+    setCurrent(null);
+    setRunning(false);
     toast.success("Fila finalizada.");
   }, [preview, running, entity]);
 
   const retryFailed = useCallback(async () => {
-    const failed = results.filter(r => !r.ok).map(({ slug, term, field }) => ({ slug, term, field }));
+    const failed = results
+      .filter((r) => !r.ok)
+      .map(({ slug, term, field }) => ({ slug, term, field }));
     if (failed.length === 0) return;
     ctrl.current = { paused: false, cancelled: false };
-    setQueue(failed); setDone(0); setResults([]); setRunning(true);
+    setQueue(failed);
+    setDone(0);
+    setResults([]);
+    setRunning(true);
     for (let i = 0; i < failed.length; i++) {
       if (ctrl.current.cancelled) break;
-      const t = failed[i]; setCurrent(t);
+      const t = failed[i];
+      setCurrent(t);
       try {
-        const { data, error } = await supabase.functions.invoke("editorial-generate", { body: { entity, slug: t.slug, field: t.field } });
+        const { data, error } = await supabase.functions.invoke("editorial-generate", {
+          body: { entity, slug: t.slug, field: t.field },
+        });
         if (error) throw error;
         if ((data as any)?.error) throw new Error((data as any).error);
-        setResults(prev => [...prev, { ...t, ok: true }]);
+        setResults((prev) => [...prev, { ...t, ok: true }]);
       } catch (e: any) {
-        setResults(prev => [...prev, { ...t, ok: false, error: e?.message ?? String(e) }]);
+        setResults((prev) => [...prev, { ...t, ok: false, error: e?.message ?? String(e) }]);
       }
       setDone(i + 1);
     }
-    setCurrent(null); setRunning(false);
+    setCurrent(null);
+    setRunning(false);
   }, [results, entity]);
 
   const pct = queue.length > 0 ? Math.round((done / queue.length) * 100) : 0;
-  const ok = results.filter(r => r.ok).length;
+  const ok = results.filter((r) => r.ok).length;
   const fail = results.length - ok;
 
   return (
     <div className="mx-auto max-w-6xl p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Link to="/admin/mission-control" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <Link
+            to="/admin/mission-control"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-4 w-4" /> Mission Control
           </Link>
           <h1 className="mt-1 text-2xl font-serif">Bulk Editorial · {ENTITY_LABEL[entity]}</h1>
-          <p className="text-sm text-muted-foreground">Geração em fila por bucket de prioridade. Todos os itens voltam para <code>draft</code> após IA.</p>
+          <p className="text-sm text-muted-foreground">
+            Geração em fila por bucket de prioridade. Todos os itens voltam para <code>draft</code>{" "}
+            após IA.
+          </p>
         </div>
         <Select value={entity} onValueChange={(v) => setParams({ entity: v })}>
-          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-44">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="catechism">Catecismo</SelectItem>
             <SelectItem value="glossary">Glossário</SelectItem>
@@ -192,16 +242,29 @@ export default function EditorialBulk() {
       </div>
 
       {loading ? (
-        <Card className="p-8 flex items-center justify-center text-muted-foreground"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando prioridade…</Card>
+        <Card className="p-8 flex items-center justify-center text-muted-foreground">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Carregando prioridade…
+        </Card>
       ) : (
         <>
           <Card className="p-4">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              {(["quick_win","red","orange","yellow","all"] as const).map(k => (
-                <button key={k} onClick={() => setBucket(k)}
-                  className={`rounded border p-3 text-left transition ${bucket===k?"border-primary bg-primary/5":"border-border hover:border-primary/50"}`}>
+              {(["quick_win", "red", "orange", "yellow", "all"] as const).map((k) => (
+                <button
+                  key={k}
+                  onClick={() => setBucket(k)}
+                  className={`rounded border p-3 text-left transition ${bucket === k ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+                >
                   <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                    {k === "quick_win" ? "🟢 Quick wins" : k === "red" ? "🔴 Alto impacto" : k === "orange" ? "🟠 Médio" : k === "yellow" ? "🟡 Baixo" : "Todos"}
+                    {k === "quick_win"
+                      ? "🟢 Quick wins"
+                      : k === "red"
+                        ? "🔴 Alto impacto"
+                        : k === "orange"
+                          ? "🟠 Médio"
+                          : k === "yellow"
+                            ? "🟡 Baixo"
+                            : "Todos"}
                   </div>
                   <div className="text-2xl font-bold tabular-nums">{buckets[k].length}</div>
                 </button>
@@ -213,29 +276,66 @@ export default function EditorialBulk() {
             <div className="flex flex-wrap items-center gap-3">
               <label className="text-sm">Limite:</label>
               <Select value={String(limit)} onValueChange={(v) => setLimit(Number(v))}>
-                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {[3,5,10,20,50].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                  {[3, 5, 10, 20, 50].map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              <Badge variant="secondary">{preview.entries.length} verbete(s) · {preview.tasks.length} campo(s)</Badge>
+              <Badge variant="secondary">
+                {preview.entries.length} verbete(s) · {preview.tasks.length} campo(s)
+              </Badge>
               <div className="ml-auto flex gap-2">
                 {running && (
                   <>
-                    <Button size="sm" variant="outline" onClick={() => { ctrl.current.paused = !ctrl.current.paused; }}>
-                      {ctrl.current.paused ? <><Play className="mr-1 h-3 w-3" /> Continuar</> : <><Pause className="mr-1 h-3 w-3" /> Pausar</>}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        ctrl.current.paused = !ctrl.current.paused;
+                      }}
+                    >
+                      {ctrl.current.paused ? (
+                        <>
+                          <Play className="mr-1 h-3 w-3" /> Continuar
+                        </>
+                      ) : (
+                        <>
+                          <Pause className="mr-1 h-3 w-3" /> Pausar
+                        </>
+                      )}
                     </Button>
-                    <Button size="sm" variant="destructive" onClick={() => { ctrl.current.cancelled = true; }}>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => {
+                        ctrl.current.cancelled = true;
+                      }}
+                    >
                       <Square className="mr-1 h-3 w-3" /> Cancelar
                     </Button>
                   </>
                 )}
                 {!running && fail > 0 && (
-                  <Button size="sm" variant="outline" onClick={retryFailed}>Reprocessar {fail} falha(s)</Button>
+                  <Button size="sm" variant="outline" onClick={retryFailed}>
+                    Reprocessar {fail} falha(s)
+                  </Button>
                 )}
                 <Button size="sm" onClick={run} disabled={running || preview.tasks.length === 0}>
-                  {running ? <><Loader2 className="mr-1 h-3 w-3 animate-spin" /> {done}/{queue.length}</>
-                    : <><Sparkles className="mr-1 h-3 w-3" /> Gerar</>}
+                  {running ? (
+                    <>
+                      <Loader2 className="mr-1 h-3 w-3 animate-spin" /> {done}/{queue.length}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-1 h-3 w-3" /> Gerar
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -244,8 +344,14 @@ export default function EditorialBulk() {
               <div className="space-y-1">
                 <Progress value={pct} />
                 <div className="flex justify-between text-xs text-muted-foreground tabular-nums">
-                  <span>{done}/{queue.length} · {pct}% · ✔ {ok} · ✖ {fail}</span>
-                  {current && running && <span>→ {current.term} · {current.field}</span>}
+                  <span>
+                    {done}/{queue.length} · {pct}% · ✔ {ok} · ✖ {fail}
+                  </span>
+                  {current && running && (
+                    <span>
+                      → {current.term} · {current.field}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
@@ -262,17 +368,26 @@ export default function EditorialBulk() {
                   </tr>
                 </thead>
                 <tbody>
-                  {preview.entries.map(r => (
+                  {preview.entries.map((r) => (
                     <tr key={r.slug} className="border-t">
-                      <td className="p-2 font-medium">{r.term}<div className="text-xs text-muted-foreground">{r.slug}</div></td>
+                      <td className="p-2 font-medium">
+                        {r.term}
+                        <div className="text-xs text-muted-foreground">{r.slug}</div>
+                      </td>
                       <td className="p-2 text-muted-foreground">{r.area ?? "—"}</td>
-                      <td className="p-2 text-right tabular-nums">{r.ice != null ? Number(r.ice).toFixed(0) : "—"}</td>
+                      <td className="p-2 text-right tabular-nums">
+                        {r.ice != null ? Number(r.ice).toFixed(0) : "—"}
+                      </td>
                       <td className="p-2 text-right tabular-nums">{r.missing_count}</td>
                       <td className="p-2 text-right tabular-nums">{r.inbound_refs ?? 0}</td>
                     </tr>
                   ))}
                   {preview.entries.length === 0 && (
-                    <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">Bucket vazio.</td></tr>
+                    <tr>
+                      <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                        Bucket vazio.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -285,7 +400,8 @@ export default function EditorialBulk() {
               <div className="max-h-64 overflow-auto text-xs font-mono space-y-1">
                 {results.map((r, i) => (
                   <div key={i} className={r.ok ? "text-emerald-700" : "text-red-700"}>
-                    {r.ok ? "✔" : "✖"} {r.slug} · {r.field}{r.error ? ` — ${r.error}` : ""}
+                    {r.ok ? "✔" : "✖"} {r.slug} · {r.field}
+                    {r.error ? ` — ${r.error}` : ""}
                   </div>
                 ))}
               </div>

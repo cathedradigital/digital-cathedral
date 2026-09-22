@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import PrototypeShell from '../PrototypeShell';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import PrototypeShell from "../PrototypeShell";
 
-const BASE = '/prototype-2.0';
+const BASE = "/prototype-2.0";
 
 const MinhaJornada: React.FC = () => {
   return (
@@ -27,15 +27,23 @@ const MinhaJornada: React.FC = () => {
           Favoritos
         </p>
         <ul className="text-sm space-y-1">
-          <li>♥ <Link to={`${BASE}/leitor?ref=jo15`} className="hover:text-primary">Jo 15,5</Link></li>
-          <li>♥ <Link to={`${BASE}/leitor?ref=sl23`} className="hover:text-primary">Sl 23</Link></li>
+          <li>
+            ♥{" "}
+            <Link to={`${BASE}/leitor?ref=jo15`} className="hover:text-primary">
+              Jo 15,5
+            </Link>
+          </li>
+          <li>
+            ♥{" "}
+            <Link to={`${BASE}/leitor?ref=sl23`} className="hover:text-primary">
+              Sl 23
+            </Link>
+          </li>
         </ul>
       </section>
 
       <section className="mt-6">
-        <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
-          Notas
-        </p>
+        <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">Notas</p>
         <p className="text-sm text-muted-foreground">Nenhuma nota ainda.</p>
       </section>
 
@@ -46,7 +54,6 @@ const MinhaJornada: React.FC = () => {
         <Link to="/pricing" className="text-sm text-primary underline">
           Conhecer Cathedra PRO →
         </Link>
-
       </section>
     </PrototypeShell>
   );

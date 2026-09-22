@@ -8,7 +8,12 @@ export default defineTool({
   description:
     "Retorna o registro completo de um santo pelo id (slug) — biografia, virtudes, oração, referências bíblicas, catecismo e citações. Dados públicos da Cathedra.",
   inputSchema: {
-    id: z.string().trim().min(1).max(120).describe("Identificador do santo (ex.: 'agostinho-de-hipona')."),
+    id: z
+      .string()
+      .trim()
+      .min(1)
+      .max(120)
+      .describe("Identificador do santo (ex.: 'agostinho-de-hipona')."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ id }) => {
@@ -23,7 +28,8 @@ export default defineTool({
       .eq("id", id)
       .maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!data) return { content: [{ type: "text", text: `Santo '${id}' não encontrado.` }], isError: true };
+    if (!data)
+      return { content: [{ type: "text", text: `Santo '${id}' não encontrado.` }], isError: true };
     return {
       content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
       structuredContent: { saint: data },

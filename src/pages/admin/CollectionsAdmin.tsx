@@ -4,39 +4,53 @@
  * Lista e cria coleções editoriais. Toda coleção nasce em `draft`; publicação
  * é uma transição explícita feita no editor. RLS já restringe tudo a admin.
  */
-import { useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
-import { toast } from 'sonner';
-import { Plus, ExternalLink, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
+import { toast } from "sonner";
+import { Plus, ExternalLink, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { useAdminCollections, useCreateCollection } from '@/features/collections/adminHooks';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAdminCollections, useCreateCollection } from "@/features/collections/adminHooks";
 
-const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
-  draft: 'outline',
-  review: 'secondary',
-  published: 'default',
-  archived: 'destructive',
+const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
+  draft: "outline",
+  review: "secondary",
+  published: "default",
+  archived: "destructive",
 };
 
 const SPACES = [
-  { value: 'church', label: 'Igreja' },
-  { value: 'library', label: 'Biblioteca' },
-  { value: 'cloister', label: 'Claustro' },
-  { value: 'atrium', label: 'Átrio' },
+  { value: "church", label: "Igreja" },
+  { value: "library", label: "Biblioteca" },
+  { value: "cloister", label: "Claustro" },
+  { value: "atrium", label: "Átrio" },
 ] as const;
 
 export default function CollectionsAdmin() {
@@ -45,29 +59,29 @@ export default function CollectionsAdmin() {
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    slug: '',
-    title: '',
-    category: 'sacramentos',
-    space: 'church' as 'church' | 'library' | 'cloister' | 'atrium',
+    slug: "",
+    title: "",
+    category: "sacramentos",
+    space: "church" as "church" | "library" | "cloister" | "atrium",
   });
 
   const submit = async () => {
     if (!form.slug.trim() || !form.title.trim()) {
-      toast.error('Slug e título são obrigatórios.');
+      toast.error("Slug e título são obrigatórios.");
       return;
     }
     try {
       const c = await create.mutateAsync({
         slug: form.slug.trim(),
         title: form.title.trim(),
-        category: form.category.trim() || 'geral',
+        category: form.category.trim() || "geral",
         space: form.space,
       });
       toast.success(`Coleção "${c.title}" criada em rascunho.`);
       setOpen(false);
-      setForm({ slug: '', title: '', category: 'sacramentos', space: 'church' });
+      setForm({ slug: "", title: "", category: "sacramentos", space: "church" });
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Falha ao criar coleção.';
+      const msg = e instanceof Error ? e.message : "Falha ao criar coleção.";
       toast.error(msg);
     }
   };
@@ -89,7 +103,10 @@ export default function CollectionsAdmin() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Nova coleção</Button>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova coleção
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -126,10 +143,14 @@ export default function CollectionsAdmin() {
                     value={form.space}
                     onValueChange={(v) => setForm({ ...form, space: v as typeof form.space })}
                   >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       {SPACES.map((s) => (
-                        <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                        <SelectItem key={s.value} value={s.value}>
+                          {s.label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -137,7 +158,9 @@ export default function CollectionsAdmin() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+              <Button variant="ghost" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
               <Button onClick={submit} disabled={create.isPending}>
                 {create.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Criar rascunho
@@ -174,7 +197,7 @@ export default function CollectionsAdmin() {
               </TableHeader>
               <TableBody>
                 {collections.map((c) => {
-                  const space = (c.metadata?.space as string) ?? '—';
+                  const space = (c.metadata?.space as string) ?? "—";
                   return (
                     <TableRow key={c.id}>
                       <TableCell className="font-medium">{c.title}</TableCell>
@@ -182,12 +205,10 @@ export default function CollectionsAdmin() {
                       <TableCell>{c.category}</TableCell>
                       <TableCell className="capitalize">{space}</TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_VARIANT[c.status] ?? 'outline'}>
-                          {c.status}
-                        </Badge>
+                        <Badge variant={STATUS_VARIANT[c.status] ?? "outline"}>{c.status}</Badge>
                       </TableCell>
                       <TableCell className="text-right space-x-1">
-                        {c.status === 'published' && (
+                        {c.status === "published" && (
                           <Button asChild size="sm" variant="ghost" title="Ver pública">
                             <Link to={`/colecoes/${c.slug}`} target="_blank" rel="noopener">
                               <ExternalLink className="h-4 w-4" />

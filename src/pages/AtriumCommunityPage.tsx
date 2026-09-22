@@ -6,26 +6,36 @@
  * A versão anterior (fórum + ranking + busca fuzzy) segue em /community-legacy.
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useNavigate } from '@/lib/rr-compat';
-import { MessageCircle, Plus, Heart, Sparkles, Users, ArrowRight, User, Calendar, BookOpen } from 'lucide-react';
-import { EditorialHero } from '@/components/editorial/harmony';
-import { SpaceLayout, SpaceHeader, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useNavigate } from "@/lib/rr-compat";
+import {
+  MessageCircle,
+  Plus,
+  Heart,
+  Sparkles,
+  Users,
+  ArrowRight,
+  User,
+  Calendar,
+  BookOpen,
+} from "lucide-react";
+import { EditorialHero } from "@/components/editorial/harmony";
+import { SpaceLayout, SpaceHeader, SpaceFooter } from "@/components/cathedra/space/SpaceLayout";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
+import { toast } from "sonner";
 
 const CATEGORIES = [
-  { id: 'geral', label: 'Geral' },
-  { id: 'testemunho', label: 'Testemunho' },
-  { id: 'partilha', label: 'Partilha' },
-  { id: 'teologia', label: 'Teologia' },
-  { id: 'biblia', label: 'Bíblia' },
-  { id: 'liturgia', label: 'Liturgia' },
-  { id: 'moral', label: 'Moral' },
-  { id: 'espiritualidade', label: 'Espiritualidade' },
+  { id: "geral", label: "Geral" },
+  { id: "testemunho", label: "Testemunho" },
+  { id: "partilha", label: "Partilha" },
+  { id: "teologia", label: "Teologia" },
+  { id: "biblia", label: "Bíblia" },
+  { id: "liturgia", label: "Liturgia" },
+  { id: "moral", label: "Moral" },
+  { id: "espiritualidade", label: "Espiritualidade" },
 ];
 
 type Post = {
@@ -44,7 +54,7 @@ type Post = {
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'agora';
+  if (mins < 1) return "agora";
   if (mins < 60) return `${mins}min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h`;
@@ -55,24 +65,24 @@ function timeAgo(dateStr: string) {
 const AtriumCommunityPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [category, setCategory] = useState('geral');
+  const [category, setCategory] = useState("geral");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newContent, setNewContent] = useState('');
-  const [newCategory, setNewCategory] = useState('geral');
+  const [newTitle, setNewTitle] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [newCategory, setNewCategory] = useState("geral");
   const [submitting, setSubmitting] = useState(false);
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     let q = supabase
-      .from('community_posts')
-      .select('*')
-      .is('parent_id', null)
-      .order('created_at', { ascending: false })
+      .from("community_posts")
+      .select("*")
+      .is("parent_id", null)
+      .order("created_at", { ascending: false })
       .limit(50);
-    if (category !== 'geral') q = q.eq('category', category);
+    if (category !== "geral") q = q.eq("category", category);
     const { data, error } = await q;
     if (error) {
       setLoading(false);
@@ -83,18 +93,21 @@ const AtriumCommunityPage: React.FC = () => {
     let profileMap = new Map<string, string>();
     if (userIds.length) {
       const { data: profiles } = (await supabase
-        .from('public_profiles' as any)
-        .select('id, name')
-        .in('id', userIds)) as { data: { id: string; name: string }[] | null };
+        .from("public_profiles" as any)
+        .select("id, name")
+        .in("id", userIds)) as { data: { id: string; name: string }[] | null };
       profileMap = new Map((profiles || []).map((p) => [p.id, p.name]));
     }
     // count replies
     const replyCounts = new Map<string, number>();
     if (rows.length) {
       const { data: replies } = await supabase
-        .from('community_posts')
-        .select('parent_id')
-        .in('parent_id', rows.map((r) => r.id));
+        .from("community_posts")
+        .select("parent_id")
+        .in(
+          "parent_id",
+          rows.map((r) => r.id),
+        );
       (replies || []).forEach((r: any) => {
         if (!r.parent_id) return;
         replyCounts.set(r.parent_id, (replyCounts.get(r.parent_id) || 0) + 1);
@@ -103,10 +116,10 @@ const AtriumCommunityPage: React.FC = () => {
     const enriched: Post[] = rows
       .map((p) => ({
         ...p,
-        author_name: profileMap.get(p.user_id) || 'Anônimo',
+        author_name: profileMap.get(p.user_id) || "Anônimo",
         replies_count: replyCounts.get(p.id) || 0,
       }))
-      .filter((p) => p.status === 'approved' || p.user_id === user?.id);
+      .filter((p) => p.status === "approved" || p.user_id === user?.id);
     setPosts(enriched);
     setLoading(false);
   }, [category, user?.id]);
@@ -123,29 +136,26 @@ const AtriumCommunityPage: React.FC = () => {
     const content = newContent.trim();
     if (!content) return;
     setSubmitting(true);
-    const { error } = await supabase.from('community_posts').insert({
+    const { error } = await supabase.from("community_posts").insert({
       user_id: user.id,
       title: newTitle.trim() || null,
       content,
       category: newCategory,
-      status: 'pending',
+      status: "pending",
     });
     setSubmitting(false);
     if (error) {
-      toast.error('Não foi possível publicar');
+      toast.error("Não foi possível publicar");
       return;
     }
-    toast.success('Enviado para moderação');
-    setNewTitle('');
-    setNewContent('');
+    toast.success("Enviado para moderação");
+    setNewTitle("");
+    setNewContent("");
     setShowNew(false);
     fetchPosts();
   };
 
-  const emptyState = useMemo(
-    () => !loading && posts.length === 0,
-    [loading, posts.length],
-  );
+  const emptyState = useMemo(() => !loading && posts.length === 0, [loading, posts.length]);
 
   return (
     <>
@@ -162,31 +172,41 @@ const AtriumCommunityPage: React.FC = () => {
         <EditorialHero density="minimal">
           <EditorialHero.Eyebrow>Communitas Fidelium</EditorialHero.Eyebrow>
           <EditorialHero.Title>Igreja Viva</EditorialHero.Title>
-          <EditorialHero.Subtitle>Um lugar para partilhar a caminhada — testemunhos, dúvidas e leituras entre irmãos na fé.</EditorialHero.Subtitle>
+          <EditorialHero.Subtitle>
+            Um lugar para partilhar a caminhada — testemunhos, dúvidas e leituras entre irmãos na
+            fé.
+          </EditorialHero.Subtitle>
         </EditorialHero>
 
         {/* ─── IGREJA VIVA: SSoT Grouping ─── */}
         <section className="mt-8 mb-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 border border-border/20 bg-accent rounded-premium text-center">
-              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2"><Sparkles className="w-3 h-3" /> SANTO DO DIA</span>
+              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2">
+                <Sparkles className="w-3 h-3" /> SANTO DO DIA
+              </span>
               <p className="font-display text-sm italic text-primary">São João Batista</p>
             </div>
             <div className="p-4 border border-border/20 bg-accent rounded-premium text-center">
-              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2"><User className="w-3 h-3" /> PAPA ATUAL</span>
+              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2">
+                <User className="w-3 h-3" /> PAPA ATUAL
+              </span>
               <p className="font-display text-sm italic text-primary">Francisco</p>
             </div>
             <div className="p-4 border border-border/20 bg-accent rounded-premium text-center">
-              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2"><BookOpen className="w-3 h-3" /> LITURGIA</span>
+              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2">
+                <BookOpen className="w-3 h-3" /> LITURGIA
+              </span>
               <p className="font-display text-sm italic text-primary">Féria da Semana</p>
             </div>
             <div className="p-4 border border-border/20 bg-accent rounded-premium text-center">
-              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2"><Calendar className="w-3 h-3" /> CALENDÁRIO</span>
+              <span className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-gold-text mb-2">
+                <Calendar className="w-3 h-3" /> CALENDÁRIO
+              </span>
               <p className="font-display text-sm italic text-primary">24 Jun 2026</p>
             </div>
           </div>
         </section>
-
 
         {/* Barra de ações */}
         <section className="max-w-4xl mx-auto px-6 pt-8 flex flex-wrap items-center gap-3">
@@ -197,8 +217,8 @@ const AtriumCommunityPage: React.FC = () => {
                 onClick={() => setCategory(c.id)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider border transition-colors ${
                   category === c.id
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'bg-card text-muted-foreground border-border hover:text-foreground'
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-card text-muted-foreground border-border hover:text-foreground"
                 }`}
                 aria-pressed={category === c.id}
               >
@@ -238,7 +258,7 @@ const AtriumCommunityPage: React.FC = () => {
                   onChange={(e) => setNewCategory(e.target.value)}
                   className="bg-background border border-border rounded-full px-3 py-1.5 text-xs uppercase tracking-widest font-semibold"
                 >
-                  {CATEGORIES.filter((c) => c.id !== 'geral').map((c) => (
+                  {CATEGORIES.filter((c) => c.id !== "geral").map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.label}
                     </option>
@@ -259,7 +279,7 @@ const AtriumCommunityPage: React.FC = () => {
                     disabled={submitting || !newContent.trim()}
                     className="px-4 py-2 rounded-full bg-foreground text-background text-xs font-bold uppercase tracking-widest disabled:opacity-40"
                   >
-                    {submitting ? 'Enviando…' : 'Publicar'}
+                    {submitting ? "Enviando…" : "Publicar"}
                   </button>
                 </div>
               </div>
@@ -272,14 +292,15 @@ const AtriumCommunityPage: React.FC = () => {
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-28 rounded-2xl bg-muted/40 animate-pulse"
-                />
+                <div key={i} className="h-28 rounded-2xl bg-muted/40 animate-pulse" />
               ))}
             </div>
           ) : emptyState ? (
-            <div className="text-center py-20 space-y-5 max-w-lg mx-auto" role="status" aria-live="polite">
+            <div
+              className="text-center py-20 space-y-5 max-w-lg mx-auto"
+              role="status"
+              aria-live="polite"
+            >
               <Sparkles className="w-8 h-8 mx-auto text-primary/50" aria-hidden />
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/15 bg-primary/5 text-[10px] uppercase tracking-[0.3em] text-primary font-semibold">
                 Silentium
@@ -288,8 +309,8 @@ const AtriumCommunityPage: React.FC = () => {
                 A praça ainda repousa em silêncio
               </h2>
               <p className="text-muted-foreground font-serif italic text-base leading-relaxed">
-                Nenhuma partilha aprovada por aqui — nem toda estação tem palavras.
-                Volte em breve ou seja a primeira voz a ecoar nesta categoria.
+                Nenhuma partilha aprovada por aqui — nem toda estação tem palavras. Volte em breve
+                ou seja a primeira voz a ecoar nesta categoria.
               </p>
               {user ? (
                 <button
@@ -323,17 +344,14 @@ const AtriumCommunityPage: React.FC = () => {
                         className="inline-flex items-center gap-2 hover:text-foreground"
                       >
                         <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center font-bold text-foreground text-[11px]">
-                          {(p.author_name || 'A').charAt(0).toUpperCase()}
+                          {(p.author_name || "A").charAt(0).toUpperCase()}
                         </span>
-                        <span className="font-semibold text-foreground">
-                          {p.author_name}
-                        </span>
+                        <span className="font-semibold text-foreground">{p.author_name}</span>
                       </Link>
                       <span>·</span>
                       <span>{timeAgo(p.created_at)}</span>
                       <span className="ml-auto uppercase tracking-widest text-[10px] font-bold text-primary">
-                        {CATEGORIES.find((c) => c.id === p.category)?.label ||
-                          p.category}
+                        {CATEGORIES.find((c) => c.id === p.category)?.label || p.category}
                       </span>
                     </div>
                     {p.title && (
@@ -349,10 +367,9 @@ const AtriumCommunityPage: React.FC = () => {
                         <Heart className="w-3.5 h-3.5" /> {p.likes_count}
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <MessageCircle className="w-3.5 h-3.5" />{' '}
-                        {p.replies_count}
+                        <MessageCircle className="w-3.5 h-3.5" /> {p.replies_count}
                       </span>
-                      {p.status !== 'approved' && (
+                      {p.status !== "approved" && (
                         <span className="ml-auto text-[10px] uppercase tracking-widest text-amber-600">
                           Aguardando moderação
                         </span>
@@ -366,12 +383,12 @@ const AtriumCommunityPage: React.FC = () => {
           )}
         </section>
 
-        <SpaceFooter 
+        <SpaceFooter
           note="Onde dois ou três estiverem reunidos em meu nome, eu estarei no meio deles."
           links={[
-            { label: 'Átrio', to: '/', hint: 'Entrada do Mosteiro' },
-            { label: 'Biblioteca', to: '/biblioteca', hint: 'Mosteiro do Conhecimento' },
-            { label: 'Sacrário', to: '/oracao', hint: 'Silenciar e rezar' },
+            { label: "Átrio", to: "/", hint: "Entrada do Mosteiro" },
+            { label: "Biblioteca", to: "/biblioteca", hint: "Mosteiro do Conhecimento" },
+            { label: "Sacrário", to: "/oracao", hint: "Silenciar e rezar" },
           ]}
         />
       </SpaceLayout>

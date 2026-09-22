@@ -1,13 +1,13 @@
-import { Icons } from '@/constants';
-import React, { useState } from 'react';
+import { Icons } from "@/constants";
+import React, { useState } from "react";
 
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/db';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/db";
+import { motion, AnimatePresence } from "framer-motion";
 
 const FeedbackWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
   const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -18,30 +18,28 @@ const FeedbackWidget = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from('app_metrics')
-        .insert([
-          { 
-            metric_type: 'feedback', 
-            metadata: { 
-              content: feedback, 
-              rating,
-              url: window.location.href,
-              user_agent: navigator.userAgent
-            } 
-          }
-        ]);
+      const { error } = await supabase.from("app_metrics").insert([
+        {
+          metric_type: "feedback",
+          metadata: {
+            content: feedback,
+            rating,
+            url: window.location.href,
+            user_agent: navigator.userAgent,
+          },
+        },
+      ]);
 
       if (error) throw error;
       setSubmitted(true);
-      setFeedback('');
+      setFeedback("");
       setRating(0);
       setTimeout(() => {
         setSubmitted(false);
         setIsOpen(false);
       }, 3000);
     } catch (err) {
-      console.error('Error submitting feedback:', err);
+      console.error("Error submitting feedback:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -71,11 +69,15 @@ const FeedbackWidget = () => {
               <form onSubmit={handleSubmit} className="space-y-spacing-md">
                 <div className="flex items-center justify-between">
                   <h3 className="font-serif font-bold text-premium-lg">Deixe seu feedback</h3>
-                  <Button type="button" onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
+                  <Button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     <Icons.X className="w-spacing-md h-spacing-md" />
                   </Button>
                 </div>
-                
+
                 <p className="text-premium-xs text-muted-foreground font-serif italic mb-spacing-md">
                   Como podemos tornar o Cathedra mais acolhedor para você?
                 </p>
@@ -86,7 +88,7 @@ const FeedbackWidget = () => {
                       key={star}
                       type="button"
                       onClick={() => setRating(star)}
-                      className={`transition-all ${rating >= star ? 'text-secondary scale-110' : 'text-muted-foreground/30'}`}
+                      className={`transition-all ${rating >= star ? "text-secondary scale-110" : "text-muted-foreground/30"}`}
                     >
                       <Icons.Star className="w-spacing-lg h-spacing-lg fill-current" />
                     </Button>
@@ -100,12 +102,12 @@ const FeedbackWidget = () => {
                   className="w-full h-spacing-4xl px-spacing-md py-spacing-sm rounded-premium-full border border-border bg-background text-premium-sm focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none font-serif"
                 />
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting || (!feedback && rating === 0)}
                   className="w-full rounded-premium-full font-bold uppercase tracking-widest text-premium-xs h-spacing-2xl"
                 >
-                  {isSubmitting ? 'Enviando...' : 'Enviar Feedback'}
+                  {isSubmitting ? "Enviando..." : "Enviar Feedback"}
                 </Button>
               </form>
             )}
@@ -120,7 +122,7 @@ const FeedbackWidget = () => {
         className="flex items-center justify-center gap-spacing-xs p-spacing-sm lg:px-spacing-md lg:py-spacing-sm bg-background border border-border text-foreground rounded-premium-full shadow-premium-hover font-bold uppercase tracking-widest text-premium-xs min-w-spacing-0"
       >
         <Icons.MessageSquare className="w-spacing-md h-spacing-md shrink-0" />
-        <span className="hidden lg:inline">{isOpen ? 'Fechar' : 'Feedback'}</span>
+        <span className="hidden lg:inline">{isOpen ? "Fechar" : "Feedback"}</span>
       </motion.button>
     </div>
   );

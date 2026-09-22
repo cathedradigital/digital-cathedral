@@ -1,8 +1,8 @@
-import React from 'react';
-import { Icons } from '../../constants';
-import BibleVersePopover from './BibleVersePopover';
-import CatechismPopover from './CatechismPopover';
-import MagisteriumPopover from './MagisteriumPopover';
+import React from "react";
+import { Icons } from "../../constants";
+import BibleVersePopover from "./BibleVersePopover";
+import CatechismPopover from "./CatechismPopover";
+import MagisteriumPopover from "./MagisteriumPopover";
 
 interface BibleRef {
   abbr: string;
@@ -12,7 +12,7 @@ interface BibleRef {
 }
 
 interface CrossReferencePanelProps {
-  type: 'bible' | 'catechism';
+  type: "bible" | "catechism";
   cicParagraphs?: number[];
   bibleRefs?: BibleRef[];
   documents?: { id: string; name: string; label: string }[];
@@ -30,7 +30,7 @@ const CrossReferencePanel: React.FC<CrossReferencePanelProps> = ({
   onNavigateToBible,
   onNavigateToDoc,
 }) => {
-  const hasRefs = (cicParagraphs.length > 0 || bibleRefs.length > 0 || documents.length > 0);
+  const hasRefs = cicParagraphs.length > 0 || bibleRefs.length > 0 || documents.length > 0;
   if (!hasRefs) return null;
 
   return (
@@ -44,40 +44,24 @@ const CrossReferencePanel: React.FC<CrossReferencePanelProps> = ({
         </span>
       </div>
 
-      {type === 'bible' && cicParagraphs.length > 0 && (
+      {type === "bible" && cicParagraphs.length > 0 && (
         <div className="space-y-spacing-2xs">
-          <p className="text-premium-xs text-muted-foreground">Parágrafos do Catecismo relacionados:</p>
+          <p className="text-premium-xs text-muted-foreground">
+            Parágrafos do Catecismo relacionados:
+          </p>
           <div className="flex flex-wrap gap-spacing-2xs">
-            {cicParagraphs.map(p => (
-              <CatechismPopover
-                key={p}
-                paragraph={p}
-                onNavigate={onNavigateToCIC}
-              />
+            {cicParagraphs.map((p) => (
+              <CatechismPopover key={p} paragraph={p} onNavigate={onNavigateToCIC} />
             ))}
           </div>
         </div>
       )}
 
-      {type === 'bible' && documents.length > 0 && (
+      {type === "bible" && documents.length > 0 && (
         <div className="space-y-spacing-2xs">
-          <p className="text-premium-xs text-muted-foreground">Documentos do Magistério relacionados:</p>
-          <div className="flex flex-wrap gap-spacing-2xs">
-            {documents.map((doc, i) => (
-              <MagisteriumPopover
-                key={i}
-                documentName={doc.name}
-                label={doc.label}
-                onNavigate={() => onNavigateToDoc?.(doc.id)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {type === 'catechism' && documents.length > 0 && (
-        <div className="space-y-spacing-2xs">
-          <p className="text-premium-xs text-muted-foreground">Documentos do Magistério relacionados:</p>
+          <p className="text-premium-xs text-muted-foreground">
+            Documentos do Magistério relacionados:
+          </p>
           <div className="flex flex-wrap gap-spacing-2xs">
             {documents.map((doc, i) => (
               <MagisteriumPopover
@@ -91,7 +75,25 @@ const CrossReferencePanel: React.FC<CrossReferencePanelProps> = ({
         </div>
       )}
 
-      {type === 'catechism' && bibleRefs.length > 0 && (
+      {type === "catechism" && documents.length > 0 && (
+        <div className="space-y-spacing-2xs">
+          <p className="text-premium-xs text-muted-foreground">
+            Documentos do Magistério relacionados:
+          </p>
+          <div className="flex flex-wrap gap-spacing-2xs">
+            {documents.map((doc, i) => (
+              <MagisteriumPopover
+                key={i}
+                documentName={doc.name}
+                label={doc.label}
+                onNavigate={() => onNavigateToDoc?.(doc.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {type === "catechism" && bibleRefs.length > 0 && (
         <div className="space-y-spacing-2xs">
           <p className="text-premium-xs text-muted-foreground">Referências bíblicas:</p>
           <div className="flex flex-wrap gap-spacing-2xs">

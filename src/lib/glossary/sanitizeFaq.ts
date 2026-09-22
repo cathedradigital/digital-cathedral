@@ -34,43 +34,41 @@ export function sanitizeFaqItemsDetailed(raw: unknown, slug?: string): SanitizeF
   stats.total = raw.length;
   const items: FaqItem[] = [];
   const isDev =
-    typeof import.meta !== 'undefined' &&
-    (import.meta as any).env &&
-    (import.meta as any).env.DEV;
+    typeof import.meta !== "undefined" && (import.meta as any).env && (import.meta as any).env.DEV;
 
   raw.forEach((item, idx) => {
-    if (!item || typeof item !== 'object') {
+    if (!item || typeof item !== "object") {
       stats.dropped += 1;
       if (isDev) {
-        console.warn(`[Glossary/FAQ] item #${idx} inválido em "${slug ?? '?'}"`, item);
+        console.warn(`[Glossary/FAQ] item #${idx} inválido em "${slug ?? "?"}"`, item);
       }
       return;
     }
     const q = (item as any).question;
     const a = (item as any).answer;
-    if (typeof q !== 'string' || !q.trim()) {
+    if (typeof q !== "string" || !q.trim()) {
       stats.dropped += 1;
       if (isDev) {
-        console.warn(`[Glossary/FAQ] item #${idx} sem question em "${slug ?? '?'}"`, item);
+        console.warn(`[Glossary/FAQ] item #${idx} sem question em "${slug ?? "?"}"`, item);
       }
       return;
     }
 
-    let answer = '';
-    if (typeof a === 'string') {
+    let answer = "";
+    if (typeof a === "string") {
       answer = a;
     } else if (a !== undefined && a !== null) {
       stats.normalized += 1;
       if (isDev) {
         console.warn(
-          `[Glossary/FAQ] item #${idx} answer de tipo inválido (${typeof a}) em "${slug ?? '?'}" — normalizado para ''`,
+          `[Glossary/FAQ] item #${idx} answer de tipo inválido (${typeof a}) em "${slug ?? "?"}" — normalizado para ''`,
         );
       }
     } else if (a === undefined || a === null) {
       stats.normalized += 1;
       if (isDev) {
         console.warn(
-          `[Glossary/FAQ] item #${idx} answer ausente em "${slug ?? '?'}" — normalizado para ''`,
+          `[Glossary/FAQ] item #${idx} answer ausente em "${slug ?? "?"}" — normalizado para ''`,
         );
       }
     }
@@ -81,7 +79,7 @@ export function sanitizeFaqItemsDetailed(raw: unknown, slug?: string): SanitizeF
 
   if (isDev && (stats.dropped > 0 || stats.normalized > 0)) {
     console.info(
-      `[Glossary/FAQ] sanitize "${slug ?? '?'}" — total=${stats.total} kept=${stats.kept} dropped=${stats.dropped} normalized=${stats.normalized}`,
+      `[Glossary/FAQ] sanitize "${slug ?? "?"}" — total=${stats.total} kept=${stats.kept} dropped=${stats.dropped} normalized=${stats.normalized}`,
     );
   }
 
@@ -103,9 +101,9 @@ export function filterFaqForJsonLd(items: FaqItem[] | null | undefined): FaqItem
   return items.filter(
     (it) =>
       !!it &&
-      typeof it.question === 'string' &&
+      typeof it.question === "string" &&
       it.question.trim().length > 0 &&
-      typeof it.answer === 'string' &&
+      typeof it.answer === "string" &&
       it.answer.trim().length > 0,
   );
 }
@@ -114,20 +112,20 @@ export function filterFaqForJsonLd(items: FaqItem[] | null | undefined): FaqItem
 /* JSON-LD builder + validação Zod                                      */
 /* -------------------------------------------------------------------- */
 
-import { z } from 'zod';
-import { reportSanitizationIssue, getSanitizePolicy } from './sanitizePolicy';
+import { z } from "zod";
+import { reportSanitizationIssue, getSanitizePolicy } from "./sanitizePolicy";
 
 const nonEmptyString = z.string().trim().min(1);
 
 export const FaqPageJsonLdSchema = z.object({
-  '@type': z.literal('FAQPage'),
+  "@type": z.literal("FAQPage"),
   mainEntity: z
     .array(
       z.object({
-        '@type': z.literal('Question'),
+        "@type": z.literal("Question"),
         name: nonEmptyString,
         acceptedAnswer: z.object({
-          '@type': z.literal('Answer'),
+          "@type": z.literal("Answer"),
           text: nonEmptyString,
         }),
       }),
@@ -161,13 +159,13 @@ export function buildFaqPageJsonLd(items: FaqItem[] | null | undefined): FaqPage
   if (eligible.length === 0) return store(null);
 
   const candidate = {
-    '@type': 'FAQPage' as const,
+    "@type": "FAQPage" as const,
     mainEntity: eligible
       .map((f) => ({
-        '@type': 'Question' as const,
+        "@type": "Question" as const,
         name: sanitizeAnswerForJsonLd(f.question),
         acceptedAnswer: {
-          '@type': 'Answer' as const,
+          "@type": "Answer" as const,
           text: sanitizeAnswerForJsonLd(f.answer),
         },
       }))
@@ -178,21 +176,17 @@ export function buildFaqPageJsonLd(items: FaqItem[] | null | undefined): FaqPage
   const parsed = FaqPageJsonLdSchema.safeParse(candidate);
   if (!parsed.success) {
     const details = parsed.error.issues.map((iss) => ({
-      path: iss.path.join('.'),
+      path: iss.path.join("."),
       code: iss.code,
       message: iss.message,
     }));
     // Política por ambiente controla severidade — mas a rejeição dos campos
     // obrigatórios do FAQPage é SEMPRE garantida (retorna null).
-    reportSanitizationIssue(
-      'Glossary/FAQ',
-      'JSON-LD FAQPage rejeitado pelo schema Zod',
-      {
-        totalIssues: details.length,
-        firstIssues: details.slice(0, 10),
-        questionCount: candidate.mainEntity.length,
-      },
-    );
+    reportSanitizationIssue("Glossary/FAQ", "JSON-LD FAQPage rejeitado pelo schema Zod", {
+      totalIssues: details.length,
+      firstIssues: details.slice(0, 10),
+      questionCount: candidate.mainEntity.length,
+    });
     return store(null);
   }
   return store(parsed.data);
@@ -210,7 +204,7 @@ export interface FaqJsonLdValidation {
   /** Versão da SanitizePolicy que produziu esse resultado. */
   policyVersion: string;
   /** Ambiente resolvido (dev/prod/test). */
-  policyEnv: 'dev' | 'prod' | 'test';
+  policyEnv: "dev" | "prod" | "test";
   /** Instante em que a validação rodou (ISO). */
   appliedAt: string;
 }
@@ -229,26 +223,36 @@ export function validateFaqJsonLdLive(items: FaqItem[] | null | undefined): FaqJ
     if (!eligible.includes(it)) droppedIndices.push(i);
   });
   const candidate = {
-    '@type': 'FAQPage' as const,
+    "@type": "FAQPage" as const,
     mainEntity: eligible.map((f) => ({
-      '@type': 'Question' as const,
+      "@type": "Question" as const,
       name: sanitizeAnswerForJsonLd(f.question),
       acceptedAnswer: {
-        '@type': 'Answer' as const,
+        "@type": "Answer" as const,
         text: sanitizeAnswerForJsonLd(f.answer),
       },
     })),
   };
   if (candidate.mainEntity.length === 0) {
-    return { ok: false, jsonLd: null, issues: [{ path: 'mainEntity', code: 'empty', message: 'nenhum item elegível' }], droppedIndices, ...meta };
-  }
-  const parsed = FaqPageJsonLdSchema.safeParse(candidate);
-  if (!parsed.success) {
-    trackEvent('glossary_faq_sanitized', { count: candidate.mainEntity.length });
     return {
       ok: false,
       jsonLd: null,
-      issues: parsed.error.issues.map((i) => ({ path: i.path.join('.'), code: i.code, message: i.message })),
+      issues: [{ path: "mainEntity", code: "empty", message: "nenhum item elegível" }],
+      droppedIndices,
+      ...meta,
+    };
+  }
+  const parsed = FaqPageJsonLdSchema.safeParse(candidate);
+  if (!parsed.success) {
+    trackEvent("glossary_faq_sanitized", { count: candidate.mainEntity.length });
+    return {
+      ok: false,
+      jsonLd: null,
+      issues: parsed.error.issues.map((i) => ({
+        path: i.path.join("."),
+        code: i.code,
+        message: i.message,
+      })),
       droppedIndices,
       ...meta,
     };
@@ -276,29 +280,34 @@ export interface FaqSanitizationDiff {
 }
 
 function collectRemoved(raw: unknown): string[] {
-  if (typeof raw !== 'string') return [];
+  if (typeof raw !== "string") return [];
   const hits: string[] = [];
-  for (const rx of [DANGEROUS_TAG_BLOCK, DANGEROUS_TAG_LOOSE, INLINE_EVENT_HANDLER, DANGEROUS_URI]) {
+  for (const rx of [
+    DANGEROUS_TAG_BLOCK,
+    DANGEROUS_TAG_LOOSE,
+    INLINE_EVENT_HANDLER,
+    DANGEROUS_URI,
+  ]) {
     const re = new RegExp(rx.source, rx.flags);
     const matches = raw.match(re);
     if (matches) hits.push(...matches);
   }
-  if (/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(raw)) hits.push('[control-chars]');
+  if (/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(raw)) hits.push("[control-chars]");
   return hits;
 }
 
 export function explainFaqSanitization(rawList: unknown): FaqSanitizationDiff[] {
   if (!Array.isArray(rawList)) return [];
   return rawList.map((item, index) => {
-    const rawQuestion = (item && typeof item === 'object') ? (item as any).question : undefined;
-    const rawAnswer = (item && typeof item === 'object') ? (item as any).answer : undefined;
+    const rawQuestion = item && typeof item === "object" ? (item as any).question : undefined;
+    const rawAnswer = item && typeof item === "object" ? (item as any).answer : undefined;
     const sanitizedQuestion = sanitizeAnswerForJsonLd(rawQuestion);
     const sanitizedAnswer = sanitizeAnswerForJsonLd(rawAnswer);
     const dropped = sanitizedQuestion.length === 0 || sanitizedAnswer.length === 0;
     const reason = !sanitizedQuestion
-      ? 'question vazia após sanitização'
+      ? "question vazia após sanitização"
       : !sanitizedAnswer
-        ? 'answer vazia após sanitização'
+        ? "answer vazia após sanitização"
         : undefined;
     return {
       index,
@@ -306,8 +315,8 @@ export function explainFaqSanitization(rawList: unknown): FaqSanitizationDiff[] 
       rawAnswer,
       sanitizedQuestion,
       sanitizedAnswer,
-      questionChanged: typeof rawQuestion === 'string' && rawQuestion !== sanitizedQuestion,
-      answerChanged: typeof rawAnswer === 'string' && rawAnswer !== sanitizedAnswer,
+      questionChanged: typeof rawQuestion === "string" && rawQuestion !== sanitizedQuestion,
+      answerChanged: typeof rawAnswer === "string" && rawAnswer !== sanitizedAnswer,
       removedFromQuestion: collectRemoved(rawQuestion),
       removedFromAnswer: collectRemoved(rawAnswer),
       dropped,
@@ -316,7 +325,6 @@ export function explainFaqSanitization(rawList: unknown): FaqSanitizationDiff[] 
   });
 }
 
-
 /* -------------------------------------------------------------------- */
 /* Sanitização de HTML e caracteres de controle para JSON-LD            */
 /* -------------------------------------------------------------------- */
@@ -324,9 +332,11 @@ export function explainFaqSanitization(rawList: unknown): FaqSanitizationDiff[] 
 // Tags perigosas cujos conteúdos devem ser DESCARTADOS por inteiro
 // (script/style/iframe podem executar código ou exfiltrar dados mesmo escapados
 // se um consumidor decidir renderizar como HTML por engano).
-const DANGEROUS_TAG_BLOCK = /<\s*(script|style|iframe|object|embed|noscript|template)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi;
+const DANGEROUS_TAG_BLOCK =
+  /<\s*(script|style|iframe|object|embed|noscript|template)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi;
 // Também remove tags "solitárias" perigosas sem fechamento
-const DANGEROUS_TAG_LOOSE = /<\s*\/?\s*(script|style|iframe|object|embed|noscript|template|link|meta|base|form|input|button|svg|math)\b[^>]*>/gi;
+const DANGEROUS_TAG_LOOSE =
+  /<\s*\/?\s*(script|style|iframe|object|embed|noscript|template|link|meta|base|form|input|button|svg|math)\b[^>]*>/gi;
 // Handlers inline (onerror=, onclick=, etc.) — mesmo após escape, evitamos deixar padrões suspeitos
 const INLINE_EVENT_HANDLER = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 // javascript:/data: URIs em atributos href/src
@@ -336,11 +346,11 @@ const CONTROL_CHARS = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;
 
 function escapeHtmlEntities(input: string): string {
   return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 /**
@@ -358,14 +368,17 @@ function escapeHtmlEntities(input: string): string {
  * por buscadores e por qualquer renderer que trate o conteúdo como HTML.
  */
 export function sanitizeAnswerForJsonLd(input: unknown): string {
-  if (typeof input !== 'string') return '';
+  if (typeof input !== "string") return "";
   let out = input;
-  out = out.replace(DANGEROUS_TAG_BLOCK, ' ');
-  out = out.replace(DANGEROUS_TAG_LOOSE, ' ');
-  out = out.replace(INLINE_EVENT_HANDLER, '');
-  out = out.replace(DANGEROUS_URI, '');
-  out = out.replace(CONTROL_CHARS, '');
+  out = out.replace(DANGEROUS_TAG_BLOCK, " ");
+  out = out.replace(DANGEROUS_TAG_LOOSE, " ");
+  out = out.replace(INLINE_EVENT_HANDLER, "");
+  out = out.replace(DANGEROUS_URI, "");
+  out = out.replace(CONTROL_CHARS, "");
   out = escapeHtmlEntities(out);
-  out = out.replace(/[ \t]+/g, ' ').replace(/\s+\n/g, '\n').trim();
+  out = out
+    .replace(/[ \t]+/g, " ")
+    .replace(/\s+\n/g, "\n")
+    .trim();
   return out;
 }

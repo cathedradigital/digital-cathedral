@@ -12,36 +12,36 @@
  *
  * Conteúdo das 14 estações permanece intocado.
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useSearchParams } from '@/lib/rr-compat';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { useSearchParams } from "@/lib/rr-compat";
 
-import { Icons } from '../../constants';
-import { Cross } from 'lucide-react';
-import PrayerPortalStandalone from '@/components/prayer/PrayerPortalStandalone';
-import { Button } from '@/components/ui/button';
-import ShareButton from './ShareButton';
-import { useDevotionalProgress } from '@/hooks/useDevotionalProgress';
-import { useDevotionalReader } from '@/components/mobile/DevotionalReaderContext';
-import PrayerModeSelector, { type PrayerMode } from '@/components/prayer/PrayerModeSelector';
-import PrayerAudioPlayer from '@/components/prayer/PrayerAudioPlayer';
-import PrayerFavoriteButton from '@/components/prayer/PrayerFavoriteButton';
-import ReaderContinuation from '@/components/shared/ReaderContinuation';
-import { resolvePrayerAutoNexus } from '@/core/knowledge/adapters/prayerAutoNexus';
-import { usePrayerAutoAdvance } from '@/hooks/usePrayerAutoAdvance';
-import { VIA_SACRA_STATIONS } from '@/data/viaSacraStations';
-import StationContemplation from '@/components/prayer/viasacra/StationContemplation';
-import StationClosingCard from '@/components/prayer/viasacra/StationClosingCard';
-import FinalClosingCard from '@/components/prayer/viasacra/FinalClosingCard';
+import { Icons } from "../../constants";
+import { Cross } from "lucide-react";
+import PrayerPortalStandalone from "@/components/prayer/PrayerPortalStandalone";
+import { Button } from "@/components/ui/button";
+import ShareButton from "./ShareButton";
+import { useDevotionalProgress } from "@/hooks/useDevotionalProgress";
+import { useDevotionalReader } from "@/components/mobile/DevotionalReaderContext";
+import PrayerModeSelector, { type PrayerMode } from "@/components/prayer/PrayerModeSelector";
+import PrayerAudioPlayer from "@/components/prayer/PrayerAudioPlayer";
+import PrayerFavoriteButton from "@/components/prayer/PrayerFavoriteButton";
+import ReaderContinuation from "@/components/shared/ReaderContinuation";
+import { resolvePrayerAutoNexus } from "@/core/knowledge/adapters/prayerAutoNexus";
+import { usePrayerAutoAdvance } from "@/hooks/usePrayerAutoAdvance";
+import { VIA_SACRA_STATIONS } from "@/data/viaSacraStations";
+import StationContemplation from "@/components/prayer/viasacra/StationContemplation";
+import StationClosingCard from "@/components/prayer/viasacra/StationClosingCard";
+import FinalClosingCard from "@/components/prayer/viasacra/FinalClosingCard";
 
-const VIA_METHOD_LABEL: Record<'landing' | 'journey', string> = {
-  landing: 'contemplativo',
-  journey: 'guiado',
+const VIA_METHOD_LABEL: Record<"landing" | "journey", string> = {
+  landing: "contemplativo",
+  journey: "guiado",
 };
 
-const COMPLETED_LS_KEY = 'cathedra:devotional-progress:viacrucis:completed';
-const MODE_LS_KEY = 'cathedra:devotional-progress:viacrucis:mode';
-const INTERVAL_LS_KEY = 'cathedra:devotional-progress:viacrucis:interval';
+const COMPLETED_LS_KEY = "cathedra:devotional-progress:viacrucis:completed";
+const MODE_LS_KEY = "cathedra:devotional-progress:viacrucis:mode";
+const INTERVAL_LS_KEY = "cathedra:devotional-progress:viacrucis:interval";
 
 const STATIONS = VIA_SACRA_STATIONS;
 
@@ -69,16 +69,20 @@ function writeCompleted(set: Set<number>) {
 function readMode(): PrayerMode {
   try {
     const v = localStorage.getItem(MODE_LS_KEY);
-    if (v === 'guided' || v === 'contemplative' || v === 'auto') return v;
-  } catch { /* ignore */ }
-  return 'guided';
+    if (v === "guided" || v === "contemplative" || v === "auto") return v;
+  } catch {
+    /* ignore */
+  }
+  return "guided";
 }
 
 function readInterval(): number {
   try {
     const n = Number(localStorage.getItem(INTERVAL_LS_KEY));
     if (Number.isFinite(n) && n >= 15000 && n <= 300000) return n;
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return 45000;
 }
 
@@ -89,7 +93,7 @@ const ViaCrucis: React.FC = () => {
   const [currentStation, setCurrentStation] = useState(0);
   const [isJourney, setIsJourney] = useState(false);
   const [showFinalClosing, setShowFinalClosing] = useState(false);
-  const { progress, loaded, save } = useDevotionalProgress('viacrucis');
+  const { progress, loaded, save } = useDevotionalProgress("viacrucis");
   const { setIndex, setFavorite } = useDevotionalReader();
 
   // Marcação de estações (persistida em localStorage — não altera o banco).
@@ -109,31 +113,39 @@ const ViaCrucis: React.FC = () => {
   const [autoIntervalMs, setAutoIntervalMs] = useState<number>(() => readInterval());
   const setMode = useCallback((m: PrayerMode) => {
     setModeState(m);
-    try { localStorage.setItem(MODE_LS_KEY, m); } catch { /* ignore */ }
+    try {
+      localStorage.setItem(MODE_LS_KEY, m);
+    } catch {
+      /* ignore */
+    }
   }, []);
   const handleIntervalChange = useCallback((ms: number) => {
     setAutoIntervalMs(ms);
-    try { localStorage.setItem(INTERVAL_LS_KEY, String(ms)); } catch { /* ignore */ }
+    try {
+      localStorage.setItem(INTERVAL_LS_KEY, String(ms));
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // Modo Contemplativo = tela limpa (foco absoluto).
-  const contemplative = mode === 'contemplative';
+  const contemplative = mode === "contemplative";
 
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const didFocusHeadingRef = useRef(false);
-  const [restoreAnnouncement, setRestoreAnnouncement] = useState('');
+  const [restoreAnnouncement, setRestoreAnnouncement] = useState("");
 
   // Restauro de posição.
   useEffect(() => {
     if (loaded && progress.step != null) {
       setCurrentStation(Math.max(0, Math.min(STATIONS.length - 1, progress.step - 1)));
-      if (progress.section === 'station') setIsJourney(true);
+      if (progress.section === "station") setIsJourney(true);
     }
   }, [loaded, progress.step, progress.section]);
 
   const focusHeading = useCallback(
-    (reason: 'hash' | 'history' | 'bfcache' | 'popstate') => {
-      if (typeof window === 'undefined') return;
+    (reason: "hash" | "history" | "bfcache" | "popstate") => {
+      if (typeof window === "undefined") return;
       const el = headingRef.current;
       if (!el) return;
       if (document.activeElement === el) {
@@ -142,12 +154,12 @@ const ViaCrucis: React.FC = () => {
       }
       el.focus();
       didFocusHeadingRef.current = true;
-      if (reason !== 'hash') {
+      if (reason !== "hash") {
         const method = isJourney ? VIA_METHOD_LABEL.journey : VIA_METHOD_LABEL.landing;
         const state = isJourney
           ? `estação ${currentStation + 1} de ${STATIONS.length}`
-          : 'introdução';
-        setRestoreAnnouncement('');
+          : "introdução";
+        setRestoreAnnouncement("");
         window.requestAnimationFrame(() => {
           setRestoreAnnouncement(`Via Sacra restaurada no modo ${method}, ${state}.`);
         });
@@ -157,57 +169,56 @@ const ViaCrucis: React.FC = () => {
   );
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (!loaded) return;
     if (didFocusHeadingRef.current) return;
 
-    const hasHash = window.location.hash === '#via-sacra';
-    const navEntry = performance.getEntriesByType('navigation')[0] as
-      | PerformanceNavigationTiming
-      | undefined;
-    const isHistoryRestore = navEntry?.type === 'back_forward';
+    const hasHash = window.location.hash === "#via-sacra";
+    const navEntry = performance.getEntriesByType("navigation")[0] as
+      PerformanceNavigationTiming | undefined;
+    const isHistoryRestore = navEntry?.type === "back_forward";
 
     if (!hasHash && !isHistoryRestore) return;
 
     const raf = window.requestAnimationFrame(() => {
-      focusHeading(hasHash ? 'hash' : 'history');
+      focusHeading(hasHash ? "hash" : "history");
       if (hasHash) {
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
       }
     });
     return () => window.cancelAnimationFrame(raf);
   }, [loaded, focusHeading]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const onPopstate = () => {
       didFocusHeadingRef.current = false;
-      window.requestAnimationFrame(() => focusHeading('popstate'));
+      window.requestAnimationFrame(() => focusHeading("popstate"));
     };
     const onPageshow = (event: PageTransitionEvent) => {
       if (!event.persisted) return;
       didFocusHeadingRef.current = false;
-      window.requestAnimationFrame(() => focusHeading('bfcache'));
+      window.requestAnimationFrame(() => focusHeading("bfcache"));
     };
-    window.addEventListener('popstate', onPopstate);
-    window.addEventListener('pageshow', onPageshow);
+    window.addEventListener("popstate", onPopstate);
+    window.addEventListener("pageshow", onPageshow);
     return () => {
-      window.removeEventListener('popstate', onPopstate);
-      window.removeEventListener('pageshow', onPageshow);
+      window.removeEventListener("popstate", onPopstate);
+      window.removeEventListener("pageshow", onPageshow);
     };
   }, [focusHeading]);
 
   // Persistência de posição.
   useEffect(() => {
     if (isJourney) {
-      save({ section: 'station', step: currentStation + 1, label: STATIONS[currentStation].title });
+      save({ section: "station", step: currentStation + 1, label: STATIONS[currentStation].title });
     }
   }, [currentStation, isJourney, save]);
 
   // Integração mobile shell (favorito + sumário) — inalterado.
   useEffect(() => {
     setIndex(
-      'Estações da Via Sacra',
+      "Estações da Via Sacra",
       STATIONS.map((s, i) => ({
         id: String(s.num),
         label: `${s.num}. ${s.title}`,
@@ -221,11 +232,11 @@ const ViaCrucis: React.FC = () => {
     );
     const cur = STATIONS[currentStation];
     setFavorite({
-      contentType: 'viacrucis_station',
+      contentType: "viacrucis_station",
       contentId: `station-${cur.num}`,
       title: `Via Crucis — ${cur.num}ª Estação: ${cur.title}`,
       content: cur.prayer,
-      url: '/viacrucis',
+      url: "/viacrucis",
       metadata: { station: cur.num, scripture: cur.scripture },
     });
   }, [currentStation, isJourney, setIndex, setFavorite]);
@@ -245,7 +256,7 @@ const ViaCrucis: React.FC = () => {
 
   // Modo Automático — timer com auto-avanço (reinicia a cada estação).
   usePrayerAutoAdvance({
-    enabled: isJourney && mode === 'auto',
+    enabled: isJourney && mode === "auto",
     intervalMs: autoIntervalMs,
     onAdvance: goNext,
     key: `station-${currentStation}-${autoIntervalMs}`,
@@ -253,12 +264,15 @@ const ViaCrucis: React.FC = () => {
 
   const station = STATIONS[currentStation];
   const totalCompleted = completed.size;
-  const progressPct = useMemo(() => Math.round((totalCompleted / STATIONS.length) * 100), [totalCompleted]);
+  const progressPct = useMemo(
+    () => Math.round((totalCompleted / STATIONS.length) * 100),
+    [totalCompleted],
+  );
 
   /* --------------------------------- Landing -------------------------------- */
   if (!isJourney) {
     // B.2.5.b — Portal de Oração (limiar contemplativo antes do reader).
-    const enterRequested = searchParams.get('enter') === '1';
+    const enterRequested = searchParams.get("enter") === "1";
     if (!enterRequested) {
       const first = STATIONS[0];
       return (
@@ -271,16 +285,16 @@ const ViaCrucis: React.FC = () => {
           theme="passion"
           accentIcon={Cross}
           highlight={{
-            eyebrow: 'Estação inicial',
+            eyebrow: "Estação inicial",
             title: first.title,
             meta: [
-              { label: 'Escritura', value: first.scripture, icon: 'book' },
-              { label: 'Estações', value: '14 estações · caminho da Cruz', icon: 'sparkles' },
+              { label: "Escritura", value: first.scripture, icon: "book" },
+              { label: "Estações", value: "14 estações · caminho da Cruz", icon: "sparkles" },
             ],
           }}
           onEnter={() => {
             const next = new URLSearchParams(searchParams);
-            next.set('enter', '1');
+            next.set("enter", "1");
             setSearchParams(next, { replace: true });
             setIsJourney(true);
           }}
@@ -313,7 +327,9 @@ const ViaCrucis: React.FC = () => {
         >
           <div className="inline-flex items-center gap-spacing-xs px-spacing-md py-spacing-2xs bg-primary/5 border border-primary/10 rounded-premium">
             <Icons.Cross className="w-spacing-md h-spacing-md text-primary" />
-            <span className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary">Via Dolorosa</span>
+            <span className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary">
+              Via Dolorosa
+            </span>
           </div>
           <h1
             id="via-sacra-heading"
@@ -349,8 +365,8 @@ const ViaCrucis: React.FC = () => {
               Contexto
             </p>
             <p className="text-premium-sm text-muted-foreground leading-relaxed">
-              Devoção medieval consolidada pelos franciscanos, ligada à peregrinação a Jerusalém.
-              A Igreja recomenda-a especialmente nas sextas-feiras da Quaresma.
+              Devoção medieval consolidada pelos franciscanos, ligada à peregrinação a Jerusalém. A
+              Igreja recomenda-a especialmente nas sextas-feiras da Quaresma.
             </p>
           </div>
           <div>
@@ -359,7 +375,8 @@ const ViaCrucis: React.FC = () => {
             </p>
             <p className="text-premium-sm text-muted-foreground leading-relaxed">
               Percorra as 14 estações em silêncio interior. A cada estação, escute a Escritura,
-              contemple o mistério e ofereça a oração final unindo os seus sofrimentos aos de Cristo.
+              contemple o mistério e ofereça a oração final unindo os seus sofrimentos aos de
+              Cristo.
             </p>
           </div>
           <div className="pt-spacing-xs flex flex-col items-start gap-spacing-sm">
@@ -399,7 +416,7 @@ const ViaCrucis: React.FC = () => {
             data-testid="via-sacra-start"
           >
             <Icons.Play className="w-spacing-md h-spacing-md fill-current" />
-            {totalCompleted > 0 ? 'Continuar Via Sacra' : 'Iniciar Via Sacra'}
+            {totalCompleted > 0 ? "Continuar Via Sacra" : "Iniciar Via Sacra"}
           </Button>
         </div>
 
@@ -409,21 +426,30 @@ const ViaCrucis: React.FC = () => {
             return (
               <Button
                 key={i}
-                onClick={() => { setCurrentStation(i); setIsJourney(true); }}
+                onClick={() => {
+                  setCurrentStation(i);
+                  setIsJourney(true);
+                }}
                 data-testid={`via-sacra-station-tile-${s.num}`}
-                aria-label={`Estação ${s.num}: ${s.title}${done ? ' (concluída)' : ''}`}
+                aria-label={`Estação ${s.num}: ${s.title}${done ? " (concluída)" : ""}`}
                 className="text-left p-spacing-lg rounded-premium-full bg-card border border-border hover:border-primary/40 hover:shadow-premium-hover hover:-translate-y-1 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-spacing-0 right-0 p-spacing-lg opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
                   <Icons.Cross className="w-spacing-4xl h-spacing-4xl -mr-spacing-xl -mt-spacing-xl rotate-12" />
                 </div>
                 <div className="relative z-10 flex items-center gap-spacing-md">
-                  <div className={`w-spacing-2xl h-spacing-2xl rounded-premium flex items-center justify-center font-black text-premium-lg shrink-0 border transition-colors ${done ? 'bg-primary text-primary-foreground border-primary' : 'bg-primary/5 text-primary border-primary/10 group-hover:bg-primary group-hover:text-primary-foreground'}`}>
+                  <div
+                    className={`w-spacing-2xl h-spacing-2xl rounded-premium flex items-center justify-center font-black text-premium-lg shrink-0 border transition-colors ${done ? "bg-primary text-primary-foreground border-primary" : "bg-primary/5 text-primary border-primary/10 group-hover:bg-primary group-hover:text-primary-foreground"}`}
+                  >
                     {done ? <Icons.Check className="w-spacing-md h-spacing-md" /> : s.num}
                   </div>
                   <div>
-                    <p className="font-serif font-bold text-premium-lg text-foreground group-hover:text-primary transition-colors leading-tight">{s.title}</p>
-                    <p className="text-premium-xs text-muted-foreground mt-spacing-2xs uppercase tracking-widest font-black">{s.scripture}</p>
+                    <p className="font-serif font-bold text-premium-lg text-foreground group-hover:text-primary transition-colors leading-tight">
+                      {s.title}
+                    </p>
+                    <p className="text-premium-xs text-muted-foreground mt-spacing-2xs uppercase tracking-widest font-black">
+                      {s.scripture}
+                    </p>
                   </div>
                 </div>
               </Button>
@@ -439,8 +465,8 @@ const ViaCrucis: React.FC = () => {
   const isStationDone = completed.has(station.num);
 
   const containerCls = contemplative
-    ? 'max-w-2xl mx-auto py-spacing-3xl px-spacing-md text-center animate-in fade-in duration-500'
-    : 'max-w-4xl mx-auto space-y-spacing-xl pb-spacing-2xl animate-in fade-in duration-700';
+    ? "max-w-2xl mx-auto py-spacing-3xl px-spacing-md text-center animate-in fade-in duration-500"
+    : "max-w-4xl mx-auto space-y-spacing-xl pb-spacing-2xl animate-in fade-in duration-700";
 
   return (
     <div className={containerCls} data-testid="via-sacra-journey" data-mode={mode}>
@@ -457,12 +483,21 @@ const ViaCrucis: React.FC = () => {
       {/* Cabeçalho de navegação — oculto no modo contemplativo. */}
       {!contemplative && (
         <div className="flex items-center justify-between px-spacing-xs">
-          <Button variant="outline" size="sm" onClick={() => setIsJourney(false)} className="rounded-premium-full shadow-premium-md gap-spacing-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsJourney(false)}
+            className="rounded-premium-full shadow-premium-md gap-spacing-xs"
+          >
             <Icons.ArrowLeft className="w-spacing-md h-spacing-md text-foreground" />
-            <span className="text-premium-xs font-black uppercase tracking-widest hidden md:block">Voltar</span>
+            <span className="text-premium-xs font-black uppercase tracking-widest hidden md:block">
+              Voltar
+            </span>
           </Button>
           <div className="text-center">
-            <p className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/60 mb-spacing-2xs">Via Sacra</p>
+            <p className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/60 mb-spacing-2xs">
+              Via Sacra
+            </p>
             <span className="text-premium-sm font-serif font-bold text-foreground">
               Estação {currentStation + 1} de 14
             </span>
@@ -482,7 +517,10 @@ const ViaCrucis: React.FC = () => {
           aria-label={`Progresso: estação ${currentStation + 1} de ${STATIONS.length}`}
         >
           {STATIONS.map((_, i) => (
-            <div key={i} className={`flex-1 h-spacing-2xs rounded-premium-full transition-all duration-500 ${completed.has(STATIONS[i].num) || i <= currentStation ? 'bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]' : 'bg-border'}`} />
+            <div
+              key={i}
+              className={`flex-1 h-spacing-2xs rounded-premium-full transition-all duration-500 ${completed.has(STATIONS[i].num) || i <= currentStation ? "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.3)]" : "bg-border"}`}
+            />
           ))}
         </div>
       )}
@@ -509,19 +547,23 @@ const ViaCrucis: React.FC = () => {
             />
             <span
               data-testid={`via-sacra-station-status-${station.num}`}
-              className={`text-premium-xs uppercase tracking-widest font-black ${isStationDone ? 'text-primary' : 'text-muted-foreground/60'}`}
+              className={`text-premium-xs uppercase tracking-widest font-black ${isStationDone ? "text-primary" : "text-muted-foreground/60"}`}
               aria-live="polite"
             >
-              {isStationDone ? 'Concluída' : 'Em oração'}
+              {isStationDone ? "Concluída" : "Em oração"}
             </span>
           </div>
         </div>
       )}
 
       {/* Corpo da estação */}
-      <div className={contemplative
-        ? 'space-y-spacing-2xl'
-        : 'bg-card border border-border rounded-[3rem] p-spacing-xl md:p-spacing-3xl space-y-spacing-2xl shadow-premium-hover shadow-black/[0.02] relative overflow-hidden'}>
+      <div
+        className={
+          contemplative
+            ? "space-y-spacing-2xl"
+            : "bg-card border border-border rounded-[3rem] p-spacing-xl md:p-spacing-3xl space-y-spacing-2xl shadow-premium-hover shadow-black/[0.02] relative overflow-hidden"
+        }
+      >
         {!contemplative && (
           <div className="absolute top-spacing-0 right-0 p-spacing-2xl opacity-[0.02]">
             <Icons.Cross className="w-spacing-4xl h-spacing-4xl -mr-spacing-3xl -mt-spacing-3xl rotate-12" />
@@ -555,7 +597,9 @@ const ViaCrucis: React.FC = () => {
           {/* Passagem bíblica expandida — só fora do contemplativo */}
           {!contemplative && (
             <div className="text-center space-y-spacing-xs">
-              <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40">Escritura</h3>
+              <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40">
+                Escritura
+              </h3>
               <p className="font-serif text-premium-base leading-relaxed text-foreground/85 italic max-w-[54ch] mx-auto">
                 {station.biblicalPassage}
               </p>
@@ -564,20 +608,28 @@ const ViaCrucis: React.FC = () => {
 
           <div className="space-y-spacing-md">
             {!contemplative && (
-              <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40 text-center">Meditação</h3>
+              <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40 text-center">
+                Meditação
+              </h3>
             )}
             <p className="text-premium-xl md:text-premium-2xl text-foreground/90 leading-relaxed font-serif text-center italic">
               "{station.meditation}"
             </p>
           </div>
 
-          <div className={contemplative
-            ? ''
-            : 'bg-primary/5 rounded-[2.5rem] p-spacing-xl md:p-spacing-2xl border border-primary/10 relative'}>
+          <div
+            className={
+              contemplative
+                ? ""
+                : "bg-primary/5 rounded-[2.5rem] p-spacing-xl md:p-spacing-2xl border border-primary/10 relative"
+            }
+          >
             {!contemplative && (
               <>
                 <Icons.Flame className="absolute -top-spacing-sm -right-spacing-sm w-spacing-xl h-spacing-xl text-primary/60 rotate-12" />
-                <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40 text-center mb-spacing-lg">Oração</h3>
+                <h3 className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary/40 text-center mb-spacing-lg">
+                  Oração
+                </h3>
               </>
             )}
             <p className="text-premium-lg text-foreground/80 leading-relaxed font-serif text-center">
@@ -594,8 +646,12 @@ const ViaCrucis: React.FC = () => {
           {!contemplative && (
             <>
               <div className="text-center space-y-spacing-xs pt-spacing-md opacity-60">
-                <p className="text-premium-sm font-serif font-bold text-foreground">V. Adoramus te, Christe, et benedicimus tibi.</p>
-                <p className="text-premium-sm font-serif italic text-muted-foreground">R. Quia per sanctam Crucem tuam redemisti mundum.</p>
+                <p className="text-premium-sm font-serif font-bold text-foreground">
+                  V. Adoramus te, Christe, et benedicimus tibi.
+                </p>
+                <p className="text-premium-sm font-serif italic text-muted-foreground">
+                  R. Quia per sanctam Crucem tuam redemisti mundum.
+                </p>
               </div>
 
               <div className="flex justify-center pt-spacing-xs">
@@ -660,26 +716,28 @@ const ViaCrucis: React.FC = () => {
       </div>
 
       {/* Continuidade — só na última estação, fora do modo contemplativo. */}
-      {isLast && !contemplative && (() => {
-        const nexus = resolvePrayerAutoNexus({
-          slug: 'via-sacra',
-          title: 'Via Sacra',
-          category: 'via-sacra',
-        });
-        return (
-          <div className="mt-spacing-2xl" data-testid="via-sacra-continuation">
-            <ReaderContinuation
-              context={{
-                kind: 'prayer',
-                id: 'via-sacra',
-                graphNodeId: nexus.selfId ?? undefined,
-                meta: { prayerCategory: 'via-sacra' },
-              }}
-              suggestions={nexus.suggestions.length > 0 ? nexus.suggestions : undefined}
-            />
-          </div>
-        );
-      })()}
+      {isLast &&
+        !contemplative &&
+        (() => {
+          const nexus = resolvePrayerAutoNexus({
+            slug: "via-sacra",
+            title: "Via Sacra",
+            category: "via-sacra",
+          });
+          return (
+            <div className="mt-spacing-2xl" data-testid="via-sacra-continuation">
+              <ReaderContinuation
+                context={{
+                  kind: "prayer",
+                  id: "via-sacra",
+                  graphNodeId: nexus.selfId ?? undefined,
+                  meta: { prayerCategory: "via-sacra" },
+                }}
+                suggestions={nexus.suggestions.length > 0 ? nexus.suggestions : undefined}
+              />
+            </div>
+          );
+        })()}
     </div>
   );
 };

@@ -7,12 +7,7 @@
  *   - Na Sprint 2.0.6 trocamos apenas a implementação (Mock → Supabase).
  */
 
-import type {
-  AtriumProfile,
-  LiturgicalContext,
-  ResumeItem,
-  AtriumExit,
-} from '../types';
+import type { AtriumProfile, LiturgicalContext, ResumeItem, AtriumExit } from "../types";
 
 export interface JourneyAdapter {
   /** Retorna até 3 itens do Estado E9 "Continuar minha caminhada". */
@@ -46,7 +41,7 @@ export interface LiturgyAdapter {
 export interface RecommendationItem {
   id: string;
   label: string;
-  kind: 'reading' | 'formation' | 'lectio' | 'saint' | 'magisterium';
+  kind: "reading" | "formation" | "lectio" | "saint" | "magisterium";
   targetPath: string;
 }
 export interface RecommendationAdapter {

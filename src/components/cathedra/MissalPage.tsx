@@ -13,67 +13,67 @@
  *     ?stage=<slug>             (etapa aberta do Ordinário)
  *     ?d=YYYY-MM-DD             (data do Próprio; default: hoje)
  */
-import React, { useMemo, useCallback, useEffect } from 'react';
-import { useSearchParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
+import React, { useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
 
-import { usePrayerHierarchy } from '@/prayer-engine/usePrayerHierarchy';
-import { usePrayers } from '@/hooks/usePrayers';
-import { flattenSectionToBlocks } from '@/prayer-engine/loadPrayerHierarchy';
-import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';
-import { useMissalProper } from '@/hooks/useMissalProper';
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
-import { useReaderTypography } from '@/hooks/useReaderTypography';
+import { usePrayerHierarchy } from "@/prayer-engine/usePrayerHierarchy";
+import { usePrayers } from "@/hooks/usePrayers";
+import { flattenSectionToBlocks } from "@/prayer-engine/loadPrayerHierarchy";
+import { useDailyLiturgy } from "@/hooks/useDailyLiturgy";
+import { useMissalProper } from "@/hooks/useMissalProper";
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
+import { useReaderTypography } from "@/hooks/useReaderTypography";
 
-import { PrayerEngineReader } from './PrayerEngineReader';
-import { MissaContinuousReader } from './MissaContinuousReader';
-import { MissalProperCards } from './primitives/liturgy/MissalProperCards';
-import { LiturgyDateNav } from './primitives/liturgy/LiturgyDateNav';
-import { ReaderTypographyControl } from './primitives/liturgy/ReaderTypographyControl';
+import { PrayerEngineReader } from "./PrayerEngineReader";
+import { MissaContinuousReader } from "./MissaContinuousReader";
+import { MissalProperCards } from "./primitives/liturgy/MissalProperCards";
+import { LiturgyDateNav } from "./primitives/liturgy/LiturgyDateNav";
+import { ReaderTypographyControl } from "./primitives/liturgy/ReaderTypographyControl";
 
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Icons } from '../../constants';
-import SEOHead from '@/components/SEOHead';
-import { useWakeLock } from '@/hooks/useWakeLock';
-import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
-import PrayerPortalStandalone from '@/components/prayer/PrayerPortalStandalone';
-import { resolvePortalTheme } from '@/lib/prayer/portalTheme';
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Icons } from "../../constants";
+import SEOHead from "@/components/SEOHead";
+import { useWakeLock } from "@/hooks/useWakeLock";
+import { EditorialHero, EditorialCard } from "@/components/editorial/harmony";
+import PrayerPortalStandalone from "@/components/prayer/PrayerPortalStandalone";
+import { resolvePortalTheme } from "@/lib/prayer/portalTheme";
 
-const CANONICAL_BASE = 'https://www.cathedradigital.com.br';
-type MissalView = 'celebracao' | 'ordinario' | 'proprio';
+const CANONICAL_BASE = "https://www.cathedradigital.com.br";
+type MissalView = "celebracao" | "ordinario" | "proprio";
 
 function parseDateParam(raw: string | null): Date {
   if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return new Date();
-  const [y, m, d] = raw.split('-').map(Number);
+  const [y, m, d] = raw.split("-").map(Number);
   const nd = new Date(y, m - 1, d);
   return Number.isNaN(nd.getTime()) ? new Date() : nd;
 }
 
 function isMissalView(s: string | null): s is MissalView {
-  return s === 'ordinario' || s === 'proprio' || s === 'celebracao';
+  return s === "ordinario" || s === "proprio" || s === "celebracao";
 }
 
 const MissalPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedDate = useMemo(() => parseDateParam(searchParams.get('d')), [searchParams]);
+  const selectedDate = useMemo(() => parseDateParam(searchParams.get("d")), [searchParams]);
   const isoDate = toIsoDateKey(selectedDate);
   const todayIso = toIsoDateKey(new Date());
   const isToday = isoDate === todayIso;
 
-  const view: MissalView = isMissalView(searchParams.get('view'))
-    ? (searchParams.get('view') as MissalView)
-    : 'celebracao';
+  const view: MissalView = isMissalView(searchParams.get("view"))
+    ? (searchParams.get("view") as MissalView)
+    : "celebracao";
 
-  const stageSlug = searchParams.get('stage');
-  const initialBlockId = searchParams.get('b');
-  const celebrationMode = searchParams.get('celebration') === '1';
+  const stageSlug = searchParams.get("stage");
+  const initialBlockId = searchParams.get("b");
+  const celebrationMode = searchParams.get("celebration") === "1";
 
   const toggleCelebration = useCallback(() => {
     const next = new URLSearchParams(searchParams);
-    if (celebrationMode) next.delete('celebration');
-    else next.set('celebration', '1');
+    if (celebrationMode) next.delete("celebration");
+    else next.set("celebration", "1");
     setSearchParams(next, { replace: false });
   }, [celebrationMode, searchParams, setSearchParams]);
 
@@ -82,9 +82,9 @@ const MissalPage: React.FC = () => {
   const setView = useCallback(
     (v: MissalView) => {
       const next = new URLSearchParams(searchParams);
-      if (v === 'celebracao') next.delete('view');
-      else next.set('view', v);
-      if (v !== 'ordinario') next.delete('stage');
+      if (v === "celebracao") next.delete("view");
+      else next.set("view", v);
+      if (v !== "ordinario") next.delete("stage");
       setSearchParams(next, { replace: false });
     },
     [searchParams, setSearchParams],
@@ -94,14 +94,14 @@ const MissalPage: React.FC = () => {
     (slug: string | null) => {
       const next = new URLSearchParams(searchParams);
       if (slug) {
-        next.set('view', 'ordinario');
-        next.set('stage', slug);
+        next.set("view", "ordinario");
+        next.set("stage", slug);
       } else {
-        next.delete('stage');
+        next.delete("stage");
       }
-      next.delete('b');
+      next.delete("b");
       setSearchParams(next, { replace: false });
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
     },
     [searchParams, setSearchParams],
   );
@@ -110,17 +110,17 @@ const MissalPage: React.FC = () => {
     (d: Date) => {
       const next = new URLSearchParams(searchParams);
       const iso = toIsoDateKey(d);
-      if (iso === todayIso) next.delete('d');
-      else next.set('d', iso);
+      if (iso === todayIso) next.delete("d");
+      else next.set("d", iso);
       setSearchParams(next, { replace: false });
     },
     [searchParams, setSearchParams, todayIso],
   );
 
-  const { hierarchy, loading: ordinarioLoading } = usePrayerHierarchy('missa-ordinario');
+  const { hierarchy, loading: ordinarioLoading } = usePrayerHierarchy("missa-ordinario");
   const { prayers } = usePrayers();
   const prayer = useMemo(
-    () => prayers.find((p) => p.slug === 'missa-ordinario') ?? null,
+    () => prayers.find((p) => p.slug === "missa-ordinario") ?? null,
     [prayers],
   );
   const { liturgy } = useDailyLiturgy(selectedDate);
@@ -154,21 +154,21 @@ const MissalPage: React.FC = () => {
   // Se abrirmos ?view=ordinario sem stage e o Ordinário já carregou,
   // permanecemos no seletor de etapas (não force o primeiro stage).
   useEffect(() => {
-    if (view === 'ordinario' && stageSlug && !ordinarioLoading && !activeSection) {
+    if (view === "ordinario" && stageSlug && !ordinarioLoading && !activeSection) {
       // slug inválido → limpa
       const next = new URLSearchParams(searchParams);
-      next.delete('stage');
+      next.delete("stage");
       setSearchParams(next, { replace: true });
     }
   }, [view, stageSlug, ordinarioLoading, activeSection, searchParams, setSearchParams]);
 
   const canonical =
     `${CANONICAL_BASE}/missal?view=${view}` +
-    (activeSection ? `&stage=${activeSection.slug}` : '') +
-    (isToday ? '' : `&d=${isoDate}`);
+    (activeSection ? `&stage=${activeSection.slug}` : "") +
+    (isToday ? "" : `&d=${isoDate}`);
 
   // ─────────────────────────────── Reader ativo ───────────────────────────────
-  if (view === 'ordinario' && activeSection && hierarchy && prayer) {
+  if (view === "ordinario" && activeSection && hierarchy && prayer) {
     const pageTitle = `${activeSection.title} · Missal Romano`;
     const pageDescription = activeSection.subtitle
       ? `${activeSection.title} (${activeSection.subtitle}) — parte do Ordo Missæ.`
@@ -179,7 +179,7 @@ const MissalPage: React.FC = () => {
         <SEOHead
           title={pageTitle}
           description={pageDescription}
-          path={`/missal?view=ordinario&stage=${activeSection.slug}${isToday ? '' : `&d=${isoDate}`}`}
+          path={`/missal?view=ordinario&stage=${activeSection.slug}${isToday ? "" : `&d=${isoDate}`}`}
         />
         <Helmet>
           <link rel="canonical" href={canonical} />
@@ -213,12 +213,12 @@ const MissalPage: React.FC = () => {
           blocks={activeBlocks}
           mysteries={[]}
           activeSection={activeSection}
-          kicker={activeSection.subtitle ?? 'Ordo Missæ'}
+          kicker={activeSection.subtitle ?? "Ordo Missæ"}
           contextKey={`missal:${activeSection.slug}:${isoDate}`}
           initialBlockId={initialBlockId}
           contentStyle={typographyStyle}
           prefaceSlot={
-            (proper || properLoading) ? (
+            proper || properLoading ? (
               <MissalProperCards proper={proper} isLoading={properLoading} />
             ) : null
           }
@@ -244,7 +244,9 @@ const MissalPage: React.FC = () => {
                   {prevStage.title}
                 </span>
               </Button>
-            ) : <span />}
+            ) : (
+              <span />
+            )}
             {nextStage ? (
               <Button
                 type="button"
@@ -259,7 +261,9 @@ const MissalPage: React.FC = () => {
                   {nextStage.title}
                 </span>
               </Button>
-            ) : <span />}
+            ) : (
+              <span />
+            )}
           </nav>
         )}
       </>
@@ -269,9 +273,9 @@ const MissalPage: React.FC = () => {
   // ── B.2.5.d — Portal do Missal (antessala contemplativa) ──
   // Antes do seletor de vistas, exibe limiar contemplativo. Só aparece na
   // vista `celebracao` (default) e enquanto `?enter=1` não estiver ativo.
-  const enterRequested = searchParams.get('enter') === '1';
-  if (view === 'celebracao' && !enterRequested && !celebrationMode) {
-    const missalTheme = resolvePortalTheme('missa-ordinario');
+  const enterRequested = searchParams.get("enter") === "1";
+  if (view === "celebracao" && !enterRequested && !celebrationMode) {
+    const missalTheme = resolvePortalTheme("missa-ordinario");
     const readingRef = liturgy?.evangelho?.referencia ?? liturgy?.primeiraLeitura?.referencia;
     return (
       <PrayerPortalStandalone
@@ -285,18 +289,26 @@ const MissalPage: React.FC = () => {
         accentIcon={missalTheme.accentIcon}
         quote={missalTheme.quote}
         highlight={{
-          eyebrow: isToday ? 'Missa de hoje' : 'Missa do dia',
-          title: proper?.celebration_title ?? liturgy?.liturgia ?? 'Celebração eucarística',
+          eyebrow: isToday ? "Missa de hoje" : "Missa do dia",
+          title: proper?.celebration_title ?? liturgy?.liturgia ?? "Celebração eucarística",
           subtitle: liturgy?.season ?? liturgy?.dia ?? undefined,
           meta: [
-            ...(readingRef ? [{ label: 'Escritura', value: readingRef, icon: 'book' as const }] : []),
-            ...(liturgy?.cor ? [{ label: 'Cor litúrgica', value: liturgy.cor, icon: 'sparkles' as const }] : []),
-            { label: 'Ordo Missæ', value: 'Ordinário · Próprio · Comunhão', icon: 'church' as const },
+            ...(readingRef
+              ? [{ label: "Escritura", value: readingRef, icon: "book" as const }]
+              : []),
+            ...(liturgy?.cor
+              ? [{ label: "Cor litúrgica", value: liturgy.cor, icon: "sparkles" as const }]
+              : []),
+            {
+              label: "Ordo Missæ",
+              value: "Ordinário · Próprio · Comunhão",
+              icon: "church" as const,
+            },
           ],
         }}
         onEnter={() => {
           const next = new URLSearchParams(searchParams);
-          next.set('enter', '1');
+          next.set("enter", "1");
           setSearchParams(next, { replace: true });
         }}
       />
@@ -305,7 +317,6 @@ const MissalPage: React.FC = () => {
 
   // ─────────────────────────────── Seletor / Hero ───────────────────────────────
   return (
-
     <>
       <SEOHead
         title="Missal Romano · Ordo Missæ"
@@ -329,12 +340,9 @@ const MissalPage: React.FC = () => {
                 estruturados como uma única experiência de oração.
               </EditorialHero.Subtitle>
               {liturgy?.season && (
-                <EditorialHero.Meta>
-                  Tempo litúrgico · {liturgy.season}
-                </EditorialHero.Meta>
+                <EditorialHero.Meta>Tempo litúrgico · {liturgy.season}</EditorialHero.Meta>
               )}
             </EditorialHero>
-
 
             <LiturgyDateNav date={selectedDate} onChange={setSelectedDate} isToday={isToday} />
 
@@ -343,11 +351,25 @@ const MissalPage: React.FC = () => {
               aria-label="Alternar visualização do Missal"
               className="bg-muted/40 p-spacing-2xs rounded-[2.5rem] border border-border/40 flex gap-spacing-2xs mx-auto w-fit shadow-premium-md"
             >
-              {([
-                { id: 'celebracao', label: 'Celebração', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
-                { id: 'proprio', label: 'Próprio', icon: <Icons.Calendar className="w-spacing-md h-spacing-md" /> },
-                { id: 'ordinario', label: 'Ordinário', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-              ] as const).map((tab) => {
+              {(
+                [
+                  {
+                    id: "celebracao",
+                    label: "Celebração",
+                    icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+                  },
+                  {
+                    id: "proprio",
+                    label: "Próprio",
+                    icon: <Icons.Calendar className="w-spacing-md h-spacing-md" />,
+                  },
+                  {
+                    id: "ordinario",
+                    label: "Ordinário",
+                    icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+                  },
+                ] as const
+              ).map((tab) => {
                 const active = view === tab.id;
                 return (
                   <Button
@@ -358,8 +380,8 @@ const MissalPage: React.FC = () => {
                     onClick={() => setView(tab.id)}
                     className={`flex items-center justify-center gap-spacing-xs px-spacing-md py-spacing-sm rounded-premium-full text-premium-xs font-black uppercase tracking-widest transition-all ${
                       active
-                        ? 'bg-background shadow-premium-hover text-primary'
-                        : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                        ? "bg-background shadow-premium-hover text-primary"
+                        : "bg-transparent text-muted-foreground hover:text-foreground hover:bg-muted/60"
                     }`}
                   >
                     {tab.icon} <span>{tab.label}</span>
@@ -371,18 +393,18 @@ const MissalPage: React.FC = () => {
         )}
 
         {/* Vista: Celebração Contínua */}
-        {view === 'celebracao' && hierarchy && prayer && (
+        {view === "celebracao" && hierarchy && prayer && (
           <section aria-label="Celebração da Santa Missa">
             <div className="mb-spacing-sm flex justify-between items-center gap-spacing-sm">
               <Button
                 type="button"
-                variant={celebrationMode ? 'default' : 'outline'}
+                variant={celebrationMode ? "default" : "outline"}
                 onClick={toggleCelebration}
                 aria-pressed={celebrationMode}
                 className="rounded-full text-premium-xs font-black uppercase tracking-widest"
               >
                 <Icons.Flame className="w-spacing-sm h-spacing-sm mr-spacing-2xs" />
-                {celebrationMode ? 'Sair do modo celebração' : 'Modo celebração'}
+                {celebrationMode ? "Sair do modo celebração" : "Modo celebração"}
               </Button>
               <ReaderTypographyControl />
             </div>
@@ -397,7 +419,7 @@ const MissalPage: React.FC = () => {
             />
           </section>
         )}
-        {view === 'celebracao' && (!hierarchy || !prayer) && (
+        {view === "celebracao" && (!hierarchy || !prayer) && (
           <div className="mx-auto max-w-3xl space-y-spacing-sm">
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-24 rounded-premium" />
@@ -406,9 +428,9 @@ const MissalPage: React.FC = () => {
         )}
 
         {/* Vista: Próprio do Dia */}
-        {view === 'proprio' && (
+        {view === "proprio" && (
           <section aria-label="Próprio da Missa">
-            {(properLoading || proper) ? (
+            {properLoading || proper ? (
               <MissalProperCards proper={proper} isLoading={properLoading} />
             ) : (
               <p className="text-center text-muted-foreground font-serif italic">
@@ -418,9 +440,8 @@ const MissalPage: React.FC = () => {
           </section>
         )}
 
-
         {/* Vista: Ordinário — grid editorial de etapas */}
-        {view === 'ordinario' && (
+        {view === "ordinario" && (
           <section aria-label="Etapas do Ordinário da Missa" className="space-y-spacing-md">
             <div className="text-center space-y-spacing-2xs">
               <p className="text-premium-xs font-black uppercase tracking-[0.25em] text-muted-foreground">
@@ -448,7 +469,7 @@ const MissalPage: React.FC = () => {
                       className="w-full text-left cursor-pointer"
                     >
                       <EditorialCard.Eyebrow>
-                        Etapa {String(idx + 1).padStart(2, '0')}
+                        Etapa {String(idx + 1).padStart(2, "0")}
                       </EditorialCard.Eyebrow>
                       <EditorialCard.Title>{s.title}</EditorialCard.Title>
                       {s.subtitle && (
@@ -458,7 +479,6 @@ const MissalPage: React.FC = () => {
                   </li>
                 ))}
               </ol>
-
             )}
           </section>
         )}

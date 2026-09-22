@@ -9,17 +9,22 @@
  * - Dedupe via `queryKey` — chamadas simultâneas para o mesmo par
  *   (isoDate, hour) compartilham a mesma Promise.
  */
-import { useEffect } from 'react';
-import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';
-import { getCachedHoursOffice, cacheHoursOffice } from '@/lib/offlineCache';
+import { useEffect } from "react";
+import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import type { DailyLiturgy } from "@/core/liturgy/LiturgyProvider";
+import { getCachedHoursOffice, cacheHoursOffice } from "@/lib/offlineCache";
 
-export type HourSlug =
-  | 'oficio' | 'laudes' | 'tercia' | 'sexta' | 'noa' | 'vesperas' | 'completas';
+export type HourSlug = "oficio" | "laudes" | "tercia" | "sexta" | "noa" | "vesperas" | "completas";
 
 export const ALL_HOUR_SLUGS: HourSlug[] = [
-  'oficio', 'laudes', 'tercia', 'sexta', 'noa', 'vesperas', 'completas',
+  "oficio",
+  "laudes",
+  "tercia",
+  "sexta",
+  "noa",
+  "vesperas",
+  "completas",
 ];
 
 export interface OfficePsalmody {
@@ -54,14 +59,17 @@ export interface LiturgyHoursOfficeRow {
 }
 
 const queryKeyFor = (isoDate: string, hour: HourSlug) =>
-  ['liturgy-hours-office', isoDate, hour] as const;
+  ["liturgy-hours-office", isoDate, hour] as const;
 
-async function fetchExisting(isoDate: string, hour: HourSlug): Promise<LiturgyHoursOfficeRow | null> {
+async function fetchExisting(
+  isoDate: string,
+  hour: HourSlug,
+): Promise<LiturgyHoursOfficeRow | null> {
   const { data, error } = await supabase
-    .from('liturgy_hours_offices' as any)
-    .select('*')
-    .eq('iso_date', isoDate)
-    .eq('hour_slug', hour)
+    .from("liturgy_hours_offices" as any)
+    .select("*")
+    .eq("iso_date", isoDate)
+    .eq("hour_slug", hour)
     .maybeSingle();
   if (error) return null;
   return (data as unknown as LiturgyHoursOfficeRow | null) ?? null;
@@ -72,7 +80,7 @@ async function generate(
   hour: HourSlug,
   readings: DailyLiturgy | null,
 ): Promise<LiturgyHoursOfficeRow | null> {
-  const { data, error } = await supabase.functions.invoke('liturgy-hours-office', {
+  const { data, error } = await supabase.functions.invoke("liturgy-hours-office", {
     body: {
       iso_date: isoDate,
       hour_slug: hour,
@@ -95,7 +103,7 @@ async function generate(
 
 export interface OfficeResolution {
   office: LiturgyHoursOfficeRow | null;
-  source: 'remote' | 'cache' | 'generated' | 'none';
+  source: "remote" | "cache" | "generated" | "none";
 }
 
 /**
@@ -113,16 +121,16 @@ async function resolveOffice(
   const remote = await fetchExisting(isoDate, hour);
   if (remote) {
     await cacheHoursOffice(isoDate, hour, remote);
-    return { office: remote, source: 'remote' };
+    return { office: remote, source: "remote" };
   }
   const cached = (await getCachedHoursOffice(isoDate, hour)) as LiturgyHoursOfficeRow | null;
-  if (cached) return { office: cached, source: 'cache' };
+  if (cached) return { office: cached, source: "cache" };
   const generated = await generate(isoDate, hour, readings);
   if (generated) {
     await cacheHoursOffice(isoDate, hour, generated);
-    return { office: generated, source: 'generated' };
+    return { office: generated, source: "generated" };
   }
-  return { office: null, source: 'none' };
+  return { office: null, source: "none" };
 }
 
 export function useLiturgyHoursOffice(
@@ -134,8 +142,9 @@ export function useLiturgyHoursOffice(
   const enabled = !!hour;
 
   const query = useQuery({
-    queryKey: hour ? queryKeyFor(isoDate, hour) : ['liturgy-hours-office', isoDate, 'none'],
-    queryFn: async () => (hour ? resolveOffice(isoDate, hour, readings) : { office: null, source: 'none' as const }),
+    queryKey: hour ? queryKeyFor(isoDate, hour) : ["liturgy-hours-office", isoDate, "none"],
+    queryFn: async () =>
+      hour ? resolveOffice(isoDate, hour, readings) : { office: null, source: "none" as const },
     enabled,
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24 * 7,
@@ -152,17 +161,19 @@ export function useLiturgyHoursOffice(
       if (qc.getQueryData(key)) return;
       const cached = (await getCachedHoursOffice(isoDate, hour)) as LiturgyHoursOfficeRow | null;
       if (!cancelled && cached && !qc.getQueryData(key)) {
-        qc.setQueryData(key, { office: cached, source: 'cache' as const });
+        qc.setQueryData(key, { office: cached, source: "cache" as const });
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [isoDate, hour, qc]);
 
-  const result = query.data ?? { office: null, source: 'none' as const };
+  const result = query.data ?? { office: null, source: "none" as const };
   return {
     office: result.office,
     source: result.source,
-    fromCache: result.source === 'cache',
+    fromCache: result.source === "cache",
     isLoading: query.isLoading,
     isError: query.isError,
   };
@@ -180,12 +191,16 @@ export function prefetchAllHoursForDay(
   readings: DailyLiturgy | null,
 ): Promise<void> {
   const jobs = ALL_HOUR_SLUGS.map((hour) =>
-    qc.prefetchQuery({
-      queryKey: queryKeyFor(isoDate, hour),
-      queryFn: () => resolveOffice(isoDate, hour, readings),
-      staleTime: 1000 * 60 * 60 * 24,
-      gcTime: 1000 * 60 * 60 * 24 * 7,
-    }).catch(() => { /* silent */ }),
+    qc
+      .prefetchQuery({
+        queryKey: queryKeyFor(isoDate, hour),
+        queryFn: () => resolveOffice(isoDate, hour, readings),
+        staleTime: 1000 * 60 * 60 * 24,
+        gcTime: 1000 * 60 * 60 * 24 * 7,
+      })
+      .catch(() => {
+        /* silent */
+      }),
   );
   return Promise.allSettled(jobs).then(() => undefined);
 }

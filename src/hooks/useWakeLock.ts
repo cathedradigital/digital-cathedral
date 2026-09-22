@@ -2,9 +2,13 @@
  * useWakeLock — mantém a tela acordada durante a celebração.
  * Fallback silencioso quando a API não é suportada.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-type WakeLockSentinel = { released: boolean; release: () => Promise<void>; addEventListener: (t: string, cb: () => void) => void };
+type WakeLockSentinel = {
+  released: boolean;
+  release: () => Promise<void>;
+  addEventListener: (t: string, cb: () => void) => void;
+};
 
 export function useWakeLock(active: boolean) {
   const sentinelRef = useRef<WakeLockSentinel | null>(null);
@@ -12,17 +16,17 @@ export function useWakeLock(active: boolean) {
   const [engaged, setEngaged] = useState(false);
 
   useEffect(() => {
-    setSupported(typeof navigator !== 'undefined' && 'wakeLock' in navigator);
+    setSupported(typeof navigator !== "undefined" && "wakeLock" in navigator);
   }, []);
 
   const request = useCallback(async () => {
     try {
       // @ts-ignore experimental API
-      const s = await navigator.wakeLock?.request('screen');
+      const s = await navigator.wakeLock?.request("screen");
       if (s) {
         sentinelRef.current = s;
         setEngaged(true);
-        s.addEventListener?.('release', () => setEngaged(false));
+        s.addEventListener?.("release", () => setEngaged(false));
       }
     } catch {
       setEngaged(false);
@@ -42,11 +46,11 @@ export function useWakeLock(active: boolean) {
     if (active) {
       request();
       const onVis = () => {
-        if (document.visibilityState === 'visible' && active) request();
+        if (document.visibilityState === "visible" && active) request();
       };
-      document.addEventListener('visibilitychange', onVis);
+      document.addEventListener("visibilitychange", onVis);
       return () => {
-        document.removeEventListener('visibilitychange', onVis);
+        document.removeEventListener("visibilitychange", onVis);
         release();
       };
     } else {

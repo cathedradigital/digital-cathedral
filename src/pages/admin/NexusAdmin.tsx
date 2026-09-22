@@ -1,6 +1,6 @@
-import { Helmet } from '@/lib/helmet-compat';
+import { Helmet } from "@/lib/helmet-compat";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { CheckCircle2, XCircle, Upload, RefreshCw, Filter, Loader2 } from "lucide-react";
 
@@ -122,15 +127,17 @@ function parseCsv(text: string): ParsedRow[] {
 function parseJson(text: string): ParsedRow[] {
   const data = JSON.parse(text);
   if (!Array.isArray(data)) throw new Error("JSON deve ser um array de objetos");
-  return data.map((d: Record<string, unknown>) => ({
-    book_abbr: String(d.book_abbr),
-    chapter: Number(d.chapter),
-    verse: d.verse != null ? Number(d.verse) : null,
-    category: String(d.category ?? "cross_ref"),
-    reference_title: String(d.reference_title ?? ""),
-    reference_id: d.reference_id != null ? String(d.reference_id) : null,
-    summary: d.summary != null ? String(d.summary) : null,
-  })).filter((r) => r.book_abbr && Number.isFinite(r.chapter) && r.reference_title);
+  return data
+    .map((d: Record<string, unknown>) => ({
+      book_abbr: String(d.book_abbr),
+      chapter: Number(d.chapter),
+      verse: d.verse != null ? Number(d.verse) : null,
+      category: String(d.category ?? "cross_ref"),
+      reference_title: String(d.reference_title ?? ""),
+      reference_id: d.reference_id != null ? String(d.reference_id) : null,
+      summary: d.summary != null ? String(d.summary) : null,
+    }))
+    .filter((r) => r.book_abbr && Number.isFinite(r.chapter) && r.reference_title);
 }
 
 // -------- Component --------
@@ -146,7 +153,9 @@ export default function NexusAdmin() {
   // Contributions
   const [contribs, setContribs] = useState<Contribution[]>([]);
   const [contribsLoading, setContribsLoading] = useState(false);
-  const [contribStatus, setContribStatus] = useState<"pending" | "approved" | "rejected">("pending");
+  const [contribStatus, setContribStatus] = useState<"pending" | "approved" | "rejected">(
+    "pending",
+  );
   const [reviewerNotes, setReviewerNotes] = useState<Record<string, string>>({});
   const [actingId, setActingId] = useState<string | null>(null);
 
@@ -194,7 +203,9 @@ export default function NexusAdmin() {
     setConnectionsLoading(true);
     let q = supabase
       .from("bible_connections")
-      .select("id,verse_id,book_abbr,chapter,verse,category,reference_title,reference_id,summary,source,created_by,created_at,updated_at,editor_notes")
+      .select(
+        "id,verse_id,book_abbr,chapter,verse,category,reference_title,reference_id,summary,source,created_by,created_at,updated_at,editor_notes",
+      )
       .order("created_at", { ascending: false })
       .limit(100);
     if (sourceFilter !== "all") q = q.eq("source", sourceFilter);
@@ -214,9 +225,16 @@ export default function NexusAdmin() {
     else setBatches((data ?? []) as ImportBatch[]);
   }, []);
 
-  useEffect(() => { loadCoverage(); loadBatches(); }, [loadCoverage, loadBatches]);
-  useEffect(() => { if (tab === "review") loadContribs(); }, [tab, loadContribs]);
-  useEffect(() => { if (tab === "log") loadConnections(); }, [tab, loadConnections]);
+  useEffect(() => {
+    loadCoverage();
+    loadBatches();
+  }, [loadCoverage, loadBatches]);
+  useEffect(() => {
+    if (tab === "review") loadContribs();
+  }, [tab, loadContribs]);
+  useEffect(() => {
+    if (tab === "log") loadConnections();
+  }, [tab, loadConnections]);
 
   // ---------- Derived ----------
   const stats = useMemo(() => {
@@ -244,7 +262,11 @@ export default function NexusAdmin() {
       _reviewer_notes: reviewerNotes[id] ?? null,
     });
     if (error) toast.error("Erro ao aprovar: " + error.message);
-    else { toast.success("Contribuição aprovada e publicada"); await loadContribs(); await loadCoverage(); }
+    else {
+      toast.success("Contribuição aprovada e publicada");
+      await loadContribs();
+      await loadCoverage();
+    }
     setActingId(null);
   };
 
@@ -255,12 +277,18 @@ export default function NexusAdmin() {
       _reviewer_notes: reviewerNotes[id] ?? null,
     });
     if (error) toast.error("Erro ao rejeitar: " + error.message);
-    else { toast.success("Contribuição rejeitada"); await loadContribs(); }
+    else {
+      toast.success("Contribuição rejeitada");
+      await loadContribs();
+    }
     setActingId(null);
   };
 
   const runImport = async () => {
-    if (!importText.trim()) { toast.error("Cole o conteúdo do arquivo antes de importar"); return; }
+    if (!importText.trim()) {
+      toast.error("Cole o conteúdo do arquivo antes de importar");
+      return;
+    }
     setImporting(true);
     const errors: Array<{ row: number; error: string }> = [];
     let rows: ParsedRow[] = [];
@@ -268,7 +296,8 @@ export default function NexusAdmin() {
       rows = importFormat === "csv" ? parseCsv(importText) : parseJson(importText);
     } catch (e) {
       toast.error("Falha ao parsear: " + (e as Error).message);
-      setImporting(false); return;
+      setImporting(false);
+      return;
     }
 
     const { data: userData } = await supabase.auth.getUser();
@@ -281,18 +310,23 @@ export default function NexusAdmin() {
         source: importFormat,
         filename: importFilename || null,
         total_rows: rows.length,
-        inserted_rows: 0, skipped_rows: 0, error_rows: 0,
+        inserted_rows: 0,
+        skipped_rows: 0,
+        error_rows: 0,
         notes: importNotes || null,
         created_by: uid,
       })
-      .select().single();
+      .select()
+      .single();
     if (batchErr || !batchRow) {
       toast.error("Falha ao criar lote: " + (batchErr?.message ?? "sem retorno"));
-      setImporting(false); return;
+      setImporting(false);
+      return;
     }
 
     // 2) Insere em chunks
-    let inserted = 0, skipped = 0;
+    let inserted = 0,
+      skipped = 0;
     const chunkSize = 100;
     for (let i = 0; i < rows.length; i += chunkSize) {
       const chunk = rows.slice(i, i + chunkSize).map((r, j) => ({
@@ -320,14 +354,19 @@ export default function NexusAdmin() {
       }
     }
 
-    await supabase.from("nexus_import_batches").update({
-      inserted_rows: inserted,
-      skipped_rows: skipped,
-      error_rows: errors.length,
-      errors: errors.length ? errors : null,
-    }).eq("id", batchRow.id);
+    await supabase
+      .from("nexus_import_batches")
+      .update({
+        inserted_rows: inserted,
+        skipped_rows: skipped,
+        error_rows: errors.length,
+        errors: errors.length ? errors : null,
+      })
+      .eq("id", batchRow.id);
 
-    toast.success(`Import concluído: ${inserted} inseridos · ${skipped} pulados · ${errors.length} erros`);
+    toast.success(
+      `Import concluído: ${inserted} inseridos · ${skipped} pulados · ${errors.length} erros`,
+    );
     setImportText("");
     setImportFilename("");
     setImportNotes("");
@@ -356,25 +395,59 @@ export default function NexusAdmin() {
       <header className="mb-8">
         <h1 className="font-display text-3xl text-primary mb-1">Nexus Theologicus · Admin</h1>
         <p className="text-sm text-primary/60">
-          Cobertura de conexões Bíblia ↔ Catecismo, revisão de sugestões e importação de dados oficiais.
+          Cobertura de conexões Bíblia ↔ Catecismo, revisão de sugestões e importação de dados
+          oficiais.
         </p>
       </header>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card><CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-widest text-primary/50">Capítulos</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-semibold">{stats.totalChapters}</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-widest text-primary/50">Com Nexus</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-semibold text-emerald-600">{stats.coveredChapters}</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-widest text-primary/50">Sem Nexus</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-semibold text-amber-600">{stats.emptyChapters}</div></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-xs uppercase tracking-widest text-primary/50">Total conexões</CardTitle></CardHeader>
-          <CardContent><div className="text-2xl font-semibold">{stats.totalConnections}</div></CardContent></Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs uppercase tracking-widest text-primary/50">
+              Capítulos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">{stats.totalChapters}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs uppercase tracking-widest text-primary/50">
+              Com Nexus
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold text-emerald-600">{stats.coveredChapters}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs uppercase tracking-widest text-primary/50">
+              Sem Nexus
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold text-amber-600">{stats.emptyChapters}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs uppercase tracking-widest text-primary/50">
+              Total conexões
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">{stats.totalConnections}</div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2 text-xs text-primary/60">
-          <span>Cobertura global</span><span>{stats.percent}%</span>
+          <span>Cobertura global</span>
+          <span>{stats.percent}%</span>
         </div>
         <Progress value={stats.percent} />
       </div>
@@ -390,17 +463,25 @@ export default function NexusAdmin() {
         {/* ---------- Coverage ---------- */}
         <TabsContent value="overview" className="mt-6">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Button size="sm" variant={onlyEmpty ? "default" : "outline"} onClick={() => setOnlyEmpty((v) => !v)}>
+            <Button
+              size="sm"
+              variant={onlyEmpty ? "default" : "outline"}
+              onClick={() => setOnlyEmpty((v) => !v)}
+            >
               <Filter className="w-4 h-4 mr-2" /> {onlyEmpty ? "Apenas vazios" : "Todos"}
             </Button>
-            <select className="text-sm rounded-md border px-3 py-1.5 bg-background"
-              value={testamentFilter} onChange={(e) => setTestamentFilter(e.target.value)}>
+            <select
+              className="text-sm rounded-md border px-3 py-1.5 bg-background"
+              value={testamentFilter}
+              onChange={(e) => setTestamentFilter(e.target.value)}
+            >
               <option value="all">Ambos testamentos</option>
               <option value="AT">Antigo Testamento</option>
               <option value="NT">Novo Testamento</option>
             </select>
             <Button size="sm" variant="ghost" onClick={loadCoverage}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${coverageLoading ? "animate-spin" : ""}`} /> Atualizar
+              <RefreshCw className={`w-4 h-4 mr-2 ${coverageLoading ? "animate-spin" : ""}`} />{" "}
+              Atualizar
             </Button>
             <span className="text-xs text-primary/50 ml-auto">
               Exibindo {coverageFiltered.length} capítulos
@@ -421,18 +502,29 @@ export default function NexusAdmin() {
                   <TableBody>
                     {coverageFiltered.map((r) => (
                       <TableRow key={`${r.book_abbr}-${r.chapter}`}>
-                        <TableCell className="font-medium">{r.book_name} <span className="text-primary/40 text-xs">({r.book_abbr})</span></TableCell>
+                        <TableCell className="font-medium">
+                          {r.book_name}{" "}
+                          <span className="text-primary/40 text-xs">({r.book_abbr})</span>
+                        </TableCell>
                         <TableCell>{r.chapter}</TableCell>
                         <TableCell>{r.connections_count}</TableCell>
                         <TableCell>
-                          {r.is_empty
-                            ? <Badge variant="outline" className="text-amber-700 border-amber-500/40">vazio</Badge>
-                            : <Badge className="bg-emerald-600/10 text-emerald-700">ok</Badge>}
+                          {r.is_empty ? (
+                            <Badge variant="outline" className="text-amber-700 border-amber-500/40">
+                              vazio
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-emerald-600/10 text-emerald-700">ok</Badge>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
                     {!coverageLoading && coverageFiltered.length === 0 && (
-                      <TableRow><TableCell colSpan={4} className="text-center py-8 text-primary/50">Nenhum capítulo neste filtro.</TableCell></TableRow>
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8 text-primary/50">
+                          Nenhum capítulo neste filtro.
+                        </TableCell>
+                      </TableRow>
                     )}
                   </TableBody>
                 </Table>
@@ -445,12 +537,18 @@ export default function NexusAdmin() {
         <TabsContent value="review" className="mt-6">
           <div className="flex items-center gap-2 mb-4">
             {(["pending", "approved", "rejected"] as const).map((s) => (
-              <Button key={s} size="sm" variant={contribStatus === s ? "default" : "outline"} onClick={() => setContribStatus(s)}>
+              <Button
+                key={s}
+                size="sm"
+                variant={contribStatus === s ? "default" : "outline"}
+                onClick={() => setContribStatus(s)}
+              >
                 {s === "pending" ? "Pendentes" : s === "approved" ? "Aprovadas" : "Rejeitadas"}
               </Button>
             ))}
             <Button size="sm" variant="ghost" onClick={loadContribs} className="ml-auto">
-              <RefreshCw className={`w-4 h-4 mr-2 ${contribsLoading ? "animate-spin" : ""}`} /> Atualizar
+              <RefreshCw className={`w-4 h-4 mr-2 ${contribsLoading ? "animate-spin" : ""}`} />{" "}
+              Atualizar
             </Button>
           </div>
           <div className="space-y-3">
@@ -461,7 +559,10 @@ export default function NexusAdmin() {
                     <div>
                       <CardTitle className="text-base">{c.reference_title}</CardTitle>
                       <div className="text-xs text-primary/60 mt-1 flex flex-wrap gap-x-3 gap-y-1">
-                        <span>📖 {c.book_abbr} {c.chapter}{c.verse ? `:${c.verse}` : ""}</span>
+                        <span>
+                          📖 {c.book_abbr} {c.chapter}
+                          {c.verse ? `:${c.verse}` : ""}
+                        </span>
                         <span>🏷 {c.connection_type}</span>
                         {c.reference_id && <span>🔗 {c.reference_id}</span>}
                         <span>⏱ {new Date(c.created_at).toLocaleString("pt-BR")}</span>
@@ -473,33 +574,59 @@ export default function NexusAdmin() {
                 <CardContent className="space-y-3">
                   <p className="text-sm text-primary/80">{c.summary}</p>
                   {c.contributor_notes && (
-                    <p className="text-xs text-primary/60 italic">Nota do contribuidor: {c.contributor_notes}</p>
+                    <p className="text-xs text-primary/60 italic">
+                      Nota do contribuidor: {c.contributor_notes}
+                    </p>
                   )}
                   {contribStatus === "pending" && (
                     <div className="pt-2 border-t space-y-2">
-                      <Label htmlFor={`rn-${c.id}`} className="text-xs">Notas do revisor (opcional)</Label>
-                      <Textarea id={`rn-${c.id}`} rows={2}
+                      <Label htmlFor={`rn-${c.id}`} className="text-xs">
+                        Notas do revisor (opcional)
+                      </Label>
+                      <Textarea
+                        id={`rn-${c.id}`}
+                        rows={2}
                         value={reviewerNotes[c.id] ?? ""}
-                        onChange={(e) => setReviewerNotes((s) => ({ ...s, [c.id]: e.target.value }))} />
+                        onChange={(e) =>
+                          setReviewerNotes((s) => ({ ...s, [c.id]: e.target.value }))
+                        }
+                      />
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={() => approve(c.id)} disabled={actingId === c.id}>
-                          {actingId === c.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle2 className="w-4 h-4 mr-2" />}
+                        <Button
+                          size="sm"
+                          onClick={() => approve(c.id)}
+                          disabled={actingId === c.id}
+                        >
+                          {actingId === c.id ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                          )}
                           Aprovar e publicar
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => reject(c.id)} disabled={actingId === c.id}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => reject(c.id)}
+                          disabled={actingId === c.id}
+                        >
                           <XCircle className="w-4 h-4 mr-2" /> Rejeitar
                         </Button>
                       </div>
                     </div>
                   )}
                   {c.reviewer_notes && contribStatus !== "pending" && (
-                    <p className="text-xs text-primary/60 pt-2 border-t">Revisor: {c.reviewer_notes}</p>
+                    <p className="text-xs text-primary/60 pt-2 border-t">
+                      Revisor: {c.reviewer_notes}
+                    </p>
                   )}
                 </CardContent>
               </Card>
             ))}
             {!contribsLoading && contribs.length === 0 && (
-              <p className="text-center text-sm text-primary/50 py-8">Nenhuma sugestão neste filtro.</p>
+              <p className="text-center text-sm text-primary/50 py-8">
+                Nenhuma sugestão neste filtro.
+              </p>
             )}
           </div>
         </TabsContent>
@@ -507,44 +634,77 @@ export default function NexusAdmin() {
         {/* ---------- Import ---------- */}
         <TabsContent value="import" className="mt-6 space-y-6">
           <Card>
-            <CardHeader><CardTitle className="text-base">Importar conexões oficiais</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-base">Importar conexões oficiais</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-xs text-primary/60">
-                Formato CSV com cabeçalho: <code>book_abbr,chapter,verse,category,reference_title,reference_id,summary</code>.
+                Formato CSV com cabeçalho:{" "}
+                <code>book_abbr,chapter,verse,category,reference_title,reference_id,summary</code>.
                 JSON: array de objetos com as mesmas chaves.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <input type="file" accept=".csv,.json,text/csv,application/json" onChange={onFile}
-                  className="text-sm" />
-                <select className="text-sm rounded-md border px-3 py-1.5 bg-background"
-                  value={importFormat} onChange={(e) => setImportFormat(e.target.value as "csv" | "json")}>
+                <input
+                  type="file"
+                  accept=".csv,.json,text/csv,application/json"
+                  onChange={onFile}
+                  className="text-sm"
+                />
+                <select
+                  className="text-sm rounded-md border px-3 py-1.5 bg-background"
+                  value={importFormat}
+                  onChange={(e) => setImportFormat(e.target.value as "csv" | "json")}
+                >
                   <option value="csv">CSV</option>
                   <option value="json">JSON</option>
                 </select>
-                {importFilename && <span className="text-xs text-primary/60">📎 {importFilename}</span>}
+                {importFilename && (
+                  <span className="text-xs text-primary/60">📎 {importFilename}</span>
+                )}
               </div>
               <div>
-                <Label htmlFor="import-text" className="text-xs">Conteúdo</Label>
-                <Textarea id="import-text" rows={10} className="font-mono text-xs"
-                  placeholder={importFormat === "csv"
-                    ? "book_abbr,chapter,verse,category,reference_title,reference_id,summary\nJo,3,16,catechism,CIC §458,458,Deus amou o mundo..."
-                    : '[\n  { "book_abbr": "Jo", "chapter": 3, "verse": 16, "category": "catechism", "reference_title": "CIC §458", "reference_id": "458", "summary": "..." }\n]'}
-                  value={importText} onChange={(e) => setImportText(e.target.value)} />
+                <Label htmlFor="import-text" className="text-xs">
+                  Conteúdo
+                </Label>
+                <Textarea
+                  id="import-text"
+                  rows={10}
+                  className="font-mono text-xs"
+                  placeholder={
+                    importFormat === "csv"
+                      ? "book_abbr,chapter,verse,category,reference_title,reference_id,summary\nJo,3,16,catechism,CIC §458,458,Deus amou o mundo..."
+                      : '[\n  { "book_abbr": "Jo", "chapter": 3, "verse": 16, "category": "catechism", "reference_title": "CIC §458", "reference_id": "458", "summary": "..." }\n]'
+                  }
+                  value={importText}
+                  onChange={(e) => setImportText(e.target.value)}
+                />
               </div>
               <div>
-                <Label htmlFor="import-notes" className="text-xs">Notas do lote (opcional)</Label>
-                <Input id="import-notes" value={importNotes} onChange={(e) => setImportNotes(e.target.value)}
-                  placeholder="Ex: Índice oficial CIC-Escritura, edição 2ª típica" />
+                <Label htmlFor="import-notes" className="text-xs">
+                  Notas do lote (opcional)
+                </Label>
+                <Input
+                  id="import-notes"
+                  value={importNotes}
+                  onChange={(e) => setImportNotes(e.target.value)}
+                  placeholder="Ex: Índice oficial CIC-Escritura, edição 2ª típica"
+                />
               </div>
               <Button onClick={runImport} disabled={importing || !importText.trim()}>
-                {importing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                {importing ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4 mr-2" />
+                )}
                 Executar import
               </Button>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-base">Últimos lotes</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-base">Últimos lotes</CardTitle>
+            </CardHeader>
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -561,17 +721,27 @@ export default function NexusAdmin() {
                 <TableBody>
                   {batches.map((b) => (
                     <TableRow key={b.id}>
-                      <TableCell className="text-xs">{new Date(b.created_at).toLocaleString("pt-BR")}</TableCell>
-                      <TableCell><Badge variant="outline">{b.source}</Badge></TableCell>
+                      <TableCell className="text-xs">
+                        {new Date(b.created_at).toLocaleString("pt-BR")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{b.source}</Badge>
+                      </TableCell>
                       <TableCell className="text-xs">{b.filename ?? "—"}</TableCell>
                       <TableCell className="text-right">{b.total_rows}</TableCell>
-                      <TableCell className="text-right text-emerald-600">{b.inserted_rows}</TableCell>
+                      <TableCell className="text-right text-emerald-600">
+                        {b.inserted_rows}
+                      </TableCell>
                       <TableCell className="text-right text-amber-600">{b.skipped_rows}</TableCell>
                       <TableCell className="text-right text-red-600">{b.error_rows}</TableCell>
                     </TableRow>
                   ))}
                   {batches.length === 0 && (
-                    <TableRow><TableCell colSpan={7} className="text-center py-6 text-primary/50 text-sm">Nenhum lote ainda.</TableCell></TableRow>
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-6 text-primary/50 text-sm">
+                        Nenhum lote ainda.
+                      </TableCell>
+                    </TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -582,8 +752,11 @@ export default function NexusAdmin() {
         {/* ---------- Log ---------- */}
         <TabsContent value="log" className="mt-6">
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <select className="text-sm rounded-md border px-3 py-1.5 bg-background"
-              value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
+            <select
+              className="text-sm rounded-md border px-3 py-1.5 bg-background"
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+            >
               <option value="all">Todas as origens</option>
               <option value="manual">Manual</option>
               <option value="csv">CSV</option>
@@ -594,7 +767,8 @@ export default function NexusAdmin() {
               <option value="ai">AI</option>
             </select>
             <Button size="sm" variant="ghost" onClick={loadConnections}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${connectionsLoading ? "animate-spin" : ""}`} /> Atualizar
+              <RefreshCw className={`w-4 h-4 mr-2 ${connectionsLoading ? "animate-spin" : ""}`} />{" "}
+              Atualizar
             </Button>
           </div>
           <Card>
@@ -614,16 +788,34 @@ export default function NexusAdmin() {
                   <TableBody>
                     {connections.map((c) => (
                       <TableRow key={c.id}>
-                        <TableCell className="font-medium max-w-xs truncate">{c.reference_title}</TableCell>
-                        <TableCell className="text-xs">{c.book_abbr ?? c.verse_id}{c.chapter ? ` ${c.chapter}` : ""}{c.verse ? `:${c.verse}` : ""}</TableCell>
-                        <TableCell><Badge variant="outline">{c.category}</Badge></TableCell>
-                        <TableCell><Badge>{c.source}</Badge></TableCell>
-                        <TableCell className="text-xs text-primary/60 font-mono">{c.created_by?.slice(0, 8) ?? "—"}</TableCell>
-                        <TableCell className="text-xs">{new Date(c.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                        <TableCell className="font-medium max-w-xs truncate">
+                          {c.reference_title}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          {c.book_abbr ?? c.verse_id}
+                          {c.chapter ? ` ${c.chapter}` : ""}
+                          {c.verse ? `:${c.verse}` : ""}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{c.category}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge>{c.source}</Badge>
+                        </TableCell>
+                        <TableCell className="text-xs text-primary/60 font-mono">
+                          {c.created_by?.slice(0, 8) ?? "—"}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                        </TableCell>
                       </TableRow>
                     ))}
                     {!connectionsLoading && connections.length === 0 && (
-                      <TableRow><TableCell colSpan={6} className="text-center py-8 text-primary/50">Nenhuma conexão nesta origem.</TableCell></TableRow>
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-primary/50">
+                          Nenhuma conexão nesta origem.
+                        </TableCell>
+                      </TableRow>
                     )}
                   </TableBody>
                 </Table>

@@ -2,13 +2,13 @@
  * Lista ordenável de itens da coleção — drag-and-drop nativo HTML5.
  * Sem dependências novas.
  */
-import { useEffect, useState } from 'react';
-import { GripVertical, Trash2, ExternalLink } from 'lucide-react';
-import { Link } from '@/lib/rr-compat';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { collectionAutoNexus } from './collectionAutoNexus';
-import type { CollectionItem } from './types';
+import { useEffect, useState } from "react";
+import { GripVertical, Trash2, ExternalLink } from "lucide-react";
+import { Link } from "@/lib/rr-compat";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { collectionAutoNexus } from "./collectionAutoNexus";
+import type { CollectionItem } from "./types";
 
 interface Props {
   items: CollectionItem[];
@@ -65,7 +65,7 @@ export default function CollectionItemsList({ items, onReorder, onRemove, disabl
               if (draggingId) move(draggingId, item.id);
             }}
             className={`flex items-center gap-3 rounded-md border border-border bg-background p-3 ${
-              draggingId === item.id ? 'opacity-50' : ''
+              draggingId === item.id ? "opacity-50" : ""
             }`}
           >
             <GripVertical
@@ -73,14 +73,16 @@ export default function CollectionItemsList({ items, onReorder, onRemove, disabl
               aria-label="Arrastar"
             />
             <span className="text-xs font-mono text-muted-foreground w-8 tabular-nums">
-              {String(idx + 1).padStart(2, '0')}
+              {String(idx + 1).padStart(2, "0")}
             </span>
             <div className="min-w-0 flex-1">
               <div className="text-sm font-medium truncate">
                 {item.title_override ?? item.item_slug}
               </div>
               <div className="text-xs text-muted-foreground truncate">
-                <Badge variant="outline" className="mr-2 text-[10px]">{item.item_type}</Badge>
+                <Badge variant="outline" className="mr-2 text-[10px]">
+                  {item.item_type}
+                </Badge>
                 {item.item_slug}
               </div>
             </div>

@@ -24,5 +24,6 @@
    - Monitoramento em tempo real de conformidade WCAG AA.
 
 **Próximos Passos:**
+
 - Continuar o monitoramento de campo (RUM) via painel de governança.
 - Expandir testes de regressão visual para novos módulos de leitura.

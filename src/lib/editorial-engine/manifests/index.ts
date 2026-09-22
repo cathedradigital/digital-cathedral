@@ -23,9 +23,22 @@ import { historyManifest } from "./history.manifest";
 import { assertValidManifest, validateManifest } from "../validate-manifest";
 
 /** Placeholder para entidades ainda não plugadas (`ready: false`). */
-const placeholder = (id: string, label: string, shortLabel: string, icon: string, weight: number): EntityManifest => ({
-  id, label, shortLabel, icon, weight,
-  table: "", slugField: "", titleField: "", statusField: "",
+const placeholder = (
+  id: string,
+  label: string,
+  shortLabel: string,
+  icon: string,
+  weight: number,
+): EntityManifest => ({
+  id,
+  label,
+  shortLabel,
+  icon,
+  weight,
+  table: "",
+  slugField: "",
+  titleField: "",
+  statusField: "",
   auditRoute: `/admin/editorial-audit?entity=${id}`,
   ready: false,
   fields: [],
@@ -54,7 +67,7 @@ for (const m of rawRegistry) assertValidManifest(m);
 export const editorialRegistry: EntityManifest[] = rawRegistry;
 
 export function getManifest(id: string): EntityManifest | undefined {
-  return editorialRegistry.find(m => m.id === id);
+  return editorialRegistry.find((m) => m.id === id);
 }
 
 export function requireManifest(id: string): EntityManifest {
@@ -66,15 +79,15 @@ export function requireManifest(id: string): EntityManifest {
 
 /** Diagnóstico usado pelo Mission Control para exibir avisos. */
 export function auditRegistry() {
-  return editorialRegistry.map(m => ({ id: m.id, ...validateManifest(m) }));
+  return editorialRegistry.map((m) => ({ id: m.id, ...validateManifest(m) }));
 }
 
-export { 
-  glossaryManifest, 
-  saintsManifest, 
-  journeysManifest, 
-  collectionsManifest, 
-  prayersManifest, 
+export {
+  glossaryManifest,
+  saintsManifest,
+  journeysManifest,
+  collectionsManifest,
+  prayersManifest,
   catechismManifest,
   bibleManifest,
   liturgyManifest,
@@ -82,6 +95,5 @@ export {
   magisteriumManifest,
   popesManifest,
   dogmasManifest,
-  historyManifest
+  historyManifest,
 };
-

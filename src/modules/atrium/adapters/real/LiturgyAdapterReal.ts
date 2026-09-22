@@ -1,11 +1,16 @@
-import type { LiturgyAdapter } from '../types';
-import type { LiturgicalContext } from '../../types';
-import { getLiturgyProvider, toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
-import { getSaintsByDate } from '@/services/saintsService';
+import type { LiturgyAdapter } from "../types";
+import type { LiturgicalContext } from "../../types";
+import { getLiturgyProvider, toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
+import { getSaintsByDate } from "@/services/saintsService";
 
 const WEEKDAYS_PT = [
-  'domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
-  'quinta-feira', 'sexta-feira', 'sábado',
+  "domingo",
+  "segunda-feira",
+  "terça-feira",
+  "quarta-feira",
+  "quinta-feira",
+  "sexta-feira",
+  "sábado",
 ];
 
 let cached: { key: string; ctx: LiturgicalContext } | null = null;
@@ -33,9 +38,9 @@ export const LiturgyAdapterReal: LiturgyAdapter = {
 
     const first = saints?.[0];
     const ctx: LiturgicalContext = {
-      season: day?.season ?? day?.liturgia ?? 'Tempo Comum',
+      season: day?.season ?? day?.liturgia ?? "Tempo Comum",
       weekday: WEEKDAYS_PT[today.getDay()],
-      colorToken: day?.colorToken ?? 'liturgical-green',
+      colorToken: day?.colorToken ?? "liturgical-green",
       saintOfDay: first
         ? {
             name: first.name,

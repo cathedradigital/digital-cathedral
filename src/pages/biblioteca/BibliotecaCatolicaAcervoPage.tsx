@@ -6,64 +6,62 @@
  * Cobre Escritos, Padres, Doutores, Clássicos e Magistério.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
-import { EditorialHero, EditorialCard } from '@/components/editorial';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import React, { useEffect, useMemo, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useSearchParams } from "@/lib/rr-compat";
+import { EditorialHero, EditorialCard } from "@/components/editorial";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Icons } from '../../constants';
-import { searchLibrary } from '@/services/libraryService';
+} from "@/components/ui/select";
+import { Icons } from "../../constants";
+import { searchLibrary } from "@/services/libraryService";
 import type {
   LibraryItem,
   LibraryKind,
   LibraryAccessType,
   LibraryFichaCompleteness,
-} from '@/types/library';
-import { LIBRARY_KIND_LABELS } from '@/types/library';
+} from "@/types/library";
+import { LIBRARY_KIND_LABELS } from "@/types/library";
 
 const PAGE_SIZE = 24;
 
-const KIND_OPTIONS: Array<{ value: LibraryKind | 'all'; label: string }> = [
-  { value: 'all', label: 'Todos os tipos' },
-  { value: 'saint_work', label: LIBRARY_KIND_LABELS.saint_work },
-  { value: 'patristic', label: LIBRARY_KIND_LABELS.patristic },
-  { value: 'doctor', label: LIBRARY_KIND_LABELS.doctor },
-  { value: 'classic', label: LIBRARY_KIND_LABELS.classic },
-  { value: 'magisterium', label: LIBRARY_KIND_LABELS.magisterium },
+const KIND_OPTIONS: Array<{ value: LibraryKind | "all"; label: string }> = [
+  { value: "all", label: "Todos os tipos" },
+  { value: "saint_work", label: LIBRARY_KIND_LABELS.saint_work },
+  { value: "patristic", label: LIBRARY_KIND_LABELS.patristic },
+  { value: "doctor", label: LIBRARY_KIND_LABELS.doctor },
+  { value: "classic", label: LIBRARY_KIND_LABELS.classic },
+  { value: "magisterium", label: LIBRARY_KIND_LABELS.magisterium },
 ];
 
-const ACCESS_OPTIONS: Array<{ value: LibraryAccessType | 'all'; label: string }> = [
-  { value: 'all', label: 'Todos os acessos' },
-  { value: 'internal', label: 'Leitor interno' },
-  { value: 'external', label: 'Fonte externa' },
-  { value: 'summary_only', label: 'Somente ficha' },
+const ACCESS_OPTIONS: Array<{ value: LibraryAccessType | "all"; label: string }> = [
+  { value: "all", label: "Todos os acessos" },
+  { value: "internal", label: "Leitor interno" },
+  { value: "external", label: "Fonte externa" },
+  { value: "summary_only", label: "Somente ficha" },
 ];
 
-const COMPLETENESS_OPTIONS: Array<{ value: LibraryFichaCompleteness | 'all'; label: string }> = [
-  { value: 'all', label: 'Toda completude' },
-  { value: 'complete', label: 'Ficha completa' },
-  { value: 'minimal', label: 'Ficha mínima' },
+const COMPLETENESS_OPTIONS: Array<{ value: LibraryFichaCompleteness | "all"; label: string }> = [
+  { value: "all", label: "Toda completude" },
+  { value: "complete", label: "Ficha completa" },
+  { value: "minimal", label: "Ficha mínima" },
 ];
 
 const BibliotecaCatolicaAcervoPage: React.FC = () => {
   const [params, setParams] = useSearchParams();
 
-  const kindParam = (params.get('kind') ?? 'all') as LibraryKind | 'all';
-  const accessParam = (params.get('access') ?? 'all') as LibraryAccessType | 'all';
-  const completenessParam = (params.get('ficha') ?? 'all') as
-    | LibraryFichaCompleteness
-    | 'all';
-  const queryParam = params.get('q') ?? '';
-  const pageParam = Math.max(1, Number(params.get('p') ?? 1));
+  const kindParam = (params.get("kind") ?? "all") as LibraryKind | "all";
+  const accessParam = (params.get("access") ?? "all") as LibraryAccessType | "all";
+  const completenessParam = (params.get("ficha") ?? "all") as LibraryFichaCompleteness | "all";
+  const queryParam = params.get("q") ?? "";
+  const pageParam = Math.max(1, Number(params.get("p") ?? 1));
 
   const [queryInput, setQueryInput] = useState(queryParam);
   const [items, setItems] = useState<LibraryItem[]>([]);
@@ -83,9 +81,9 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
     setError(null);
     searchLibrary({
       query: queryParam,
-      kinds: kindParam !== 'all' ? [kindParam] : undefined,
-      access: accessParam !== 'all' ? accessParam : null,
-      completeness: completenessParam !== 'all' ? [completenessParam] : undefined,
+      kinds: kindParam !== "all" ? [kindParam] : undefined,
+      access: accessParam !== "all" ? accessParam : null,
+      completeness: completenessParam !== "all" ? [completenessParam] : undefined,
       limit: PAGE_SIZE,
       offset: (pageParam - 1) * PAGE_SIZE,
     })
@@ -96,7 +94,7 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
       })
       .catch((e: unknown) => {
         if (!alive) return;
-        const msg = e instanceof Error ? e.message : 'Erro desconhecido';
+        const msg = e instanceof Error ? e.message : "Erro desconhecido";
         setError(msg);
         setItems([]);
         setTotal(0);
@@ -109,22 +107,19 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
 
   const updateParam = (key: string, value: string | null) => {
     const next = new URLSearchParams(params);
-    if (!value || value === 'all' || value === '') next.delete(key);
+    if (!value || value === "all" || value === "") next.delete(key);
     else next.set(key, value);
     // Reset da paginação ao mudar filtros
-    if (key !== 'p') next.delete('p');
+    if (key !== "p") next.delete("p");
     setParams(next, { replace: true });
   };
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    updateParam('q', queryInput.trim() || null);
+    updateParam("q", queryInput.trim() || null);
   };
 
-  const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(total / PAGE_SIZE)),
-    [total],
-  );
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(total / PAGE_SIZE)), [total]);
 
   return (
     <section className="min-h-screen bg-background" data-space="biblioteca">
@@ -134,10 +129,7 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
           name="description"
           content="Explore o acervo unificado da Biblioteca Católica: Escritos dos Santos, Padres, Doutores, Clássicos e Magistério. Busca por título, autor ou tema."
         />
-        <link
-          rel="canonical"
-          href="https://cathedradigital.com.br/biblioteca/catolica/acervo"
-        />
+        <link rel="canonical" href="https://cathedradigital.com.br/biblioteca/catolica/acervo" />
       </Helmet>
 
       <EditorialHero
@@ -153,7 +145,9 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
         <section aria-label="Filtros e busca" className="space-y-spacing-sm">
           <form onSubmit={submitSearch} className="flex gap-spacing-2xs">
             <div className="flex-1">
-              <Label htmlFor="q" className="sr-only">Buscar</Label>
+              <Label htmlFor="q" className="sr-only">
+                Buscar
+              </Label>
               <Input
                 id="q"
                 value={queryInput}
@@ -171,42 +165,45 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-spacing-sm">
             <div>
               <Label className="text-premium-xs">Tipo</Label>
-              <Select
-                value={kindParam}
-                onValueChange={(v) => updateParam('kind', v)}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select value={kindParam} onValueChange={(v) => updateParam("kind", v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {KIND_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
               <Label className="text-premium-xs">Acesso</Label>
-              <Select
-                value={accessParam}
-                onValueChange={(v) => updateParam('access', v)}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select value={accessParam} onValueChange={(v) => updateParam("access", v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {ACCESS_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
               <Label className="text-premium-xs">Ficha editorial</Label>
-              <Select
-                value={completenessParam}
-                onValueChange={(v) => updateParam('ficha', v)}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select value={completenessParam} onValueChange={(v) => updateParam("ficha", v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {COMPLETENESS_OPTIONS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -219,10 +216,10 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
           <div className="flex items-baseline justify-between border-b border-border/50 pb-spacing-2xs">
             <p className="text-premium-xs text-muted-foreground">
               {loading
-                ? 'Carregando…'
+                ? "Carregando…"
                 : total === 0
-                  ? 'Nenhuma obra encontrada.'
-                  : `${total} ${total === 1 ? 'obra' : 'obras'}${queryParam ? ` para "${queryParam}"` : ''}`}
+                  ? "Nenhuma obra encontrada."
+                  : `${total} ${total === 1 ? "obra" : "obras"}${queryParam ? ` para "${queryParam}"` : ""}`}
             </p>
             {totalPages > 1 && (
               <p className="text-premium-xs text-muted-foreground">
@@ -253,20 +250,20 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
                     kicker={
                       <span className="inline-flex items-center gap-1">
                         {LIBRARY_KIND_LABELS[item.library_kind]}
-                        {item.year ? ` · c. ${item.year}` : ''}
+                        {item.year ? ` · c. ${item.year}` : ""}
                       </span>
                     }
                     title={item.title}
                     meta={
                       <span className="flex flex-wrap items-center gap-1.5">
                         <span>{item.author_label}</span>
-                        {item.access_type === 'external' && (
+                        {item.access_type === "external" && (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 text-[10px] font-semibold uppercase">
                             <Icons.ExternalLink className="w-3 h-3" aria-hidden />
                             Externa
                           </span>
                         )}
-                        {item.ficha_completeness === 'complete' && (
+                        {item.ficha_completeness === "complete" && (
                           <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold uppercase">
                             Ficha completa
                           </span>
@@ -291,7 +288,7 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 disabled={pageParam <= 1}
-                onClick={() => updateParam('p', String(pageParam - 1))}
+                onClick={() => updateParam("p", String(pageParam - 1))}
               >
                 ← Anterior
               </Button>
@@ -299,7 +296,7 @@ const BibliotecaCatolicaAcervoPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 disabled={pageParam >= totalPages}
-                onClick={() => updateParam('p', String(pageParam + 1))}
+                onClick={() => updateParam("p", String(pageParam + 1))}
               >
                 Próxima →
               </Button>

@@ -39,7 +39,13 @@ export function Helmet({ children }: { children?: React.ReactNode }): null {
         document.title = text;
         return;
       }
-      if (type === "meta" || type === "link" || type === "script" || type === "style" || type === "base") {
+      if (
+        type === "meta" ||
+        type === "link" ||
+        type === "script" ||
+        type === "style" ||
+        type === "base"
+      ) {
         const el = document.createElement(type);
         applyTag(el, props);
         if (type === "script" && typeof props.children === "string") {

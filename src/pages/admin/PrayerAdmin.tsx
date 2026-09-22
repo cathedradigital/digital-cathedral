@@ -4,18 +4,25 @@
  * mostra número de blocos, duração, permite abrir o leitor e alternar publicação.
  * Somente admins acessam.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, Navigate } from '@/lib/rr-compat';
-import { supabase } from '@/lib/db';
-import { toast } from 'sonner';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ArrowLeft, ExternalLink, Loader2, Search, BookOpenCheck } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, Navigate } from "@/lib/rr-compat";
+import { supabase } from "@/lib/db";
+import { toast } from "sonner";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ArrowLeft, ExternalLink, Loader2, Search, BookOpenCheck } from "lucide-react";
 
 interface PrayerRow {
   id: string;
@@ -23,30 +30,30 @@ interface PrayerRow {
   title: string;
   subtitle: string | null;
   category: string;
-  content_status: 'stub' | 'partial' | 'complete';
+  content_status: "stub" | "partial" | "complete";
   duration_min: number | null;
   is_published: boolean;
   blocks_count: number;
   updated_at: string;
 }
 
-const STATUS_STYLES: Record<PrayerRow['content_status'], string> = {
-  complete: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
-  partial: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
-  stub: 'bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300',
+const STATUS_STYLES: Record<PrayerRow["content_status"], string> = {
+  complete: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+  partial: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+  stub: "bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
 };
 
-const STATUS_LABEL: Record<PrayerRow['content_status'], string> = {
-  complete: 'Completa',
-  partial: 'Parcial',
-  stub: 'Rascunho',
+const STATUS_LABEL: Record<PrayerRow["content_status"], string> = {
+  complete: "Completa",
+  partial: "Parcial",
+  stub: "Rascunho",
 };
 
 export default function PrayerAdmin() {
   const { isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [rows, setRows] = useState<PrayerRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -54,14 +61,16 @@ export default function PrayerAdmin() {
     (async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from('prayers')
-        .select('id, slug, title, subtitle, category, content_status, duration_min, is_published, blocks, updated_at')
-        .order('content_status', { ascending: false })
-        .order('category')
-        .order('slug');
+        .from("prayers")
+        .select(
+          "id, slug, title, subtitle, category, content_status, duration_min, is_published, blocks, updated_at",
+        )
+        .order("content_status", { ascending: false })
+        .order("category")
+        .order("slug");
       if (cancelled) return;
       if (error) {
-        toast.error('Falha ao carregar orações');
+        toast.error("Falha ao carregar orações");
         setLoading(false);
         return;
       }
@@ -91,9 +100,9 @@ export default function PrayerAdmin() {
 
   const stats = useMemo(() => {
     const total = rows.length;
-    const complete = rows.filter((r) => r.content_status === 'complete').length;
-    const partial = rows.filter((r) => r.content_status === 'partial').length;
-    const stub = rows.filter((r) => r.content_status === 'stub').length;
+    const complete = rows.filter((r) => r.content_status === "complete").length;
+    const partial = rows.filter((r) => r.content_status === "partial").length;
+    const stub = rows.filter((r) => r.content_status === "stub").length;
     const coverage = total ? Math.round((complete / total) * 100) : 0;
     return { total, complete, partial, stub, coverage };
   }, [rows]);
@@ -101,15 +110,15 @@ export default function PrayerAdmin() {
   const togglePublish = async (row: PrayerRow) => {
     const next = !row.is_published;
     const { error } = await supabase
-      .from('prayers')
+      .from("prayers")
       .update({ is_published: next })
-      .eq('id', row.id);
+      .eq("id", row.id);
     if (error) {
-      toast.error('Falha ao atualizar publicação');
+      toast.error("Falha ao atualizar publicação");
       return;
     }
     setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, is_published: next } : r)));
-    toast.success(next ? 'Publicada' : 'Despublicada');
+    toast.success(next ? "Publicada" : "Despublicada");
   };
 
   if (adminLoading) {
@@ -145,7 +154,8 @@ export default function PrayerAdmin() {
             Curadoria de Orações
           </h1>
           <p className="mt-2 max-w-[68ch] font-stitch-body text-sm text-stitch-on-surface-variant">
-            Painel editorial das orações. Status <em>complete</em> abre com o leitor contemplativo por blocos;
+            Painel editorial das orações. Status <em>complete</em> abre com o leitor contemplativo
+            por blocos;
             <em> stub</em> exibe o texto simples até a curadoria concluir.
           </p>
         </header>
@@ -153,11 +163,11 @@ export default function PrayerAdmin() {
         {/* Métricas */}
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-5">
           {[
-            { label: 'Total', value: stats.total },
-            { label: 'Completas', value: stats.complete },
-            { label: 'Parciais', value: stats.partial },
-            { label: 'Rascunhos', value: stats.stub },
-            { label: 'Cobertura', value: `${stats.coverage}%` },
+            { label: "Total", value: stats.total },
+            { label: "Completas", value: stats.complete },
+            { label: "Parciais", value: stats.partial },
+            { label: "Rascunhos", value: stats.stub },
+            { label: "Cobertura", value: `${stats.coverage}%` },
           ].map((m) => (
             <Card key={m.label}>
               <CardHeader className="pb-1">
@@ -173,7 +183,10 @@ export default function PrayerAdmin() {
         {/* Busca */}
         <div className="mb-4 flex items-center gap-2">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stitch-on-surface-variant" aria-hidden />
+            <Search
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stitch-on-surface-variant"
+              aria-hidden
+            />
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -223,16 +236,16 @@ export default function PrayerAdmin() {
                       </TableCell>
                       <TableCell className="text-right tabular-nums">{r.blocks_count}</TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {r.duration_min ? `${r.duration_min} min` : '—'}
+                        {r.duration_min ? `${r.duration_min} min` : "—"}
                       </TableCell>
                       <TableCell>
                         <Button
                           type="button"
                           size="sm"
-                          variant={r.is_published ? 'default' : 'outline'}
+                          variant={r.is_published ? "default" : "outline"}
                           onClick={() => togglePublish(r)}
                         >
-                          {r.is_published ? 'Sim' : 'Não'}
+                          {r.is_published ? "Sim" : "Não"}
                         </Button>
                       </TableCell>
                       <TableCell className="text-right">

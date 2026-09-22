@@ -1,19 +1,19 @@
-import React, { useMemo } from 'react';
-import { useNavigate, Link } from '@/lib/rr-compat';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useMemo } from "react";
+import { useNavigate, Link } from "@/lib/rr-compat";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { AppRoute } from '@/types';
-import { Icons } from '@/constants';
-import ContemplativeLayout from './ContemplativeLayout';
-import { EditorialHero } from '@/components/editorial';
-import { cn } from '@/lib/utils';
+import { AppRoute } from "@/types";
+import { Icons } from "@/constants";
+import ContemplativeLayout from "./ContemplativeLayout";
+import { EditorialHero } from "@/components/editorial";
+import { cn } from "@/lib/utils";
 import {
   useBibliotecaState,
   useBibliotecaRecents,
   type BibliotecaTab,
   type AxisFilter,
-} from '@/hooks/useBibliotecaState';
-import { useFavorites } from '@/hooks/useFavorites';
+} from "@/hooks/useBibliotecaState";
+import { useFavorites } from "@/hooks/useFavorites";
 
 /**
  * Biblioteca — ambiente único de conhecimento.
@@ -23,21 +23,21 @@ import { useFavorites } from '@/hooks/useFavorites';
  */
 
 const tabs: { key: BibliotecaTab; label: string }[] = [
-  { key: 'pesquisar', label: 'Pesquisar' },
-  { key: 'temas', label: 'Temas' },
-  { key: 'escritos', label: 'Escritos' },
-  { key: 'autores', label: 'Autores' },
-  { key: 'colecoes', label: 'Coleções' },
-  { key: 'favoritos', label: 'Favoritos' },
-  { key: 'recentes', label: 'Recentes' },
+  { key: "pesquisar", label: "Pesquisar" },
+  { key: "temas", label: "Temas" },
+  { key: "escritos", label: "Escritos" },
+  { key: "autores", label: "Autores" },
+  { key: "colecoes", label: "Coleções" },
+  { key: "favoritos", label: "Favoritos" },
+  { key: "recentes", label: "Recentes" },
 ];
 
 const axes: { key: NonNullable<AxisFilter>; label: string }[] = [
-  { key: 'tema', label: 'Tema' },
-  { key: 'pessoa', label: 'Pessoa' },
-  { key: 'documento', label: 'Documento' },
-  { key: 'periodo', label: 'Período' },
-  { key: 'fonte', label: 'Fonte' },
+  { key: "tema", label: "Tema" },
+  { key: "pessoa", label: "Pessoa" },
+  { key: "documento", label: "Documento" },
+  { key: "periodo", label: "Período" },
+  { key: "fonte", label: "Fonte" },
 ];
 
 /**
@@ -55,7 +55,7 @@ type CoverPalette = {
   /** Cor do kicker + moldura interna + spine (dourado, sépia, etc.). */
   accent: string;
   /** 'paper' = fundo claro (grão em multiply escuro). 'ink' = fundo escuro (grão em screen claro). */
-  grain: 'paper' | 'ink';
+  grain: "paper" | "ink";
 };
 
 type Escrito = {
@@ -68,23 +68,77 @@ type Escrito = {
 };
 
 const escritos: Escrito[] = [
-  { title: 'Bíblia',           kicker: 'Sagrada Escritura',      to: AppRoute.BIBLE,                              description: 'Antigo e Novo Testamento com anotações e Nexus.', spine: 'Vulgata Clementina',   palette: { bg: '#111111', fg: '#F4E9D0', accent: '#C9A24C', grain: 'ink'   } },
-  { title: 'Catecismo',        kicker: 'Doutrina',                to: AppRoute.CATECHISM,                          description: 'CIC organizado por parágrafos e referências.',    spine: 'Igreja Católica',      palette: { bg: '#0E2748', fg: '#EAE3D2', accent: '#B8965A', grain: 'ink'   } },
-  { title: 'Magistério',       kicker: 'Documentos Pontifícios',  to: AppRoute.MAGISTERIUM,                        description: 'Encíclicas, exortações e constituições.',         spine: 'Libreria Editrice',    palette: { bg: '#4A1220', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink'   } },
-  { title: 'Padres',           kicker: 'Patrística',              to: `/buscar?tipo=padres`,            description: 'Escritos dos Padres do Oriente e Ocidente.',      spine: 'Patrologia Latina',    palette: { bg: '#E8DCC0', fg: '#3A2A18', accent: '#8A6B3E', grain: 'paper' } },
-  { title: 'Santos',           kicker: 'Vida e Escritos',         to: '/santos',                             description: 'Biografias, escritos e testemunhos.',             spine: 'Acta Sanctorum',       palette: { bg: '#1F3A2A', fg: '#EADFC6', accent: '#B8965A', grain: 'ink'   } },
-  { title: 'Concílios',        kicker: 'Assembleias da Igreja',   to: `/buscar?tipo=concilios`,         description: 'Documentos conciliares em texto integral.',       spine: 'Decreta Conciliorum',  palette: { bg: '#5A5651', fg: '#EFE8DA', accent: '#C9A24C', grain: 'ink'   } },
-  { title: 'Direito Canônico', kicker: 'Normas',                  to: `/buscar?tipo=direito-canonico`,  description: 'Código de 1983 e legislação eclesiástica.',       spine: 'Codex Iuris Canonici', palette: { bg: '#1C1C1C', fg: '#E9E1CE', accent: '#8E7B4A', grain: 'ink'   } },
-
+  {
+    title: "Bíblia",
+    kicker: "Sagrada Escritura",
+    to: AppRoute.BIBLE,
+    description: "Antigo e Novo Testamento com anotações e Nexus.",
+    spine: "Vulgata Clementina",
+    palette: { bg: "#111111", fg: "#F4E9D0", accent: "#C9A24C", grain: "ink" },
+  },
+  {
+    title: "Catecismo",
+    kicker: "Doutrina",
+    to: AppRoute.CATECHISM,
+    description: "CIC organizado por parágrafos e referências.",
+    spine: "Igreja Católica",
+    palette: { bg: "#0E2748", fg: "#EAE3D2", accent: "#B8965A", grain: "ink" },
+  },
+  {
+    title: "Magistério",
+    kicker: "Documentos Pontifícios",
+    to: AppRoute.MAGISTERIUM,
+    description: "Encíclicas, exortações e constituições.",
+    spine: "Libreria Editrice",
+    palette: { bg: "#4A1220", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+  },
+  {
+    title: "Padres",
+    kicker: "Patrística",
+    to: `/buscar?tipo=padres`,
+    description: "Escritos dos Padres do Oriente e Ocidente.",
+    spine: "Patrologia Latina",
+    palette: { bg: "#E8DCC0", fg: "#3A2A18", accent: "#8A6B3E", grain: "paper" },
+  },
+  {
+    title: "Santos",
+    kicker: "Vida e Escritos",
+    to: "/santos",
+    description: "Biografias, escritos e testemunhos.",
+    spine: "Acta Sanctorum",
+    palette: { bg: "#1F3A2A", fg: "#EADFC6", accent: "#B8965A", grain: "ink" },
+  },
+  {
+    title: "Concílios",
+    kicker: "Assembleias da Igreja",
+    to: `/buscar?tipo=concilios`,
+    description: "Documentos conciliares em texto integral.",
+    spine: "Decreta Conciliorum",
+    palette: { bg: "#5A5651", fg: "#EFE8DA", accent: "#C9A24C", grain: "ink" },
+  },
+  {
+    title: "Direito Canônico",
+    kicker: "Normas",
+    to: `/buscar?tipo=direito-canonico`,
+    description: "Código de 1983 e legislação eclesiástica.",
+    spine: "Codex Iuris Canonici",
+    palette: { bg: "#1C1C1C", fg: "#E9E1CE", accent: "#8E7B4A", grain: "ink" },
+  },
 ];
 
-type ColecaoItem = { title: string; kicker: string; spine: string; to: string; palette: CoverPalette };
+type ColecaoItem = {
+  title: string;
+  kicker: string;
+  spine: string;
+  to: string;
+  palette: CoverPalette;
+};
 type ColecaoSerie = {
-  numeral: string;   // I, II, III... — numeração romana editorial
-  kicker: string;    // ex.: "Série · Sagrada Escritura"
-  title: string;     // Nome da série
-  curator: string;   // Uma frase de curadoria — por que existe
-  accent: string;    // Cor de acento do módulo (fio, numeral, kicker)
+  numeral: string; // I, II, III... — numeração romana editorial
+  kicker: string; // ex.: "Série · Sagrada Escritura"
+  title: string; // Nome da série
+  curator: string; // Uma frase de curadoria — por que existe
+  accent: string; // Cor de acento do módulo (fio, numeral, kicker)
   items: ColecaoItem[];
 };
 
@@ -95,116 +149,302 @@ type ColecaoSerie = {
  */
 const seriesColecoes: ColecaoSerie[] = [
   {
-    numeral: 'I',
-    kicker: 'Série · Sagrada Escritura',
-    title: 'Evangelhos',
-    curator: 'Os quatro rostos do único Cristo — porta de entrada de toda leitura cristã.',
-    accent: '#C9A24C',
+    numeral: "I",
+    kicker: "Série · Sagrada Escritura",
+    title: "Evangelhos",
+    curator: "Os quatro rostos do único Cristo — porta de entrada de toda leitura cristã.",
+    accent: "#C9A24C",
     items: [
-      { title: 'Mateus',  kicker: 'Evangelho', spine: 'O Rei prometido',   to: `${AppRoute.BIBLE}?book=mt`, palette: { bg: '#1F1A0F', fg: '#F0E4C4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Marcos',  kicker: 'Evangelho', spine: 'O Servo',           to: `${AppRoute.BIBLE}?book=mc`, palette: { bg: '#3A1810', fg: '#F0DFC4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Lucas',   kicker: 'Evangelho', spine: 'O Filho do Homem',  to: `${AppRoute.BIBLE}?book=lc`, palette: { bg: '#E8DCC0', fg: '#3A2A18', accent: '#8A6B3E', grain: 'paper' } },
-      { title: 'João',    kicker: 'Evangelho', spine: 'O Verbo eterno',    to: `${AppRoute.BIBLE}?book=jo`, palette: { bg: '#0E2748', fg: '#EAE3D2', accent: '#B8965A', grain: 'ink' } },
+      {
+        title: "Mateus",
+        kicker: "Evangelho",
+        spine: "O Rei prometido",
+        to: `${AppRoute.BIBLE}?book=mt`,
+        palette: { bg: "#1F1A0F", fg: "#F0E4C4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Marcos",
+        kicker: "Evangelho",
+        spine: "O Servo",
+        to: `${AppRoute.BIBLE}?book=mc`,
+        palette: { bg: "#3A1810", fg: "#F0DFC4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Lucas",
+        kicker: "Evangelho",
+        spine: "O Filho do Homem",
+        to: `${AppRoute.BIBLE}?book=lc`,
+        palette: { bg: "#E8DCC0", fg: "#3A2A18", accent: "#8A6B3E", grain: "paper" },
+      },
+      {
+        title: "João",
+        kicker: "Evangelho",
+        spine: "O Verbo eterno",
+        to: `${AppRoute.BIBLE}?book=jo`,
+        palette: { bg: "#0E2748", fg: "#EAE3D2", accent: "#B8965A", grain: "ink" },
+      },
     ],
   },
   {
-    numeral: 'II',
-    kicker: 'Série · Corpus Paulinum',
-    title: 'Cartas Paulinas',
-    curator: 'A palavra do Apóstolo às primeiras comunidades — teologia que nasce da missão.',
-    accent: '#B8965A',
+    numeral: "II",
+    kicker: "Série · Corpus Paulinum",
+    title: "Cartas Paulinas",
+    curator: "A palavra do Apóstolo às primeiras comunidades — teologia que nasce da missão.",
+    accent: "#B8965A",
     items: [
-      { title: 'Romanos',        kicker: 'Epístola', spine: 'A justiça pela fé',    to: `${AppRoute.BIBLE}?book=rm`,  palette: { bg: '#4A1220', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: '1 Coríntios',    kicker: 'Epístola', spine: 'A caridade',           to: `${AppRoute.BIBLE}?book=1co`, palette: { bg: '#2C3E50', fg: '#EEE6D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Gálatas',        kicker: 'Epístola', spine: 'Liberdade em Cristo',  to: `${AppRoute.BIBLE}?book=gl`,  palette: { bg: '#1F3A2A', fg: '#EADFC6', accent: '#B8965A', grain: 'ink' } },
-      { title: 'Efésios',        kicker: 'Epístola', spine: 'O mistério da Igreja', to: `${AppRoute.BIBLE}?book=ef`,  palette: { bg: '#DDE4E8', fg: '#1A2E3E', accent: '#8A6B3E', grain: 'paper' } },
-      { title: 'Filipenses',     kicker: 'Epístola', spine: 'A alegria em Cristo',  to: `${AppRoute.BIBLE}?book=fp`,  palette: { bg: '#3E2A18', fg: '#EFE0C4', accent: '#C9A24C', grain: 'ink' } },
+      {
+        title: "Romanos",
+        kicker: "Epístola",
+        spine: "A justiça pela fé",
+        to: `${AppRoute.BIBLE}?book=rm`,
+        palette: { bg: "#4A1220", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "1 Coríntios",
+        kicker: "Epístola",
+        spine: "A caridade",
+        to: `${AppRoute.BIBLE}?book=1co`,
+        palette: { bg: "#2C3E50", fg: "#EEE6D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Gálatas",
+        kicker: "Epístola",
+        spine: "Liberdade em Cristo",
+        to: `${AppRoute.BIBLE}?book=gl`,
+        palette: { bg: "#1F3A2A", fg: "#EADFC6", accent: "#B8965A", grain: "ink" },
+      },
+      {
+        title: "Efésios",
+        kicker: "Epístola",
+        spine: "O mistério da Igreja",
+        to: `${AppRoute.BIBLE}?book=ef`,
+        palette: { bg: "#DDE4E8", fg: "#1A2E3E", accent: "#8A6B3E", grain: "paper" },
+      },
+      {
+        title: "Filipenses",
+        kicker: "Epístola",
+        spine: "A alegria em Cristo",
+        to: `${AppRoute.BIBLE}?book=fp`,
+        palette: { bg: "#3E2A18", fg: "#EFE0C4", accent: "#C9A24C", grain: "ink" },
+      },
     ],
   },
   {
-    numeral: 'III',
-    kicker: 'Série · Doutrina',
-    title: 'Catecismo Essencial',
-    curator: 'Quatro pilares para começar: fé, sacramentos, vida em Cristo e oração.',
-    accent: '#B8965A',
+    numeral: "III",
+    kicker: "Série · Doutrina",
+    title: "Catecismo Essencial",
+    curator: "Quatro pilares para começar: fé, sacramentos, vida em Cristo e oração.",
+    accent: "#B8965A",
     items: [
-      { title: 'Profissão da Fé',    kicker: 'CIC · I',   spine: '§§ 26 – 1065',   to: `${AppRoute.CATECHISM}?p=26`,   palette: { bg: '#0E2748', fg: '#EAE3D2', accent: '#B8965A', grain: 'ink' } },
-      { title: 'Sacramentos',        kicker: 'CIC · II',  spine: '§§ 1066 – 1690', to: `${AppRoute.CATECHISM}?p=1066`, palette: { bg: '#3A0E1A', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Vida em Cristo',     kicker: 'CIC · III', spine: '§§ 1691 – 2557', to: `${AppRoute.CATECHISM}?p=1691`, palette: { bg: '#1F3A2A', fg: '#EADFC6', accent: '#B8965A', grain: 'ink' } },
-      { title: 'Oração Cristã',      kicker: 'CIC · IV',  spine: '§§ 2558 – 2865', to: `${AppRoute.CATECHISM}?p=2558`, palette: { bg: '#E8DCC0', fg: '#3A2A18', accent: '#8A6B3E', grain: 'paper' } },
+      {
+        title: "Profissão da Fé",
+        kicker: "CIC · I",
+        spine: "§§ 26 – 1065",
+        to: `${AppRoute.CATECHISM}?p=26`,
+        palette: { bg: "#0E2748", fg: "#EAE3D2", accent: "#B8965A", grain: "ink" },
+      },
+      {
+        title: "Sacramentos",
+        kicker: "CIC · II",
+        spine: "§§ 1066 – 1690",
+        to: `${AppRoute.CATECHISM}?p=1066`,
+        palette: { bg: "#3A0E1A", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Vida em Cristo",
+        kicker: "CIC · III",
+        spine: "§§ 1691 – 2557",
+        to: `${AppRoute.CATECHISM}?p=1691`,
+        palette: { bg: "#1F3A2A", fg: "#EADFC6", accent: "#B8965A", grain: "ink" },
+      },
+      {
+        title: "Oração Cristã",
+        kicker: "CIC · IV",
+        spine: "§§ 2558 – 2865",
+        to: `${AppRoute.CATECHISM}?p=2558`,
+        palette: { bg: "#E8DCC0", fg: "#3A2A18", accent: "#8A6B3E", grain: "paper" },
+      },
     ],
   },
   {
-    numeral: 'IV',
-    kicker: 'Série · Santoral',
-    title: 'Santos da Igreja',
-    curator: 'Testemunhas de que o Evangelho ainda é possível — de cada século, uma voz.',
-    accent: '#C9A24C',
+    numeral: "IV",
+    kicker: "Série · Santoral",
+    title: "Santos da Igreja",
+    curator: "Testemunhas de que o Evangelho ainda é possível — de cada século, uma voz.",
+    accent: "#C9A24C",
     items: [
-      { title: 'Agostinho',      kicker: 'Padre e Doutor',   spine: 'Séc. IV–V',  to: `${AppRoute.SAINTS}?q=agostinho`,       palette: { bg: '#3E2A18', fg: '#EFE0C4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Francisco',      kicker: 'Fundador',         spine: 'Séc. XII–XIII', to: `${AppRoute.SAINTS}?q=francisco-de-assis`, palette: { bg: '#4A2A10', fg: '#F0DFC4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Teresa de Ávila',kicker: 'Doutora',          spine: 'Séc. XVI',   to: `${AppRoute.SAINTS}?q=teresa-de-avila`, palette: { bg: '#DDE4E8', fg: '#1A2E3E', accent: '#8A6B3E', grain: 'paper' } },
-      { title: 'Teresinha',      kicker: 'Doutora',          spine: 'Séc. XIX',   to: `${AppRoute.SAINTS}?q=teresinha`,       palette: { bg: '#2C3E50', fg: '#EEE6D0', accent: '#C9A24C', grain: 'ink' } },
+      {
+        title: "Agostinho",
+        kicker: "Padre e Doutor",
+        spine: "Séc. IV–V",
+        to: `${AppRoute.SAINTS}?q=agostinho`,
+        palette: { bg: "#3E2A18", fg: "#EFE0C4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Francisco",
+        kicker: "Fundador",
+        spine: "Séc. XII–XIII",
+        to: `${AppRoute.SAINTS}?q=francisco-de-assis`,
+        palette: { bg: "#4A2A10", fg: "#F0DFC4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Teresa de Ávila",
+        kicker: "Doutora",
+        spine: "Séc. XVI",
+        to: `${AppRoute.SAINTS}?q=teresa-de-avila`,
+        palette: { bg: "#DDE4E8", fg: "#1A2E3E", accent: "#8A6B3E", grain: "paper" },
+      },
+      {
+        title: "Teresinha",
+        kicker: "Doutora",
+        spine: "Séc. XIX",
+        to: `${AppRoute.SAINTS}?q=teresinha`,
+        palette: { bg: "#2C3E50", fg: "#EEE6D0", accent: "#C9A24C", grain: "ink" },
+      },
     ],
   },
   {
-    numeral: 'V',
-    kicker: 'Série · Patrística',
-    title: 'Padres da Igreja',
-    curator: 'A Igreja pensando em voz alta nos primeiros séculos — a Tradição em sua fonte.',
-    accent: '#8A6B3E',
+    numeral: "V",
+    kicker: "Série · Patrística",
+    title: "Padres da Igreja",
+    curator: "A Igreja pensando em voz alta nos primeiros séculos — a Tradição em sua fonte.",
+    accent: "#8A6B3E",
     items: [
-      { title: 'Inácio de Antioquia', kicker: 'Padre Apostólico', spine: 'Séc. I–II',   to: `/buscar?tipo=padres&q=inacio-antioquia`, palette: { bg: '#1C1C1C', fg: '#E9E1CE', accent: '#8E7B4A', grain: 'ink' } },
-      { title: 'Ireneu de Lyon',      kicker: 'Padre Grego',      spine: 'Séc. II',     to: `/buscar?tipo=padres&q=ireneu`,           palette: { bg: '#1F3A2A', fg: '#EADFC6', accent: '#B8965A', grain: 'ink' } },
-      { title: 'Atanásio',            kicker: 'Padre Grego',      spine: 'Séc. IV',     to: `/buscar?tipo=padres&q=atanasio`,         palette: { bg: '#4A1220', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'João Crisóstomo',     kicker: 'Padre Grego',      spine: 'Séc. IV–V',   to: `/buscar?tipo=padres&q=crisostomo`,       palette: { bg: '#E8DCC0', fg: '#3A2A18', accent: '#8A6B3E', grain: 'paper' } },
-      { title: 'Gregório Magno',      kicker: 'Padre Latino',     spine: 'Séc. VI–VII', to: `/buscar?tipo=padres&q=gregorio-magno`,   palette: { bg: '#0E2748', fg: '#EAE3D2', accent: '#B8965A', grain: 'ink' } },
-
+      {
+        title: "Inácio de Antioquia",
+        kicker: "Padre Apostólico",
+        spine: "Séc. I–II",
+        to: `/buscar?tipo=padres&q=inacio-antioquia`,
+        palette: { bg: "#1C1C1C", fg: "#E9E1CE", accent: "#8E7B4A", grain: "ink" },
+      },
+      {
+        title: "Ireneu de Lyon",
+        kicker: "Padre Grego",
+        spine: "Séc. II",
+        to: `/buscar?tipo=padres&q=ireneu`,
+        palette: { bg: "#1F3A2A", fg: "#EADFC6", accent: "#B8965A", grain: "ink" },
+      },
+      {
+        title: "Atanásio",
+        kicker: "Padre Grego",
+        spine: "Séc. IV",
+        to: `/buscar?tipo=padres&q=atanasio`,
+        palette: { bg: "#4A1220", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "João Crisóstomo",
+        kicker: "Padre Grego",
+        spine: "Séc. IV–V",
+        to: `/buscar?tipo=padres&q=crisostomo`,
+        palette: { bg: "#E8DCC0", fg: "#3A2A18", accent: "#8A6B3E", grain: "paper" },
+      },
+      {
+        title: "Gregório Magno",
+        kicker: "Padre Latino",
+        spine: "Séc. VI–VII",
+        to: `/buscar?tipo=padres&q=gregorio-magno`,
+        palette: { bg: "#0E2748", fg: "#EAE3D2", accent: "#B8965A", grain: "ink" },
+      },
     ],
   },
   {
-    numeral: 'VI',
-    kicker: 'Série · Magistério',
-    title: 'Concílios',
-    curator: 'Quando a Igreja inteira se reúne para escutar o Espírito e responder ao seu tempo.',
-    accent: '#B8965A',
+    numeral: "VI",
+    kicker: "Série · Magistério",
+    title: "Concílios",
+    curator: "Quando a Igreja inteira se reúne para escutar o Espírito e responder ao seu tempo.",
+    accent: "#B8965A",
     items: [
-      { title: 'Niceia I',      kicker: 'Concílio', spine: '325 · Trindade',      to: `/buscar?tipo=concilios&q=niceia`,      palette: { bg: '#5A5651', fg: '#EFE8DA', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Calcedônia',    kicker: 'Concílio', spine: '451 · Cristologia',   to: `/buscar?tipo=concilios&q=calcedonia`,  palette: { bg: '#3E2A18', fg: '#EFE0C4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Trento',        kicker: 'Concílio', spine: '1545–1563',           to: `/buscar?tipo=concilios&q=trento`,      palette: { bg: '#4A1220', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Vaticano II',   kicker: 'Concílio', spine: '1962–1965',           to: `/buscar?tipo=concilios&q=vaticano-ii`, palette: { bg: '#0E2748', fg: '#EAE3D2', accent: '#B8965A', grain: 'ink' } },
-
+      {
+        title: "Niceia I",
+        kicker: "Concílio",
+        spine: "325 · Trindade",
+        to: `/buscar?tipo=concilios&q=niceia`,
+        palette: { bg: "#5A5651", fg: "#EFE8DA", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Calcedônia",
+        kicker: "Concílio",
+        spine: "451 · Cristologia",
+        to: `/buscar?tipo=concilios&q=calcedonia`,
+        palette: { bg: "#3E2A18", fg: "#EFE0C4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Trento",
+        kicker: "Concílio",
+        spine: "1545–1563",
+        to: `/buscar?tipo=concilios&q=trento`,
+        palette: { bg: "#4A1220", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Vaticano II",
+        kicker: "Concílio",
+        spine: "1962–1965",
+        to: `/buscar?tipo=concilios&q=vaticano-ii`,
+        palette: { bg: "#0E2748", fg: "#EAE3D2", accent: "#B8965A", grain: "ink" },
+      },
     ],
   },
   {
-    numeral: 'VII',
-    kicker: 'Série · Magistério Pontifício',
-    title: 'Encíclicas',
-    curator: 'A voz do Sucessor de Pedro na história — de Rerum Novarum a Fratelli Tutti.',
-    accent: '#C9A24C',
+    numeral: "VII",
+    kicker: "Série · Magistério Pontifício",
+    title: "Encíclicas",
+    curator: "A voz do Sucessor de Pedro na história — de Rerum Novarum a Fratelli Tutti.",
+    accent: "#C9A24C",
     items: [
-      { title: 'Rerum Novarum',     kicker: 'Leão XIII',    spine: '1891 · Trabalho',      to: `${AppRoute.MAGISTERIUM}?q=rerum-novarum`,   palette: { bg: '#3E2A18', fg: '#EFE0C4', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Humanae Vitae',     kicker: 'Paulo VI',     spine: '1968 · Vida',          to: `${AppRoute.MAGISTERIUM}?q=humanae-vitae`,   palette: { bg: '#DDE4E8', fg: '#1A2E3E', accent: '#8A6B3E', grain: 'paper' } },
-      { title: 'Redemptor Hominis', kicker: 'João Paulo II',spine: '1979 · Cristo',        to: `${AppRoute.MAGISTERIUM}?q=redemptor-hominis`, palette: { bg: '#4A1220', fg: '#F0E4D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Deus Caritas Est',  kicker: 'Bento XVI',    spine: '2005 · Amor',          to: `${AppRoute.MAGISTERIUM}?q=deus-caritas-est`, palette: { bg: '#2C3E50', fg: '#EEE6D0', accent: '#C9A24C', grain: 'ink' } },
-      { title: 'Fratelli Tutti',    kicker: 'Francisco',    spine: '2020 · Fraternidade',  to: `${AppRoute.MAGISTERIUM}?q=fratelli-tutti`,  palette: { bg: '#1F3A2A', fg: '#EADFC6', accent: '#B8965A', grain: 'ink' } },
+      {
+        title: "Rerum Novarum",
+        kicker: "Leão XIII",
+        spine: "1891 · Trabalho",
+        to: `${AppRoute.MAGISTERIUM}?q=rerum-novarum`,
+        palette: { bg: "#3E2A18", fg: "#EFE0C4", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Humanae Vitae",
+        kicker: "Paulo VI",
+        spine: "1968 · Vida",
+        to: `${AppRoute.MAGISTERIUM}?q=humanae-vitae`,
+        palette: { bg: "#DDE4E8", fg: "#1A2E3E", accent: "#8A6B3E", grain: "paper" },
+      },
+      {
+        title: "Redemptor Hominis",
+        kicker: "João Paulo II",
+        spine: "1979 · Cristo",
+        to: `${AppRoute.MAGISTERIUM}?q=redemptor-hominis`,
+        palette: { bg: "#4A1220", fg: "#F0E4D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Deus Caritas Est",
+        kicker: "Bento XVI",
+        spine: "2005 · Amor",
+        to: `${AppRoute.MAGISTERIUM}?q=deus-caritas-est`,
+        palette: { bg: "#2C3E50", fg: "#EEE6D0", accent: "#C9A24C", grain: "ink" },
+      },
+      {
+        title: "Fratelli Tutti",
+        kicker: "Francisco",
+        spine: "2020 · Fraternidade",
+        to: `${AppRoute.MAGISTERIUM}?q=fratelli-tutti`,
+        palette: { bg: "#1F3A2A", fg: "#EADFC6", accent: "#B8965A", grain: "ink" },
+      },
     ],
   },
 ];
 
 /** "Descubra" — temas curados com linha curatorial editorial. */
 const descubra: { name: string; slug: string; hint: string }[] = [
-  { name: 'Esperança',    slug: 'esperanca',    hint: 'Ancorar-se em Cristo quando o presente pesa.' },
-  { name: 'Misericórdia', slug: 'misericordia', hint: 'Rosto do Pai que vai ao encontro do filho.' },
-  { name: 'Maria',        slug: 'maria',        hint: 'A Mãe segundo os Padres e Doutores.' },
-  { name: 'Perdão',       slug: 'perdao',       hint: 'Setenta vezes sete, sem medida.' },
-  { name: 'Caridade',     slug: 'caridade',     hint: 'A mais excelente das virtudes.' },
-  { name: 'Sacramentos',  slug: 'sacramentos',  hint: 'Sinais visíveis da graça invisível.' },
-  { name: 'Oração',       slug: 'oracao',       hint: 'A respiração da alma cristã.' },
-  { name: 'Família',      slug: 'familia',      hint: 'Igreja doméstica, escola de virtudes.' },
+  { name: "Esperança", slug: "esperanca", hint: "Ancorar-se em Cristo quando o presente pesa." },
+  {
+    name: "Misericórdia",
+    slug: "misericordia",
+    hint: "Rosto do Pai que vai ao encontro do filho.",
+  },
+  { name: "Maria", slug: "maria", hint: "A Mãe segundo os Padres e Doutores." },
+  { name: "Perdão", slug: "perdao", hint: "Setenta vezes sete, sem medida." },
+  { name: "Caridade", slug: "caridade", hint: "A mais excelente das virtudes." },
+  { name: "Sacramentos", slug: "sacramentos", hint: "Sinais visíveis da graça invisível." },
+  { name: "Oração", slug: "oracao", hint: "A respiração da alma cristã." },
+  { name: "Família", slug: "familia", hint: "Igreja doméstica, escola de virtudes." },
 ];
-
-
 
 /**
  * Resolve o destino de uma busca em função do eixo ativo.
@@ -213,35 +453,32 @@ const descubra: { name: string; slug: string; hint: string }[] = [
  */
 function resolveSearchTarget(query: string, axis: AxisFilter): string {
   const q = query.trim();
-  const qp = q ? `q=${encodeURIComponent(q)}` : '';
+  const qp = q ? `q=${encodeURIComponent(q)}` : "";
   switch (axis) {
-    case 'tema':
-      return `/temas${qp ? `?${qp}` : ''}`;
-    case 'pessoa':
-      return `/buscar?tipo=autores${qp ? `&${qp}` : ''}`;
-    case 'documento':
-      return `/buscar?tipo=documentos${qp ? `&${qp}` : ''}`;
-    case 'periodo':
-      return `/buscar?tipo=periodo${qp ? `&${qp}` : ''}`;
-    case 'fonte':
-      return `/buscar?tipo=fontes${qp ? `&${qp}` : ''}`;
+    case "tema":
+      return `/temas${qp ? `?${qp}` : ""}`;
+    case "pessoa":
+      return `/buscar?tipo=autores${qp ? `&${qp}` : ""}`;
+    case "documento":
+      return `/buscar?tipo=documentos${qp ? `&${qp}` : ""}`;
+    case "periodo":
+      return `/buscar?tipo=periodo${qp ? `&${qp}` : ""}`;
+    case "fonte":
+      return `/buscar?tipo=fontes${qp ? `&${qp}` : ""}`;
     default:
-      return `/buscar${qp ? `?${qp}` : ''}`;
+      return `/buscar${qp ? `?${qp}` : ""}`;
   }
 }
 
-
-type BibliotecaTheme = 'vaticana' | 'apple' | 'logos';
+type BibliotecaTheme = "vaticana" | "apple" | "logos";
 
 const BibliotecaPage: React.FC = () => {
   const navigate = useNavigate();
   const { query, axis, tab, setQuery, setAxis, setTab } = useBibliotecaState();
   const { recents, pushRecent, clearRecents, removeRecent } = useBibliotecaRecents();
-  const { favorites, removeFavorite } = useFavorites('biblioteca');
+  const { favorites, removeFavorite } = useFavorites("biblioteca");
   // Identidade travada em "Logos 2030" — seletor removido para reduzir dívida (auditoria).
-  const theme: BibliotecaTheme = 'logos';
-
-
+  const theme: BibliotecaTheme = "logos";
 
   const filteredEscritos = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -272,7 +509,6 @@ const BibliotecaPage: React.FC = () => {
   return (
     <ContemplativeLayout>
       <div className="w-full pt-spacing-md pb-spacing-4xl" data-biblioteca-theme={theme}>
-
         {/* Hero editorial — abertura contemplativa (Sprint R1). */}
         <EditorialHero
           parchment
@@ -283,10 +519,8 @@ const BibliotecaPage: React.FC = () => {
           className="mb-spacing-2xl"
         />
 
-
         {/* ABERTURA — Continuar lendo é a página aberta do livro. */}
         <ContinueReadingHero recents={recents} />
-
 
         {/* Busca — respiração generosa depois da abertura, sem cara de topo de app. */}
         <form
@@ -307,7 +541,10 @@ const BibliotecaPage: React.FC = () => {
             {(query || axis) && (
               <button
                 type="button"
-                onClick={() => { setQuery(''); if (axis) setAxis(axis); }}
+                onClick={() => {
+                  setQuery("");
+                  if (axis) setAxis(axis);
+                }}
                 className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-[0.25em] text-primary/45 hover:text-secondary"
                 aria-label="Limpar busca"
               >
@@ -329,10 +566,10 @@ const BibliotecaPage: React.FC = () => {
                   onClick={() => setAxis(a.key)}
                   aria-pressed={active}
                   className={cn(
-                    'text-[11px] uppercase tracking-[0.2em] px-spacing-md py-[6px] border transition-colors',
+                    "text-[11px] uppercase tracking-[0.2em] px-spacing-md py-[6px] border transition-colors",
                     active
-                      ? 'border-secondary text-secondary bg-secondary/5'
-                      : 'border-primary/15 text-primary/60 hover:border-secondary/60 hover:text-secondary',
+                      ? "border-secondary text-secondary bg-secondary/5"
+                      : "border-primary/15 text-primary/60 hover:border-secondary/60 hover:text-secondary",
                   )}
                 >
                   {a.label}
@@ -356,8 +593,11 @@ const BibliotecaPage: React.FC = () => {
             {tabs.map((t) => {
               const active = tab === t.key;
               const count =
-                t.key === 'favoritos' ? favorites.length :
-                t.key === 'recentes' ? recents.length : undefined;
+                t.key === "favoritos"
+                  ? favorites.length
+                  : t.key === "recentes"
+                    ? recents.length
+                    : undefined;
               return (
                 <li key={t.key}>
                   <button
@@ -365,10 +605,10 @@ const BibliotecaPage: React.FC = () => {
                     onClick={() => setTab(t.key)}
                     aria-pressed={active}
                     className={cn(
-                      'text-[11px] uppercase tracking-[0.25em] font-medium pb-[6px] border-b transition-colors flex items-baseline gap-spacing-xs',
+                      "text-[11px] uppercase tracking-[0.25em] font-medium pb-[6px] border-b transition-colors flex items-baseline gap-spacing-xs",
                       active
-                        ? 'text-secondary border-secondary'
-                        : 'text-primary/55 border-transparent hover:text-secondary',
+                        ? "text-secondary border-secondary"
+                        : "text-primary/55 border-transparent hover:text-secondary",
                     )}
                   >
                     <span>{t.label}</span>
@@ -392,29 +632,39 @@ const BibliotecaPage: React.FC = () => {
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="mt-spacing-2xl"
           >
-            {tab === 'escritos' && (
+            {tab === "escritos" && (
               <EscritosView escritos={filteredEscritos} onOpen={openEscrito} />
             )}
-            {tab === 'pesquisar' && (
+            {tab === "pesquisar" && (
               <PesquisarView
                 query={query}
                 axis={axis}
                 onSubmit={() => navigate(resolveSearchTarget(query, axis))}
               />
             )}
-            {tab === 'temas' && (
-              <PlaceholderView to={AppRoute.TEMAS} label="Ir para Temas" description="Explore o conhecimento organizado por temas doutrinais, espirituais e históricos." />
+            {tab === "temas" && (
+              <PlaceholderView
+                to={AppRoute.TEMAS}
+                label="Ir para Temas"
+                description="Explore o conhecimento organizado por temas doutrinais, espirituais e históricos."
+              />
             )}
-            {tab === 'autores' && (
-              <PlaceholderView to={`${AppRoute.BUSCAR}?tipo=autores`} label="Explorar autores" description="Padres, Doutores, Santos e teólogos — organizados por período e tradição." />
+            {tab === "autores" && (
+              <PlaceholderView
+                to={`${AppRoute.BUSCAR}?tipo=autores`}
+                label="Explorar autores"
+                description="Padres, Doutores, Santos e teólogos — organizados por período e tradição."
+              />
             )}
-            {tab === 'colecoes' && (
-              <PlaceholderView to={`${AppRoute.BUSCAR}?tipo=colecoes`} label="Ver coleções" description="Coleções editoriais curadas: Patrística, Doutrina Social, Espiritualidade Clássica." />
+            {tab === "colecoes" && (
+              <PlaceholderView
+                to={`${AppRoute.BUSCAR}?tipo=colecoes`}
+                label="Ver coleções"
+                description="Coleções editoriais curadas: Patrística, Doutrina Social, Espiritualidade Clássica."
+              />
             )}
-            {tab === 'favoritos' && (
-              <FavoritosView items={favorites} onRemove={removeFavorite} />
-            )}
-            {tab === 'recentes' && (
+            {tab === "favoritos" && <FavoritosView items={favorites} onRemove={removeFavorite} />}
+            {tab === "recentes" && (
               <RecentesView items={recents} onClear={clearRecents} onRemove={removeRecent} />
             )}
           </motion.section>
@@ -434,28 +684,33 @@ const BibliotecaPage: React.FC = () => {
  */
 
 /** Paleta neutra usada pelo hero quando não há paleta explícita. */
-const DEFAULT_PALETTE: CoverPalette = { bg: '#111111', fg: '#F4E9D0', accent: '#C9A24C', grain: 'ink' };
+const DEFAULT_PALETTE: CoverPalette = {
+  bg: "#111111",
+  fg: "#F4E9D0",
+  accent: "#C9A24C",
+  grain: "ink",
+};
 
 /**
  * Textura de papel MUITO discreta via gradientes radiais.
  * 'paper' aplica pontos escuros em multiply; 'ink' aplica pontos claros em screen.
  * Nenhuma imagem — apenas CSS. Efeito quase imperceptível, apenas quebra a chapadão.
  */
-const grainStyle = (mode: CoverPalette['grain']): React.CSSProperties =>
-  mode === 'paper'
+const grainStyle = (mode: CoverPalette["grain"]): React.CSSProperties =>
+  mode === "paper"
     ? {
         backgroundImage:
-          'radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px)',
-        backgroundSize: '3px 3px, 7px 7px',
-        backgroundPosition: '0 0, 1px 2px',
-        mixBlendMode: 'multiply',
+          "radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px)",
+        backgroundSize: "3px 3px, 7px 7px",
+        backgroundPosition: "0 0, 1px 2px",
+        mixBlendMode: "multiply",
       }
     : {
         backgroundImage:
-          'radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px)',
-        backgroundSize: '3px 3px, 7px 7px',
-        backgroundPosition: '0 0, 1px 2px',
-        mixBlendMode: 'screen',
+          "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px)",
+        backgroundSize: "3px 3px, 7px 7px",
+        backgroundPosition: "0 0, 1px 2px",
+        mixBlendMode: "screen",
       };
 
 const BookCover: React.FC<{
@@ -465,30 +720,27 @@ const BookCover: React.FC<{
   palette: CoverPalette;
   to: string;
   onOpen?: () => void;
-  size?: 'md' | 'lg';
+  size?: "md" | "lg";
   /** Marca de leitura discreta à esquerda (fio dourado vertical). */
   bookmarked?: boolean;
-}> = ({ kicker, title, spine, palette, to, onOpen, size = 'md', bookmarked = false }) => {
-  const dims = size === 'lg' ? 'w-[168px] md:w-[200px]' : 'w-[144px] md:w-[160px]';
+}> = ({ kicker, title, spine, palette, to, onOpen, size = "md", bookmarked = false }) => {
+  const dims = size === "lg" ? "w-[168px] md:w-[200px]" : "w-[144px] md:w-[160px]";
   return (
     <Link
       to={to}
       onClick={onOpen}
-      className={cn(
-        'group relative block flex-shrink-0 snap-start focus:outline-none',
-        dims,
-      )}
+      className={cn("group relative block flex-shrink-0 snap-start focus:outline-none", dims)}
       aria-label={`Abrir ${title}`}
     >
       {/* Capa 2:3 — objeto físico: papel, lombada, folhas, brilho superior. */}
       <div
         className={cn(
-          'relative aspect-[2/3] w-full overflow-hidden transition-all duration-500 ease-out',
+          "relative aspect-[2/3] w-full overflow-hidden transition-all duration-500 ease-out",
           // Sombra editorial: livro em pé sobre a mesa, não card de dashboard.
-          'shadow-[-1px_0_0_rgba(0,0,0,0.10),1px_2px_3px_rgba(0,0,0,0.10),10px_20px_32px_-18px_rgba(0,0,0,0.55)]',
-          'group-hover:-translate-y-[5px] group-hover:rotate-[-0.2deg]',
-          'group-hover:shadow-[-1px_0_0_rgba(0,0,0,0.12),2px_4px_6px_rgba(0,0,0,0.12),14px_30px_42px_-14px_rgba(0,0,0,0.65)]',
-          'group-focus-visible:ring-2 group-focus-visible:ring-secondary group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background',
+          "shadow-[-1px_0_0_rgba(0,0,0,0.10),1px_2px_3px_rgba(0,0,0,0.10),10px_20px_32px_-18px_rgba(0,0,0,0.55)]",
+          "group-hover:-translate-y-[5px] group-hover:rotate-[-0.2deg]",
+          "group-hover:shadow-[-1px_0_0_rgba(0,0,0,0.12),2px_4px_6px_rgba(0,0,0,0.12),14px_30px_42px_-14px_rgba(0,0,0,0.65)]",
+          "group-focus-visible:ring-2 group-focus-visible:ring-secondary group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-background",
         )}
         style={{ backgroundColor: palette.bg, color: palette.fg }}
       >
@@ -498,9 +750,9 @@ const BookCover: React.FC<{
           className="absolute inset-y-0 left-0 w-[8px] pointer-events-none"
           style={{
             background:
-              palette.grain === 'ink'
-                ? 'linear-gradient(to right, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0) 100%)'
-                : 'linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 40%, rgba(0,0,0,0) 100%)',
+              palette.grain === "ink"
+                ? "linear-gradient(to right, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 40%, rgba(0,0,0,0) 100%)"
+                : "linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 40%, rgba(0,0,0,0) 100%)",
           }}
         />
         {/* Borda direita — folhas do miolo do livro. */}
@@ -509,7 +761,7 @@ const BookCover: React.FC<{
           className="absolute inset-y-[3%] right-0 w-[3px] pointer-events-none"
           style={{
             background:
-              'repeating-linear-gradient(to bottom, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, rgba(0,0,0,0.10) 1px, rgba(0,0,0,0.10) 2px)',
+              "repeating-linear-gradient(to bottom, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, rgba(0,0,0,0.10) 1px, rgba(0,0,0,0.10) 2px)",
           }}
         />
         {/* Brilho superior — luz incidente na capa. */}
@@ -518,9 +770,9 @@ const BookCover: React.FC<{
           className="absolute inset-x-0 top-0 h-[35%] pointer-events-none"
           style={{
             background:
-              palette.grain === 'ink'
-                ? 'linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0) 100%)'
-                : 'linear-gradient(to bottom, rgba(255,255,255,0.30), rgba(255,255,255,0) 100%)',
+              palette.grain === "ink"
+                ? "linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(255,255,255,0) 100%)"
+                : "linear-gradient(to bottom, rgba(255,255,255,0.30), rgba(255,255,255,0) 100%)",
           }}
         />
         {/* Sombra inferior interna — peso, desgaste elegante. */}
@@ -528,12 +780,15 @@ const BookCover: React.FC<{
           aria-hidden
           className="absolute inset-x-0 bottom-0 h-[25%] pointer-events-none"
           style={{
-            background:
-              'linear-gradient(to top, rgba(0,0,0,0.18), rgba(0,0,0,0) 100%)',
+            background: "linear-gradient(to top, rgba(0,0,0,0.18), rgba(0,0,0,0) 100%)",
           }}
         />
         {/* Grão de papel */}
-        <div aria-hidden className="absolute inset-0 pointer-events-none opacity-80" style={grainStyle(palette.grain)} />
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-80"
+          style={grainStyle(palette.grain)}
+        />
         {/* Moldura interna fina, na cor de acento — impressão editorial. */}
         <div
           aria-hidden
@@ -551,8 +806,8 @@ const BookCover: React.FC<{
           <div className="flex-1 flex items-center justify-center px-[2px]">
             <h3
               className={cn(
-                'font-serif italic leading-[1.05] text-center',
-                size === 'lg' ? 'text-2xl md:text-[28px]' : 'text-xl md:text-[22px]',
+                "font-serif italic leading-[1.05] text-center",
+                size === "lg" ? "text-2xl md:text-[28px]" : "text-xl md:text-[22px]",
               )}
             >
               {title}
@@ -580,7 +835,6 @@ const BookCover: React.FC<{
   );
 };
 
-
 /**
  * ContinueReadingHero — o "livro sobre a mesa".
  * Estrutura editorial (R1.2):
@@ -604,46 +858,47 @@ function stableHash(s: string): number {
 
 /** Infere o "tipo" da obra a partir do path (Bíblia / Catecismo / etc.). */
 function inferKind(path?: string): string {
-  if (!path) return 'Leitura em curso';
-  if (path.includes('/bible') || path.includes('/biblia')) return 'Bíblia';
-  if (path.includes('/catechism') || path.includes('/catecismo')) return 'Catecismo';
-  if (path.includes('magisterium') || path.includes('magisterio')) return 'Magistério';
-  if (path.includes('/saints') || path.includes('/santos')) return 'Vida dos Santos';
-  return 'Leitura em curso';
+  if (!path) return "Leitura em curso";
+  if (path.includes("/bible") || path.includes("/biblia")) return "Bíblia";
+  if (path.includes("/catechism") || path.includes("/catecismo")) return "Catecismo";
+  if (path.includes("magisterium") || path.includes("magisterio")) return "Magistério";
+  if (path.includes("/saints") || path.includes("/santos")) return "Vida dos Santos";
+  return "Leitura em curso";
 }
 
 /** Formata "Última leitura • Hoje às 07:43" | "Ontem às 22:10" | "12 nov". */
 function formatLastRead(iso?: string): string {
-  if (!iso) return 'Curadoria de hoje';
+  if (!iso) return "Curadoria de hoje";
   const d = new Date(iso);
   const now = new Date();
   const sameDay = d.toDateString() === now.toDateString();
-  const y = new Date(now); y.setDate(now.getDate() - 1);
+  const y = new Date(now);
+  y.setDate(now.getDate() - 1);
   const yesterday = d.toDateString() === y.toDateString();
-  const hh = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const hh = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   if (sameDay) return `Hoje às ${hh}`;
   if (yesterday) return `Ontem às ${hh}`;
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 }
 
 const FALLBACK_EXCERPTS = [
-  '…quem vem a mim jamais terá fome; e quem crê em mim jamais terá sede…',
-  '…tarde vos amei, ó Beleza tão antiga e tão nova, tarde vos amei…',
-  '…nada te perturbe, nada te espante; tudo passa, só Deus não muda…',
-  '…tu nos fizeste para ti, e inquieto está o nosso coração até que descanse em ti…',
+  "…quem vem a mim jamais terá fome; e quem crê em mim jamais terá sede…",
+  "…tarde vos amei, ó Beleza tão antiga e tão nova, tarde vos amei…",
+  "…nada te perturbe, nada te espante; tudo passa, só Deus não muda…",
+  "…tu nos fizeste para ti, e inquieto está o nosso coração até que descanse em ti…",
 ];
 
 const ContinueReadingHero: React.FC<{
-  recents: ReturnType<typeof useBibliotecaRecents>['recents'];
+  recents: ReturnType<typeof useBibliotecaRecents>["recents"];
 }> = ({ recents }) => {
   const last = recents[0];
-  const seedKey = last?.id ?? 'fallback:confissoes';
+  const seedKey = last?.id ?? "fallback:confissoes";
   const seed = stableHash(seedKey);
 
-  const kind = last ? inferKind(last.path) : 'Leitura recomendada';
-  const title = last?.title ?? 'As Confissões';
-  const reference = last?.subtitle ?? 'Livro X · A memória e o desejo';
-  const path = last?.path ?? `${AppRoute.BUSCAR}?q=${encodeURIComponent('Confissões Agostinho')}`;
+  const kind = last ? inferKind(last.path) : "Leitura recomendada";
+  const title = last?.title ?? "As Confissões";
+  const reference = last?.subtitle ?? "Livro X · A memória e o desejo";
+  const path = last?.path ?? `${AppRoute.BUSCAR}?q=${encodeURIComponent("Confissões Agostinho")}`;
   const excerpt = FALLBACK_EXCERPTS[seed % FALLBACK_EXCERPTS.length];
 
   // Placeholder: 30–85% para nunca soar como "quase terminando" nem "recém aberto".
@@ -670,9 +925,7 @@ const ContinueReadingHero: React.FC<{
 
       <div className="min-w-0">
         {/* Bloco superior: LIVRO · CAPÍTULO · REFERÊNCIA */}
-        <p className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">
-          {kind}
-        </p>
+        <p className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">{kind}</p>
         <h2 className="font-serif italic text-[2rem] md:text-[3rem] leading-[1.05] text-primary tracking-tight mt-spacing-md">
           {title}
         </h2>
@@ -680,11 +933,10 @@ const ContinueReadingHero: React.FC<{
           {reference}
         </p>
 
-
         {/* Trecho interrompido — não resumo, evocação. */}
         <blockquote className="mt-spacing-2xl max-w-xl border-l border-secondary/50 pl-spacing-lg">
           <p className="font-serif italic text-primary/75 text-xl md:text-2xl leading-relaxed">
-            {excerpt.startsWith('…') ? excerpt : `…${excerpt}`}
+            {excerpt.startsWith("…") ? excerpt : `…${excerpt}`}
           </p>
         </blockquote>
 
@@ -698,10 +950,7 @@ const ContinueReadingHero: React.FC<{
           aria-label={`Progresso de leitura: ${pct}% concluído`}
         >
           <div className="relative h-[2px] w-full bg-primary/10">
-            <div
-              className="absolute inset-y-0 left-0 bg-secondary"
-              style={{ width: `${pct}%` }}
-            />
+            <div className="absolute inset-y-0 left-0 bg-secondary" style={{ width: `${pct}%` }} />
             <div
               aria-hidden="true"
               className="absolute top-1/2 -translate-y-1/2 h-[10px] w-[2px] bg-secondary"
@@ -721,7 +970,7 @@ const ContinueReadingHero: React.FC<{
             to={path}
             className="group inline-flex items-baseline gap-spacing-md font-serif italic text-2xl md:text-3xl text-primary border-b border-primary pb-spacing-sm hover:text-secondary hover:border-secondary transition-colors"
           >
-            {last ? 'Retomar leitura' : 'Continuar onde parou'}
+            {last ? "Retomar leitura" : "Continuar onde parou"}
             <span
               aria-hidden="true"
               className="text-secondary text-xl transition-transform group-hover:translate-x-1"
@@ -735,29 +984,28 @@ const ContinueReadingHero: React.FC<{
   );
 };
 
-
 const Shelf: React.FC<{
   label: string;
   hint?: string;
   dim?: boolean;
   children: React.ReactNode;
 }> = ({ label, hint, dim, children }) => (
-  <section aria-label={label} className={cn('mb-spacing-4xl pt-spacing-2xl', dim && 'opacity-80')}>
+  <section aria-label={label} className={cn("mb-spacing-4xl pt-spacing-2xl", dim && "opacity-80")}>
     <header className="flex items-baseline justify-between mb-spacing-lg">
       <div>
-        <span className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">{label}</span>
-        {hint && (
-          <p className="font-serif italic text-primary/60 text-base mt-[2px]">{hint}</p>
-        )}
+        <span className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">
+          {label}
+        </span>
+        {hint && <p className="font-serif italic text-primary/60 text-base mt-[2px]">{hint}</p>}
         <div aria-hidden className="h-px w-16 bg-secondary/40 mt-spacing-md" />
       </div>
     </header>
 
     <div
       className={cn(
-        'flex gap-spacing-lg overflow-x-auto snap-x snap-mandatory pb-spacing-md',
-        '[scrollbar-width:thin] [-ms-overflow-style:none]',
-        '[&::-webkit-scrollbar]:h-[6px] [&::-webkit-scrollbar-thumb]:bg-primary/15 [&::-webkit-scrollbar-track]:bg-transparent',
+        "flex gap-spacing-lg overflow-x-auto snap-x snap-mandatory pb-spacing-md",
+        "[scrollbar-width:thin] [-ms-overflow-style:none]",
+        "[&::-webkit-scrollbar]:h-[6px] [&::-webkit-scrollbar-thumb]:bg-primary/15 [&::-webkit-scrollbar-track]:bg-transparent",
       )}
     >
       {children}
@@ -784,14 +1032,9 @@ const CollectionsEditorial: React.FC<{ series: ColecaoSerie[] }> = ({ series }) 
       <div aria-hidden className="h-px w-16 bg-secondary/40 mt-spacing-lg" />
     </div>
 
-
     <div className="flex flex-col gap-spacing-4xl">
       {series.map((serie, idx) => (
-        <article
-          key={serie.title}
-          aria-label={serie.title}
-          className="group/serie relative"
-        >
+        <article key={serie.title} aria-label={serie.title} className="group/serie relative">
           {/* Fio horizontal dourado no topo, exceto na primeira. */}
           {idx > 0 && (
             <div
@@ -814,7 +1057,6 @@ const CollectionsEditorial: React.FC<{ series: ColecaoSerie[] }> = ({ series }) 
                 <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 font-medium">
                   {serie.kicker}
                 </span>
-
               </div>
               <h3 className="font-serif italic text-primary text-[2rem] md:text-[2.5rem] leading-[1.05] mb-spacing-md">
                 {serie.title}
@@ -828,9 +1070,9 @@ const CollectionsEditorial: React.FC<{ series: ColecaoSerie[] }> = ({ series }) 
             <div className="md:col-span-8 lg:col-span-9 min-w-0">
               <div
                 className={cn(
-                  'flex gap-spacing-lg overflow-x-auto snap-x snap-mandatory pb-spacing-md',
-                  '[scrollbar-width:thin] [-ms-overflow-style:none]',
-                  '[&::-webkit-scrollbar]:h-[6px] [&::-webkit-scrollbar-thumb]:bg-primary/15 [&::-webkit-scrollbar-track]:bg-transparent',
+                  "flex gap-spacing-lg overflow-x-auto snap-x snap-mandatory pb-spacing-md",
+                  "[scrollbar-width:thin] [-ms-overflow-style:none]",
+                  "[&::-webkit-scrollbar]:h-[6px] [&::-webkit-scrollbar-thumb]:bg-primary/15 [&::-webkit-scrollbar-track]:bg-transparent",
                 )}
               >
                 {serie.items.map((item) => (
@@ -848,7 +1090,9 @@ const CollectionsEditorial: React.FC<{ series: ColecaoSerie[] }> = ({ series }) 
               <div
                 aria-hidden
                 className="h-px w-full mt-spacing-xs"
-                style={{ background: `linear-gradient(to right, ${serie.accent}55, transparent 80%)` }}
+                style={{
+                  background: `linear-gradient(to right, ${serie.accent}55, transparent 80%)`,
+                }}
               />
             </div>
           </div>
@@ -858,8 +1102,6 @@ const CollectionsEditorial: React.FC<{ series: ColecaoSerie[] }> = ({ series }) 
   </section>
 );
 
-
-
 const EscritosView: React.FC<{
   escritos: Escrito[];
   onOpen: (e: Escrito) => void;
@@ -867,161 +1109,185 @@ const EscritosView: React.FC<{
   const [featured] = descubra;
 
   return (
-  <div className="w-full">
-    <Shelf label="Fontes primárias" hint="A Tradição escrita da Igreja, reunida sob uma só luz.">
-      {escritos.length === 0 && (
-        <div className="py-spacing-2xl text-primary/40 italic font-serif">
-          Nada corresponde à sua busca.
-        </div>
-      )}
-      {escritos.map((e) => (
-        <BookCover
-          key={e.title}
-          kicker={e.kicker}
-          title={e.title}
-          spine={e.spine}
-          palette={e.palette}
-          to={e.to}
-          onOpen={() => onOpen(e)}
-        />
-      ))}
-    </Shelf>
-
-    <CollectionsEditorial series={seriesColecoes} />
-
-
-    {/* R1.4 — Da mesa do bibliotecário: mesa de recomendações, não vitrine de cards. */}
-    <section aria-label="Da mesa do bibliotecário" className="mb-spacing-4xl pt-spacing-2xl relative">
-      {/* Textura de papel sutilíssima só nesta mesa. */}
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={grainStyle('paper')}
-      />
-
-      {/* Cabeçalho editorial da seção. */}
-      <div className="mb-spacing-3xl max-w-2xl relative">
-        <span className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">
-          Da mesa do bibliotecário
-        </span>
-        <h2 className="font-serif italic text-primary text-[2rem] md:text-[2.75rem] leading-[1.05] mt-spacing-md mb-spacing-md">
-          Uma leitura escolhida para este momento
-        </h2>
-        <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug">
-          Percursos preparados para aprofundar a fé, a reflexão e a oração.
-        </p>
-        <div aria-hidden className="h-px w-16 bg-secondary/40 mt-spacing-lg" />
-      </div>
-
-      {/* Recomendação principal — capa maior à esquerda, nota do bibliotecário à direita. */}
-      <div className="relative grid grid-cols-1 md:grid-cols-12 gap-spacing-2xl md:gap-spacing-4xl items-start mb-spacing-4xl">
-        <div className="md:col-span-4 lg:col-span-3 flex md:justify-end">
+    <div className="w-full">
+      <Shelf label="Fontes primárias" hint="A Tradição escrita da Igreja, reunida sob uma só luz.">
+        {escritos.length === 0 && (
+          <div className="py-spacing-2xl text-primary/40 italic font-serif">
+            Nada corresponde à sua busca.
+          </div>
+        )}
+        {escritos.map((e) => (
           <BookCover
-            kicker="Percurso Editorial"
-            title={featured.name}
-            spine="Nota do bibliotecário"
-            palette={{ bg: '#0E2748', fg: '#EAE3D2', accent: '#C9A24C', grain: 'ink' }}
-            to={`${AppRoute.TEMAS}/${featured.slug}`}
-            size="lg"
-            bookmarked
+            key={e.title}
+            kicker={e.kicker}
+            title={e.title}
+            spine={e.spine}
+            palette={e.palette}
+            to={e.to}
+            onOpen={() => onOpen(e)}
           />
+        ))}
+      </Shelf>
+
+      <CollectionsEditorial series={seriesColecoes} />
+
+      {/* R1.4 — Da mesa do bibliotecário: mesa de recomendações, não vitrine de cards. */}
+      <section
+        aria-label="Da mesa do bibliotecário"
+        className="mb-spacing-4xl pt-spacing-2xl relative"
+      >
+        {/* Textura de papel sutilíssima só nesta mesa. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none opacity-[0.04]"
+          style={grainStyle("paper")}
+        />
+
+        {/* Cabeçalho editorial da seção. */}
+        <div className="mb-spacing-3xl max-w-2xl relative">
+          <span className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">
+            Da mesa do bibliotecário
+          </span>
+          <h2 className="font-serif italic text-primary text-[2rem] md:text-[2.75rem] leading-[1.05] mt-spacing-md mb-spacing-md">
+            Uma leitura escolhida para este momento
+          </h2>
+          <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug">
+            Percursos preparados para aprofundar a fé, a reflexão e a oração.
+          </p>
+          <div aria-hidden className="h-px w-16 bg-secondary/40 mt-spacing-lg" />
         </div>
 
-        <div className="md:col-span-8 lg:col-span-8 lg:col-start-5 relative">
-          {/* Numeral romano marginal — como página de livro. */}
-          <span
-            className="absolute -left-spacing-lg md:-left-spacing-2xl top-0 font-serif italic text-secondary/60 text-2xl md:text-3xl leading-none select-none hidden md:block"
-            aria-hidden
-          >
-            I
-          </span>
+        {/* Recomendação principal — capa maior à esquerda, nota do bibliotecário à direita. */}
+        <div className="relative grid grid-cols-1 md:grid-cols-12 gap-spacing-2xl md:gap-spacing-4xl items-start mb-spacing-4xl">
+          <div className="md:col-span-4 lg:col-span-3 flex md:justify-end">
+            <BookCover
+              kicker="Percurso Editorial"
+              title={featured.name}
+              spine="Nota do bibliotecário"
+              palette={{ bg: "#0E2748", fg: "#EAE3D2", accent: "#C9A24C", grain: "ink" }}
+              to={`${AppRoute.TEMAS}/${featured.slug}`}
+              size="lg"
+              bookmarked
+            />
+          </div>
 
-          <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 block mb-spacing-sm">
-            Recomendação de hoje
-          </span>
-          <h3 className="font-serif italic text-[2.25rem] md:text-[3rem] text-primary leading-[1.02] mb-spacing-lg">
-            A {featured.name} que permanece
-          </h3>
-
-          {/* Nota do bibliotecário — bloco com filete dourado à esquerda, tom manuscrito. */}
-          <blockquote className="border-l-[2px] border-secondary/40 pl-spacing-lg py-spacing-xs max-w-xl mb-spacing-lg">
-            <p className="font-serif italic text-primary/75 text-lg md:text-xl leading-relaxed">
-              Um caminho para atravessar tempos de espera descobrindo a promessa que sustenta a alma.
-            </p>
-            <footer className="mt-spacing-md text-[10px] uppercase tracking-[0.28em] text-primary/45">
-              Bibliotecário · {featured.hint.replace(/\.$/, '')}
-            </footer>
-          </blockquote>
-
-          <Link
-            to={`${AppRoute.TEMAS}/${featured.slug}`}
-            className="group inline-flex items-baseline gap-spacing-sm font-serif italic text-primary text-lg md:text-xl border-b border-primary/25 hover:border-secondary hover:text-secondary transition-colors pb-[3px] focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-          >
-            Abrir este caminho
+          <div className="md:col-span-8 lg:col-span-8 lg:col-start-5 relative">
+            {/* Numeral romano marginal — como página de livro. */}
             <span
+              className="absolute -left-spacing-lg md:-left-spacing-2xl top-0 font-serif italic text-secondary/60 text-2xl md:text-3xl leading-none select-none hidden md:block"
               aria-hidden
-              className="text-secondary transition-transform duration-500 group-hover:translate-x-[6px]"
             >
-              →
+              I
             </span>
-          </Link>
-        </div>
-      </div>
 
-      {/* Três caminhos assimétricos — para estudar, contemplar, rezar. */}
-      <div className="relative">
-        <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 block mb-spacing-lg">
-          Também sobre a mesa
-        </span>
+            <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 block mb-spacing-sm">
+              Recomendação de hoje
+            </span>
+            <h3 className="font-serif italic text-[2.25rem] md:text-[3rem] text-primary leading-[1.02] mb-spacing-lg">
+              A {featured.name} que permanece
+            </h3>
 
-        <ul className="grid grid-cols-1 md:grid-cols-12 gap-spacing-2xl md:gap-spacing-3xl">
-          {[
-            { numeral: 'II', kicker: 'Para estudar',    title: 'Bíblia + Catecismo', note: 'Ler a Escritura à luz da doutrina que a Igreja recebeu.',       to: AppRoute.CATECHISM, span: 'md:col-span-5' },
-            { numeral: 'III',kicker: 'Para contemplar', title: 'Santos + Padres',    note: 'Escutar quem já atravessou o caminho antes de nós.',             to: AppRoute.SAINTS,    span: 'md:col-span-4' },
-            { numeral: 'IV', kicker: 'Para rezar',      title: 'Lectio + Evangelho', note: 'Fazer da Palavra oração — do texto ao coração, do coração à vida.', to: AppRoute.LECTIO_DIVINA, span: 'md:col-span-3' },
-          ].map((c) => (
-            <li key={c.title} className={cn(c.span, 'group/rec')}>
-              <Link
-                to={c.to}
-                className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+            {/* Nota do bibliotecário — bloco com filete dourado à esquerda, tom manuscrito. */}
+            <blockquote className="border-l-[2px] border-secondary/40 pl-spacing-lg py-spacing-xs max-w-xl mb-spacing-lg">
+              <p className="font-serif italic text-primary/75 text-lg md:text-xl leading-relaxed">
+                Um caminho para atravessar tempos de espera descobrindo a promessa que sustenta a
+                alma.
+              </p>
+              <footer className="mt-spacing-md text-[10px] uppercase tracking-[0.28em] text-primary/45">
+                Bibliotecário · {featured.hint.replace(/\.$/, "")}
+              </footer>
+            </blockquote>
+
+            <Link
+              to={`${AppRoute.TEMAS}/${featured.slug}`}
+              className="group inline-flex items-baseline gap-spacing-sm font-serif italic text-primary text-lg md:text-xl border-b border-primary/25 hover:border-secondary hover:text-secondary transition-colors pb-[3px] focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+            >
+              Abrir este caminho
+              <span
+                aria-hidden
+                className="text-secondary transition-transform duration-500 group-hover:translate-x-[6px]"
               >
-                {/* Marca de página — pequeno numeral romano dourado + fio curto. */}
-                <div className="flex items-baseline gap-spacing-sm mb-spacing-md">
-                  <span
-                    className="font-serif italic text-secondary/70 text-xl leading-none"
-                    aria-hidden
-                  >
-                    {c.numeral}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="h-px flex-1 bg-secondary/25 group-hover/rec:bg-secondary/60 transition-colors"
-                  />
-                  <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 font-medium">
-                    {c.kicker}
-                  </span>
+                →
+              </span>
+            </Link>
+          </div>
+        </div>
 
-                </div>
-                <h4 className="font-serif italic text-primary text-[1.75rem] md:text-[2.15rem] leading-[1.05] mb-spacing-sm group-hover/rec:text-secondary transition-colors">
-                  {c.title}
-                </h4>
-                <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug">
-                  {c.note}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+        {/* Três caminhos assimétricos — para estudar, contemplar, rezar. */}
+        <div className="relative">
+          <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 block mb-spacing-lg">
+            Também sobre a mesa
+          </span>
 
-  </div>
+          <ul className="grid grid-cols-1 md:grid-cols-12 gap-spacing-2xl md:gap-spacing-3xl">
+            {[
+              {
+                numeral: "II",
+                kicker: "Para estudar",
+                title: "Bíblia + Catecismo",
+                note: "Ler a Escritura à luz da doutrina que a Igreja recebeu.",
+                to: AppRoute.CATECHISM,
+                span: "md:col-span-5",
+              },
+              {
+                numeral: "III",
+                kicker: "Para contemplar",
+                title: "Santos + Padres",
+                note: "Escutar quem já atravessou o caminho antes de nós.",
+                to: AppRoute.SAINTS,
+                span: "md:col-span-4",
+              },
+              {
+                numeral: "IV",
+                kicker: "Para rezar",
+                title: "Lectio + Evangelho",
+                note: "Fazer da Palavra oração — do texto ao coração, do coração à vida.",
+                to: AppRoute.LECTIO_DIVINA,
+                span: "md:col-span-3",
+              },
+            ].map((c) => (
+              <li key={c.title} className={cn(c.span, "group/rec")}>
+                <Link
+                  to={c.to}
+                  className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+                >
+                  {/* Marca de página — pequeno numeral romano dourado + fio curto. */}
+                  <div className="flex items-baseline gap-spacing-sm mb-spacing-md">
+                    <span
+                      className="font-serif italic text-secondary/70 text-xl leading-none"
+                      aria-hidden
+                    >
+                      {c.numeral}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="h-px flex-1 bg-secondary/25 group-hover/rec:bg-secondary/60 transition-colors"
+                    />
+                    <span className="text-[10px] uppercase tracking-[0.32em] text-secondary/80 font-medium">
+                      {c.kicker}
+                    </span>
+                  </div>
+                  <h4 className="font-serif italic text-primary text-[1.75rem] md:text-[2.15rem] leading-[1.05] mb-spacing-sm group-hover/rec:text-secondary transition-colors">
+                    {c.title}
+                  </h4>
+                  <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug">
+                    {c.note}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </div>
   );
 };
 
-
-
-const PesquisarView: React.FC<{ query: string; axis: AxisFilter; onSubmit: () => void }> = ({ query, axis, onSubmit }) => (
+const PesquisarView: React.FC<{ query: string; axis: AxisFilter; onSubmit: () => void }> = ({
+  query,
+  axis,
+  onSubmit,
+}) => (
   <div className="max-w-2xl">
     <span className="text-[10px] uppercase tracking-[0.32em] text-secondary font-medium">
       Busca
@@ -1030,7 +1296,8 @@ const PesquisarView: React.FC<{ query: string; axis: AxisFilter; onSubmit: () =>
       Pesquisa aberta
     </h2>
     <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug mb-spacing-lg">
-      Digite acima e escolha um eixo — Tema, Pessoa, Documento, Período ou Fonte — para ir direto ao resultado certo.
+      Digite acima e escolha um eixo — Tema, Pessoa, Documento, Período ou Fonte — para ir direto ao
+      resultado certo.
     </p>
     <div aria-hidden className="h-px w-16 bg-secondary/40 mb-spacing-lg" />
     {(query.trim() || axis) && (
@@ -1039,14 +1306,16 @@ const PesquisarView: React.FC<{ query: string; axis: AxisFilter; onSubmit: () =>
         onClick={onSubmit}
         className="text-[11px] uppercase tracking-[0.25em] text-primary border-b border-primary pb-[3px] hover:text-secondary hover:border-secondary transition-colors"
       >
-        {axis ? `Buscar em ${axis}` : 'Buscar em toda a Biblioteca'} ↵
+        {axis ? `Buscar em ${axis}` : "Buscar em toda a Biblioteca"} ↵
       </button>
     )}
   </div>
 );
 
-
-const FavoritosView: React.FC<{ items: ReturnType<typeof useFavorites>['favorites']; onRemove: (id: string) => void }> = ({ items, onRemove }) => {
+const FavoritosView: React.FC<{
+  items: ReturnType<typeof useFavorites>["favorites"];
+  onRemove: (id: string) => void;
+}> = ({ items, onRemove }) => {
   if (items.length === 0) {
     return (
       <div className="max-w-xl">
@@ -1057,7 +1326,8 @@ const FavoritosView: React.FC<{ items: ReturnType<typeof useFavorites>['favorite
           Favoritos
         </h2>
         <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug">
-          Marque um parágrafo, versículo ou documento como favorito para retornar a ele com um clique.
+          Marque um parágrafo, versículo ou documento como favorito para retornar a ele com um
+          clique.
         </p>
         <div aria-hidden className="h-px w-16 bg-secondary/40 mt-spacing-lg" />
       </div>
@@ -1077,15 +1347,23 @@ const FavoritosView: React.FC<{ items: ReturnType<typeof useFavorites>['favorite
 
       <ul className="divide-y divide-primary/10 border-y border-primary/10">
         {items.map((f, i) => {
-          const path = f.content && f.content.startsWith('/') ? f.content : undefined;
+          const path = f.content && f.content.startsWith("/") ? f.content : undefined;
           const inner = (
             <>
-              <span className="font-serif text-secondary text-lg leading-none mr-spacing-md w-8 tabular-nums">{String(i + 1).padStart(2, '0')}.</span>
+              <span className="font-serif text-secondary text-lg leading-none mr-spacing-md w-8 tabular-nums">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
               <div className="flex-1 min-w-0">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-secondary/80">{f.type}</span>
-                <span className="block font-serif text-xl text-primary group-hover:text-secondary transition-colors">{f.title}</span>
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-secondary/80">
+                  {f.type}
+                </span>
+                <span className="block font-serif text-xl text-primary group-hover:text-secondary transition-colors">
+                  {f.title}
+                </span>
                 {!path && f.content && (
-                  <span className="block text-xs text-primary/45 mt-[2px] truncate">{f.content}</span>
+                  <span className="block text-xs text-primary/45 mt-[2px] truncate">
+                    {f.content}
+                  </span>
                 )}
               </div>
             </>
@@ -1093,7 +1371,9 @@ const FavoritosView: React.FC<{ items: ReturnType<typeof useFavorites>['favorite
           return (
             <li key={f.id} className="flex items-center gap-spacing-sm py-spacing-lg">
               {path ? (
-                <Link to={path} className="group flex items-center flex-1 min-w-0">{inner}</Link>
+                <Link to={path} className="group flex items-center flex-1 min-w-0">
+                  {inner}
+                </Link>
               ) : (
                 <div className="flex items-center flex-1 min-w-0 opacity-80">{inner}</div>
               )}
@@ -1114,7 +1394,7 @@ const FavoritosView: React.FC<{ items: ReturnType<typeof useFavorites>['favorite
 };
 
 const RecentesView: React.FC<{
-  items: ReturnType<typeof useBibliotecaRecents>['recents'];
+  items: ReturnType<typeof useBibliotecaRecents>["recents"];
   onClear: () => void;
   onRemove: (id: string) => void;
 }> = ({ items, onClear, onRemove }) => {
@@ -1161,14 +1441,23 @@ const RecentesView: React.FC<{
         {items.map((r, i) => (
           <li key={r.id} className="flex items-center gap-spacing-sm py-spacing-lg">
             <Link to={r.path} className="group flex items-center flex-1 min-w-0">
-              <span className="font-serif text-secondary text-lg leading-none mr-spacing-md w-8 tabular-nums">{String(i + 1).padStart(2, '0')}.</span>
+              <span className="font-serif text-secondary text-lg leading-none mr-spacing-md w-8 tabular-nums">
+                {String(i + 1).padStart(2, "0")}.
+              </span>
               <div className="flex-1 min-w-0">
                 {r.subtitle && (
-                  <span className="block text-[10px] uppercase tracking-[0.25em] text-secondary/80">{r.subtitle}</span>
+                  <span className="block text-[10px] uppercase tracking-[0.25em] text-secondary/80">
+                    {r.subtitle}
+                  </span>
                 )}
-                <span className="block font-serif text-xl text-primary group-hover:text-secondary transition-colors">{r.title}</span>
+                <span className="block font-serif text-xl text-primary group-hover:text-secondary transition-colors">
+                  {r.title}
+                </span>
                 <span className="block text-xs text-primary/45 mt-[2px]">
-                  {new Date(r.visitedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                  {new Date(r.visitedAt).toLocaleString("pt-BR", {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}
                 </span>
               </div>
             </Link>
@@ -1187,7 +1476,11 @@ const RecentesView: React.FC<{
   );
 };
 
-const PlaceholderView: React.FC<{ to: string; label: string; description: string }> = ({ to, label, description }) => (
+const PlaceholderView: React.FC<{ to: string; label: string; description: string }> = ({
+  to,
+  label,
+  description,
+}) => (
   <div className="max-w-xl">
     <p className="font-serif italic text-primary/60 text-base md:text-lg leading-snug mb-spacing-lg">
       {description}
@@ -1201,6 +1494,5 @@ const PlaceholderView: React.FC<{ to: string; label: string; description: string
     </Link>
   </div>
 );
-
 
 export default BibliotecaPage;

@@ -1,16 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { toast } from 'sonner';
-import { fingerprintQuery } from './queryFingerprint';
-import type { SnapshotHistoryRow } from './useSnapshotHistory';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+import { fingerprintQuery } from "./queryFingerprint";
+import type { SnapshotHistoryRow } from "./useSnapshotHistory";
 
-const fmtMs = (v: number) =>
-  v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(2)} ms`;
-const fmtInt = (v: number) => (v ?? 0).toLocaleString('pt-BR');
+const fmtMs = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${v.toFixed(2)} ms`);
+const fmtInt = (v: number) => (v ?? 0).toLocaleString("pt-BR");
 
 interface Variant {
   query: string;
@@ -37,8 +41,11 @@ export function FingerprintDrilldown({
     const map = new Map<string, Array<{ when: string; mean: number; calls: number }>>();
     for (const v of variants) map.set(v.query, []);
     for (const s of sorted) {
-      const when = new Date(s.taken_at).toLocaleString('pt-BR', {
-        month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+      const when = new Date(s.taken_at).toLocaleString("pt-BR", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
       });
       for (const r of s.rows || []) {
         if (fingerprintQuery(r.query) !== fingerprint) continue;
@@ -53,15 +60,17 @@ export function FingerprintDrilldown({
   const downloadBlob = (name: string, content: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = name;
-    document.body.appendChild(a); a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
-  const fpShort = fingerprint.slice(0, 24).replace(/\W+/g, '_');
+  const stamp = () => new Date().toISOString().replace(/[:.]/g, "-");
+  const fpShort = fingerprint.slice(0, 24).replace(/\W+/g, "_");
 
   const exportJson = () => {
     const payload = {
@@ -79,44 +88,74 @@ export function FingerprintDrilldown({
     downloadBlob(
       `pg_stat_fp_${fpShort}_${stamp()}.json`,
       JSON.stringify(payload, null, 2),
-      'application/json',
+      "application/json",
     );
     toast.success(`${variants.length} variantes exportadas (JSON)`);
   };
 
   const exportCsv = () => {
     const escape = (v: unknown) => {
-      const s = v == null ? '' : String(v);
+      const s = v == null ? "" : String(v);
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const header = [
-      'fingerprint','variant_idx','calls','mean_ms','max_ms','total_ms',
-      'snapshot_when','snapshot_mean_ms','snapshot_calls','query',
+      "fingerprint",
+      "variant_idx",
+      "calls",
+      "mean_ms",
+      "max_ms",
+      "total_ms",
+      "snapshot_when",
+      "snapshot_mean_ms",
+      "snapshot_calls",
+      "query",
     ];
-    const lines = [header.join(',')];
+    const lines = [header.join(",")];
     variants.forEach((v, i) => {
       const evo = evolution.get(v.query) || [];
-      const q = v.query.replace(/\s+/g, ' ').trim();
+      const q = v.query.replace(/\s+/g, " ").trim();
       if (evo.length === 0) {
-        lines.push([
-          fingerprint, i + 1, v.calls, v.mean_exec_ms.toFixed(3),
-          v.max_exec_ms.toFixed(3), v.total_exec_ms.toFixed(3),
-          '', '', '', q,
-        ].map(escape).join(','));
+        lines.push(
+          [
+            fingerprint,
+            i + 1,
+            v.calls,
+            v.mean_exec_ms.toFixed(3),
+            v.max_exec_ms.toFixed(3),
+            v.total_exec_ms.toFixed(3),
+            "",
+            "",
+            "",
+            q,
+          ]
+            .map(escape)
+            .join(","),
+        );
       } else {
         for (const e of evo) {
-          lines.push([
-            fingerprint, i + 1, v.calls, v.mean_exec_ms.toFixed(3),
-            v.max_exec_ms.toFixed(3), v.total_exec_ms.toFixed(3),
-            e.when, e.mean.toFixed(3), e.calls, q,
-          ].map(escape).join(','));
+          lines.push(
+            [
+              fingerprint,
+              i + 1,
+              v.calls,
+              v.mean_exec_ms.toFixed(3),
+              v.max_exec_ms.toFixed(3),
+              v.total_exec_ms.toFixed(3),
+              e.when,
+              e.mean.toFixed(3),
+              e.calls,
+              q,
+            ]
+              .map(escape)
+              .join(","),
+          );
         }
       }
     });
     downloadBlob(
       `pg_stat_fp_${fpShort}_${stamp()}.csv`,
-      lines.join('\n'),
-      'text/csv;charset=utf-8',
+      lines.join("\n"),
+      "text/csv;charset=utf-8",
     );
     toast.success(`${variants.length} variantes exportadas (CSV)`);
   };
@@ -125,7 +164,7 @@ export function FingerprintDrilldown({
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-medium text-muted-foreground">
-          {variants.length} variante{variants.length !== 1 ? 's' : ''} nesta classe
+          {variants.length} variante{variants.length !== 1 ? "s" : ""} nesta classe
         </p>
         <div className="flex items-center gap-1">
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={exportCsv}>
@@ -156,7 +195,7 @@ export function FingerprintDrilldown({
                 <TableCell className="text-right text-xs">{fmtInt(v.calls)}</TableCell>
                 <TableCell className="text-right text-xs">{fmtMs(v.mean_exec_ms)}</TableCell>
                 <TableCell className="text-right text-xs">
-                  <span className={v.max_exec_ms > 200 ? 'text-destructive font-medium' : ''}>
+                  <span className={v.max_exec_ms > 200 ? "text-destructive font-medium" : ""}>
                     {fmtMs(v.max_exec_ms)}
                   </span>
                 </TableCell>

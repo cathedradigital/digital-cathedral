@@ -4,13 +4,13 @@
  * 2.0.4B-2 e 2.0.4B-3 sem mudar a assinatura pública.
  */
 
-import type { ContentAdapters } from './types';
-import { BibleAdapter } from './BibleAdapter';
-import { CatechismAdapter } from './CatechismAdapter';
-import { MagisteriumAdapter } from './MagisteriumAdapter';
+import type { ContentAdapters } from "./types";
+import { BibleAdapter } from "./BibleAdapter";
+import { CatechismAdapter } from "./CatechismAdapter";
+import { MagisteriumAdapter } from "./MagisteriumAdapter";
 
 export { BibleAdapter, CatechismAdapter, MagisteriumAdapter };
-export type { ContentAdapter, ContentGetParams, ContentAdapters } from './types';
+export type { ContentAdapter, ContentGetParams, ContentAdapters } from "./types";
 
 /** Registro default consumido pelo `ReaderService`. */
 export const defaultContentAdapters: ContentAdapters = {

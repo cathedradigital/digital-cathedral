@@ -1,13 +1,13 @@
-import { Icons } from '@/constants';
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/db';
-import { SOCIAL_LINKS } from '@/config/site-config';
-import { trackEvent } from '@/lib/analytics';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/db";
+import { SOCIAL_LINKS } from "@/config/site-config";
+import { trackEvent } from "@/lib/analytics";
 
 interface Step {
   title: string;
@@ -24,7 +24,7 @@ const steps: Step[] = [
       { label: "Em busca de propósito", value: "busca" },
       { label: "Grato pelas bênçãos", value: "gratidão" },
       { label: "Com dúvidas na fé", value: "dúvida" },
-    ]
+    ],
   },
   {
     title: "Sua prática diária",
@@ -34,7 +34,7 @@ const steps: Step[] = [
       { label: "Iniciando agora", value: "iniciante" },
       { label: "Sinto-me um pouco afastado", value: "afastado" },
       { label: "Sinto que está 'seca'", value: "seca" },
-    ]
+    ],
   },
   {
     title: "Seu objetivo",
@@ -44,15 +44,15 @@ const steps: Step[] = [
       { label: "Conhecimento doutrinário", value: "conhecimento" },
       { label: "Direção para decisões", value: "direção" },
       { label: "Aprofundar na Palavra", value: "aprofundar" },
-    ]
-  }
+    ],
+  },
 ];
 
 const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const { toast } = useToast();
@@ -74,25 +74,25 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('app_metrics').insert({
-        metric_type: 'journey_lead',
+      const { error } = await supabase.from("app_metrics").insert({
+        metric_type: "journey_lead",
         metadata: {
           name,
           email,
           answers,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
 
       if (error) throw error;
-      
+
       setShowResult(true);
     } catch (err) {
       console.error(err);
       toast({
         title: "Erro ao salvar",
         description: "Não conseguimos iniciar sua jornada. Tente novamente.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -101,7 +101,9 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
   const getWhatsAppLink = () => {
     const theme = answers[0] || "espiritualidade";
-    const text = encodeURIComponent(`Olá! Concluí minha jornada guiada no Cathedra sobre o tema "${theme}". Gostaria de aprofundar minha reflexão.`);
+    const text = encodeURIComponent(
+      `Olá! Concluí minha jornada guiada no Cathedra sobre o tema "${theme}". Gostaria de aprofundar minha reflexão.`,
+    );
     return `${SOCIAL_LINKS.WHATSAPP}?text=${text}`;
   };
 
@@ -109,12 +111,12 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-background p-spacing-md overflow-y-auto">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full max-w-spacing-2xl bg-card border border-border shadow-premium-hover rounded-[2rem] p-spacing-xl md:p-spacing-2xl"
       >
-        <Button 
+        <Button
           onClick={onClose}
           className="absolute top-spacing-lg right-spacing-lg text-muted-foreground hover:text-foreground p-spacing-xs rounded-premium-full hover:bg-muted transition-colors"
         >
@@ -128,7 +130,9 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 <div className="space-y-spacing-xs">
                   <div className="flex items-center gap-spacing-xs text-secondary">
                     <Icons.Sparkles className="w-spacing-md h-spacing-md" />
-                    <span className="text-premium-xs font-black uppercase tracking-[0.2em]">{steps[currentStep].title}</span>
+                    <span className="text-premium-xs font-black uppercase tracking-[0.2em]">
+                      {steps[currentStep].title}
+                    </span>
                   </div>
                   <h2 className="text-premium-3xl md:text-premium-4xl font-serif font-bold text-primary leading-tight">
                     {steps[currentStep].question}
@@ -151,15 +155,17 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 <div className="flex items-center justify-between pt-spacing-md">
                   <div className="flex gap-spacing-xs">
                     {steps.map((_, i) => (
-                      <div 
-                        key={i} 
-                        className={`h-spacing-2xs rounded-premium-full transition-all ${i === currentStep ? 'w-spacing-xl bg-secondary' : 'w-spacing-xs bg-border'}`} 
+                      <div
+                        key={i}
+                        className={`h-spacing-2xs rounded-premium-full transition-all ${i === currentStep ? "w-spacing-xl bg-secondary" : "w-spacing-xs bg-border"}`}
                       />
                     ))}
-                    <div className={`h-spacing-2xs rounded-premium-full transition-all ${currentStep === steps.length ? 'w-spacing-xl bg-secondary' : 'w-spacing-xs bg-border'}`} />
+                    <div
+                      className={`h-spacing-2xs rounded-premium-full transition-all ${currentStep === steps.length ? "w-spacing-xl bg-secondary" : "w-spacing-xs bg-border"}`}
+                    />
                   </div>
                   {currentStep > 0 && (
-                    <Button 
+                    <Button
                       onClick={() => setCurrentStep(currentStep - 1)}
                       className="flex items-center gap-spacing-xs text-premium-sm text-muted-foreground hover:text-foreground font-serif"
                     >
@@ -173,7 +179,9 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                 <div className="space-y-spacing-xs">
                   <div className="flex items-center gap-spacing-xs text-secondary">
                     <Icons.Mail className="w-spacing-md h-spacing-md" />
-                    <span className="text-premium-xs font-black uppercase tracking-[0.2em]">Quase lá</span>
+                    <span className="text-premium-xs font-black uppercase tracking-[0.2em]">
+                      Quase lá
+                    </span>
                   </div>
                   <h2 className="text-premium-3xl font-serif font-bold text-primary">
                     Onde devemos enviar seu roteiro espiritual?
@@ -207,15 +215,15 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full h-spacing-2xl rounded-premium-full text-premium-xs font-black uppercase tracking-[0.2em] shadow-premium-hover"
                 >
-                  {isSubmitting ? 'Gerando seu roteiro...' : 'Começar a Jornada'}
+                  {isSubmitting ? "Gerando seu roteiro..." : "Começar a Jornada"}
                 </Button>
 
-                <Button 
+                <Button
                   type="button"
                   onClick={() => setCurrentStep(steps.length - 1)}
                   className="w-full flex items-center justify-center gap-spacing-xs text-premium-sm text-muted-foreground hover:text-foreground font-serif"
@@ -226,7 +234,7 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
             )}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-spacing-xl"
@@ -235,7 +243,9 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
               <div className="w-spacing-3xl h-spacing-3xl bg-secondary/10 rounded-premium flex items-center justify-center mx-auto mb-spacing-md text-secondary">
                 <Icons.Sparkles className="w-spacing-xl h-spacing-xl" />
               </div>
-              <h2 className="text-premium-3xl font-serif font-bold text-primary">Seu Roteiro está pronto!</h2>
+              <h2 className="text-premium-3xl font-serif font-bold text-primary">
+                Seu Roteiro está pronto!
+              </h2>
               <p className="text-muted-foreground font-serif italic">
                 Enviamos uma cópia completa para seu e-mail, mas aqui está o início da sua reflexão:
               </p>
@@ -245,49 +255,63 @@ const GuidedJourney = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
               <div className="p-spacing-lg rounded-premium bg-secondary/5 border border-secondary/20 space-y-spacing-sm">
                 <div className="flex items-center gap-spacing-xs text-secondary">
                   <Icons.Book className="w-spacing-md h-spacing-md" />
-                  <span className="text-premium-xs font-black uppercase tracking-widest">A Palavra de Deus</span>
+                  <span className="text-premium-xs font-black uppercase tracking-widest">
+                    A Palavra de Deus
+                  </span>
                 </div>
                 <p className="text-premium-lg font-serif italic text-primary">
-                  "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei." (Mt 11,28)
+                  "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei."
+                  (Mt 11,28)
                 </p>
               </div>
 
               <div className="p-spacing-lg rounded-premium bg-primary/5 border border-primary/10 space-y-spacing-sm">
                 <div className="flex items-center gap-spacing-xs text-primary">
                   <Icons.Cross className="w-spacing-md h-spacing-md" />
-                  <span className="text-premium-xs font-black uppercase tracking-widest">Catecismo</span>
+                  <span className="text-premium-xs font-black uppercase tracking-widest">
+                    Catecismo
+                  </span>
                 </div>
                 <p className="text-premium-sm font-serif text-muted-foreground">
-                  "A oração é a elevação da alma a Deus ou o pedido a Deus de bens convenientes." (§2559)
+                  "A oração é a elevação da alma a Deus ou o pedido a Deus de bens convenientes."
+                  (§2559)
                 </p>
               </div>
 
               <div className="p-spacing-lg rounded-premium bg-muted/30 border border-border space-y-spacing-sm">
                 <div className="flex items-center gap-spacing-xs text-muted-foreground">
                   <Icons.MessageSquare className="w-spacing-md h-spacing-md" />
-                  <span className="text-premium-xs font-black uppercase tracking-widest">Logos IA: Apoio Contemplativo</span>
+                  <span className="text-premium-xs font-black uppercase tracking-widest">
+                    Logos IA: Apoio Contemplativo
+                  </span>
                 </div>
                 <p className="text-premium-sm font-serif italic leading-relaxed">
-                  Percebo que você busca paz em meio ao cansaço. Saiba que o silêncio não é ausência, mas a plenitude da presença divina que restaura as forças.
+                  Percebo que você busca paz em meio ao cansaço. Saiba que o silêncio não é
+                  ausência, mas a plenitude da presença divina que restaura as forças.
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-spacing-sm">
-              <Button 
+              <Button
                 asChild
                 className="flex-1 h-spacing-2xl rounded-premium-full text-premium-xs font-black uppercase tracking-[0.1em]"
               >
-                <a 
-                  href={getWhatsAppLink()} 
-                  target="_blank" 
+                <a
+                  href={getWhatsAppLink()}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackEvent('social_link_click', { platform: 'WhatsApp', url: getWhatsAppLink() })}
+                  onClick={() =>
+                    trackEvent("social_link_click", {
+                      platform: "WhatsApp",
+                      url: getWhatsAppLink(),
+                    })
+                  }
                 >
                   Aprofundar via WhatsApp
                 </a>
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={onClose}
                 className="h-spacing-2xl rounded-premium-full text-premium-xs font-black uppercase tracking-[0.1em] px-spacing-xl"

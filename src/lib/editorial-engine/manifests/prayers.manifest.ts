@@ -29,20 +29,50 @@ export const prayersManifest: EntityManifest = {
   },
   fields: [
     // — Identidade —
-    { key: "title",              label: "Título",             group: "meta",      required: true, weight: 1 },
-    { key: "category",           label: "Categoria",          group: "meta",      required: true, weight: 1 },
+    { key: "title", label: "Título", group: "meta", required: true, weight: 1 },
+    { key: "category", label: "Categoria", group: "meta", required: true, weight: 1 },
 
     // — Núcleo editorial —
-    { key: "subtitle",           label: "Subtítulo",          group: "editorial", required: true, weight: 1 },
-    { key: "content",            label: "Conteúdo/Descrição", group: "editorial", required: true, weight: 3 },
-    { key: "explanation",        label: "Explicação teológica", group: "editorial", required: true, weight: 2 },
-    { key: "meditation",         label: "Meditação",          group: "editorial", required: false, weight: 2 },
-    { key: "source_ref",         label: "Fonte / Origem",     group: "editorial", required: true, weight: 1 },
+    { key: "subtitle", label: "Subtítulo", group: "editorial", required: true, weight: 1 },
+    { key: "content", label: "Conteúdo/Descrição", group: "editorial", required: true, weight: 3 },
+    {
+      key: "explanation",
+      label: "Explicação teológica",
+      group: "editorial",
+      required: true,
+      weight: 2,
+    },
+    { key: "meditation", label: "Meditação", group: "editorial", required: false, weight: 2 },
+    { key: "source_ref", label: "Fonte / Origem", group: "editorial", required: true, weight: 1 },
 
     // — Núcleo Nexus —
-    { key: "sections_count",     label: "Seções litúrgicas",  group: "nexus",     required: true, weight: 3 },
-    { key: "related_bible",      label: "Referências bíblicas", group: "nexus",   required: true, weight: 2 },
-    { key: "related_catechism",  label: "Referências CIC",    group: "nexus",     required: true, weight: 1 },
-    { key: "related_glossary",   label: "Verbetes do Glossário", group: "nexus",  required: false, weight: 1 },
+    {
+      key: "sections_count",
+      label: "Seções litúrgicas",
+      group: "nexus",
+      required: true,
+      weight: 3,
+    },
+    {
+      key: "related_bible",
+      label: "Referências bíblicas",
+      group: "nexus",
+      required: true,
+      weight: 2,
+    },
+    {
+      key: "related_catechism",
+      label: "Referências CIC",
+      group: "nexus",
+      required: true,
+      weight: 1,
+    },
+    {
+      key: "related_glossary",
+      label: "Verbetes do Glossário",
+      group: "nexus",
+      required: false,
+      weight: 1,
+    },
   ],
 };

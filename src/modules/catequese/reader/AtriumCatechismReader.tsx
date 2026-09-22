@@ -5,30 +5,30 @@
  * Com ?p=N → delega ao Catechism existente (não duplica lógica).
  */
 
-import React, { lazy, Suspense } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, useSearchParams } from '@/lib/rr-compat';
-import { BookMarked, ArrowRight, Search as SearchIcon } from 'lucide-react';
-import { CIC_SECTIONS } from '@/data/catechism';
-import { AppRoute } from '@/types';
-import { CatechismSkeleton } from '@/components/cathedra/RouteSkeletons';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
+import React, { lazy, Suspense } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, useSearchParams } from "@/lib/rr-compat";
+import { BookMarked, ArrowRight, Search as SearchIcon } from "lucide-react";
+import { CIC_SECTIONS } from "@/data/catechism";
+import { AppRoute } from "@/types";
+import { CatechismSkeleton } from "@/components/cathedra/RouteSkeletons";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { EditorialHero, EditorialCard } from "@/components/editorial/harmony";
 
-const Catechism = lazy(() => import('./Catechism'));
+const Catechism = lazy(() => import("./Catechism"));
 
 const PART_KICKERS: Record<string, string> = {
-  'Introdução': 'Prólogo',
-  'Parte I': 'Credo',
-  'Parte II': 'Liturgia',
-  'Parte III': 'Moral',
-  'Parte IV': 'Oração',
+  Introdução: "Prólogo",
+  "Parte I": "Credo",
+  "Parte II": "Liturgia",
+  "Parte III": "Moral",
+  "Parte IV": "Oração",
 };
 
 const AtriumCatechismReader: React.FC = () => {
   const [sp] = useSearchParams();
-  const pParam = sp.get('p');
+  const pParam = sp.get("p");
 
   // Reader Template Master (COS §10 / Regra 11):
   // Quando há `?p=`, o próprio Catechism renderiza a cadeia canônica
@@ -37,11 +37,7 @@ const AtriumCatechismReader: React.FC = () => {
   if (pParam) {
     return (
       <Suspense fallback={<CatechismSkeleton />}>
-        <MobileTopBar
-          kicker="Cathedra · Depositum Fidei"
-          title={`§${pParam}`}
-          showBack
-        />
+        <MobileTopBar kicker="Cathedra · Depositum Fidei" title={`§${pParam}`} showBack />
         <Catechism />
         <MobileBottomNav />
       </Suspense>
@@ -49,7 +45,6 @@ const AtriumCatechismReader: React.FC = () => {
   }
   return <CatechismLanding />;
 };
-
 
 const CatechismLanding: React.FC = () => {
   return (
@@ -68,11 +63,7 @@ const CatechismLanding: React.FC = () => {
         <meta property="og:title" content="Cathedra — Catecismo da Igreja Católica" />
       </Helmet>
 
-      <MobileTopBar
-        transparent
-        kicker="Cathedra"
-        title="Catecismo"
-      />
+      <MobileTopBar transparent kicker="Cathedra" title="Catecismo" />
 
       <section className="mx-auto w-full max-w-[1120px] px-5 pb-[calc(var(--stitch-mobile-bottomnav-h)+var(--stitch-mobile-safe-bottom)+2rem)] pt-10 md:px-16 md:pb-16 md:pt-14 animate-fade-in">
         {/* CAT-SP4 · Onda B.1 — Hero universal (Harmony) */}
@@ -80,8 +71,8 @@ const CatechismLanding: React.FC = () => {
           <EditorialHero.Eyebrow>Depositum Fidei</EditorialHero.Eyebrow>
           <EditorialHero.Title>Catecismo</EditorialHero.Title>
           <EditorialHero.Subtitle>
-            Dois mil e oitocentos e sessenta e cinco parágrafos que articulam a fé,
-            os sacramentos, a vida moral e a oração da Igreja em um único fio de ouro.
+            Dois mil e oitocentos e sessenta e cinco parágrafos que articulam a fé, os sacramentos,
+            a vida moral e a oração da Igreja em um único fio de ouro.
           </EditorialHero.Subtitle>
           <EditorialHero.Context>
             <Link
@@ -104,12 +95,10 @@ const CatechismLanding: React.FC = () => {
                 className="grid grid-cols-1 gap-[var(--sp-l)] border-b border-stitch-outline-variant/20 pb-[var(--sp-xl)] last:border-b-0 md:grid-cols-12"
               >
                 <header className="md:col-span-4">
-                  <span className="type-rubrica">
-                    {PART_KICKERS[part.part] ?? part.part}
-                  </span>
+                  <span className="type-rubrica">{PART_KICKERS[part.part] ?? part.part}</span>
                   <div className="mt-[var(--sp-s)] flex items-baseline gap-4">
                     <span className="font-stitch-display text-[48px] italic leading-none text-stitch-secondary/75">
-                      {String(idx).padStart(2, '0')}
+                      {String(idx).padStart(2, "0")}
                     </span>
                     <div>
                       <h2 className="type-h3 text-foreground">{part.part}</h2>
@@ -153,8 +142,8 @@ const CatechismLanding: React.FC = () => {
         <section className="mt-12 flex items-center gap-4 border-t border-stitch-secondary/10 pt-8 text-stitch-on-surface-variant">
           <BookMarked className="h-5 w-5 text-stitch-secondary" />
           <p className="font-stitch-body text-[14px] italic">
-            "A fé que professamos, os sacramentos que celebramos, a vida que
-            vivemos, a oração que rezamos." — CIC, Prólogo.
+            "A fé que professamos, os sacramentos que celebramos, a vida que vivemos, a oração que
+            rezamos." — CIC, Prólogo.
           </p>
         </section>
       </section>

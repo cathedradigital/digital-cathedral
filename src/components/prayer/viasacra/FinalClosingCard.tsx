@@ -4,11 +4,11 @@
  * Momento de recolhimento após percorrer todo o caminho da Cruz. Inclui
  * versículo pascal, oração final e CTAs (recomeçar / voltar às Orações).
  */
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Cross, RefreshCcw, Home } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import ShareButton from '@/components/cathedra/ShareButton';
+import React from "react";
+import { motion } from "framer-motion";
+import { Cross, RefreshCcw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ShareButton from "@/components/cathedra/ShareButton";
 
 interface Props {
   onRestart: () => void;
@@ -40,7 +40,11 @@ const FinalClosingCard: React.FC<Props> = ({ onRestart, onExit }) => {
       </h2>
 
       <p className="font-serif italic text-premium-lg leading-relaxed text-foreground/85 max-w-[54ch] mx-auto">
-        "Se, pois, morremos com Cristo, cremos que também com Ele viveremos, sabendo que Cristo, ressuscitado dos mortos, já não morre." <span className="not-italic text-premium-xs uppercase tracking-widest text-muted-foreground">— Rm 6,8-9</span>
+        "Se, pois, morremos com Cristo, cremos que também com Ele viveremos, sabendo que Cristo,
+        ressuscitado dos mortos, já não morre."{" "}
+        <span className="not-italic text-premium-xs uppercase tracking-widest text-muted-foreground">
+          — Rm 6,8-9
+        </span>
       </p>
 
       <div className="mx-auto max-w-[54ch] rounded-2xl border border-primary/10 bg-primary/[0.04] px-spacing-lg py-spacing-md space-y-spacing-xs">
@@ -48,9 +52,9 @@ const FinalClosingCard: React.FC<Props> = ({ onRestart, onExit }) => {
           Oração final
         </p>
         <p className="font-serif text-premium-base leading-relaxed text-foreground/90">
-          Senhor Jesus Cristo, pela Vossa dolorosa Paixão, pela Vossa morte e sepultura,
-          concedei-me caminhar hoje como discípulo da Cruz — sepultando em mim o que morre
-          e deixando florescer o que já ressuscita em Vós. Amém.
+          Senhor Jesus Cristo, pela Vossa dolorosa Paixão, pela Vossa morte e sepultura, concedei-me
+          caminhar hoje como discípulo da Cruz — sepultando em mim o que morre e deixando florescer
+          o que já ressuscita em Vós. Amém.
         </p>
       </div>
 

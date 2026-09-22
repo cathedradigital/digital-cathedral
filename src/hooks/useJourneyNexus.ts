@@ -7,43 +7,48 @@
  * `ReaderContinuation` — sem componente ou arquitetura nova.
  */
 
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import {
   resolveJourneyAutoNexus,
   type JourneyLike,
-} from '@/core/knowledge/adapters/journeyAutoNexus';
+} from "@/core/knowledge/adapters/journeyAutoNexus";
 import {
   mergeCuratedEdges,
   type CuratedNexusEdge,
-} from '@/core/knowledge/adapters/nexusGraphMerge';
+} from "@/core/knowledge/adapters/nexusGraphMerge";
 import {
   BUCKET_LABEL,
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
-} from '@/core/knowledge/adapters/ReaderAutoNexus';
-import { getJourneyCuratedEdges } from '@/services/journeyNexusService';
+} from "@/core/knowledge/adapters/ReaderAutoNexus";
+import { getJourneyCuratedEdges } from "@/services/journeyNexusService";
 
 /** Ordem canônica das Jornadas: prática primeiro, depois estudo. */
 export const JOURNEY_NEXUS_ORDER: readonly ReaderNexusBucket[] = [
-  'saint', 'catechism', 'bible', 'magisterium', 'father', 'prayer', 'glossary', 'liturgy',
+  "saint",
+  "catechism",
+  "bible",
+  "magisterium",
+  "father",
+  "prayer",
+  "glossary",
+  "liturgy",
 ];
 
 export interface JourneyNexusInput extends JourneyLike {
   slug?: string | null;
 }
 
-export function useJourneyNexus(
-  journey: JourneyNexusInput | null,
-): ReaderAutoNexusOutput | null {
+export function useJourneyNexus(journey: JourneyNexusInput | null): ReaderAutoNexusOutput | null {
   const keys = useMemo(
-    () => [journey?.slug ?? '', journey?.id ?? ''].filter(Boolean) as string[],
+    () => [journey?.slug ?? "", journey?.id ?? ""].filter(Boolean) as string[],
     [journey?.slug, journey?.id],
   );
 
   const { data: edges } = useQuery<CuratedNexusEdge[]>({
-    queryKey: ['journey-nexus', keys.join('|')],
+    queryKey: ["journey-nexus", keys.join("|")],
     queryFn: () => getJourneyCuratedEdges(keys),
     enabled: keys.length > 0,
     staleTime: 10 * 60 * 1000,
@@ -51,15 +56,21 @@ export function useJourneyNexus(
   });
 
   const fingerprint = journey
-    ? [journey.id, journey.title, journey.subtitle ?? '', journey.category ?? '', (journey.tags ?? []).join('|')].join('#')
-    : '';
+    ? [
+        journey.id,
+        journey.title,
+        journey.subtitle ?? "",
+        journey.category ?? "",
+        (journey.tags ?? []).join("|"),
+      ].join("#")
+    : "";
 
   return useMemo(() => {
     if (!journey) return null;
     const heuristic = resolveJourneyAutoNexus(journey);
     const base: ReaderAutoNexusOutput = {
       selfId: null,
-      byBucket: heuristic.byKind as ReaderAutoNexusOutput['byBucket'],
+      byBucket: heuristic.byKind as ReaderAutoNexusOutput["byBucket"],
       labels: BUCKET_LABEL,
       suggestions: [],
     };

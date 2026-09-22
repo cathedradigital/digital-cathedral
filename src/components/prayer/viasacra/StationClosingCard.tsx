@@ -6,9 +6,9 @@
  *   • Oração final
  *   • Ação concreta para o dia
  */
-import React from 'react';
-import { Leaf, HandHeart, Sunrise } from 'lucide-react';
-import type { ViaSacraStation } from '@/data/viaSacraStations';
+import React from "react";
+import { Leaf, HandHeart, Sunrise } from "lucide-react";
+import type { ViaSacraStation } from "@/data/viaSacraStations";
 
 interface Props {
   station: ViaSacraStation;

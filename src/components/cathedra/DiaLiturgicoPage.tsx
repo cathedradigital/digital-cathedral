@@ -16,45 +16,45 @@
  *
  * Ver `docs/CATHEDRA-CONSTITUTION.md`, artigos 3, 6, 7, 8, 9.
  */
-import React, { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from '@/lib/rr-compat';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
+import React, { useCallback, useMemo } from "react";
+import { useNavigate, useParams } from "@/lib/rr-compat";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
 
-import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import SEOHead from '@/components/SEOHead';
-import { Icons } from '@/constants';
+import { EditorialHero, EditorialCard } from "@/components/editorial/harmony";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import SEOHead from "@/components/SEOHead";
+import { Icons } from "@/constants";
 
-import { useDailyLiturgy } from '@/hooks/useDailyLiturgy';
-import { useMissalProper } from '@/hooks/useMissalProper';
-import { useSaintOfDay } from '@/hooks/useSaintOfDay';
-import { useRecommendedHour } from '@/hooks/useRecommendedHour';
-import { usePrayers } from '@/hooks/usePrayers';
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
+import { useDailyLiturgy } from "@/hooks/useDailyLiturgy";
+import { useMissalProper } from "@/hooks/useMissalProper";
+import { useSaintOfDay } from "@/hooks/useSaintOfDay";
+import { useRecommendedHour } from "@/hooks/useRecommendedHour";
+import { usePrayers } from "@/hooks/usePrayers";
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
 
-import { LiturgyDateNav } from './primitives/liturgy/LiturgyDateNav';
-import { LiturgyDayHeader } from './primitives/liturgy/LiturgyDayHeader';
-import { MissalProperCards } from './primitives/liturgy/MissalProperCards';
-import ReaderContinuation from '@/components/shared/ReaderContinuation';
+import { LiturgyDateNav } from "./primitives/liturgy/LiturgyDateNav";
+import { LiturgyDayHeader } from "./primitives/liturgy/LiturgyDayHeader";
+import { MissalProperCards } from "./primitives/liturgy/MissalProperCards";
+import ReaderContinuation from "@/components/shared/ReaderContinuation";
 
-const CANONICAL_BASE = 'https://www.cathedradigital.com.br';
+const CANONICAL_BASE = "https://www.cathedradigital.com.br";
 
 function parseDateParam(raw: string | undefined): Date {
   if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) return new Date();
-  const [y, m, d] = raw.split('-').map(Number);
+  const [y, m, d] = raw.split("-").map(Number);
   const nd = new Date(y, m - 1, d);
   return Number.isNaN(nd.getTime()) ? new Date() : nd;
 }
 
 function formatFullDate(d: Date): string {
   try {
-    return new Intl.DateTimeFormat('pt-BR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("pt-BR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     }).format(d);
   } catch {
     return d.toISOString().slice(0, 10);
@@ -62,11 +62,11 @@ function formatFullDate(d: Date): string {
 }
 
 const HOUR_ORDER: readonly string[] = [
-  'breviario-oficio-leituras',
-  'breviario-laudes',
-  'breviario-hora-media',
-  'breviario-vesperas',
-  'breviario-completas',
+  "breviario-oficio-leituras",
+  "breviario-laudes",
+  "breviario-hora-media",
+  "breviario-vesperas",
+  "breviario-completas",
 ];
 
 const DiaLiturgicoPage: React.FC = () => {
@@ -81,7 +81,7 @@ const DiaLiturgicoPage: React.FC = () => {
   const setSelectedDate = useCallback(
     (d: Date) => {
       const iso = toIsoDateKey(d);
-      navigate(iso === todayIso ? '/liturgia/dia' : `/liturgia/dia/${iso}`, { replace: false });
+      navigate(iso === todayIso ? "/liturgia/dia" : `/liturgia/dia/${iso}`, { replace: false });
     },
     [navigate, todayIso],
   );
@@ -101,8 +101,9 @@ const DiaLiturgicoPage: React.FC = () => {
   );
 
   const dateLabel = formatFullDate(selectedDate);
-  const celebration = liturgy?.liturgia ?? (liturgyLoading ? 'Carregando celebração…' : 'Dia Litúrgico');
-  const canonical = `${CANONICAL_BASE}/liturgia/dia${isToday ? '' : `/${isoDate}`}`;
+  const celebration =
+    liturgy?.liturgia ?? (liturgyLoading ? "Carregando celebração…" : "Dia Litúrgico");
+  const canonical = `${CANONICAL_BASE}/liturgia/dia${isToday ? "" : `/${isoDate}`}`;
 
   // Referência para a Continuação (evangelho > 1ª leitura > salmo)
   const scriptureRef =
@@ -116,7 +117,7 @@ const DiaLiturgicoPage: React.FC = () => {
       <SEOHead
         title={`Dia Litúrgico · ${dateLabel}`}
         description={`${celebration}. Missal, Liturgia das Horas, Santo do Dia e Escrituras — a peregrinação litúrgica completa do Cathedra.`}
-        path={`/liturgia/dia${isToday ? '' : `/${isoDate}`}`}
+        path={`/liturgia/dia${isToday ? "" : `/${isoDate}`}`}
       />
       <Helmet>
         <link rel="canonical" href={canonical} />
@@ -126,10 +127,10 @@ const DiaLiturgicoPage: React.FC = () => {
         {/* ── Hero editorial ───────────────────────────────────────── */}
         <EditorialHero align="center">
           <EditorialHero.Eyebrow>Cathedra · Dia Litúrgico</EditorialHero.Eyebrow>
-          <EditorialHero.Title>{isToday ? 'Hoje na Igreja' : 'Dia Litúrgico'}</EditorialHero.Title>
+          <EditorialHero.Title>{isToday ? "Hoje na Igreja" : "Dia Litúrgico"}</EditorialHero.Title>
           <EditorialHero.Subtitle>
             {celebration}
-            {liturgy?.season ? ` · ${liturgy.season}` : ''}
+            {liturgy?.season ? ` · ${liturgy.season}` : ""}
           </EditorialHero.Subtitle>
           <EditorialHero.Meta>{dateLabel}</EditorialHero.Meta>
         </EditorialHero>
@@ -155,18 +156,13 @@ const DiaLiturgicoPage: React.FC = () => {
         )}
 
         {/* ── Santo do Dia ─────────────────────────────────────────── */}
-        <section
-          aria-label="Santo do Dia"
-          className="mx-auto max-w-3xl px-spacing-sm"
-        >
+        <section aria-label="Santo do Dia" className="mx-auto max-w-3xl px-spacing-sm">
           <EditorialCard density="balanced" as="article">
             <EditorialCard.Eyebrow>Santo do Dia</EditorialCard.Eyebrow>
             <EditorialCard.Title>
-              {saint?.name ?? (isToday ? 'Consultando o santoral…' : 'Sem memória específica')}
+              {saint?.name ?? (isToday ? "Consultando o santoral…" : "Sem memória específica")}
             </EditorialCard.Title>
-            {saint?.title && (
-              <EditorialCard.Description>{saint.title}</EditorialCard.Description>
-            )}
+            {saint?.title && <EditorialCard.Description>{saint.title}</EditorialCard.Description>}
             {saint?.slug && (
               <EditorialCard.CTA>
                 <Link
@@ -194,13 +190,13 @@ const DiaLiturgicoPage: React.FC = () => {
               <h2 className="font-display text-premium-xl text-foreground">Próprio do Dia</h2>
             </div>
             <Button asChild variant="outline" className="rounded-premium-full">
-              <Link to={`/missal${isToday ? '' : `?d=${isoDate}`}`}>
+              <Link to={`/missal${isToday ? "" : `?d=${isoDate}`}`}>
                 Celebrar
                 <Icons.ArrowRight className="w-spacing-sm h-spacing-sm ml-spacing-2xs" />
               </Link>
             </Button>
           </header>
-          {(properLoading || proper) ? (
+          {properLoading || proper ? (
             <MissalProperCards proper={proper} isLoading={properLoading} />
           ) : (
             <p className="text-muted-foreground font-serif italic">
@@ -232,17 +228,17 @@ const DiaLiturgicoPage: React.FC = () => {
                 ))
               : hours.map((h) => {
                   const isRecommended = recommended?.prayer.slug === h.slug && isToday;
-                  const hourSlug = h.slug.replace(/^breviario-/, '');
+                  const hourSlug = h.slug.replace(/^breviario-/, "");
                   return (
                     <EditorialCard
                       key={h.slug}
                       density="minimal"
                       as="a"
-                      href={`/breviary?hour=${hourSlug}${isToday ? '' : `&d=${isoDate}`}`}
+                      href={`/breviary?hour=${hourSlug}${isToday ? "" : `&d=${isoDate}`}`}
                       interactive
                     >
                       <EditorialCard.Eyebrow>
-                        {isRecommended ? 'Hora recomendada agora' : 'Hora canônica'}
+                        {isRecommended ? "Hora recomendada agora" : "Hora canônica"}
                       </EditorialCard.Eyebrow>
                       <EditorialCard.Title>{h.title}</EditorialCard.Title>
                       {h.subtitle && (
@@ -258,10 +254,10 @@ const DiaLiturgicoPage: React.FC = () => {
         {/* ── Continuação (Knowledge Engine) ───────────────────────── */}
         <ReaderContinuation
           context={{
-            kind: 'prayer',
+            kind: "prayer",
             id: `dia-liturgico:${isoDate}`,
             meta: {
-              prayerCategory: 'liturgia',
+              prayerCategory: "liturgia",
               nextPrayerSlug: recommended?.prayer.slug,
               // pistas para o motor sugerir Bíblia/Catecismo automaticamente:
               theme: liturgy?.season ?? undefined,

@@ -1,28 +1,28 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { FaithTerm } from '@/components/cathedra/AZFaithPage';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { FaithTerm } from "@/components/cathedra/AZFaithPage";
 
 export const useGlossary = () => {
   return useQuery({
-    queryKey: ['glossary'],
+    queryKey: ["glossary"],
     queryFn: async () => {
-      console.log('Fetching glossary from Supabase...');
+      console.log("Fetching glossary from Supabase...");
       const { data, error } = await supabase
-        .from('glossary')
-        .select('*')
-        .order('term', { ascending: true });
+        .from("glossary")
+        .select("*")
+        .order("term", { ascending: true });
 
       if (error) {
-        console.error('Error fetching glossary:', error);
+        console.error("Error fetching glossary:", error);
         throw error;
       }
 
-      console.log('Glossary fetched:', data?.length, 'terms');
+      console.log("Glossary fetched:", data?.length, "terms");
 
-      return (data || []).map(item => ({
+      return (data || []).map((item) => ({
         term: item.term,
-        definition: item.definition || '',
-        category: item.category || 'Conceito',
+        definition: item.definition || "",
+        category: item.category || "Conceito",
         reference: item.reference || undefined,
         deepInterpretation: item.deep_interpretation || undefined,
         practicalApplication: item.practical_application || undefined,

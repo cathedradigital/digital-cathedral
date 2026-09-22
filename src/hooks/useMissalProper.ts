@@ -5,10 +5,10 @@
  *   function `missal-proper` (que gera + persiste). Cache 24h.
  * - Habilitado apenas quando `readings.evangelho.texto` está disponível.
  */
-import { useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import type { DailyLiturgy } from "@/core/liturgy/LiturgyProvider";
 
 export interface MissalProperRow {
   iso_date: string;
@@ -31,16 +31,16 @@ export interface MissalProperRow {
 
 async function fetchExisting(isoDate: string): Promise<MissalProperRow | null> {
   const { data, error } = await supabase
-    .from('missal_propers' as any)
-    .select('*')
-    .eq('iso_date', isoDate)
+    .from("missal_propers" as any)
+    .select("*")
+    .eq("iso_date", isoDate)
     .maybeSingle();
   if (error) return null;
   return (data as unknown as MissalProperRow | null) ?? null;
 }
 
 async function generate(isoDate: string, readings: DailyLiturgy): Promise<MissalProperRow | null> {
-  const { data, error } = await supabase.functions.invoke('missal-proper', {
+  const { data, error } = await supabase.functions.invoke("missal-proper", {
     body: {
       iso_date: isoDate,
       readings: {
@@ -63,7 +63,7 @@ export function useMissalProper(isoDate: string, readings: DailyLiturgy | null) 
   const enabled = !!readings?.evangelho?.texto;
 
   const query = useQuery({
-    queryKey: ['missal-proper', isoDate],
+    queryKey: ["missal-proper", isoDate],
     queryFn: async () => {
       const cached = await fetchExisting(isoDate);
       if (cached) return cached;
@@ -81,8 +81,10 @@ export function useMissalProper(isoDate: string, readings: DailyLiturgy | null) 
     if (query.data || query.isFetching) return;
     (async () => {
       const row = await generate(isoDate, readings);
-      if (row) qc.setQueryData(['missal-proper', isoDate], row);
-    })().catch(() => { /* silencia */ });
+      if (row) qc.setQueryData(["missal-proper", isoDate], row);
+    })().catch(() => {
+      /* silencia */
+    });
   }, [enabled, readings, isoDate, query.data, query.isFetching, qc]);
 
   return {

@@ -7,14 +7,12 @@
  * idêntico, sem duplicação de código.
  */
 
-import React, { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from '@/lib/rr-compat';
-import { CatechismSkeleton } from '@/components/cathedra/RouteSkeletons';
+import React, { lazy, Suspense } from "react";
+import { Navigate, Route, Routes } from "@/lib/rr-compat";
+import { CatechismSkeleton } from "@/components/cathedra/RouteSkeletons";
 
-const AtriumCatechismReader = lazy(() =>
-  import('./reader/AtriumCatechismReader'),
-);
-const Catechism = lazy(() => import('./reader/Catechism'));
+const AtriumCatechismReader = lazy(() => import("./reader/AtriumCatechismReader"));
+const Catechism = lazy(() => import("./reader/Catechism"));
 
 const CatequeseRoutes: React.FC = () => (
   <Routes>
@@ -35,10 +33,7 @@ const CatequeseRoutes: React.FC = () => (
       }
     />
     <Route path="catecismo" element={<Navigate to="/catechism" replace />} />
-    <Route
-      path="catechism-explorer"
-      element={<Navigate to="/catechism" replace />}
-    />
+    <Route path="catechism-explorer" element={<Navigate to="/catechism" replace />} />
   </Routes>
 );
 

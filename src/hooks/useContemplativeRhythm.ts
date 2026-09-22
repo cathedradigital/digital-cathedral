@@ -10,7 +10,7 @@
  *   - `silenceSec` — duração padrão do timer de silêncio (Contemple).
  *   - `fadeMs`     — velocidade da transição fade entre blocos.
  */
-import { useCallback, useEffect, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 export interface ContemplativeRhythm {
   pauseMs: number;
@@ -30,8 +30,8 @@ export const RHYTHM_BOUNDS = {
   fadeMs: { min: 150, max: 1000, step: 50 },
 } as const;
 
-const STORAGE_KEY = 'cathedra.prayer.rhythm';
-const CHANGE_EVENT = 'cathedra:rhythm-change';
+const STORAGE_KEY = "cathedra.prayer.rhythm";
+const CHANGE_EVENT = "cathedra:rhythm-change";
 
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
@@ -59,7 +59,7 @@ function sanitize(raw: Partial<ContemplativeRhythm> | null | undefined): Contemp
 }
 
 function read(): ContemplativeRhythm {
-  if (typeof window === 'undefined') return DEFAULT_RHYTHM;
+  if (typeof window === "undefined") return DEFAULT_RHYTHM;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_RHYTHM;
@@ -70,14 +70,14 @@ function read(): ContemplativeRhythm {
 }
 
 function subscribe(cb: () => void) {
-  if (typeof window === 'undefined') return () => {};
+  if (typeof window === "undefined") return () => {};
   const onStorage = (e: StorageEvent) => {
     if (e.key === STORAGE_KEY) cb();
   };
-  window.addEventListener('storage', onStorage);
+  window.addEventListener("storage", onStorage);
   window.addEventListener(CHANGE_EVENT, cb as EventListener);
   return () => {
-    window.removeEventListener('storage', onStorage);
+    window.removeEventListener("storage", onStorage);
     window.removeEventListener(CHANGE_EVENT, cb as EventListener);
   };
 }
@@ -108,7 +108,7 @@ export function useContemplativeRhythm(): UseContemplativeRhythm {
   const rhythm = useSyncExternalStore(subscribe, getSnapshot, () => DEFAULT_RHYTHM);
 
   const setRhythm = useCallback((patch: Partial<ContemplativeRhythm>) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     const next = sanitize({ ...read(), ...patch });
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -120,7 +120,7 @@ export function useContemplativeRhythm(): UseContemplativeRhythm {
   }, []);
 
   const reset = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_RHYTHM));
     } catch {

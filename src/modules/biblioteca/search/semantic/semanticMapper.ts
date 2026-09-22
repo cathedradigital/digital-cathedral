@@ -6,8 +6,8 @@
  * resultados novos por si só — quem faz isso é o `searchLibrary()`, que decide
  * quando hidratar hits puramente semânticos via searchers de módulo.
  */
-import type { LibraryResult } from '../types';
-import type { SemanticHit } from './semanticClient';
+import type { LibraryResult } from "../types";
+import type { SemanticHit } from "./semanticClient";
 
 export interface SemanticEnrichment {
   semanticScore: number;

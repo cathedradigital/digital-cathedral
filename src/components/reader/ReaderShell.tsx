@@ -20,8 +20,8 @@
  * NÃO faz fetch, NÃO conhece rotas. Recebe slots já resolvidos.
  */
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface ReaderShellProps {
   /** Cabeçalho editorial da leitura (use EditorialHero). */
@@ -59,29 +59,31 @@ export const ReaderShell: React.FC<ReaderShellProps> = ({
   nexus,
   continuation,
   className,
-  contentMaxWidth = 'max-w-[68ch]',
-  ariaLabel = 'Leitura',
+  contentMaxWidth = "max-w-[68ch]",
+  ariaLabel = "Leitura",
 }) => {
   return (
     <article
       className={cn(
-        'relative w-full bg-transparent text-foreground',
-        'flex flex-col min-h-screen',
+        "relative w-full bg-transparent text-foreground",
+        "flex flex-col min-h-screen",
         className,
       )}
       aria-label={ariaLabel}
       data-reader-shell
     >
-      <header data-reader-slot="hero" className="order-first">{hero}</header>
+      <header data-reader-slot="hero" className="order-first">
+        {hero}
+      </header>
 
       <div
         data-reader-slot="content"
         className={cn(
-          'w-full mx-auto flex-1',
+          "w-full mx-auto flex-1",
           contentMaxWidth,
-          'px-[var(--stitch-margin-mobile)] md:px-0',
-          'py-spacing-lg md:py-spacing-2xl',
-          'space-y-spacing-lg',
+          "px-[var(--stitch-margin-mobile)] md:px-0",
+          "py-spacing-lg md:py-spacing-2xl",
+          "space-y-spacing-lg",
         )}
       >
         {children}

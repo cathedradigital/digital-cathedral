@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import { toast } from 'sonner';
-import { useReadingMarks } from '@/hooks/useReadingMarks';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import { toast } from "sonner";
+import { useReadingMarks } from "@/hooks/useReadingMarks";
 
 interface ReadingMarkProps {
-  contentType: 'bible' | 'catechism' | 'magisterium';
+  contentType: "bible" | "catechism" | "magisterium";
   contentId: string;
   label?: string;
   chapter?: number;
@@ -13,26 +13,28 @@ interface ReadingMarkProps {
   position?: number;
 }
 
-const ReadingMark: React.FC<ReadingMarkProps> = ({ 
-  contentType, 
-  contentId, 
+const ReadingMark: React.FC<ReadingMarkProps> = ({
+  contentType,
+  contentId,
   label,
   chapter,
   paragraph,
-  position
+  position,
 }) => {
   const { marks, addMark, deleteMark } = useReadingMarks();
   const [existingMarkId, setExistingMarkId] = useState<string | null>(null);
 
   useEffect(() => {
-    const found = marks.find(m => m.content_type === contentType && m.content_id === contentId && !m.is_last_read);
+    const found = marks.find(
+      (m) => m.content_type === contentType && m.content_id === contentId && !m.is_last_read,
+    );
     setExistingMarkId(found ? found.id : null);
   }, [marks, contentType, contentId]);
 
   const toggleMark = async () => {
     if (existingMarkId) {
       await deleteMark(existingMarkId);
-      toast.info('Marca de leitura removida');
+      toast.info("Marca de leitura removida");
     } else {
       await addMark({
         content_type: contentType,
@@ -41,10 +43,10 @@ const ReadingMark: React.FC<ReadingMarkProps> = ({
         chapter,
         paragraph,
         position,
-        url: window.location.pathname + window.location.search
+        url: window.location.pathname + window.location.search,
       });
-      toast.success('Marca de leitura adicionada', {
-        description: 'Você pode retornar a este ponto depois.'
+      toast.success("Marca de leitura adicionada", {
+        description: "Você pode retornar a este ponto depois.",
       });
     }
   };
@@ -56,10 +58,10 @@ const ReadingMark: React.FC<ReadingMarkProps> = ({
       onClick={toggleMark}
       variant="ghost"
       size="icon"
-      className={`rounded-premium-full transition-all active:scale-95 ${isMarked ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'}`}
+      className={`rounded-premium-full transition-all active:scale-95 ${isMarked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5"}`}
       title={isMarked ? "Remover marca de leitura" : "Marcar para ler depois"}
     >
-      <Icons.Bookmark className={`w-spacing-md h-spacing-md ${isMarked ? 'fill-current' : ''}`} />
+      <Icons.Bookmark className={`w-spacing-md h-spacing-md ${isMarked ? "fill-current" : ""}`} />
     </Button>
   );
 };

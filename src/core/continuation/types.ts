@@ -6,34 +6,25 @@
  * é o Continuation Engine.
  */
 
-import type {
-  KnowledgeNodeId,
-  KnowledgeNodeKind,
-  ResolvedNode,
-} from '@/core/knowledge/types';
+import type { KnowledgeNodeId, KnowledgeNodeKind, ResolvedNode } from "@/core/knowledge/types";
 
 /** Tipo de leitura em curso — origem do contexto. */
-export type ContinuationKind =
-  | 'bible'
-  | 'catechism'
-  | 'magisterium'
-  | 'saint'
-  | 'journey-step';
+export type ContinuationKind = "bible" | "catechism" | "magisterium" | "saint" | "journey-step";
 
 /**
  * Intenção espiritual/pedagógica de cada sugestão.
  * Sprint 2 (revisada): adiciona `celebrate` para tempo/festa litúrgica.
  */
 export type ContinuationIntent =
-  | 'study'     // continuar estudando (mesmo domínio ou irmão)
-  | 'deepen'   // aprofundar em outro domínio (CIC, Magistério)
-  | 'meet'     // conhecer alguém (padre, santo, doutor)
-  | 'pray'     // levar à oração / Lectio
-  | 'apply'    // aplicar na vida / jornada
-  | 'celebrate'; // festa/tempo litúrgico (Natal, Páscoa, santo do dia)
+  | "study" // continuar estudando (mesmo domínio ou irmão)
+  | "deepen" // aprofundar em outro domínio (CIC, Magistério)
+  | "meet" // conhecer alguém (padre, santo, doutor)
+  | "pray" // levar à oração / Lectio
+  | "apply" // aplicar na vida / jornada
+  | "celebrate"; // festa/tempo litúrgico (Natal, Páscoa, santo do dia)
 
 /** Confiança da recomendação — insumo para diversificação e fallback. */
-export type ContinuationConfidence = 'low' | 'medium' | 'high';
+export type ContinuationConfidence = "low" | "medium" | "high";
 
 /** Metadados opcionais do que o usuário acabou de ler. */
 export interface ContinuationMeta {
@@ -67,7 +58,7 @@ export interface ContinuationInput {
 export interface ContinuationContext {
   kind: ContinuationKind;
   /** Kind mapeado para o vocabulário do KnowledgeGraph. */
-  graphKind: KnowledgeNodeKind | 'journey-step';
+  graphKind: KnowledgeNodeKind | "journey-step";
   id?: string;
   graphNodeId?: KnowledgeNodeId;
   themeIds: KnowledgeNodeId[];
@@ -112,12 +103,12 @@ export interface ContinuationSuggestion {
   confidence: ContinuationConfidence;
   reasons: string[];
   /** Origem: grafo (recomendação real) ou fallback (rede de segurança). */
-  source: 'graph' | 'fallback';
+  source: "graph" | "fallback";
 }
 
 export interface ContinuationResult {
   suggestions: ContinuationSuggestion[];
-  source: 'graph' | 'fallback' | 'mixed';
+  source: "graph" | "fallback" | "mixed";
   /** Contexto normalizado usado — retornado para telemetria/debug. */
   context: ContinuationContext;
 }

@@ -4,9 +4,9 @@
  * Renderiza salmodia, leitura breve, responsório, cântico evangélico,
  * preces e oração conclusiva vindas de `useLiturgyHoursOffice`.
  */
-import React from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import type { LiturgyHoursOfficeRow } from '@/hooks/useLiturgyHoursOffice';
+import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { LiturgyHoursOfficeRow } from "@/hooks/useLiturgyHoursOffice";
 
 interface Props {
   office: LiturgyHoursOfficeRow | null;
@@ -52,7 +52,12 @@ export const LiturgyHoursOfficeSkeleton: React.FC = () => (
   </div>
 );
 
-export const LiturgyHoursOfficeCards: React.FC<Props> = ({ office, isLoading, hourTitle, hourLatin }) => {
+export const LiturgyHoursOfficeCards: React.FC<Props> = ({
+  office,
+  isLoading,
+  hourTitle,
+  hourLatin,
+}) => {
   if (isLoading && !office) return <LiturgyHoursOfficeSkeleton />;
   if (!office) return null;
 
@@ -60,15 +65,19 @@ export const LiturgyHoursOfficeCards: React.FC<Props> = ({ office, isLoading, ho
     <div className="space-y-4">
       <header className="text-center">
         <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary">
-          Próprio da Hora · {new Date(office.iso_date + 'T00:00:00').toLocaleDateString('pt-BR', {
-            weekday: 'long', day: 'numeric', month: 'long',
+          Próprio da Hora ·{" "}
+          {new Date(office.iso_date + "T00:00:00").toLocaleDateString("pt-BR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
           })}
         </p>
         <h2 className="mt-2 font-stitch-display text-2xl md:text-3xl text-stitch-on-surface">
           {hourTitle}
         </h2>
         <p className="mt-1 font-stitch-body text-xs italic text-stitch-on-surface-variant">
-          {hourLatin}{office.season_note ? ` · ${office.season_note}` : ''}
+          {hourLatin}
+          {office.season_note ? ` · ${office.season_note}` : ""}
         </p>
       </header>
 
@@ -82,7 +91,10 @@ export const LiturgyHoursOfficeCards: React.FC<Props> = ({ office, isLoading, ho
         <Card kicker="Psalmodia" title="Salmodia">
           <div className="space-y-4">
             {office.psalmody.map((p, idx) => (
-              <div key={`${p.reference}-${idx}`} className="rounded-xl bg-stitch-surface-container-lowest/60 p-4">
+              <div
+                key={`${p.reference}-${idx}`}
+                className="rounded-xl bg-stitch-surface-container-lowest/60 p-4"
+              >
                 <p className="font-stitch-body text-[11px] font-bold uppercase tracking-widest text-stitch-secondary">
                   Antífona
                 </p>
@@ -100,7 +112,11 @@ export const LiturgyHoursOfficeCards: React.FC<Props> = ({ office, isLoading, ho
       {office.brief_reading_text && (
         <Card
           kicker="Lectio brevis"
-          title={office.brief_reading_ref ? `Leitura Breve · ${office.brief_reading_ref}` : 'Leitura Breve'}
+          title={
+            office.brief_reading_ref
+              ? `Leitura Breve · ${office.brief_reading_ref}`
+              : "Leitura Breve"
+          }
         >
           <p className="whitespace-pre-line">{office.brief_reading_text}</p>
         </Card>
@@ -129,7 +145,9 @@ export const LiturgyHoursOfficeCards: React.FC<Props> = ({ office, isLoading, ho
         <Card kicker="Preces" title="Preces e Intercessões">
           <ul className="list-decimal space-y-2 pl-5 marker:text-stitch-secondary">
             {office.intercessions.map((it, i) => (
-              <li key={i} className="pl-1">{it}</li>
+              <li key={i} className="pl-1">
+                {it}
+              </li>
             ))}
           </ul>
           <p className="mt-2 font-stitch-body text-xs italic text-stitch-on-surface-variant">

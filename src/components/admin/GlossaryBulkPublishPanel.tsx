@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -86,15 +86,11 @@ export default function GlossaryBulkPublishPanel({ onPublished }: Props) {
     void load();
   }, [load]);
 
-  const enriched = useMemo(
-    () => rows.map((r) => ({ row: r, check: isReady(r) })),
-    [rows],
-  );
+  const enriched = useMemo(() => rows.map((r) => ({ row: r, check: isReady(r) })), [rows]);
   const readyRows = useMemo(() => enriched.filter((e) => e.check.ok), [enriched]);
   const blockedRows = useMemo(() => enriched.filter((e) => !e.check.ok), [enriched]);
 
-  const allReadySelected =
-    readyRows.length > 0 && readyRows.every((e) => selected.has(e.row.id));
+  const allReadySelected = readyRows.length > 0 && readyRows.every((e) => selected.has(e.row.id));
 
   const toggleAll = () => {
     if (allReadySelected) setSelected(new Set());
@@ -143,7 +139,10 @@ export default function GlossaryBulkPublishPanel({ onPublished }: Props) {
     if (ok > 0) toast.success(`${ok} verbete(s) publicado(s).`);
     if (failures.length > 0) {
       toast.error(
-        `${failures.length} falharam: ${failures.slice(0, 3).map((f) => f.term).join(", ")}${failures.length > 3 ? "…" : ""}`,
+        `${failures.length} falharam: ${failures
+          .slice(0, 3)
+          .map((f) => f.term)
+          .join(", ")}${failures.length > 3 ? "…" : ""}`,
       );
       console.warn("[glossary bulk publish] falhas:", failures);
     }
@@ -159,12 +158,17 @@ export default function GlossaryBulkPublishPanel({ onPublished }: Props) {
         <div>
           <CardTitle className="text-base">Publicação em lote</CardTitle>
           <p className="text-xs text-muted-foreground mt-1">
-            Publica rascunhos com os 11 campos editoriais preenchidos. O processo respeita o
-            trigger de validação — verbetes incompletos são ignorados automaticamente.
+            Publica rascunhos com os 11 campos editoriais preenchidos. O processo respeita o trigger
+            de validação — verbetes incompletos são ignorados automaticamente.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading || publishing}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void load()}
+            disabled={loading || publishing}
+          >
             <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
             Recarregar
           </Button>

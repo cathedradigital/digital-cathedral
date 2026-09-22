@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/db';
-import { detectCategories } from './smartRouter';
+import { supabase } from "@/lib/db";
+import { detectCategories } from "./smartRouter";
 
 export interface EmotionRecord {
   emotion_type: string;
@@ -21,12 +21,12 @@ export interface PsychologicalProfile {
 export async function saveUserPsychology(
   userId: string,
   text: string,
-  source: string
+  source: string,
 ): Promise<void> {
   if (!userId || !text.trim()) return;
 
   const scores = detectCategories(text);
-  
+
   // Only save if there's at least one match
   const topCategory = Object.entries(scores)
     .sort(([, a], [, b]) => b - a)
@@ -38,23 +38,21 @@ export async function saveUserPsychology(
 
   try {
     // 1. Log the individual emotion detection
-    const { error: logError } = await supabase
-      .from('user_emotions')
-      .insert({
-        user_id: userId,
-        emotion_type: emotionType,
-        score,
-        context_text: text.slice(0, 1000), // Cap length
-        source_feature: source,
-      });
+    const { error: logError } = await supabase.from("user_emotions").insert({
+      user_id: userId,
+      emotion_type: emotionType,
+      score,
+      context_text: text.slice(0, 1000), // Cap length
+      source_feature: source,
+    });
 
     if (logError) throw logError;
 
     // 2. Fetch current profile or create it
     const { data: profile, error: fetchError } = await supabase
-      .from('user_psychological_profiles')
-      .select('*')
-      .eq('user_id', userId)
+      .from("user_psychological_profiles")
+      .select("*")
+      .eq("user_id", userId)
       .maybeSingle();
 
     if (fetchError) throw fetchError;
@@ -68,30 +66,33 @@ export async function saveUserPsychology(
     traits[emotionType] = (traits[emotionType] || 0) + 1;
 
     // Determine dominant emotion from history
-    const counts = moodHistory.reduce((acc, val) => {
-      acc[val] = (acc[val] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const dominantEmotion = Object.entries(counts)
-      .sort(([, a], [, b]) => b - a)[0][0];
+    const counts = moodHistory.reduce(
+      (acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    const dominantEmotion = Object.entries(counts).sort(([, a], [, b]) => b - a)[0][0];
 
     // 3. Update the aggregated profile
-    const { error: upsertError } = await supabase
-      .from('user_psychological_profiles')
-      .upsert({
+    const { error: upsertError } = await supabase.from("user_psychological_profiles").upsert(
+      {
         user_id: userId,
         dominant_emotion: dominantEmotion,
         mood_history: moodHistory,
         traits,
         last_updated: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      },
+      { onConflict: "user_id" },
+    );
 
     if (upsertError) throw upsertError;
 
     console.log(`Psychological profile updated for user ${userId}: dominant=${dominantEmotion}`);
   } catch (err) {
-    console.error('Error saving user psychology:', err);
+    console.error("Error saving user psychology:", err);
   }
 }
 
@@ -100,13 +101,13 @@ export async function saveUserPsychology(
  */
 export async function getUserPsychology(userId: string): Promise<PsychologicalProfile | null> {
   const { data, error } = await supabase
-    .from('user_psychological_profiles')
-    .select('*')
-    .eq('user_id', userId)
+    .from("user_psychological_profiles")
+    .select("*")
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (error) {
-    console.error('Error fetching user psychology:', error);
+    console.error("Error fetching user psychology:", error);
     return null;
   }
 

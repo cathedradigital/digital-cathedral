@@ -5,9 +5,9 @@
  * Oração sobre as Oferendas, Prefácio, Antífona de Comunhão, Oração
  * após a Comunhão) gerados por IA e cacheados por data.
  */
-import React from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import type { MissalProperRow } from '@/hooks/useMissalProper';
+import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { MissalProperRow } from "@/hooks/useMissalProper";
 
 interface Props {
   proper: MissalProperRow | null;
@@ -33,9 +33,7 @@ const ProperCard: React.FC<CardProps> = ({ kicker, title, text, note }) => (
       {text}
     </p>
     {note && (
-      <p className="mt-2 font-stitch-body text-xs italic text-stitch-on-surface-variant">
-        {note}
-      </p>
+      <p className="mt-2 font-stitch-body text-xs italic text-stitch-on-surface-variant">{note}</p>
     )}
   </section>
 );
@@ -63,8 +61,11 @@ export const MissalProperCards: React.FC<Props> = ({ proper, isLoading }) => {
     <div className="space-y-4">
       <header className="text-center">
         <p className="font-stitch-body text-[11px] font-bold uppercase tracking-[0.28em] text-stitch-secondary">
-          Próprio da Missa · {new Date(proper.iso_date + 'T00:00:00').toLocaleDateString('pt-BR', {
-            weekday: 'long', day: 'numeric', month: 'long',
+          Próprio da Missa ·{" "}
+          {new Date(proper.iso_date + "T00:00:00").toLocaleDateString("pt-BR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
           })}
         </p>
         <h2 className="mt-2 font-stitch-display text-2xl md:text-3xl text-stitch-on-surface">
@@ -72,25 +73,44 @@ export const MissalProperCards: React.FC<Props> = ({ proper, isLoading }) => {
         </h2>
         {(proper.liturgical_color || proper.season_note) && (
           <p className="mt-2 font-stitch-body text-sm italic text-stitch-on-surface-variant">
-            {[proper.liturgical_color && `Cor litúrgica: ${proper.liturgical_color}`, proper.season_note]
+            {[
+              proper.liturgical_color && `Cor litúrgica: ${proper.liturgical_color}`,
+              proper.season_note,
+            ]
               .filter(Boolean)
-              .join(' · ')}
+              .join(" · ")}
           </p>
         )}
       </header>
 
       {proper.entrance_antiphon && (
-        <ProperCard kicker="Antiphona ad introitum" title="Antífona de Entrada" text={proper.entrance_antiphon} />
+        <ProperCard
+          kicker="Antiphona ad introitum"
+          title="Antífona de Entrada"
+          text={proper.entrance_antiphon}
+        />
       )}
       <ProperCard kicker="Collecta" title="Oração Coleta" text={proper.collect} />
-      <ProperCard kicker="Super oblata" title="Oração sobre as Oferendas" text={proper.offertory_prayer} />
+      <ProperCard
+        kicker="Super oblata"
+        title="Oração sobre as Oferendas"
+        text={proper.offertory_prayer}
+      />
       {proper.preface_suggestion && (
         <ProperCard kicker="Praefatio" title="Prefácio sugerido" text={proper.preface_suggestion} />
       )}
       {proper.communion_antiphon && (
-        <ProperCard kicker="Antiphona ad communionem" title="Antífona de Comunhão" text={proper.communion_antiphon} />
+        <ProperCard
+          kicker="Antiphona ad communionem"
+          title="Antífona de Comunhão"
+          text={proper.communion_antiphon}
+        />
       )}
-      <ProperCard kicker="Post communionem" title="Oração após a Comunhão" text={proper.prayer_after_communion} />
+      <ProperCard
+        kicker="Post communionem"
+        title="Oração após a Comunhão"
+        text={proper.prayer_after_communion}
+      />
 
       {proper.model && (
         <p className="text-center font-stitch-body text-[10px] uppercase tracking-widest text-stitch-on-surface-variant/70">

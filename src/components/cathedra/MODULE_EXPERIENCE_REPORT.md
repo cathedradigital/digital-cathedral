@@ -1,6 +1,7 @@
 # Cathedra Module Experience Report (MXR)
 
 ## 1. Bible (Sacra Biblia)
+
 - **Main Objective**: Access, read, and meditate on the Sacred Scriptures.
 - **User Journey**: Home -> Bible -> Select Testament -> Select Book -> Select Chapter -> Reading Content.
 - **Clicks to Content**: 4 clicks (Home -> Bible -> Book -> Chapter -> Content).
@@ -9,6 +10,7 @@
 - **Reading Experience**: High quality. Premium typography, floating controls for audio, marks, and Logos AI insights.
 
 ## 2. Catechism (Catechismus)
+
 - **Main Objective**: Study the systematic doctrine of the Church by paragraphs.
 - **User Journey**: Home -> Catechism -> Select Part -> Select Section -> Reading Paragraphs.
 - **Clicks to Content**: 4 clicks (Home -> Catechism -> Part -> Section -> Paragraph).
@@ -17,6 +19,7 @@
 - **Reading Experience**: Immersive. Integrated cross-references (Bible/Documents) provide deep theological context.
 
 ## 3. Library (Sacrum Archivum)
+
 - **Main Objective**: Discover and explore all available modules and formation resources.
 - **User Journey**: Bottom Nav -> Library -> Select Module.
 - **Clicks to Content**: 2 clicks (Library -> Module).
@@ -25,6 +28,7 @@
 - **Reading Experience**: N/A (Portal module).
 
 ## 4. Documents (Magisterium)
+
 - **Main Objective**: Consult papal encyclicals and official Church documents.
 - **User Journey**: Home/Library -> Magisterium -> Select Theme or Search -> Select Document -> Reading.
 - **Clicks to Content**: 3 clicks (Magisterium -> Search/Theme -> Document).

@@ -1,16 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { bibleRecoveryStore, RecoveryEvent } from '@/lib/bibleRecoveryStore';
-import { runRecoveryCheck, summarize, ValidationRow } from '@/lib/bibleRecoveryRunner';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle2, FileWarning, Languages, PlayCircle, Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { bibleRecoveryStore, RecoveryEvent } from "@/lib/bibleRecoveryStore";
+import { runRecoveryCheck, summarize, ValidationRow } from "@/lib/bibleRecoveryRunner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertCircle,
+  CheckCircle2,
+  FileWarning,
+  Languages,
+  PlayCircle,
+  Loader2,
+} from "lucide-react";
 
-const typeLabel: Record<RecoveryEvent['type'], { label: string; icon: React.ReactNode; tone: string }> = {
-  navigation_error: { label: 'Erro de Navegação', icon: <AlertCircle className="h-4 w-4" />, tone: 'destructive' },
-  empty_chapter: { label: 'Capítulo Vazio', icon: <FileWarning className="h-4 w-4" />, tone: 'destructive' },
-  incomplete_chapter: { label: 'Capítulo Incompleto', icon: <FileWarning className="h-4 w-4" />, tone: 'secondary' },
-  english_text: { label: 'Texto em Inglês', icon: <Languages className="h-4 w-4" />, tone: 'destructive' },
+const typeLabel: Record<
+  RecoveryEvent["type"],
+  { label: string; icon: React.ReactNode; tone: string }
+> = {
+  navigation_error: {
+    label: "Erro de Navegação",
+    icon: <AlertCircle className="h-4 w-4" />,
+    tone: "destructive",
+  },
+  empty_chapter: {
+    label: "Capítulo Vazio",
+    icon: <FileWarning className="h-4 w-4" />,
+    tone: "destructive",
+  },
+  incomplete_chapter: {
+    label: "Capítulo Incompleto",
+    icon: <FileWarning className="h-4 w-4" />,
+    tone: "secondary",
+  },
+  english_text: {
+    label: "Texto em Inglês",
+    icon: <Languages className="h-4 w-4" />,
+    tone: "destructive",
+  },
 };
 
 const BibleRecoveryPanel: React.FC = () => {
@@ -21,7 +47,9 @@ const BibleRecoveryPanel: React.FC = () => {
 
   useEffect(() => {
     const unsub = bibleRecoveryStore.subscribe(setEvents);
-    return () => { unsub(); };
+    return () => {
+      unsub();
+    };
   }, []);
 
   const start = async () => {
@@ -50,22 +78,30 @@ const BibleRecoveryPanel: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => bibleRecoveryStore.clear()}>Limpar eventos</Button>
+          <Button variant="outline" onClick={() => bibleRecoveryStore.clear()}>
+            Limpar eventos
+          </Button>
           <Button onClick={start} disabled={running}>
-            {running ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <PlayCircle className="h-4 w-4 mr-2" />}
-            {running ? `Validando ${progress.done}/${progress.total}` : 'Executar checagem completa'}
+            {running ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <PlayCircle className="h-4 w-4 mr-2" />
+            )}
+            {running
+              ? `Validando ${progress.done}/${progress.total}`
+              : "Executar checagem completa"}
           </Button>
         </div>
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
-          { label: 'Total', value: sum.total },
-          { label: 'OK', value: sum.ok },
-          { label: 'Vazios', value: sum.empty },
-          { label: 'Inglês', value: sum.english },
-          { label: 'Lentos', value: sum.slow },
-          { label: 'Erros', value: sum.error },
+          { label: "Total", value: sum.total },
+          { label: "OK", value: sum.ok },
+          { label: "Vazios", value: sum.empty },
+          { label: "Inglês", value: sum.english },
+          { label: "Lentos", value: sum.slow },
+          { label: "Erros", value: sum.error },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="pt-4">
@@ -91,13 +127,18 @@ const BibleRecoveryPanel: React.FC = () => {
                 const meta = typeLabel[e.type];
                 return (
                   <li key={e.id} className="py-2 flex items-start gap-3">
-                    <Badge variant={meta.tone as any} className="gap-1">{meta.icon}{meta.label}</Badge>
+                    <Badge variant={meta.tone as any} className="gap-1">
+                      {meta.icon}
+                      {meta.label}
+                    </Badge>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate">{e.message}</div>
-                      {e.evidence && <div className="text-xs text-muted-foreground truncate">{e.evidence}</div>}
+                      {e.evidence && (
+                        <div className="text-xs text-muted-foreground truncate">{e.evidence}</div>
+                      )}
                     </div>
                     <time className="text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(e.timestamp).toLocaleTimeString('pt-BR')}
+                      {new Date(e.timestamp).toLocaleTimeString("pt-BR")}
                     </time>
                   </li>
                 );
@@ -111,7 +152,9 @@ const BibleRecoveryPanel: React.FC = () => {
         <CardHeader>
           <CardTitle className="text-base">
             Tabela de validação ({rows.length})
-            {sum.avgMs > 0 && <span className="ml-2 text-xs text-muted-foreground">média {sum.avgMs}ms</span>}
+            {sum.avgMs > 0 && (
+              <span className="ml-2 text-xs text-muted-foreground">média {sum.avgMs}ms</span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
@@ -133,12 +176,18 @@ const BibleRecoveryPanel: React.FC = () => {
                   <td className="py-1.5 pr-3">{r.language}</td>
                   <td className="py-1.5 pr-3">{r.openMs}ms</td>
                   <td className="py-1.5 pr-3">
-                    <Badge variant={r.result === 'OK' ? 'secondary' : 'destructive'}>{r.result}</Badge>
+                    <Badge variant={r.result === "OK" ? "secondary" : "destructive"}>
+                      {r.result}
+                    </Badge>
                   </td>
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={5} className="py-3 text-muted-foreground">Execute a checagem para gerar a tabela.</td></tr>
+                <tr>
+                  <td colSpan={5} className="py-3 text-muted-foreground">
+                    Execute a checagem para gerar a tabela.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

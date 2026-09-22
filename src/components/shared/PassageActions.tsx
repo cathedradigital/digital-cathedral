@@ -15,15 +15,15 @@
  * PA-1 endurece: loading/erro por ação, aria-busy/aria-live, foco
  * visível e tap targets 44×44 em todos os breakpoints.
  */
-import React, { useCallback, useState } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { toast } from 'sonner';
-import { Icons } from '@/constants';
-import { cn } from '@/lib/utils';
-import { useShare } from '@/hooks/useShare';
-import { buildPassageUrl, type PassageDescriptor } from '@/lib/passageUrl';
+import React, { useCallback, useState } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { toast } from "sonner";
+import { Icons } from "@/constants";
+import { cn } from "@/lib/utils";
+import { useShare } from "@/hooks/useShare";
+import { buildPassageUrl, type PassageDescriptor } from "@/lib/passageUrl";
 
-type ActionKey = 'text' | 'reference' | 'share' | 'highlight';
+type ActionKey = "text" | "reference" | "share" | "highlight";
 
 export interface PassageActionsProps {
   /** Texto do trecho (o que será copiado como "trecho"). */
@@ -39,17 +39,17 @@ export interface PassageActionsProps {
   /** Se fornecido, sobrescreve a navegação padrão do botão Destacar. */
   onHighlight?: () => void | Promise<void>;
   /** Observabilidade opcional após ação bem-sucedida. */
-  onCopy?: (kind: 'text' | 'reference') => void;
+  onCopy?: (kind: "text" | "reference") => void;
   onShare?: () => void;
   /** Tamanho visual dos botões. */
-  size?: 'sm' | 'md';
+  size?: "sm" | "md";
   /** Classes extras aplicadas ao wrapper. */
   className?: string;
 }
 
 async function writeClipboard(value: string): Promise<boolean> {
   try {
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(value);
       return true;
     }
@@ -68,7 +68,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   onHighlight,
   onCopy,
   onShare,
-  size = 'sm',
+  size = "sm",
   className,
 }) => {
   const share = useShare();
@@ -77,50 +77,53 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   const [loadingMap, setLoadingMap] = useState<Partial<Record<ActionKey, boolean>>>({});
   const [successMap, setSuccessMap] = useState<Partial<Record<ActionKey, boolean>>>({});
   const [errorMap, setErrorMap] = useState<Partial<Record<ActionKey, string>>>({});
-  const [status, setStatus] = useState<string>('');
+  const [status, setStatus] = useState<string>("");
 
   // URL efetiva: prop direta ou derivada de `passage`.
-  const effectiveUrl = url ?? (passage ? buildPassageUrl(passage) : '');
+  const effectiveUrl = url ?? (passage ? buildPassageUrl(passage) : "");
 
   // Destaque efetivo: callback custom OU navegação padrão para o Reader.
   const canHighlight = Boolean(onHighlight || passage);
 
-  const run = useCallback(
-    async (key: ActionKey, fn: () => Promise<void>, successMsg?: string) => {
-      setLoadingMap((m) => ({ ...m, [key]: true }));
-      setErrorMap((m) => ({ ...m, [key]: undefined }));
-      setSuccessMap((m) => ({ ...m, [key]: false }));
-      try {
-        await fn();
-        if (successMsg) setStatus(successMsg);
-        setSuccessMap((m) => ({ ...m, [key]: true }));
-        // limpa o "success" transiente após 1.6s
-        window.setTimeout(() => {
-          setSuccessMap((m) => ({ ...m, [key]: false }));
-        }, 1600);
-      } catch (err: any) {
-        const message = err?.message ?? 'Ação falhou';
-        setErrorMap((m) => ({ ...m, [key]: message }));
-        setStatus(`Erro: ${message}`);
-        toast.error(message);
-      } finally {
-        setLoadingMap((m) => ({ ...m, [key]: false }));
-      }
-    },
-    [],
-  );
+  const run = useCallback(async (key: ActionKey, fn: () => Promise<void>, successMsg?: string) => {
+    setLoadingMap((m) => ({ ...m, [key]: true }));
+    setErrorMap((m) => ({ ...m, [key]: undefined }));
+    setSuccessMap((m) => ({ ...m, [key]: false }));
+    try {
+      await fn();
+      if (successMsg) setStatus(successMsg);
+      setSuccessMap((m) => ({ ...m, [key]: true }));
+      // limpa o "success" transiente após 1.6s
+      window.setTimeout(() => {
+        setSuccessMap((m) => ({ ...m, [key]: false }));
+      }, 1600);
+    } catch (err: any) {
+      const message = err?.message ?? "Ação falhou";
+      setErrorMap((m) => ({ ...m, [key]: message }));
+      setStatus(`Erro: ${message}`);
+      toast.error(message);
+    } finally {
+      setLoadingMap((m) => ({ ...m, [key]: false }));
+    }
+  }, []);
 
   const handleCopyText = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      return run('text', async () => {
-        const ok = await writeClipboard(
-          effectiveUrl ? `"${text}"\n— ${reference}\n${effectiveUrl}` : `"${text}"\n— ${reference}`,
-        );
-        if (!ok) throw new Error('Não foi possível copiar');
-        toast.success('Trecho copiado');
-        onCopy?.('text');
-      }, 'Trecho copiado');
+      return run(
+        "text",
+        async () => {
+          const ok = await writeClipboard(
+            effectiveUrl
+              ? `"${text}"\n— ${reference}\n${effectiveUrl}`
+              : `"${text}"\n— ${reference}`,
+          );
+          if (!ok) throw new Error("Não foi possível copiar");
+          toast.success("Trecho copiado");
+          onCopy?.("text");
+        },
+        "Trecho copiado",
+      );
     },
     [run, text, reference, effectiveUrl, onCopy],
   );
@@ -128,12 +131,16 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   const handleCopyReference = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      return run('reference', async () => {
-        const ok = await writeClipboard(reference);
-        if (!ok) throw new Error('Não foi possível copiar');
-        toast.success('Referência copiada');
-        onCopy?.('reference');
-      }, 'Referência copiada');
+      return run(
+        "reference",
+        async () => {
+          const ok = await writeClipboard(reference);
+          if (!ok) throw new Error("Não foi possível copiar");
+          toast.success("Referência copiada");
+          onCopy?.("reference");
+        },
+        "Referência copiada",
+      );
     },
     [run, reference, onCopy],
   );
@@ -141,14 +148,18 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   const handleShare = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      return run('share', async () => {
-        await share({
-          title: title ?? reference,
-          text: `"${text}" — ${reference}`,
-          url: effectiveUrl || undefined,
-        });
-        onShare?.();
-      }, 'Compartilhado');
+      return run(
+        "share",
+        async () => {
+          await share({
+            title: title ?? reference,
+            text: `"${text}" — ${reference}`,
+            url: effectiveUrl || undefined,
+          });
+          onShare?.();
+        },
+        "Compartilhado",
+      );
     },
     [run, share, title, reference, text, effectiveUrl, onShare],
   );
@@ -156,15 +167,13 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   const handleHighlight = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      return run('highlight', async () => {
+      return run("highlight", async () => {
         if (onHighlight) {
           await onHighlight();
         } else if (passage) {
           const dest = buildPassageUrl({ ...passage, highlight: passage.highlight ?? reference });
           // Extrai apenas pathname+search para navegação SPA
-          const rel = dest.startsWith('http')
-            ? dest.replace(/^https?:\/\/[^/]+/, '')
-            : dest;
+          const rel = dest.startsWith("http") ? dest.replace(/^https?:\/\/[^/]+/, "") : dest;
           navigate(rel);
         }
       });
@@ -173,23 +182,23 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   );
 
   const btnBase = cn(
-    'inline-flex items-center gap-1.5 rounded-full border border-border/50',
-    'bg-background/60 hover:bg-primary/5 hover:border-primary/40',
-    'text-muted-foreground hover:text-primary',
-    'transition-colors',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-    'disabled:opacity-60 disabled:cursor-not-allowed',
-    'min-h-[44px] min-w-[44px]',
-    size === 'sm' ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs',
+    "inline-flex items-center gap-1.5 rounded-full border border-border/50",
+    "bg-background/60 hover:bg-primary/5 hover:border-primary/40",
+    "text-muted-foreground hover:text-primary",
+    "transition-colors",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "disabled:opacity-60 disabled:cursor-not-allowed",
+    "min-h-[44px] min-w-[44px]",
+    size === "sm" ? "px-2.5 py-1 text-[11px]" : "px-3 py-1.5 text-xs",
   );
-  const iconSize = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
+  const iconSize = size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4";
 
   const renderIcon = (key: ActionKey, Icon: React.ComponentType<any>) => {
     if (loadingMap[key]) {
-      return <Icons.Loader className={cn(iconSize, 'animate-spin')} aria-hidden="true" />;
+      return <Icons.Loader className={cn(iconSize, "animate-spin")} aria-hidden="true" />;
     }
     if (successMap[key]) {
-      return <Icons.Check className={cn(iconSize, 'text-primary')} aria-hidden="true" />;
+      return <Icons.Check className={cn(iconSize, "text-primary")} aria-hidden="true" />;
     }
     return <Icon className={iconSize} aria-hidden="true" />;
   };
@@ -198,7 +207,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
 
   return (
     <div
-      className={cn('flex flex-wrap items-center gap-1.5', className)}
+      className={cn("flex flex-wrap items-center gap-1.5", className)}
       role="group"
       aria-label={`Ações para ${reference}`}
       onClick={(e) => e.stopPropagation()}
@@ -216,7 +225,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
         aria-busy={loadingMap.text || undefined}
         disabled={!!loadingMap.text}
       >
-        {renderIcon('text', Icons.Quote)}
+        {renderIcon("text", Icons.Quote)}
         <span>Copiar trecho</span>
       </button>
 
@@ -228,7 +237,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
         aria-busy={loadingMap.reference || undefined}
         disabled={!!loadingMap.reference}
       >
-        {renderIcon('reference', Icons.Link)}
+        {renderIcon("reference", Icons.Link)}
         <span>Copiar referência</span>
       </button>
 
@@ -240,7 +249,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
         aria-busy={loadingMap.share || undefined}
         disabled={!!loadingMap.share}
       >
-        {renderIcon('share', Icons.Share)}
+        {renderIcon("share", Icons.Share)}
         <span>Compartilhar</span>
       </button>
 
@@ -253,7 +262,7 @@ const PassageActions: React.FC<PassageActionsProps> = ({
           aria-busy={loadingMap.highlight || undefined}
           disabled={!!loadingMap.highlight}
         >
-          {renderIcon('highlight', Icons.Highlighter)}
+          {renderIcon("highlight", Icons.Highlighter)}
           <span>Destacar</span>
         </button>
       )}
@@ -267,6 +276,6 @@ const PassageActions: React.FC<PassageActionsProps> = ({
   );
 };
 
-PassageActions.displayName = 'PassageActions';
+PassageActions.displayName = "PassageActions";
 
 export default PassageActions;

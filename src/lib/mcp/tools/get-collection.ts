@@ -22,7 +22,11 @@ export default defineTool({
       .eq("status", "published")
       .maybeSingle();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    if (!collection) return { content: [{ type: "text", text: `Coleção '${slug}' não encontrada ou não publicada.` }], isError: true };
+    if (!collection)
+      return {
+        content: [{ type: "text", text: `Coleção '${slug}' não encontrada ou não publicada.` }],
+        isError: true,
+      };
 
     const { data: items } = await sb
       .from("collection_items")

@@ -7,23 +7,22 @@
  *  - Wrappers puramente visuais e composicionais.
  */
 
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { EditorialDivider } from './index';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { EditorialDivider } from "./index";
 
 /* ------------------------------------------------------------------ */
 /* Kicker — versalete dourado standalone                              */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialKickerProps
-  extends React.HTMLAttributes<HTMLSpanElement> {
-  as?: 'span' | 'p';
-  tone?: 'gold' | 'muted';
+export interface EditorialKickerProps extends React.HTMLAttributes<HTMLSpanElement> {
+  as?: "span" | "p";
+  tone?: "gold" | "muted";
 }
 
 export const EditorialKicker: React.FC<EditorialKickerProps> = ({
-  as = 'span',
-  tone = 'gold',
+  as = "span",
+  tone = "gold",
   className,
   children,
   ...rest
@@ -32,8 +31,8 @@ export const EditorialKicker: React.FC<EditorialKickerProps> = ({
   return (
     <Comp
       className={cn(
-        'font-stitch-label text-stitch-label-sm uppercase tracking-[0.32em]',
-        tone === 'gold' ? 'text-stitch-secondary' : 'text-stitch-on-surface-variant',
+        "font-stitch-label text-stitch-label-sm uppercase tracking-[0.32em]",
+        tone === "gold" ? "text-stitch-secondary" : "text-stitch-on-surface-variant",
         className,
       )}
       {...rest}
@@ -47,8 +46,7 @@ export const EditorialKicker: React.FC<EditorialKickerProps> = ({
 /* Meta — linha contextual discreta                                   */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialMetaProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface EditorialMetaProps extends React.HTMLAttributes<HTMLDivElement> {
   dot?: boolean;
 }
 
@@ -60,8 +58,8 @@ export const EditorialMeta: React.FC<EditorialMetaProps> = ({
 }) => (
   <div
     className={cn(
-      'flex items-center gap-3 font-stitch-label text-stitch-label-sm uppercase tracking-[0.24em]',
-      'text-stitch-on-surface-variant/80',
+      "flex items-center gap-3 font-stitch-label text-stitch-label-sm uppercase tracking-[0.24em]",
+      "text-stitch-on-surface-variant/80",
       className,
     )}
     {...rest}
@@ -80,20 +78,19 @@ export const EditorialMeta: React.FC<EditorialMetaProps> = ({
 /* GoldMarkerDivider — filete dourado com marcador central            */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialGoldMarkerProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface EditorialGoldMarkerProps extends React.HTMLAttributes<HTMLDivElement> {
   symbol?: React.ReactNode;
 }
 
 export const EditorialGoldMarker: React.FC<EditorialGoldMarkerProps> = ({
-  symbol = '✦',
+  symbol = "✦",
   className,
   ...rest
 }) => (
   <div
     role="separator"
     aria-orientation="horizontal"
-    className={cn('flex items-center gap-4 text-stitch-secondary', className)}
+    className={cn("flex items-center gap-4 text-stitch-secondary", className)}
     {...rest}
   >
     <span className="h-px flex-1 bg-[linear-gradient(90deg,transparent,hsl(var(--stitch-secondary)),transparent)]" />
@@ -108,8 +105,10 @@ export const EditorialGoldMarker: React.FC<EditorialGoldMarkerProps> = ({
 /* Progress — barra dourada 2px + marcador                            */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialProgressProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface EditorialProgressProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   value: number; // 0..100
   label?: React.ReactNode;
 }
@@ -122,7 +121,7 @@ export const EditorialProgress: React.FC<EditorialProgressProps> = ({
 }) => {
   const clamped = Math.max(0, Math.min(100, value));
   return (
-    <div className={cn('w-full', className)} {...rest}>
+    <div className={cn("w-full", className)} {...rest}>
       <div
         role="progressbar"
         aria-valuemin={0}
@@ -153,8 +152,7 @@ export const EditorialProgress: React.FC<EditorialProgressProps> = ({
 /* Quote — citação editorial                                          */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialQuoteProps
-  extends React.HTMLAttributes<HTMLQuoteElement> {
+export interface EditorialQuoteProps extends React.HTMLAttributes<HTMLQuoteElement> {
   cite?: React.ReactNode;
 }
 
@@ -166,8 +164,8 @@ export const EditorialQuote: React.FC<EditorialQuoteProps> = ({
 }) => (
   <blockquote
     className={cn(
-      'relative pl-6 border-l border-stitch-secondary/60',
-      'font-stitch-display italic text-stitch-headline-sm text-stitch-on-background',
+      "relative pl-6 border-l border-stitch-secondary/60",
+      "font-stitch-display italic text-stitch-headline-sm text-stitch-on-background",
       className,
     )}
     {...rest}
@@ -185,8 +183,7 @@ export const EditorialQuote: React.FC<EditorialQuoteProps> = ({
 /* Marginalia — numeração marginal dourada (versículo / §CIC)         */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialMarginaliaProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface EditorialMarginaliaProps extends React.HTMLAttributes<HTMLDivElement> {
   marker: React.ReactNode;
   markerAriaLabel?: string;
 }
@@ -199,10 +196,7 @@ export const EditorialMarginalia: React.FC<EditorialMarginaliaProps> = ({
   ...rest
 }) => (
   <div
-    className={cn(
-      'grid grid-cols-[3rem,1fr] gap-3 md:gap-4 items-baseline',
-      className,
-    )}
+    className={cn("grid grid-cols-[3rem,1fr] gap-3 md:gap-4 items-baseline", className)}
     {...rest}
   >
     <span
@@ -221,8 +215,10 @@ export const EditorialMarginalia: React.FC<EditorialMarginaliaProps> = ({
 /* EmptyState — vazio contemplativo                                    */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialEmptyStateProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface EditorialEmptyStateProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   kicker?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -235,22 +231,16 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
   title,
   description,
   action,
-  symbol = '✦',
+  symbol = "✦",
   className,
   ...rest
 }) => (
   <div
     role="status"
-    className={cn(
-      'flex flex-col items-center text-center py-16 px-4',
-      className,
-    )}
+    className={cn("flex flex-col items-center text-center py-16 px-4", className)}
     {...rest}
   >
-    <span
-      aria-hidden="true"
-      className="text-2xl text-stitch-secondary/80 mb-6"
-    >
+    <span aria-hidden="true" className="text-2xl text-stitch-secondary/80 mb-6">
       {symbol}
     </span>
     {kicker && (
@@ -281,22 +271,21 @@ export interface EditorialBreadcrumbItem {
   current?: boolean;
 }
 
-export interface EditorialBreadcrumbProps
-  extends React.HTMLAttributes<HTMLElement> {
+export interface EditorialBreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   items: EditorialBreadcrumbItem[];
   separator?: React.ReactNode;
 }
 
 export const EditorialBreadcrumb: React.FC<EditorialBreadcrumbProps> = ({
   items,
-  separator = '·',
+  separator = "·",
   className,
   ...rest
 }) => (
   <nav
     aria-label="Trilha"
     className={cn(
-      'font-stitch-label text-stitch-label-sm uppercase tracking-[0.24em] text-stitch-on-surface-variant',
+      "font-stitch-label text-stitch-label-sm uppercase tracking-[0.24em] text-stitch-on-surface-variant",
       className,
     )}
     {...rest}
@@ -309,22 +298,18 @@ export const EditorialBreadcrumb: React.FC<EditorialBreadcrumbProps> = ({
             <a
               href={item.href}
               onClick={item.onClick}
-              aria-current={item.current || isLast ? 'page' : undefined}
+              aria-current={item.current || isLast ? "page" : undefined}
               className={cn(
-                'transition-colors focus-visible:outline-none focus-visible:text-stitch-secondary',
-                item.current || isLast
-                  ? 'text-stitch-secondary'
-                  : 'hover:text-stitch-secondary',
+                "transition-colors focus-visible:outline-none focus-visible:text-stitch-secondary",
+                item.current || isLast ? "text-stitch-secondary" : "hover:text-stitch-secondary",
               )}
             >
               {item.label}
             </a>
           ) : (
             <span
-              aria-current={item.current || isLast ? 'page' : undefined}
-              className={cn(
-                item.current || isLast ? 'text-stitch-secondary' : undefined,
-              )}
+              aria-current={item.current || isLast ? "page" : undefined}
+              className={cn(item.current || isLast ? "text-stitch-secondary" : undefined)}
             >
               {item.label}
             </span>
@@ -349,35 +334,34 @@ export const EditorialBreadcrumb: React.FC<EditorialBreadcrumbProps> = ({
 /* ------------------------------------------------------------------ */
 
 type CTAOwnProps = {
-  as?: 'button' | 'a';
-  variant?: 'inline' | 'block';
+  as?: "button" | "a";
+  variant?: "inline" | "block";
   href?: string;
 };
 
 export type EditorialCTAProps = CTAOwnProps &
   Omit<
-    React.ButtonHTMLAttributes<HTMLButtonElement> &
-      React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    React.ButtonHTMLAttributes<HTMLButtonElement> & React.AnchorHTMLAttributes<HTMLAnchorElement>,
     keyof CTAOwnProps
   >;
 
 export const EditorialCTA = React.forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
   EditorialCTAProps
->(({ as = 'button', variant = 'inline', className, children, ...rest }, ref) => {
-  const Comp = (as === 'a' ? 'a' : 'button') as React.ElementType;
+>(({ as = "button", variant = "inline", className, children, ...rest }, ref) => {
+  const Comp = (as === "a" ? "a" : "button") as React.ElementType;
   return (
     <Comp
       ref={ref as never}
-      type={as === 'button' ? 'button' : undefined}
+      type={as === "button" ? "button" : undefined}
       className={cn(
-        'group inline-flex items-center gap-3 font-stitch-label uppercase tracking-[0.28em] text-stitch-label-md',
-        'text-stitch-on-background',
-        'pb-1 border-b border-stitch-secondary',
-        'transition-[letter-spacing,color] duration-300',
-        'hover:tracking-[0.34em] hover:text-stitch-secondary',
-        'focus-visible:outline-none focus-visible:text-stitch-secondary focus-visible:tracking-[0.34em]',
-        variant === 'block' && 'w-full justify-center',
+        "group inline-flex items-center gap-3 font-stitch-label uppercase tracking-[0.28em] text-stitch-label-md",
+        "text-stitch-on-background",
+        "pb-1 border-b border-stitch-secondary",
+        "transition-[letter-spacing,color] duration-300",
+        "hover:tracking-[0.34em] hover:text-stitch-secondary",
+        "focus-visible:outline-none focus-visible:text-stitch-secondary focus-visible:tracking-[0.34em]",
+        variant === "block" && "w-full justify-center",
         className,
       )}
       {...rest}
@@ -392,14 +376,13 @@ export const EditorialCTA = React.forwardRef<
     </Comp>
   );
 });
-EditorialCTA.displayName = 'EditorialCTA';
+EditorialCTA.displayName = "EditorialCTA";
 
 /* ------------------------------------------------------------------ */
 /* Panel — painel editorial para Nexus / popovers                     */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialPanelProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface EditorialPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   kicker?: React.ReactNode;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
@@ -413,7 +396,7 @@ export const EditorialPanel: React.FC<EditorialPanelProps> = ({
   title,
   subtitle,
   onClose,
-  closeLabel = 'Fechar',
+  closeLabel = "Fechar",
   footer,
   className,
   children,
@@ -421,11 +404,11 @@ export const EditorialPanel: React.FC<EditorialPanelProps> = ({
 }) => (
   <div
     role="dialog"
-    aria-label={typeof title === 'string' ? title : undefined}
+    aria-label={typeof title === "string" ? title : undefined}
     className={cn(
-      'flex flex-col bg-stitch-surface-container-lowest text-stitch-on-surface',
-      'border border-stitch-outline-variant/40 rounded-[var(--stitch-radius-xl)]',
-      'overflow-hidden',
+      "flex flex-col bg-stitch-surface-container-lowest text-stitch-on-surface",
+      "border border-stitch-outline-variant/40 rounded-[var(--stitch-radius-xl)]",
+      "overflow-hidden",
       className,
     )}
     {...rest}
@@ -475,36 +458,38 @@ export const EditorialPanel: React.FC<EditorialPanelProps> = ({
 /* BookCover — capa 3D com textura de linho                            */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialBookCoverProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface EditorialBookCoverProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   title: React.ReactNode;
   author?: React.ReactNode;
   /** URL da imagem de capa. Se ausente, usa capa tipográfica. */
   image?: string;
   /** Cor de fundo quando não há imagem (var CSS ou hsl). Default: burgundy. */
   color?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
-const COVER_SIZE: Record<NonNullable<EditorialBookCoverProps['size']>, string> = {
-  sm: 'w-24 h-36',
-  md: 'w-36 h-52',
-  lg: 'w-48 h-72',
+const COVER_SIZE: Record<NonNullable<EditorialBookCoverProps["size"]>, string> = {
+  sm: "w-24 h-36",
+  md: "w-36 h-52",
+  lg: "w-48 h-72",
 };
 
 export const EditorialBookCover: React.FC<EditorialBookCoverProps> = ({
   title,
   author,
   image,
-  color = 'hsl(var(--stitch-primary))',
-  size = 'md',
+  color = "hsl(var(--stitch-primary))",
+  size = "md",
   className,
   ...rest
 }) => (
   <div
     className={cn(
-      'relative shrink-0 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.35),inset_-2px_0_4px_rgba(0,0,0,0.15),inset_2px_0_1px_rgba(255,255,255,0.06)]',
-      'rounded-sm overflow-hidden',
+      "relative shrink-0 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.35),inset_-2px_0_4px_rgba(0,0,0,0.15),inset_2px_0_1px_rgba(255,255,255,0.06)]",
+      "rounded-sm overflow-hidden",
       COVER_SIZE[size],
       className,
     )}
@@ -514,7 +499,7 @@ export const EditorialBookCover: React.FC<EditorialBookCoverProps> = ({
     {image ? (
       <img
         src={image}
-        alt={typeof title === 'string' ? title : ''}
+        alt={typeof title === "string" ? title : ""}
         loading="lazy"
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -535,8 +520,7 @@ export const EditorialBookCover: React.FC<EditorialBookCoverProps> = ({
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-overlay"
       style={{
-        backgroundImage:
-          "url('https://www.transparenttextures.com/patterns/lined-paper.png')",
+        backgroundImage: "url('https://www.transparenttextures.com/patterns/lined-paper.png')",
       }}
     />
     {/* Lombada (highlight à esquerda) */}
@@ -551,8 +535,7 @@ export const EditorialBookCover: React.FC<EditorialBookCoverProps> = ({
 /* Timeline — trilha vertical com marcadores dourados                  */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialTimelineProps
-  extends React.HTMLAttributes<HTMLOListElement> {}
+export interface EditorialTimelineProps extends React.HTMLAttributes<HTMLOListElement> {}
 
 export const EditorialTimeline: React.FC<EditorialTimelineProps> = ({
   className,
@@ -561,9 +544,9 @@ export const EditorialTimeline: React.FC<EditorialTimelineProps> = ({
 }) => (
   <ol
     className={cn(
-      'relative pl-8 md:pl-10',
-      'before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2',
-      'before:w-px before:bg-[linear-gradient(180deg,transparent,hsl(var(--stitch-secondary))/0.5,transparent)]',
+      "relative pl-8 md:pl-10",
+      "before:absolute before:left-3 md:before:left-4 before:top-2 before:bottom-2",
+      "before:w-px before:bg-[linear-gradient(180deg,transparent,hsl(var(--stitch-secondary))/0.5,transparent)]",
       className,
     )}
     {...rest}
@@ -576,15 +559,17 @@ export const EditorialTimeline: React.FC<EditorialTimelineProps> = ({
 /* ChapterCard — item da Timeline (numeral romano dourado)             */
 /* ------------------------------------------------------------------ */
 
-export interface EditorialChapterCardProps
-  extends Omit<React.LiHTMLAttributes<HTMLLIElement>, 'title'> {
+export interface EditorialChapterCardProps extends Omit<
+  React.LiHTMLAttributes<HTMLLIElement>,
+  "title"
+> {
   numeral: React.ReactNode;
   kicker?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
   meta?: React.ReactNode;
   action?: React.ReactNode;
-  state?: 'default' | 'current' | 'done';
+  state?: "default" | "current" | "done";
 }
 
 export const EditorialChapterCard: React.FC<EditorialChapterCardProps> = ({
@@ -594,25 +579,25 @@ export const EditorialChapterCard: React.FC<EditorialChapterCardProps> = ({
   description,
   meta,
   action,
-  state = 'default',
+  state = "default",
   className,
   ...rest
 }) => (
-  <li className={cn('relative py-6', className)} {...rest}>
+  <li className={cn("relative py-6", className)} {...rest}>
     <span
       aria-hidden="true"
       className={cn(
-        'absolute left-0 top-8 -translate-x-[calc(50%+0px)] md:-translate-x-[calc(50%+2px)]',
-        'flex items-center justify-center h-6 w-6 rounded-full',
-        'font-stitch-label uppercase tracking-widest text-[10px]',
-        state === 'current' &&
-          'bg-stitch-secondary text-stitch-primary-foreground shadow-[0_0_0_4px_hsl(var(--stitch-background))]',
-        state === 'done' &&
-          'bg-stitch-surface-container border border-stitch-secondary/60 text-stitch-secondary',
-        state === 'default' &&
-          'bg-stitch-background border border-stitch-outline-variant text-stitch-on-surface-variant',
+        "absolute left-0 top-8 -translate-x-[calc(50%+0px)] md:-translate-x-[calc(50%+2px)]",
+        "flex items-center justify-center h-6 w-6 rounded-full",
+        "font-stitch-label uppercase tracking-widest text-[10px]",
+        state === "current" &&
+          "bg-stitch-secondary text-stitch-primary-foreground shadow-[0_0_0_4px_hsl(var(--stitch-background))]",
+        state === "done" &&
+          "bg-stitch-surface-container border border-stitch-secondary/60 text-stitch-secondary",
+        state === "default" &&
+          "bg-stitch-background border border-stitch-outline-variant text-stitch-on-surface-variant",
       )}
-      style={{ left: '0.75rem' }}
+      style={{ left: "0.75rem" }}
     >
       {numeral}
     </span>

@@ -32,7 +32,9 @@ export default defineTool({
 
     const { data: steps } = await sb
       .from("journey_steps")
-      .select("step_order,title,subtitle,step_type,content,duration_minutes,is_free,reflection,exercise,closing")
+      .select(
+        "step_order,title,subtitle,step_type,content,duration_minutes,is_free,reflection,exercise,closing",
+      )
       .eq("journey_id", j.id)
       .order("step_order", { ascending: true });
 

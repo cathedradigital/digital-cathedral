@@ -1,22 +1,31 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BIBLE_DATA } from '@/data/bible-books';
+import { Icons } from "@/constants";
+import React, { useState, useEffect, Suspense, lazy } from "react";
+import { supabase } from "@/lib/db";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BIBLE_DATA } from "@/data/bible-books";
 
-const CatechismDebug = lazy(() => import('./CatechismDebug'));
-const BibleKnowledgeAudit = lazy(() => import('./BibleKnowledgeAudit').then(m => ({ default: m.BibleKnowledgeAudit })));
+const CatechismDebug = lazy(() => import("./CatechismDebug"));
+const BibleKnowledgeAudit = lazy(() =>
+  import("./BibleKnowledgeAudit").then((m) => ({ default: m.BibleKnowledgeAudit })),
+);
 
 interface Post {
   id: string;
   title: string | null;
   content: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   user_id: string;
   created_at: string;
   category: string | null;
@@ -28,19 +37,30 @@ interface Post {
 const AdminContentTab: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('pending');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("pending");
 
   const auditData = React.useMemo(() => {
-    const allBooks = Object.values(BIBLE_DATA).flat().flatMap(cat => cat.books);
+    const allBooks = Object.values(BIBLE_DATA)
+      .flat()
+      .flatMap((cat) => cat.books);
     // Em produção estes dados viriam de uma consulta real de cobertura
     return {
       totalBooks: allBooks.length,
       coveredBooks: allBooks.length - 8,
-      emptyBooks: ['Tobias', 'Judite', 'Ester', '1 Macabeus', '2 Macabeus', 'Sabedoria', 'Eclesiástico', 'Baruc'],
+      emptyBooks: [
+        "Tobias",
+        "Judite",
+        "Ester",
+        "1 Macabeus",
+        "2 Macabeus",
+        "Sabedoria",
+        "Eclesiástico",
+        "Baruc",
+      ],
       totalChapters: allBooks.reduce((acc, b) => acc + b.chapters, 0),
       themesCount: 42,
-      theologicalThemes: []
+      theologicalThemes: [],
     };
   }, []);
 
@@ -52,78 +72,92 @@ const AdminContentTab: React.FC = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('community_posts')
-        .select('*, profiles(name)')
-        .order('created_at', { ascending: false });
+        .from("community_posts")
+        .select("*, profiles(name)")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPosts(data as any[] || []);
+      setPosts((data as any[]) || []);
     } catch (error: any) {
-      toast.error('Erro ao buscar conteúdos: ' + error.message);
+      toast.error("Erro ao buscar conteúdos: " + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateStatus = async (id: string, newStatus: 'approved' | 'rejected' | 'pending') => {
+  const handleUpdateStatus = async (id: string, newStatus: "approved" | "rejected" | "pending") => {
     try {
       const { error } = await supabase
-        .from('community_posts')
+        .from("community_posts")
         .update({ status: newStatus })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) throw error;
 
-      setPosts(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
-      toast.success(`Conteúdo ${newStatus === 'approved' ? 'aprovado' : newStatus === 'rejected' ? 'rejeitado' : 'marcado como pendente'} com sucesso.`);
+      setPosts((prev) => prev.map((p) => (p.id === id ? { ...p, status: newStatus } : p)));
+      toast.success(
+        `Conteúdo ${newStatus === "approved" ? "aprovado" : newStatus === "rejected" ? "rejeitado" : "marcado como pendente"} com sucesso.`,
+      );
     } catch (error: any) {
-      toast.error('Erro ao atualizar conteúdo: ' + error.message);
+      toast.error("Erro ao atualizar conteúdo: " + error.message);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir este conteúdo permanentemente?')) return;
+    if (!confirm("Tem certeza que deseja excluir este conteúdo permanentemente?")) return;
 
     try {
-      const { error } = await supabase
-        .from('community_posts')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("community_posts").delete().eq("id", id);
 
       if (error) throw error;
 
-      setPosts(prev => prev.filter(p => p.id !== id));
-      toast.success('Conteúdo excluído com sucesso.');
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Conteúdo excluído com sucesso.");
     } catch (error: any) {
-      toast.error('Erro ao excluir conteúdo: ' + error.message);
+      toast.error("Erro ao excluir conteúdo: " + error.message);
     }
   };
-
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'approved':
-        return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-spacing-2xs"><Icons.CheckCircle2 className="w-spacing-sm h-spacing-sm" /> Aprovado</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive" className="gap-spacing-2xs"><Icons.XCircle className="w-spacing-sm h-spacing-sm" /> Rejeitado</Badge>;
+      case "approved":
+        return (
+          <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-spacing-2xs">
+            <Icons.CheckCircle2 className="w-spacing-sm h-spacing-sm" /> Aprovado
+          </Badge>
+        );
+      case "rejected":
+        return (
+          <Badge variant="destructive" className="gap-spacing-2xs">
+            <Icons.XCircle className="w-spacing-sm h-spacing-sm" /> Rejeitado
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary" className="gap-spacing-2xs bg-amber-500/10 text-amber-500 border-amber-500/20"><Icons.Clock className="w-spacing-sm h-spacing-sm" /> Pendente</Badge>;
+        return (
+          <Badge
+            variant="secondary"
+            className="gap-spacing-2xs bg-amber-500/10 text-amber-500 border-amber-500/20"
+          >
+            <Icons.Clock className="w-spacing-sm h-spacing-sm" /> Pendente
+          </Badge>
+        );
     }
   };
 
-  const filteredPosts = posts.filter(p => 
-    (p.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
-     p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     p.profiles?.name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-    (activeTab === 'all' || p.status === activeTab)
+  const filteredPosts = posts.filter(
+    (p) =>
+      (p.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.profiles?.name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (activeTab === "all" || p.status === activeTab),
   );
 
-  const pendingCount = posts.filter(p => p.status === 'pending').length;
+  const pendingCount = posts.filter((p) => p.status === "pending").length;
 
   if (loading) {
     return (
       <div className="space-y-spacing-md">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <Card key={i} className="h-spacing-4xl bg-muted/40 animate-pulse" />
         ))}
       </div>
@@ -165,16 +199,19 @@ const AdminContentTab: React.FC = () => {
           <TabsTrigger value="bible-audit">Auditoria Bíblica</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="bible-audit" className="relative h-[800px] overflow-hidden rounded-premium border border-primary/5">
+        <TabsContent
+          value="bible-audit"
+          className="relative h-[800px] overflow-hidden rounded-premium border border-primary/5"
+        >
           <Suspense fallback={<Card className="h-full animate-pulse" />}>
-             <BibleKnowledgeAudit 
-               onClose={() => setActiveTab('pending')} 
-               auditData={auditData} 
-             />
+            <BibleKnowledgeAudit onClose={() => setActiveTab("pending")} auditData={auditData} />
           </Suspense>
         </TabsContent>
 
-        <TabsContent value={activeTab === 'bible-audit' ? 'none' : activeTab} className="space-y-spacing-md">
+        <TabsContent
+          value={activeTab === "bible-audit" ? "none" : activeTab}
+          className="space-y-spacing-md"
+        >
           {filteredPosts.length === 0 ? (
             <Card className="border-dashed border-2 py-spacing-2xl text-center">
               <Icons.MessageSquare className="w-spacing-2xl h-spacing-2xl text-muted-foreground mx-auto mb-spacing-md opacity-20" />
@@ -186,34 +223,65 @@ const AdminContentTab: React.FC = () => {
                 <CardHeader className="flex flex-row items-center justify-between pb-spacing-2xs pt-spacing-sm px-spacing-sm">
                   <div className="flex items-center gap-spacing-xs">
                     <Icons.User className="w-spacing-sm h-spacing-sm text-muted-foreground" />
-                    <span className="text-premium-xs font-bold">{post.profiles?.name || 'Usuário'}</span>
-                    <span className="text-premium-xs text-muted-foreground">• {new Date(post.created_at).toLocaleDateString('pt-BR')}</span>
-                    {post.category && <Badge variant="outline" className="text-premium-xs uppercase h-spacing-md px-spacing-2xs">{post.category}</Badge>}
+                    <span className="text-premium-xs font-bold">
+                      {post.profiles?.name || "Usuário"}
+                    </span>
+                    <span className="text-premium-xs text-muted-foreground">
+                      • {new Date(post.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                    {post.category && (
+                      <Badge
+                        variant="outline"
+                        className="text-premium-xs uppercase h-spacing-md px-spacing-2xs"
+                      >
+                        {post.category}
+                      </Badge>
+                    )}
                   </div>
-                  <div className="scale-90 origin-right">
-                    {getStatusBadge(post.status)}
-                  </div>
+                  <div className="scale-90 origin-right">{getStatusBadge(post.status)}</div>
                 </CardHeader>
                 <CardContent className="px-spacing-sm pb-spacing-xs pt-spacing-2xs">
-                  {post.title && <h3 className="text-premium-sm font-bold mb-spacing-3xs">{post.title}</h3>}
-                  <p className="text-premium-xs text-muted-foreground whitespace-pre-wrap line-clamp-spacing-sm">{post.content}</p>
+                  {post.title && (
+                    <h3 className="text-premium-sm font-bold mb-spacing-3xs">{post.title}</h3>
+                  )}
+                  <p className="text-premium-xs text-muted-foreground whitespace-pre-wrap line-clamp-spacing-sm">
+                    {post.content}
+                  </p>
                 </CardContent>
                 <CardFooter className="bg-muted/10 border-t border-border/10 py-spacing-2xs px-spacing-sm flex justify-end gap-spacing-2xs">
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(post.id)} className="text-destructive h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(post.id)}
+                    className="text-destructive h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs"
+                  >
                     <Icons.Trash2 className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Excluir
                   </Button>
-                  {post.status === 'pending' && (
+                  {post.status === "pending" && (
                     <>
-                      <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(post.id, 'rejected')} className="h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleUpdateStatus(post.id, "rejected")}
+                        className="h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs"
+                      >
                         <Icons.X className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Rejeitar
                       </Button>
-                      <Button size="sm" onClick={() => handleUpdateStatus(post.id, 'approved')} className="h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs bg-emerald-600 hover:bg-emerald-700 text-white">
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdateStatus(post.id, "approved")}
+                        className="h-spacing-lg text-premium-xs font-bold uppercase tracking-widest px-spacing-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                      >
                         <Icons.Check className="w-spacing-sm h-spacing-sm mr-spacing-2xs" /> Aprovar
                       </Button>
                     </>
                   )}
-                  {post.status !== 'pending' && (
-                    <Button variant="outline" size="sm" onClick={() => handleUpdateStatus(post.id, 'pending')}>
+                  {post.status !== "pending" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleUpdateStatus(post.id, "pending")}
+                    >
                       Voltar para Pendente
                     </Button>
                   )}

@@ -7,19 +7,19 @@
  * — delega a um `ContentAdapter` selecionado pelo `kind` do alvo.
  */
 
-import type { KnowledgeNodeKind } from '@/core/knowledge';
-import type { ReaderContent, SearchResult } from '../contracts';
+import type { KnowledgeNodeKind } from "@/core/knowledge";
+import type { ReaderContent, SearchResult } from "../contracts";
 import {
   defaultContentAdapters,
   type ContentAdapter,
   type ContentAdapters,
   type ContentGetParams,
-} from '../adapters';
+} from "../adapters";
 
 /** Subset de `KnowledgeNodeKind` atendido pelo ReaderService nesta sprint. */
-export type ReaderKind = 'bible' | 'catechism' | 'magisterium';
+export type ReaderKind = "bible" | "catechism" | "magisterium";
 
-const READABLE_KINDS: readonly ReaderKind[] = ['bible', 'catechism', 'magisterium'] as const;
+const READABLE_KINDS: readonly ReaderKind[] = ["bible", "catechism", "magisterium"] as const;
 
 function isReaderKind(kind: KnowledgeNodeKind): kind is ReaderKind {
   return (READABLE_KINDS as readonly string[]).includes(kind);

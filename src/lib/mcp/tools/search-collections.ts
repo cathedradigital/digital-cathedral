@@ -21,7 +21,9 @@ export default defineTool({
       .from("collections")
       .select("slug,title,subtitle,description,category,featured,cover")
       .eq("status", "published")
-      .or(`title.ilike.%${query}%,subtitle.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`)
+      .or(
+        `title.ilike.%${query}%,subtitle.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`,
+      )
       .limit(limit ?? 15);
     if (category) q = q.eq("category", category);
     const { data, error } = await q;

@@ -9,11 +9,11 @@
  *
  * P1 — Botões consolidados no Design System via `<Button variant="pill*">`.
  */
-import React from 'react';
-import { BookOpen, Circle, Timer, type LucideIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { BookOpen, Circle, Timer, type LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export type PrayerMode = 'guided' | 'contemplative' | 'auto';
+export type PrayerMode = "guided" | "contemplative" | "auto";
 
 interface Props {
   mode: PrayerMode;
@@ -23,18 +23,18 @@ interface Props {
 }
 
 const OPTIONS: Array<{ id: PrayerMode; label: string; icon: LucideIcon; hint: string }> = [
-  { id: 'guided', label: 'Guiado', icon: BookOpen, hint: 'Passo a passo, avanço manual' },
-  { id: 'contemplative', label: 'Contemplativo', icon: Circle, hint: 'Tela limpa, sem UI' },
-  { id: 'auto', label: 'Automático', icon: Timer, hint: 'Avança sozinho' },
+  { id: "guided", label: "Guiado", icon: BookOpen, hint: "Passo a passo, avanço manual" },
+  { id: "contemplative", label: "Contemplativo", icon: Circle, hint: "Tela limpa, sem UI" },
+  { id: "auto", label: "Automático", icon: Timer, hint: "Avança sozinho" },
 ];
 
 const INTERVAL_STEPS = [
-  { ms: 15000, label: '15s' },
-  { ms: 30000, label: '30s' },
-  { ms: 45000, label: '45s' },
-  { ms: 60000, label: '1min' },
-  { ms: 90000, label: '1min30' },
-  { ms: 120000, label: '2min' },
+  { ms: 15000, label: "15s" },
+  { ms: 30000, label: "30s" },
+  { ms: 45000, label: "45s" },
+  { ms: 60000, label: "1min" },
+  { ms: 90000, label: "1min30" },
+  { ms: 120000, label: "2min" },
 ];
 
 export const PrayerModeSelector: React.FC<Props> = ({
@@ -58,7 +58,7 @@ export const PrayerModeSelector: React.FC<Props> = ({
               key={opt.id}
               role="tab"
               type="button"
-              variant={active ? 'pill-active' : 'pill'}
+              variant={active ? "pill-active" : "pill"}
               size="pill"
               aria-selected={active}
               aria-label={`${opt.label} — ${opt.hint}`}
@@ -72,7 +72,7 @@ export const PrayerModeSelector: React.FC<Props> = ({
         })}
       </div>
 
-      {mode === 'auto' && onIntervalChange && (
+      {mode === "auto" && onIntervalChange && (
         <div className="flex items-center gap-2 font-stitch-body text-[11px] uppercase tracking-widest text-stitch-on-surface-variant">
           <label htmlFor="prayer-auto-interval">Ritmo</label>
           <select

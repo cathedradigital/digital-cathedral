@@ -6,12 +6,12 @@
  *
  * P1 — Botão consolidado no Design System via `<Button variant="pill*">`.
  */
-import React from 'react';
-import { Bookmark, BookmarkCheck } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useDevotionalFavorites } from '@/hooks/useDevotionalFavorites';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Bookmark, BookmarkCheck } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useDevotionalFavorites } from "@/hooks/useDevotionalFavorites";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface Props {
   contentType: string;
@@ -29,28 +29,28 @@ export const PrayerFavoriteButton: React.FC<Props> = ({ contentType, contentId, 
   return (
     <Button
       type="button"
-      variant={active ? 'pill-toned' : 'pill'}
+      variant={active ? "pill-toned" : "pill"}
       size="pill"
       disabled={disabled}
       aria-pressed={active}
       aria-label={
         disabled
-          ? 'Entrar para salvar esta oração'
+          ? "Entrar para salvar esta oração"
           : active
-            ? 'Remover dos favoritos'
-            : 'Salvar nos favoritos'
+            ? "Remover dos favoritos"
+            : "Salvar nos favoritos"
       }
-      title={disabled ? 'Faça login para salvar' : active ? 'Remover dos favoritos' : 'Salvar'}
+      title={disabled ? "Faça login para salvar" : active ? "Remover dos favoritos" : "Salvar"}
       onClick={() =>
         !disabled &&
         toggle({ contentType, contentId, title, url }).catch(() => {
           /* silenciado — feedback via aria-pressed */
         })
       }
-      className={cn(disabled && 'cursor-not-allowed opacity-50')}
+      className={cn(disabled && "cursor-not-allowed opacity-50")}
     >
       {active ? <BookmarkCheck aria-hidden /> : <Bookmark aria-hidden />}
-      {active ? 'Salva' : 'Salvar'}
+      {active ? "Salva" : "Salvar"}
     </Button>
   );
 };

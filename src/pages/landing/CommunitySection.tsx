@@ -1,4 +1,4 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import { motion } from "framer-motion";
 
 import { fadeUp } from "./animations";
@@ -9,32 +9,32 @@ const CommunitySection = () => {
       title: "Rede de Oração Viva",
       desc: "Milhares de fiéis unidos em oração simultânea. Peça orações e interceda pelos seus irmãos em Cristo.",
       icon: <Icons.Users className="w-spacing-lg h-spacing-lg" />,
-      tag: "Intercessão"
+      tag: "Intercessão",
     },
     {
       title: "Irmandades Digitais",
       desc: "Grupos de estudo e partilha focados em temas específicos do Magistério e da vida dos santos.",
       icon: <Icons.Globe className="h-spacing-lg w-spacing-lg" />,
-      tag: "Comunidade"
+      tag: "Comunidade",
     },
     {
       title: "Ambiente Seguro",
       desc: "Espaço moderado e livre de distrações, focado exclusivamente no crescimento espiritual e teológico.",
       icon: <Icons.Shield className="h-spacing-lg w-spacing-lg" />,
-      tag: "Privacidade"
+      tag: "Privacidade",
     },
     {
       title: "Partilha de Graças",
       desc: "Um mural para testemunhar as maravilhas que Deus opera em sua vida através do estudo e da oração.",
       icon: <Icons.MessageSquare className="h-spacing-lg w-spacing-lg" />,
-      tag: "Testemunho"
-    }
+      tag: "Testemunho",
+    },
   ];
 
   return (
     <section className="w-full py-spacing-4xl px-spacing-md bg-background relative overflow-hidden">
       <div className="absolute top-spacing-2xs/2 left-spacing-2xs/2 -translate-x-1/2 -translate-y-1/2 w-spacing-3xl h-spacing-3xl bg-primary/[0.02] rounded-premium pointer-events-none" />
-      
+
       <div className="max-w-7xl mx-auto space-y-spacing-3xl relative z-10">
         <div className="text-center space-y-spacing-md max-w-spacing-3xl mx-auto">
           <motion.div
@@ -46,7 +46,7 @@ const CommunitySection = () => {
           >
             <span>Irmandade Cathedra</span>
           </motion.div>
-          
+
           <motion.h2
             variants={fadeUp}
             initial="hidden"
@@ -55,9 +55,10 @@ const CommunitySection = () => {
             custom={1}
             className="font-display font-bold leading-tight"
           >
-            Você nunca está <span className="text-primary italic font-serif">sozinho</span> em sua jornada
+            Você nunca está <span className="text-primary italic font-serif">sozinho</span> em sua
+            jornada
           </motion.h2>
-          
+
           <motion.p
             variants={fadeUp}
             initial="hidden"
@@ -107,9 +108,12 @@ const CommunitySection = () => {
         >
           <div className="flex -space-x-spacing-md justify-center mb-spacing-md">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="w-spacing-2xl h-spacing-2xl rounded-premium border-4 border-background bg-muted overflow-hidden">
-                <img 
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`} 
+              <div
+                key={i}
+                className="w-spacing-2xl h-spacing-2xl rounded-premium border-4 border-background bg-muted overflow-hidden"
+              >
+                <img
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`}
                   alt="Avatar de membro"
                   width={64}
                   height={64}
@@ -125,7 +129,8 @@ const CommunitySection = () => {
           </div>
           <h4 className="font-bold">Junte-se a milhares de fiéis</h4>
           <p className="text-muted-foreground max-w-spacing-xl mx-auto">
-            Mais do que um aplicativo, somos uma família em busca da santidade. Participe das nossas vigílias mensais e grupos de estudo.
+            Mais do que um aplicativo, somos uma família em busca da santidade. Participe das nossas
+            vigílias mensais e grupos de estudo.
           </p>
         </motion.div>
       </div>

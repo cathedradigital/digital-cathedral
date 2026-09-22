@@ -1,26 +1,25 @@
 /**
  * Portal de Documentação — guia individual (`/docs/:slug`), localizado.
  */
-import React, { useEffect, useMemo } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link, Navigate, useParams } from '@/lib/rr-compat';
-import { ArrowLeft } from 'lucide-react';
-import { useLang } from '@/hooks/useLang';
-import { getDocsBundle, getDocGuide } from '@/content/docs';
-import { recordDocView } from '@/lib/docsPopularity';
-
+import React, { useEffect, useMemo } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link, Navigate, useParams } from "@/lib/rr-compat";
+import { ArrowLeft } from "lucide-react";
+import { useLang } from "@/hooks/useLang";
+import { getDocsBundle, getDocGuide } from "@/content/docs";
+import { recordDocView } from "@/lib/docsPopularity";
 
 function slugifyHeading(value: string): string {
   return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export default function DocsArticlePage() {
-  const { slug = '' } = useParams();
+  const { slug = "" } = useParams();
   const { lang } = useLang();
   const bundle = useMemo(() => getDocsBundle(lang), [lang]);
   const guide = useMemo(() => getDocGuide(lang, slug), [lang, slug]);
@@ -31,7 +30,6 @@ export default function DocsArticlePage() {
   }, [guide]);
 
   if (!guide) return <Navigate to="/docs" replace />;
-
 
   return (
     <>
@@ -53,16 +51,26 @@ export default function DocsArticlePage() {
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
             {bundle.categories[guide.category]}
           </p>
-          <h1 className="mt-1 font-display text-3xl font-black tracking-tight text-foreground">{guide.title}</h1>
+          <h1 className="mt-1 font-display text-3xl font-black tracking-tight text-foreground">
+            {guide.title}
+          </h1>
           <p className="mt-2 text-sm text-muted-foreground">{guide.summary}</p>
         </header>
 
-        <nav aria-label={bundle.ui.onThisPage} className="mb-8 rounded-lg border border-border bg-muted/30 p-4">
-          <p className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">{bundle.ui.onThisPage}</p>
+        <nav
+          aria-label={bundle.ui.onThisPage}
+          className="mb-8 rounded-lg border border-border bg-muted/30 p-4"
+        >
+          <p className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">
+            {bundle.ui.onThisPage}
+          </p>
           <ul className="space-y-1">
             {guide.sections.map((section) => (
               <li key={section.heading}>
-                <a href={`#${slugifyHeading(section.heading)}`} className="text-sm text-primary hover:underline">
+                <a
+                  href={`#${slugifyHeading(section.heading)}`}
+                  className="text-sm text-primary hover:underline"
+                >
                   {section.heading}
                 </a>
               </li>

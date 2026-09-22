@@ -1,18 +1,30 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Icons } from '@/constants';
-import { useCatechismPending } from '@/contexts/CatechismPendingContext';
-import { fetchCatechismParagraph, CatechismFetchError } from '@/hooks/useCatechismParagraph';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Icons } from "@/constants";
+import { useCatechismPending } from "@/contexts/CatechismPendingContext";
+import { fetchCatechismParagraph, CatechismFetchError } from "@/hooks/useCatechismParagraph";
 
 interface Props {
   startPara: number;
@@ -20,7 +32,7 @@ interface Props {
   onJumpTo?: (p: number) => void;
 }
 
-type RunStatus = 'pending' | 'recovered' | 'error' | 'cancelled' | 'backoff';
+type RunStatus = "pending" | "recovered" | "error" | "cancelled" | "backoff";
 
 interface ParaState {
   paragraph: number;
@@ -36,18 +48,23 @@ interface ParaState {
 
 const reasonLabel = (code?: string) => {
   switch (code) {
-    case 'not_found': return 'não encontrado no banco oficial';
-    case 'network': return 'falha de rede';
-    case 'unauthorized': return 'sessão expirada';
-    case 'forbidden': return 'sem permissão';
-    default: return 'erro desconhecido';
+    case "not_found":
+      return "não encontrado no banco oficial";
+    case "network":
+      return "falha de rede";
+    case "unauthorized":
+      return "sessão expirada";
+    case "forbidden":
+      return "sem permissão";
+    default:
+      return "erro desconhecido";
   }
 };
 
-const isTransient = (code?: string) => code === 'network' || code === 'unknown';
+const isTransient = (code?: string) => code === "network" || code === "unknown";
 
 const sleep = (ms: number, signal: { cancelled: boolean }) =>
-  new Promise<void>(resolve => {
+  new Promise<void>((resolve) => {
     const start = Date.now();
     const tick = () => {
       if (signal.cancelled || Date.now() - start >= ms) return resolve();
@@ -59,7 +76,7 @@ const sleep = (ms: number, signal: { cancelled: boolean }) =>
 const triggerDownload = (filename: string, mime: string, content: string) => {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
@@ -69,16 +86,16 @@ const triggerDownload = (filename: string, mime: string, content: string) => {
 };
 
 const csvEscape = (v: unknown) => {
-  const s = v == null ? '' : String(v);
+  const s = v == null ? "" : String(v);
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
 
-const CONCURRENCY_KEY = 'cathedra.catechism.verifyConcurrency';
-const MAX_RETRIES_KEY = 'cathedra.catechism.verifyMaxRetries';
-const BASE_BACKOFF_KEY = 'cathedra.catechism.verifyBaseBackoffMs';
+const CONCURRENCY_KEY = "cathedra.catechism.verifyConcurrency";
+const MAX_RETRIES_KEY = "cathedra.catechism.verifyMaxRetries";
+const BASE_BACKOFF_KEY = "cathedra.catechism.verifyBaseBackoffMs";
 
 const readNum = (key: string, fallback: number, min: number, max: number) => {
-  if (typeof window === 'undefined') return fallback;
+  if (typeof window === "undefined") return fallback;
   const raw = Number(window.localStorage.getItem(key));
   return Number.isFinite(raw) && raw >= min && raw <= max ? raw : fallback;
 };
@@ -89,15 +106,19 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [results, setResults] = useState<Record<number, ParaState>>({});
-  const [runStatus, setRunStatus] = useState<'idle' | 'running' | 'cancelled' | 'completed'>('idle');
+  const [runStatus, setRunStatus] = useState<"idle" | "running" | "cancelled" | "completed">(
+    "idle",
+  );
   const [paused, setPaused] = useState(false);
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false);
-  const [exportFilter, setExportFilter] = useState<'all' | 'pending' | 'backoff' | 'error'>('all');
+  const [exportFilter, setExportFilter] = useState<"all" | "pending" | "backoff" | "error">("all");
   const [now, setNow] = useState(() => Date.now());
 
   const [concurrency, setConcurrency] = useState<number>(() => readNum(CONCURRENCY_KEY, 4, 1, 8));
   const [maxRetries, setMaxRetries] = useState<number>(() => readNum(MAX_RETRIES_KEY, 3, 0, 6));
-  const [baseBackoffMs, setBaseBackoffMs] = useState<number>(() => readNum(BASE_BACKOFF_KEY, 600, 100, 5000));
+  const [baseBackoffMs, setBaseBackoffMs] = useState<number>(() =>
+    readNum(BASE_BACKOFF_KEY, 600, 100, 5000),
+  );
 
   const cancelRef = useRef({ cancelled: false });
   const pausedRef = useRef(false);
@@ -105,9 +126,21 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
   const sessionKey = `cathedra.catechism.verifyRun.${startPara}-${endPara}`;
 
   // Persistência das configurações.
-  useEffect(() => { try { localStorage.setItem(CONCURRENCY_KEY, String(concurrency)); } catch {} }, [concurrency]);
-  useEffect(() => { try { localStorage.setItem(MAX_RETRIES_KEY, String(maxRetries)); } catch {} }, [maxRetries]);
-  useEffect(() => { try { localStorage.setItem(BASE_BACKOFF_KEY, String(baseBackoffMs)); } catch {} }, [baseBackoffMs]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(CONCURRENCY_KEY, String(concurrency));
+    } catch {}
+  }, [concurrency]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(MAX_RETRIES_KEY, String(maxRetries));
+    } catch {}
+  }, [maxRetries]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(BASE_BACKOFF_KEY, String(baseBackoffMs));
+    } catch {}
+  }, [baseBackoffMs]);
 
   // Restaura estado salvo da seção.
   useEffect(() => {
@@ -115,14 +148,17 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
     try {
       const raw = sessionStorage.getItem(sessionKey);
       if (!raw) {
-        setProgress({ done: 0, total: 0 }); setResults({}); setRunStatus('idle');
-        setPaused(false); pausedRef.current = false;
+        setProgress({ done: 0, total: 0 });
+        setResults({});
+        setRunStatus("idle");
+        setPaused(false);
+        pausedRef.current = false;
         return;
       }
       const saved = JSON.parse(raw);
       setProgress(saved.progress ?? { done: 0, total: 0 });
       setResults(saved.results ?? {});
-      setRunStatus(saved.runStatus ?? 'idle');
+      setRunStatus(saved.runStatus ?? "idle");
       const wasPaused = Boolean(saved.paused);
       setPaused(wasPaused);
       pausedRef.current = wasPaused;
@@ -138,18 +174,20 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
 
   // Tick global apenas quando há countdown ativo.
   useEffect(() => {
-    const hasCountdown = Object.values(results).some(r => r.status === 'backoff' && r.nextAttemptAt);
+    const hasCountdown = Object.values(results).some(
+      (r) => r.status === "backoff" && r.nextAttemptAt,
+    );
     if (!hasCountdown && !isRunning) return;
     const id = setInterval(() => setNow(Date.now()), 500);
     return () => clearInterval(id);
   }, [results, isRunning]);
 
-  const inRange = pending.filter(p => p >= startPara && p <= endPara);
+  const inRange = pending.filter((p) => p >= startPara && p <= endPara);
 
   const recordResult = (p: number, patch: Partial<ParaState>) => {
-    setResults(prev => ({
+    setResults((prev) => ({
       ...prev,
-      [p]: { paragraph: p, status: 'pending', attempts: 0, ...prev[p], ...patch },
+      [p]: { paragraph: p, status: "pending", attempts: 0, ...prev[p], ...patch },
     }));
   };
 
@@ -160,16 +198,17 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
     let attempts = 0;
     let lastErr: any = null;
     while (attempts <= cfg.maxRetries) {
-      if (cancelRef.current.cancelled) return { ok: false, err: lastErr ?? new Error('cancelled'), attempts };
+      if (cancelRef.current.cancelled)
+        return { ok: false, err: lastErr ?? new Error("cancelled"), attempts };
       attempts += 1;
       const t0 = performance.now();
       try {
         const result = await fetchCatechismParagraph(p);
         const elapsed = Math.round(performance.now() - t0);
-        queryClient.setQueryData(['catechism-paragraph', p], result);
+        queryClient.setQueryData(["catechism-paragraph", p], result);
         clearPending(p);
         recordResult(p, {
-          status: 'recovered',
+          status: "recovered",
           attempts,
           lastAttemptAt: new Date().toISOString(),
           nextAttemptAt: undefined,
@@ -182,11 +221,11 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
       } catch (err: any) {
         const elapsed = Math.round(performance.now() - t0);
         lastErr = err;
-        const code = err instanceof CatechismFetchError ? err.code : 'unknown';
+        const code = err instanceof CatechismFetchError ? err.code : "unknown";
         const willRetry = isTransient(code) && attempts <= cfg.maxRetries;
         const backoffMs = willRetry ? cfg.baseBackoffMs * Math.pow(2, attempts - 1) : 0;
         recordResult(p, {
-          status: willRetry ? 'backoff' : 'error',
+          status: willRetry ? "backoff" : "error",
           attempts,
           lastAttemptAt: new Date().toISOString(),
           nextAttemptAt: willRetry ? new Date(Date.now() + backoffMs).toISOString() : undefined,
@@ -205,11 +244,14 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
 
   const waitWhilePaused = async () => {
     while (pausedRef.current && !cancelRef.current.cancelled) {
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
     }
   };
 
-  const runWorkers = async (queue: number[], cfg: { maxRetries: number; baseBackoffMs: number; concurrency: number }) => {
+  const runWorkers = async (
+    queue: number[],
+    cfg: { maxRetries: number; baseBackoffMs: number; concurrency: number },
+  ) => {
     const total = queue.length;
     let recovered = 0;
     let stillMissing = 0;
@@ -222,7 +264,7 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
           const remaining = queue.length - idx;
           cancelled += remaining;
           for (let i = idx; i < queue.length; i += 1) {
-            recordResult(queue[i], { status: 'cancelled', nextAttemptAt: undefined });
+            recordResult(queue[i], { status: "cancelled", nextAttemptAt: undefined });
           }
           idx = queue.length;
           break;
@@ -233,18 +275,21 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
         }
         const p = queue[idx++];
         const attemptIdx = idx;
-        const res = await fetchWithBackoff(p, { maxRetries: cfg.maxRetries, baseBackoffMs: cfg.baseBackoffMs });
+        const res = await fetchWithBackoff(p, {
+          maxRetries: cfg.maxRetries,
+          baseBackoffMs: cfg.baseBackoffMs,
+        });
         if (res.ok === true) {
           recovered += 1;
         } else if (!cancelRef.current.cancelled) {
           stillMissing += 1;
           const errAny: any = res.err;
-          const code = errAny instanceof CatechismFetchError ? errAny.code : 'unknown';
+          const code = errAny instanceof CatechismFetchError ? errAny.code : "unknown";
           toast.error(`§${p} — ${reasonLabel(code)}`, {
-            description: `Item ${attemptIdx}/${total} · ${res.attempts} tentativa(s)${errAny?.status ? ` · HTTP ${errAny.status}` : ''}`,
+            description: `Item ${attemptIdx}/${total} · ${res.attempts} tentativa(s)${errAny?.status ? ` · HTTP ${errAny.status}` : ""}`,
           });
         }
-        setProgress(prev => ({ done: prev.done + 1, total: prev.total || total }));
+        setProgress((prev) => ({ done: prev.done + 1, total: prev.total || total }));
       }
     });
     await Promise.all(workers);
@@ -255,26 +300,30 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
     if (isRunning || queue.length === 0) return;
     cancelRef.current = { cancelled: false };
     setIsRunning(true);
-    setRunStatus('running');
+    setRunStatus("running");
     if (!opts.resume) {
       setResults({});
       setProgress({ done: 0, total: queue.length });
     } else {
-      setProgress(prev => ({ done: prev.done, total: prev.total || (prev.done + queue.length) }));
+      setProgress((prev) => ({ done: prev.done, total: prev.total || prev.done + queue.length }));
     }
     try {
       const summary = await runWorkers(queue, { maxRetries, baseBackoffMs, concurrency });
       if (cancelRef.current.cancelled) {
-        setRunStatus('cancelled');
-        toast.message('Verificação cancelada.', {
+        setRunStatus("cancelled");
+        toast.message("Verificação cancelada.", {
           description: `${summary.recovered} recuperado(s) · ${summary.stillMissing} com erro · ${summary.cancelled} não processado(s).`,
         });
       } else {
-        setRunStatus('completed');
+        setRunStatus("completed");
         if (summary.recovered > 0 && summary.stillMissing === 0) {
-          toast.success(`${summary.recovered} parágrafo${summary.recovered > 1 ? 's' : ''} carregado${summary.recovered > 1 ? 's' : ''} com sucesso.`);
+          toast.success(
+            `${summary.recovered} parágrafo${summary.recovered > 1 ? "s" : ""} carregado${summary.recovered > 1 ? "s" : ""} com sucesso.`,
+          );
         } else if (summary.recovered > 0) {
-          toast.success(`${summary.recovered} recuperado(s).`, { description: `${summary.stillMissing} ainda não disponível(eis) no banco oficial.` });
+          toast.success(`${summary.recovered} recuperado(s).`, {
+            description: `${summary.stillMissing} ainda não disponível(eis) no banco oficial.`,
+          });
         } else {
           toast.error(`Nenhum parágrafo disponível ainda. ${summary.stillMissing} pendente(s).`);
         }
@@ -291,7 +340,7 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
     cancelRef.current.cancelled = true;
     pausedRef.current = false;
     setPaused(false);
-    setRunStatus('cancelled');
+    setRunStatus("cancelled");
     setConfirmCancelOpen(false);
   };
 
@@ -299,53 +348,58 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
     if (!isRunning) return;
     pausedRef.current = true;
     setPaused(true);
-    toast.message('Execução pausada.', { description: 'Workers em andamento concluirão o item atual.' });
+    toast.message("Execução pausada.", {
+      description: "Workers em andamento concluirão o item atual.",
+    });
   };
 
   const handleResume = () => {
     pausedRef.current = false;
     setPaused(false);
-    if (!isRunning && runStatus === 'running') {
+    if (!isRunning && runStatus === "running") {
       // Pausa estava ativa entre refresh: retomar com o que restar.
       const processed = new Set(
         Object.values(results)
-          .filter(r => r.status === 'recovered' || r.status === 'error')
-          .map(r => r.paragraph),
+          .filter((r) => r.status === "recovered" || r.status === "error")
+          .map((r) => r.paragraph),
       );
-      const remaining = inRange.filter(p => !processed.has(p));
+      const remaining = inRange.filter((p) => !processed.has(p));
       if (remaining.length > 0) startRun(remaining, { resume: true });
     } else {
-      toast.message('Execução retomada.');
+      toast.message("Execução retomada.");
     }
   };
 
   // Retomada automática após refresh: só se 'running' E não pausado/cancelado/concluído.
   useEffect(() => {
     if (autoResumedRef.current) return;
-    if (runStatus !== 'running') return;
+    if (runStatus !== "running") return;
     if (paused) return;
     if (isRunning) return;
     if (inRange.length === 0) return;
     autoResumedRef.current = true;
     const processed = new Set(
       Object.values(results)
-        .filter(r => r.status === 'recovered' || r.status === 'error')
-        .map(r => r.paragraph),
+        .filter((r) => r.status === "recovered" || r.status === "error")
+        .map((r) => r.paragraph),
     );
-    const remaining = inRange.filter(p => !processed.has(p));
+    const remaining = inRange.filter((p) => !processed.has(p));
     if (remaining.length === 0) {
-      setRunStatus('completed');
+      setRunStatus("completed");
       return;
     }
-    toast.message('Retomando verificação…', { description: `${remaining.length} parágrafo(s) restantes.` });
+    toast.message("Retomando verificação…", {
+      description: `${remaining.length} parágrafo(s) restantes.`,
+    });
     startRun(remaining, { resume: true });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runStatus, paused, inRange.length]);
 
   const errorRows = useMemo(
-    () => Object.values(results)
-      .filter(r => r.status === 'error' || (r.status === 'backoff' && r.errorCode))
-      .sort((a, b) => a.paragraph - b.paragraph),
+    () =>
+      Object.values(results)
+        .filter((r) => r.status === "error" || (r.status === "backoff" && r.errorCode))
+        .sort((a, b) => a.paragraph - b.paragraph),
     [results],
   );
 
@@ -353,15 +407,18 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
 
   const buildExportRows = (): ParaState[] => {
     const map = new Map<number, ParaState>();
-    inRange.forEach(p => map.set(p, results[p] ?? { paragraph: p, status: 'pending', attempts: 0 }));
-    Object.values(results).forEach(r => { if (!map.has(r.paragraph)) map.set(r.paragraph, r); });
+    inRange.forEach((p) =>
+      map.set(p, results[p] ?? { paragraph: p, status: "pending", attempts: 0 }),
+    );
+    Object.values(results).forEach((r) => {
+      if (!map.has(r.paragraph)) map.set(r.paragraph, r);
+    });
     let rows = Array.from(map.values()).sort((a, b) => a.paragraph - b.paragraph);
-    if (exportFilter !== 'all') {
-      rows = rows.filter(r => r.status === exportFilter);
+    if (exportFilter !== "all") {
+      rows = rows.filter((r) => r.status === exportFilter);
     }
     return rows;
   };
-
 
   const exportJSON = () => {
     const payload = {
@@ -372,19 +429,41 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
       progress,
       paragraphs: buildExportRows(),
     };
-    triggerDownload(`catechism-pending-${startPara}-${endPara}.json`, 'application/json', JSON.stringify(payload, null, 2));
+    triggerDownload(
+      `catechism-pending-${startPara}-${endPara}.json`,
+      "application/json",
+      JSON.stringify(payload, null, 2),
+    );
   };
 
   const exportCSV = () => {
-    const rows = ['paragraph,section_start,section_end,status,attempts,last_attempt_at,next_attempt_at,response_time_ms,error_code,http_status,error_message'];
-    buildExportRows().forEach(r => {
-      rows.push([
-        r.paragraph, startPara, endPara, r.status, r.attempts,
-        r.lastAttemptAt ?? '', r.nextAttemptAt ?? '', r.responseTimeMs ?? '',
-        r.errorCode ?? '', r.httpStatus ?? '', r.errorMessage ?? '',
-      ].map(csvEscape).join(','));
+    const rows = [
+      "paragraph,section_start,section_end,status,attempts,last_attempt_at,next_attempt_at,response_time_ms,error_code,http_status,error_message",
+    ];
+    buildExportRows().forEach((r) => {
+      rows.push(
+        [
+          r.paragraph,
+          startPara,
+          endPara,
+          r.status,
+          r.attempts,
+          r.lastAttemptAt ?? "",
+          r.nextAttemptAt ?? "",
+          r.responseTimeMs ?? "",
+          r.errorCode ?? "",
+          r.httpStatus ?? "",
+          r.errorMessage ?? "",
+        ]
+          .map(csvEscape)
+          .join(","),
+      );
     });
-    triggerDownload(`catechism-pending-${startPara}-${endPara}.csv`, 'text/csv;charset=utf-8', rows.join('\n'));
+    triggerDownload(
+      `catechism-pending-${startPara}-${endPara}.csv`,
+      "text/csv;charset=utf-8",
+      rows.join("\n"),
+    );
   };
 
   const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
@@ -429,18 +508,61 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
               <SelectItem value="error">Com erro</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={exportCSV} disabled={!hasExportable} variant="ghost" size="sm" data-testid="catechism-export-csv">CSV</Button>
-          <Button onClick={exportJSON} disabled={!hasExportable} variant="ghost" size="sm" data-testid="catechism-export-json">JSON</Button>
+          <Button
+            onClick={exportCSV}
+            disabled={!hasExportable}
+            variant="ghost"
+            size="sm"
+            data-testid="catechism-export-csv"
+          >
+            CSV
+          </Button>
+          <Button
+            onClick={exportJSON}
+            disabled={!hasExportable}
+            variant="ghost"
+            size="sm"
+            data-testid="catechism-export-json"
+          >
+            JSON
+          </Button>
           {isRunning && !paused && (
-            <Button onClick={handlePause} variant="outline" size="sm" data-testid="catechism-verify-pause">Pausar</Button>
+            <Button
+              onClick={handlePause}
+              variant="outline"
+              size="sm"
+              data-testid="catechism-verify-pause"
+            >
+              Pausar
+            </Button>
           )}
-          {(isRunning && paused) || (runStatus === 'running' && paused && !isRunning) ? (
-            <Button onClick={handleResume} variant="outline" size="sm" data-testid="catechism-verify-resume">Retomar</Button>
+          {(isRunning && paused) || (runStatus === "running" && paused && !isRunning) ? (
+            <Button
+              onClick={handleResume}
+              variant="outline"
+              size="sm"
+              data-testid="catechism-verify-resume"
+            >
+              Retomar
+            </Button>
           ) : null}
-          {(isRunning || (runStatus === 'running' && paused)) ? (
-            <Button onClick={() => setConfirmCancelOpen(true)} variant="outline" size="sm" data-testid="catechism-verify-cancel">Cancelar</Button>
+          {isRunning || (runStatus === "running" && paused) ? (
+            <Button
+              onClick={() => setConfirmCancelOpen(true)}
+              variant="outline"
+              size="sm"
+              data-testid="catechism-verify-cancel"
+            >
+              Cancelar
+            </Button>
           ) : (
-            <Button onClick={verifyAll} variant="outline" size="sm" data-testid="catechism-verify-all" disabled={inRange.length === 0}>
+            <Button
+              onClick={verifyAll}
+              variant="outline"
+              size="sm"
+              data-testid="catechism-verify-all"
+              disabled={inRange.length === 0}
+            >
               Verificar todos ({inRange.length})
             </Button>
           )}
@@ -452,13 +574,15 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
           <AlertDialogHeader>
             <AlertDialogTitle>Cancelar verificação em lote?</AlertDialogTitle>
             <AlertDialogDescription>
-              Os workers em andamento concluirão o item atual e os parágrafos restantes serão marcados
-              como “cancelados”. A retomada automática após refresh ficará bloqueada — só uma nova
-              execução manual irá processá-los novamente.
+              Os workers em andamento concluirão o item atual e os parágrafos restantes serão
+              marcados como “cancelados”. A retomada automática após refresh ficará bloqueada — só
+              uma nova execução manual irá processá-los novamente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="catechism-cancel-modal-keep">Continuar verificando</AlertDialogCancel>
+            <AlertDialogCancel data-testid="catechism-cancel-modal-keep">
+              Continuar verificando
+            </AlertDialogCancel>
             <AlertDialogAction onClick={confirmCancel} data-testid="catechism-cancel-modal-confirm">
               Cancelar mesmo assim
             </AlertDialogAction>
@@ -468,27 +592,40 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
 
       <div className="grid gap-spacing-sm sm:grid-cols-3" data-testid="catechism-verify-config">
         <div className="flex items-center gap-spacing-xs">
-          <label htmlFor="cat-concurrency" className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap">
+          <label
+            htmlFor="cat-concurrency"
+            className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap"
+          >
             Concorrência
           </label>
           <Slider
             id="cat-concurrency"
-            min={1} max={8} step={1}
+            min={1}
+            max={8}
+            step={1}
             value={[concurrency]}
             onValueChange={(v) => setConcurrency(v[0] ?? 4)}
             disabled={isRunning}
             className="flex-1"
             aria-label="Requisições simultâneas"
           />
-          <span className="text-premium-xs font-display text-primary/70 tabular-nums w-spacing-xl text-right">{concurrency}x</span>
+          <span className="text-premium-xs font-display text-primary/70 tabular-nums w-spacing-xl text-right">
+            {concurrency}x
+          </span>
         </div>
         <div className="flex items-center gap-spacing-xs">
-          <label htmlFor="cat-max-retries" className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap">
+          <label
+            htmlFor="cat-max-retries"
+            className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap"
+          >
             Máx. tentativas
           </label>
           <Input
             id="cat-max-retries"
-            type="number" min={0} max={6} step={1}
+            type="number"
+            min={0}
+            max={6}
+            step={1}
             value={maxRetries}
             onChange={(e) => setMaxRetries(Math.max(0, Math.min(6, Number(e.target.value) || 0)))}
             disabled={isRunning}
@@ -496,14 +633,22 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
           />
         </div>
         <div className="flex items-center gap-spacing-xs">
-          <label htmlFor="cat-backoff" className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap">
+          <label
+            htmlFor="cat-backoff"
+            className="text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60 whitespace-nowrap"
+          >
             Backoff inicial (ms)
           </label>
           <Input
             id="cat-backoff"
-            type="number" min={100} max={5000} step={100}
+            type="number"
+            min={100}
+            max={5000}
+            step={100}
             value={baseBackoffMs}
-            onChange={(e) => setBaseBackoffMs(Math.max(100, Math.min(5000, Number(e.target.value) || 600)))}
+            onChange={(e) =>
+              setBaseBackoffMs(Math.max(100, Math.min(5000, Number(e.target.value) || 600)))
+            }
             disabled={isRunning}
             className="h-8 w-spacing-4xl text-premium-xs"
           />
@@ -514,37 +659,53 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
         <div className="space-y-spacing-2xs" data-testid="catechism-verify-progress">
           <div className="flex items-center justify-between text-premium-xs font-display tracking-[0.1em] uppercase text-primary/60">
             <span>
-              {paused ? 'Pausada' : isRunning ? 'Verificando…' : runStatus === 'cancelled' ? 'Cancelada' : runStatus === 'completed' ? 'Concluída' : 'Última execução'}
+              {paused
+                ? "Pausada"
+                : isRunning
+                  ? "Verificando…"
+                  : runStatus === "cancelled"
+                    ? "Cancelada"
+                    : runStatus === "completed"
+                      ? "Concluída"
+                      : "Última execução"}
             </span>
-            <span>{progress.done}/{progress.total} · {pct}%</span>
+            <span>
+              {progress.done}/{progress.total} · {pct}%
+            </span>
           </div>
           <Progress value={pct} />
         </div>
       )}
 
       <ul className="flex flex-wrap gap-spacing-2xs" aria-label="Lista de parágrafos pendentes">
-        {inRange.map(p => {
+        {inRange.map((p) => {
           const r = results[p];
           const tone =
-            r?.status === 'recovered' ? 'text-emerald-600 border-emerald-500/30' :
-            r?.status === 'error' ? 'text-destructive border-destructive/30' :
-            r?.status === 'cancelled' ? 'text-amber-600 border-amber-500/30' :
-            r?.status === 'backoff' ? 'text-sky-600 border-sky-500/30 animate-pulse' :
-            'text-primary/60 border-primary/10 hover:border-primary/30';
-          const countdown = r?.status === 'backoff' ? secondsUntil(r.nextAttemptAt) : 0;
-          const label = countdown > 0
-            ? `§${p} · ${countdown}s`
-            : `§${p}${r?.attempts ? ` ·${r.attempts}` : ''}${r?.responseTimeMs ? ` · ${r.responseTimeMs}ms` : ''}`;
-          const title = r?.status === 'backoff'
-            ? `Próxima tentativa em ${countdown}s`
-            : r?.errorMessage ?? r?.status ?? 'pendente';
+            r?.status === "recovered"
+              ? "text-emerald-600 border-emerald-500/30"
+              : r?.status === "error"
+                ? "text-destructive border-destructive/30"
+                : r?.status === "cancelled"
+                  ? "text-amber-600 border-amber-500/30"
+                  : r?.status === "backoff"
+                    ? "text-sky-600 border-sky-500/30 animate-pulse"
+                    : "text-primary/60 border-primary/10 hover:border-primary/30";
+          const countdown = r?.status === "backoff" ? secondsUntil(r.nextAttemptAt) : 0;
+          const label =
+            countdown > 0
+              ? `§${p} · ${countdown}s`
+              : `§${p}${r?.attempts ? ` ·${r.attempts}` : ""}${r?.responseTimeMs ? ` · ${r.responseTimeMs}ms` : ""}`;
+          const title =
+            r?.status === "backoff"
+              ? `Próxima tentativa em ${countdown}s`
+              : (r?.errorMessage ?? r?.status ?? "pendente");
           return (
             <li key={p}>
               <button
                 type="button"
                 onClick={() => onJumpTo?.(p)}
                 className={`text-premium-xs font-display tracking-[0.1em] border rounded-premium-full px-spacing-sm py-spacing-2xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${tone}`}
-                aria-label={`Ir para parágrafo ${p}${r ? ` (${r.status})` : ''}`}
+                aria-label={`Ir para parágrafo ${p}${r ? ` (${r.status})` : ""}`}
                 title={title}
               >
                 {label}
@@ -572,7 +733,7 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
                 </tr>
               </thead>
               <tbody>
-                {errorRows.map(r => (
+                {errorRows.map((r) => (
                   <tr key={r.paragraph} className="border-b border-primary/5 align-top">
                     <td className="py-spacing-2xs pr-spacing-sm">
                       <button
@@ -585,11 +746,15 @@ const CatechismPendingPanel: React.FC<Props> = ({ startPara, endPara, onJumpTo }
                     </td>
                     <td className="py-spacing-2xs pr-spacing-sm tabular-nums">{r.attempts}</td>
                     <td className="py-spacing-2xs pr-spacing-sm text-muted-foreground">
-                      {r.lastAttemptAt ? new Date(r.lastAttemptAt).toLocaleTimeString() : '—'}
+                      {r.lastAttemptAt ? new Date(r.lastAttemptAt).toLocaleTimeString() : "—"}
                     </td>
-                    <td className="py-spacing-2xs pr-spacing-sm tabular-nums">{r.httpStatus ?? '—'}</td>
-                    <td className="py-spacing-2xs pr-spacing-sm">{r.errorCode ?? '—'}</td>
-                    <td className="py-spacing-2xs text-destructive/80 break-all">{r.errorMessage ?? '—'}</td>
+                    <td className="py-spacing-2xs pr-spacing-sm tabular-nums">
+                      {r.httpStatus ?? "—"}
+                    </td>
+                    <td className="py-spacing-2xs pr-spacing-sm">{r.errorCode ?? "—"}</td>
+                    <td className="py-spacing-2xs text-destructive/80 break-all">
+                      {r.errorMessage ?? "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

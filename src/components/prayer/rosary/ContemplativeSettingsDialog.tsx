@@ -3,9 +3,9 @@
  * duração da pausa entre blocos, timer de silêncio e velocidade das
  * transições fade. Preferências persistem via `useContemplativeRhythm`.
  */
-import React from 'react';
-import { Sliders, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Sliders, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,31 +14,26 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Slider } from '@/components/ui/slider';
+} from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
 import {
   DEFAULT_RHYTHM,
   RHYTHM_BOUNDS,
   useContemplativeRhythm,
-} from '@/hooks/useContemplativeRhythm';
+} from "@/hooks/useContemplativeRhythm";
 
 interface Props {
   triggerLabel?: string;
 }
 
-const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = 'Ritmo' }) => {
+const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = "Ritmo" }) => {
   const { rhythm, setRhythm, reset } = useContemplativeRhythm();
   const [open, setOpen] = React.useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="pill"
-          size="pill"
-          aria-label="Ajustar ritmo contemplativo"
-        >
+        <Button type="button" variant="pill" size="pill" aria-label="Ajustar ritmo contemplativo">
           <Sliders aria-hidden />
           {triggerLabel}
         </Button>
@@ -47,8 +42,8 @@ const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = 'Ritmo' }
         <DialogHeader>
           <DialogTitle className="font-stitch-display text-xl">Ritmo contemplativo</DialogTitle>
           <DialogDescription>
-            Ajuste o tempo entre blocos, o silêncio guiado e a velocidade das transições.
-            As preferências ficam salvas no seu dispositivo.
+            Ajuste o tempo entre blocos, o silêncio guiado e a velocidade das transições. As
+            preferências ficam salvas no seu dispositivo.
           </DialogDescription>
         </DialogHeader>
 
@@ -58,7 +53,7 @@ const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = 'Ritmo' }
             label="Pausa entre blocos"
             value={rhythm.pauseMs}
             unit="ms"
-            suffix={rhythm.pauseMs === 0 ? 'Sem pausa' : `${(rhythm.pauseMs / 1000).toFixed(1)}s`}
+            suffix={rhythm.pauseMs === 0 ? "Sem pausa" : `${(rhythm.pauseMs / 1000).toFixed(1)}s`}
             bounds={RHYTHM_BOUNDS.pauseMs}
             onChange={(v) => setRhythm({ pauseMs: v })}
             help="Delay antes do próximo bloco aparecer, para respirar entre as orações."
@@ -68,7 +63,7 @@ const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = 'Ritmo' }
             label="Timer de silêncio (Contemple)"
             value={rhythm.silenceSec}
             unit="s"
-            suffix={rhythm.silenceSec === 0 ? 'Sem silêncio' : `${rhythm.silenceSec}s`}
+            suffix={rhythm.silenceSec === 0 ? "Sem silêncio" : `${rhythm.silenceSec}s`}
             bounds={RHYTHM_BOUNDS.silenceSec}
             onChange={(v) => setRhythm({ silenceSec: v })}
             help="Duração sugerida do silêncio guiado antes de iniciar cada mistério."
@@ -95,7 +90,8 @@ const ContemplativeSettingsDialog: React.FC<Props> = ({ triggerLabel = 'Ritmo' }
           </Button>
         </DialogFooter>
         <p className="mt-2 text-center font-stitch-body text-[11px] text-stitch-on-surface-variant">
-          Padrão: {DEFAULT_RHYTHM.pauseMs}ms · {DEFAULT_RHYTHM.silenceSec}s · {DEFAULT_RHYTHM.fadeMs}ms
+          Padrão: {DEFAULT_RHYTHM.pauseMs}ms · {DEFAULT_RHYTHM.silenceSec}s ·{" "}
+          {DEFAULT_RHYTHM.fadeMs}ms
         </p>
       </DialogContent>
     </Dialog>
@@ -116,10 +112,7 @@ interface FieldProps {
 const Field: React.FC<FieldProps> = ({ id, label, value, suffix, bounds, onChange, help }) => (
   <div>
     <div className="flex items-baseline justify-between">
-      <label
-        htmlFor={id}
-        className="font-stitch-body text-sm font-semibold text-stitch-on-surface"
-      >
+      <label htmlFor={id} className="font-stitch-body text-sm font-semibold text-stitch-on-surface">
         {label}
       </label>
       <span

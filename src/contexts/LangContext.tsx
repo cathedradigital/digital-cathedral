@@ -1,13 +1,13 @@
-import React, { createContext, useState, useCallback, useMemo, useEffect } from 'react';
-import type { Language } from '@/types';
-import { UI_TRANSLATIONS } from '@/services/translations';
+import React, { createContext, useState, useCallback, useMemo, useEffect } from "react";
+import type { Language } from "@/types";
+import { UI_TRANSLATIONS } from "@/services/translations";
 import {
   DEFAULT_LOCALE,
   detectLocaleFromPath,
   getLocaleDefinition,
   isSupportedLocale,
   withLocalePath,
-} from '@/lib/i18n/locales';
+} from "@/lib/i18n/locales";
 
 export interface LanguageContextType {
   lang: Language;
@@ -32,37 +32,40 @@ export const LangProvider: React.FC<{ children: React.ReactNode }> = ({ children
     (window as any).cathedra_t = (key: string) => {
       // Esta é uma implementação simplificada para o teste conseguir acessar o contexto
       // No mundo real, poderíamos usar um CustomEvent ou similar se necessário
-      return key; 
+      return key;
     };
   }, []);
   const [lang, setLangState] = useState<Language>(() => {
     try {
       const fromPath = detectLocaleFromPath(window.location.pathname);
       if (fromPath !== DEFAULT_LOCALE) return fromPath;
-      const stored = localStorage.getItem('cathedra_lang');
+      const stored = localStorage.getItem("cathedra_lang");
       return isSupportedLocale(stored) ? stored : DEFAULT_LOCALE;
     } catch {
       return DEFAULT_LOCALE;
     }
   });
 
-  const t = useCallback((k: string) => {
-    const val = UI_TRANSLATIONS[lang]?.[k];
-    if (val === undefined) {
-      // Fallback para Português se a tradução faltar no idioma atual
-      const fallback = UI_TRANSLATIONS[DEFAULT_LOCALE]?.[k];
-      if (fallback !== undefined) return fallback;
-      
-      // Fallback final: Log e retornar a chave formatada para evitar strings vazias
-      console.warn(`[i18n] Chave ausente: "${k}" para o idioma "${lang}"`);
-      return k;
-    }
-    return val;
-  }, [lang]);
+  const t = useCallback(
+    (k: string) => {
+      const val = UI_TRANSLATIONS[lang]?.[k];
+      if (val === undefined) {
+        // Fallback para Português se a tradução faltar no idioma atual
+        const fallback = UI_TRANSLATIONS[DEFAULT_LOCALE]?.[k];
+        if (fallback !== undefined) return fallback;
+
+        // Fallback final: Log e retornar a chave formatada para evitar strings vazias
+        console.warn(`[i18n] Chave ausente: "${k}" para o idioma "${lang}"`);
+        return k;
+      }
+      return val;
+    },
+    [lang],
+  );
 
   useEffect(() => {
     try {
-      localStorage.setItem('cathedra_lang', lang);
+      localStorage.setItem("cathedra_lang", lang);
     } catch {
       /* storage indisponível */
     }
@@ -78,7 +81,7 @@ export const LangProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isSupportedLocale(next)) return;
     setLangState(next);
     try {
-      localStorage.setItem('cathedra_lang', next);
+      localStorage.setItem("cathedra_lang", next);
       const target =
         withLocalePath(window.location.pathname, next) +
         window.location.search +

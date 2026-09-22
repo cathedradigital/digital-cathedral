@@ -14,27 +14,28 @@ export type AvatarSources = {
 
 const DEFAULT_WIDTHS = [96, 192, 384] as const;
 
-const OBJECT_SEGMENT = '/storage/v1/object/public/';
-const RENDER_SEGMENT = '/storage/v1/render/image/public/';
+const OBJECT_SEGMENT = "/storage/v1/object/public/";
+const RENDER_SEGMENT = "/storage/v1/render/image/public/";
 
-const isSupabaseStorageUrl = (url: string) => url.includes(OBJECT_SEGMENT) || url.includes(RENDER_SEGMENT);
+const isSupabaseStorageUrl = (url: string) =>
+  url.includes(OBJECT_SEGMENT) || url.includes(RENDER_SEGMENT);
 
 const stripQuery = (url: string) => {
-  const q = url.indexOf('?');
-  return q === -1 ? { base: url, query: '' } : { base: url.slice(0, q), query: url.slice(q) };
+  const q = url.indexOf("?");
+  return q === -1 ? { base: url, query: "" } : { base: url.slice(0, q), query: url.slice(q) };
 };
 
 const preservedParams = (query: string) => {
   // Mantém cache-busters como ?t=123 mas remove width/height/quality/resize
   // pré-existentes para evitar conflitos com o srcSet gerado.
-  if (!query) return '';
-  const params = new URLSearchParams(query.startsWith('?') ? query.slice(1) : query);
-  params.delete('width');
-  params.delete('height');
-  params.delete('quality');
-  params.delete('resize');
+  if (!query) return "";
+  const params = new URLSearchParams(query.startsWith("?") ? query.slice(1) : query);
+  params.delete("width");
+  params.delete("height");
+  params.delete("quality");
+  params.delete("resize");
   const s = params.toString();
-  return s ? `&${s}` : '';
+  return s ? `&${s}` : "";
 };
 
 export const getAvatarSources = (
@@ -53,7 +54,7 @@ export const getAvatarSources = (
 
   const build = (w: number) => `${base}?width=${w}&height=${w}&resize=cover&quality=80${suffix}`;
 
-  const srcSet = widths.map((w) => `${build(w)} ${w}w`).join(', ');
+  const srcSet = widths.map((w) => `${build(w)} ${w}w`).join(", ");
   const largest = widths[widths.length - 1];
 
   return {
@@ -61,6 +62,6 @@ export const getAvatarSources = (
     srcSet,
     // Avatar do hero tem 64px em mobile e 96px em telas ≥sm; o navegador
     // escolhe a variante mais próxima do DPR (2x → 128/192w).
-    sizes: '(max-width: 640px) 64px, 96px',
+    sizes: "(max-width: 640px) 64px, 96px",
   };
 };

@@ -1,4 +1,4 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 
 import { HomeButton } from "@/components/cathedra/HomeButton";
 import { trackEvent } from "@/lib/analytics";
@@ -14,7 +14,7 @@ const CtaBannerSection = ({ onStart }: CtaBannerSectionProps) => (
       <CathedraCard className="text-center space-y-spacing-xl py-spacing-3xl md:py-spacing-4xl relative overflow-hidden group border-primary/10">
         {/* Subtle background glow */}
         <div className="absolute inset-0 bg-primary/[0.02] pointer-events-none" />
-        
+
         <div className="relative z-10 space-y-spacing-xl">
           <div className="relative inline-flex items-center justify-center">
             <Icons.Church className="w-spacing-3xl h-spacing-3xl text-primary" />
@@ -28,10 +28,10 @@ const CtaBannerSection = ({ onStart }: CtaBannerSectionProps) => (
             </p>
           </div>
           <div className="flex flex-col items-center gap-spacing-lg">
-            <HomeButton 
-              size="lg" 
+            <HomeButton
+              size="lg"
               onClick={() => {
-                trackEvent('conversion', { type: 'cta_banner_click' });
+                trackEvent("conversion", { type: "cta_banner_click" });
                 onStart();
               }}
               aria-label="Iniciar minha jornada agora"

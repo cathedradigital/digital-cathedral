@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { MobileTopBar } from '@/components/mobile/MobileTopBar';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import SEOHead from '@/components/SEOHead';
-import { useNavigate } from '@/lib/rr-compat';
-import { cn } from '@/lib/utils';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { MobileTopBar } from "@/components/mobile/MobileTopBar";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import SEOHead from "@/components/SEOHead";
+import { useNavigate } from "@/lib/rr-compat";
+import { cn } from "@/lib/utils";
 
 interface ContemplationStage {
   id: string;
@@ -20,53 +20,55 @@ interface ContemplationStage {
 
 const STAGES: ContemplationStage[] = [
   {
-    id: 'preparatio',
-    kicker: 'Preparação',
-    title: 'Faça silêncio',
-    instruction: 'Sente-se com as costas eretas. Feche os olhos e respire lentamente três vezes.',
-    guidance: 'Deixe cair as preocupações do dia. Você está diante de Deus.',
+    id: "preparatio",
+    kicker: "Preparação",
+    title: "Faça silêncio",
+    instruction: "Sente-se com as costas eretas. Feche os olhos e respire lentamente três vezes.",
+    guidance: "Deixe cair as preocupações do dia. Você está diante de Deus.",
     seconds: 60,
     icon: Icons.Feather,
   },
   {
-    id: 'invocatio',
-    kicker: 'Invocação',
-    title: 'Chame o Espírito',
+    id: "invocatio",
+    kicker: "Invocação",
+    title: "Chame o Espírito",
     instruction: 'Ore em silêncio: "Vinde, Espírito Santo. Ensina-me a estar diante de Vós."',
-    guidance: 'Não busque sentimentos. Ofereça apenas a sua presença.',
+    guidance: "Não busque sentimentos. Ofereça apenas a sua presença.",
     seconds: 90,
     icon: Icons.Sparkles,
   },
   {
-    id: 'verbum',
-    kicker: 'Palavra',
-    title: 'Repouse na Palavra',
-    instruction: 'Escolha uma frase breve — "Eis-me aqui, Senhor" — e a repita sem pressa no coração.',
-    guidance: 'Se distrações surgirem, volte suavemente à frase.',
+    id: "verbum",
+    kicker: "Palavra",
+    title: "Repouse na Palavra",
+    instruction:
+      'Escolha uma frase breve — "Eis-me aqui, Senhor" — e a repita sem pressa no coração.',
+    guidance: "Se distrações surgirem, volte suavemente à frase.",
     seconds: 180,
     icon: Icons.Book,
   },
   {
-    id: 'praesentia',
-    kicker: 'Presença',
-    title: 'Apenas estar',
-    instruction: 'Solte a frase. Fique diante de Deus sem palavras, sem imagens. Deixe-se olhar por Ele.',
+    id: "praesentia",
+    kicker: "Presença",
+    title: "Apenas estar",
+    instruction:
+      "Solte a frase. Fique diante de Deus sem palavras, sem imagens. Deixe-se olhar por Ele.",
     guidance: 'A oração agora é receber. Não precisa "fazer" nada.',
     seconds: 300,
     icon: Icons.Sun,
   },
   {
-    id: 'gratitudo',
-    kicker: 'Gratidão',
-    title: 'Agradeça e volte',
-    instruction: 'Reze um Pai-Nosso lentamente. Agradeça o tempo dado a Deus e a Sua fidelidade.',
-    guidance: 'Leve o silêncio para o resto do seu dia.',
+    id: "gratitudo",
+    kicker: "Gratidão",
+    title: "Agradeça e volte",
+    instruction: "Reze um Pai-Nosso lentamente. Agradeça o tempo dado a Deus e a Sua fidelidade.",
+    guidance: "Leve o silêncio para o resto do seu dia.",
     seconds: 90,
     icon: Icons.Heart,
   },
 ];
 
-const STORAGE_KEY = 'cathedra:contemplatio:progress:v1';
+const STORAGE_KEY = "cathedra:contemplatio:progress:v1";
 
 interface ContemplationProgress {
   stageId: string;
@@ -92,7 +94,9 @@ function writeProgress(p: ContemplationProgress) {
 }
 
 const formatTime = (s: number) =>
-  `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+  `${Math.floor(s / 60)
+    .toString()
+    .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
 const ContemplatioPage: React.FC = () => {
   const navigate = useNavigate();
@@ -225,7 +229,9 @@ const ContemplatioPage: React.FC = () => {
                   <span className="font-black uppercase tracking-widest">
                     Etapa {index + 1} de {total}
                   </span>
-                  <span className="font-mono tabular-nums text-foreground">{formatTime(seconds)}</span>
+                  <span className="font-mono tabular-nums text-foreground">
+                    {formatTime(seconds)}
+                  </span>
                 </div>
                 <div className="h-1.5 rounded-full bg-border overflow-hidden">
                   <motion.div
@@ -281,10 +287,10 @@ const ContemplatioPage: React.FC = () => {
                 <Button
                   onClick={goNext}
                   className={cn(
-                    'flex-1 h-12 rounded-premium-full font-black uppercase text-premium-xs tracking-widest',
+                    "flex-1 h-12 rounded-premium-full font-black uppercase text-premium-xs tracking-widest",
                     index === total - 1
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-foreground text-background hover:bg-primary hover:text-primary-foreground',
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
                   )}
                 >
                   {index === total - 1 ? (
@@ -326,7 +332,7 @@ const ContemplatioPage: React.FC = () => {
                   <Icons.RotateCcw className="w-4 h-4 mr-spacing-2xs" /> Nova sessão
                 </Button>
                 <Button
-                  onClick={() => navigate('/lectio')}
+                  onClick={() => navigate("/lectio")}
                   className="rounded-premium-full h-12 px-spacing-xl text-premium-xs font-black uppercase tracking-widest bg-primary text-primary-foreground"
                 >
                   Ir ao Modo Estudo

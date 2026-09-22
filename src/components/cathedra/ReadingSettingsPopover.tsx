@@ -1,16 +1,11 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
-import { supabase } from '@/lib/db';
-
+import React, { useRef, useState, useCallback, useEffect } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/lib/db";
 
 interface ReadingSettingsPopoverProps {
   children?: React.ReactNode;
@@ -35,7 +30,9 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const lastToggleAtRef = useRef(0);
-  const [translations, setTranslations] = useState<Array<{ id: string; code: string; name: string }>>([]);
+  const [translations, setTranslations] = useState<
+    Array<{ id: string; code: string; name: string }>
+  >([]);
 
   // Carrega traduções prontas uma única vez ao abrir.
   useEffect(() => {
@@ -43,33 +40,37 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
     let cancelled = false;
     (async () => {
       const { data } = await supabase
-        .from('bible_translation_sources')
-        .select('id, code, name, is_primary, status')
-        .in('status', ['ready', 'draft'])
-        .order('is_primary', { ascending: false })
-        .order('code');
+        .from("bible_translation_sources")
+        .select("id, code, name, is_primary, status")
+        .in("status", ["ready", "draft"])
+        .order("is_primary", { ascending: false })
+        .order("code");
       if (!cancelled && data) {
         setTranslations(data as any);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [open, translations.length]);
 
-
-  const handleOpenChange = useCallback((next: boolean) => {
-    const now = Date.now();
-    if (now - lastToggleAtRef.current < debounceMs) {
-      // Ignora alternâncias muito próximas para preservar o estado
-      // (incluindo "Modo Imersivo") e evitar abrir/fechar em loop.
-      return;
-    }
-    lastToggleAtRef.current = now;
-    setOpen(next);
-    if (!next) {
-      // Retorna o foco ao gatilho (letra T) para fluxo com leitor de tela.
-      requestAnimationFrame(() => triggerRef.current?.focus());
-    }
-  }, [debounceMs]);
+  const handleOpenChange = useCallback(
+    (next: boolean) => {
+      const now = Date.now();
+      if (now - lastToggleAtRef.current < debounceMs) {
+        // Ignora alternâncias muito próximas para preservar o estado
+        // (incluindo "Modo Imersivo") e evitar abrir/fechar em loop.
+        return;
+      }
+      lastToggleAtRef.current = now;
+      setOpen(next);
+      if (!next) {
+        // Retorna o foco ao gatilho (letra T) para fluxo com leitor de tela.
+        requestAnimationFrame(() => triggerRef.current?.focus());
+      }
+    },
+    [debounceMs],
+  );
 
   const closePopover = useCallback(() => {
     lastToggleAtRef.current = Date.now();
@@ -78,23 +79,23 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
   }, []);
 
   const themes = [
-    { id: 'paper', label: 'Claro', color: 'bg-[#FEFDFB]', text: 'text-stone-900' },
-    { id: 'sepia', label: 'Pergaminho', color: 'bg-[#E8E2D2]', text: 'text-stone-800' },
-    { id: 'dark', label: 'Escuro', color: 'bg-[#1A1C1E]', text: 'text-stone-200' },
-    { id: 'night', label: 'Noite', color: 'bg-[#000000]', text: 'text-stone-100' },
+    { id: "paper", label: "Claro", color: "bg-[#FEFDFB]", text: "text-stone-900" },
+    { id: "sepia", label: "Pergaminho", color: "bg-[#E8E2D2]", text: "text-stone-800" },
+    { id: "dark", label: "Escuro", color: "bg-[#1A1C1E]", text: "text-stone-200" },
+    { id: "night", label: "Noite", color: "bg-[#000000]", text: "text-stone-100" },
   ] as const;
 
   const fontSizes = [
-    { id: 'small', label: 'A', className: 'text-xs' },
-    { id: 'medium', label: 'A', className: 'text-sm' },
-    { id: 'large', label: 'A', className: 'text-lg' },
-    { id: 'extra-large', label: 'A', className: 'text-xl' },
+    { id: "small", label: "A", className: "text-xs" },
+    { id: "medium", label: "A", className: "text-sm" },
+    { id: "large", label: "A", className: "text-lg" },
+    { id: "extra-large", label: "A", className: "text-xl" },
   ] as const;
 
   const lineSpacings = [
-    { id: 'tight', icon: Icons.AlignLeft, label: 'Compacto' },
-    { id: 'normal', icon: Icons.AlignCenter, label: 'Normal' },
-    { id: 'wide', icon: Icons.AlignJustify, label: 'Amplo' },
+    { id: "tight", icon: Icons.AlignLeft, label: "Compacto" },
+    { id: "normal", icon: Icons.AlignCenter, label: "Normal" },
+    { id: "wide", icon: Icons.AlignJustify, label: "Amplo" },
   ] as const;
 
   return (
@@ -129,20 +130,29 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
         onEscapeKeyDown={() => closePopover()}
       >
         <p id="reading-settings-desc" className="sr-only">
-          Preferências de leitura agrupadas por seção. Pressione Esc para fechar e retornar ao botão de configurações.
+          Preferências de leitura agrupadas por seção. Pressione Esc para fechar e retornar ao botão
+          de configurações.
         </p>
         <div className="space-y-spacing-xl">
           <div
             data-testid="reading-settings-header"
             className="flex items-center justify-between gap-spacing-sm flex-wrap"
           >
-            <h4 id="reading-settings-title" className="text-[10px] font-black uppercase tracking-widest text-primary/30">Aparência</h4>
+            <h4
+              id="reading-settings-title"
+              className="text-[10px] font-black uppercase tracking-widest text-primary/30"
+            >
+              Aparência
+            </h4>
             <div className="flex items-center gap-spacing-xs">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => updateSettings({ immersiveMode: !settings.immersiveMode })}
-                className={cn("text-[9px] uppercase tracking-tighter h-7 px-2 rounded-full whitespace-nowrap", settings.immersiveMode && "bg-primary/10 text-primary")}
+                className={cn(
+                  "text-[9px] uppercase tracking-tighter h-7 px-2 rounded-full whitespace-nowrap",
+                  settings.immersiveMode && "bg-primary/10 text-primary",
+                )}
               >
                 Modo Imersivo
               </Button>
@@ -159,20 +169,32 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
             </div>
           </div>
 
-
           {/* Temas */}
-          <div role="radiogroup" aria-label="Temas de leitura" className="grid grid-cols-4 gap-spacing-sm">
+          <div
+            role="radiogroup"
+            aria-label="Temas de leitura"
+            className="grid grid-cols-4 gap-spacing-sm"
+          >
             {themes.map((t) => (
               <button
                 key={t.id}
                 onClick={() => updateSettings({ theme: t.id })}
                 className={cn(
                   "group flex flex-col items-center gap-spacing-xs p-1 rounded-premium transition-all border-2",
-                  settings.theme === t.id ? "border-primary/20 scale-105" : "border-transparent hover:border-primary/5"
+                  settings.theme === t.id
+                    ? "border-primary/20 scale-105"
+                    : "border-transparent hover:border-primary/5",
                 )}
               >
-                <div className={cn("w-full aspect-square rounded-full shadow-inner border border-black/5", t.color)} />
-                <span className="text-[8px] font-medium uppercase tracking-tighter opacity-40 group-hover:opacity-100">{t.label}</span>
+                <div
+                  className={cn(
+                    "w-full aspect-square rounded-full shadow-inner border border-black/5",
+                    t.color,
+                  )}
+                />
+                <span className="text-[8px] font-medium uppercase tracking-tighter opacity-40 group-hover:opacity-100">
+                  {t.label}
+                </span>
               </button>
             ))}
           </div>
@@ -181,8 +203,17 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
 
           {/* Tamanho da Fonte */}
           <section aria-labelledby="reading-settings-size" className="space-y-spacing-md">
-            <h4 id="reading-settings-size" className="text-[10px] font-black uppercase tracking-widest text-primary/30">Tamanho do Texto</h4>
-            <div role="radiogroup" aria-labelledby="reading-settings-size" className="flex bg-primary/[0.03] p-1 rounded-premium-full border border-primary/5">
+            <h4
+              id="reading-settings-size"
+              className="text-[10px] font-black uppercase tracking-widest text-primary/30"
+            >
+              Tamanho do Texto
+            </h4>
+            <div
+              role="radiogroup"
+              aria-labelledby="reading-settings-size"
+              className="flex bg-primary/[0.03] p-1 rounded-premium-full border border-primary/5"
+            >
               {fontSizes.map((f) => (
                 <button
                   key={f.id}
@@ -192,7 +223,9 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
                   onClick={() => updateSettings({ fontSize: f.id })}
                   className={cn(
                     "flex-1 py-spacing-xs rounded-premium-full transition-all text-center",
-                    settings.fontSize === f.id ? "bg-background text-primary shadow-premium-sm" : "text-primary/30 hover:text-primary/60"
+                    settings.fontSize === f.id
+                      ? "bg-background text-primary shadow-premium-sm"
+                      : "text-primary/30 hover:text-primary/60",
                   )}
                 >
                   <span className={cn("font-serif font-bold", f.className)}>{f.label}</span>
@@ -203,12 +236,21 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
 
           {/* Contraste e Acessibilidade */}
           <section aria-labelledby="reading-settings-a11y" className="space-y-spacing-md">
-            <h4 id="reading-settings-a11y" className="text-[10px] font-black uppercase tracking-widest text-primary/30">Acessibilidade</h4>
-            <div role="radiogroup" aria-labelledby="reading-settings-a11y" className="flex gap-spacing-sm">
+            <h4
+              id="reading-settings-a11y"
+              className="text-[10px] font-black uppercase tracking-widest text-primary/30"
+            >
+              Acessibilidade
+            </h4>
+            <div
+              role="radiogroup"
+              aria-labelledby="reading-settings-a11y"
+              className="flex gap-spacing-sm"
+            >
               {[
-                { id: 'normal', label: 'Normal', icon: Icons.Circle },
-                { id: 'soft', label: 'Suave', icon: Icons.Droplets },
-                { id: 'high', label: 'Alto Contraste', icon: Icons.Contrast },
+                { id: "normal", label: "Normal", icon: Icons.Circle },
+                { id: "soft", label: "Suave", icon: Icons.Droplets },
+                { id: "high", label: "Alto Contraste", icon: Icons.Contrast },
               ].map((c) => (
                 <button
                   key={c.id}
@@ -218,12 +260,21 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
                   onClick={() => updateSettings({ contrast: c.id as any })}
                   className={cn(
                     "flex-1 flex flex-col items-center gap-spacing-xs p-spacing-sm rounded-premium transition-all border",
-                    settings.contrast === c.id ? "bg-primary/5 border-primary/20 shadow-inner" : "border-primary/5 hover:bg-primary/[0.02]"
+                    settings.contrast === c.id
+                      ? "bg-primary/5 border-primary/20 shadow-inner"
+                      : "border-primary/5 hover:bg-primary/[0.02]",
                   )}
                   title={c.label}
                 >
-                  <c.icon className={cn("w-spacing-md h-spacing-md", settings.contrast === c.id ? "text-primary" : "text-primary/20")} />
-                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-60">{c.id}</span>
+                  <c.icon
+                    className={cn(
+                      "w-spacing-md h-spacing-md",
+                      settings.contrast === c.id ? "text-primary" : "text-primary/20",
+                    )}
+                  />
+                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-60">
+                    {c.id}
+                  </span>
                 </button>
               ))}
             </div>
@@ -231,8 +282,17 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
 
           {/* Espaçamento */}
           <section aria-labelledby="reading-settings-spacing" className="space-y-spacing-md">
-            <h4 id="reading-settings-spacing" className="text-[10px] font-black uppercase tracking-widest text-primary/30">Espaçamento</h4>
-            <div role="radiogroup" aria-labelledby="reading-settings-spacing" className="flex gap-spacing-sm">
+            <h4
+              id="reading-settings-spacing"
+              className="text-[10px] font-black uppercase tracking-widest text-primary/30"
+            >
+              Espaçamento
+            </h4>
+            <div
+              role="radiogroup"
+              aria-labelledby="reading-settings-spacing"
+              className="flex gap-spacing-sm"
+            >
               {lineSpacings.map((s) => (
                 <button
                   key={s.id}
@@ -242,26 +302,39 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
                   onClick={() => updateSettings({ lineSpacing: s.id })}
                   className={cn(
                     "flex-1 flex flex-col items-center gap-spacing-xs p-spacing-sm rounded-premium transition-all border",
-                    settings.lineSpacing === s.id ? "bg-primary/5 border-primary/20 shadow-inner" : "border-primary/5 hover:bg-primary/[0.02]"
+                    settings.lineSpacing === s.id
+                      ? "bg-primary/5 border-primary/20 shadow-inner"
+                      : "border-primary/5 hover:bg-primary/[0.02]",
                   )}
                 >
-                  <s.icon className={cn("w-spacing-md h-spacing-md", settings.lineSpacing === s.id ? "text-primary" : "text-primary/20")} />
-                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-60">{s.label}</span>
+                  <s.icon
+                    className={cn(
+                      "w-spacing-md h-spacing-md",
+                      settings.lineSpacing === s.id ? "text-primary" : "text-primary/20",
+                    )}
+                  />
+                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-60">
+                    {s.label}
+                  </span>
                 </button>
               ))}
             </div>
           </section>
 
-
-          
           <div className="pt-spacing-sm">
-            <button 
-              onClick={() => updateSettings({ fontFamily: settings.fontFamily === 'serif' ? 'sans' : 'serif' })}
+            <button
+              onClick={() =>
+                updateSettings({ fontFamily: settings.fontFamily === "serif" ? "sans" : "serif" })
+              }
               className="w-full flex items-center justify-between p-spacing-md rounded-premium bg-primary/[0.02] border border-primary/5 hover:bg-primary/[0.04] transition-all group"
             >
               <div className="flex flex-col text-left">
-                <span className="text-[9px] font-black uppercase tracking-widest text-primary/40">Tipografia</span>
-                <span className="text-premium-xs font-serif italic text-primary/70">{settings.fontFamily === 'serif' ? 'Serifada (Clássica)' : 'Sem Serifa (Moderna)'}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-primary/40">
+                  Tipografia
+                </span>
+                <span className="text-premium-xs font-serif italic text-primary/70">
+                  {settings.fontFamily === "serif" ? "Serifada (Clássica)" : "Sem Serifa (Moderna)"}
+                </span>
               </div>
               <Icons.Shuffle className="w-spacing-sm h-spacing-sm text-primary/20 group-hover:text-primary transition-colors" />
             </button>
@@ -271,23 +344,30 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
 
           {/* Tradução bíblica + modernização ortográfica */}
           <section aria-labelledby="reading-settings-translation" className="space-y-spacing-md">
-            <h4 id="reading-settings-translation" className="text-[10px] font-black uppercase tracking-widest text-primary/30">
+            <h4
+              id="reading-settings-translation"
+              className="text-[10px] font-black uppercase tracking-widest text-primary/30"
+            >
               Tradução Bíblica
             </h4>
             <select
               aria-label="Selecionar tradução bíblica"
-              value={settings.bibleTranslationId ?? ''}
+              value={settings.bibleTranslationId ?? ""}
               onChange={(e) => updateSettings({ bibleTranslationId: e.target.value || null })}
               className="w-full text-xs font-serif italic px-3 py-2 rounded-premium bg-background border border-primary/10 text-primary/80 focus:outline-none focus:border-primary/30"
             >
               <option value="">Padrão (primária do servidor)</option>
               {translations.map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
               ))}
             </select>
             <div className="flex items-center justify-between p-spacing-sm rounded-premium bg-primary/[0.02] border border-primary/5">
               <div className="flex flex-col text-left pr-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-primary/40">Modernização Ortográfica</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-primary/40">
+                  Modernização Ortográfica
+                </span>
                 <span className="text-[10px] font-serif italic text-primary/60">
                   Opcional. Texto original sempre preservado no banco.
                 </span>
@@ -299,10 +379,12 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
                 onClick={() => updateSettings({ bibleModernize: !settings.bibleModernize })}
                 className={cn(
                   "h-7 px-3 rounded-full text-[9px] uppercase tracking-tighter border border-primary/5 transition-all whitespace-nowrap",
-                  settings.bibleModernize ? "bg-primary/10 text-primary border-primary/20" : "text-primary/40"
+                  settings.bibleModernize
+                    ? "bg-primary/10 text-primary border-primary/20"
+                    : "text-primary/40",
                 )}
               >
-                {settings.bibleModernize ? 'Ativo' : 'Inativo'}
+                {settings.bibleModernize ? "Ativo" : "Inativo"}
               </Button>
             </div>
           </section>
@@ -312,19 +394,27 @@ const ReadingSettingsPopover: React.FC<ReadingSettingsPopoverProps> = ({
           <div className="pt-spacing-xs">
             <div className="flex items-center justify-between p-spacing-sm">
               <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary/40">Recursos</span>
-                <span className="text-premium-xs font-serif italic text-primary/70">Margens de Estudo</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary/40">
+                  Recursos
+                </span>
+                <span className="text-premium-xs font-serif italic text-primary/70">
+                  Margens de Estudo
+                </span>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => updateSettings({ showStudyMarginalia: !settings.showStudyMarginalia })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  updateSettings({ showStudyMarginalia: !settings.showStudyMarginalia })
+                }
                 className={cn(
                   "h-7 px-3 rounded-full text-[9px] uppercase tracking-tighter border border-primary/5 transition-all",
-                  settings.showStudyMarginalia ? "bg-primary/10 text-primary border-primary/20" : "text-primary/40"
+                  settings.showStudyMarginalia
+                    ? "bg-primary/10 text-primary border-primary/20"
+                    : "text-primary/40",
                 )}
               >
-                {settings.showStudyMarginalia ? 'Ativo' : 'Inativo'}
+                {settings.showStudyMarginalia ? "Ativo" : "Inativo"}
               </Button>
             </div>
           </div>

@@ -44,7 +44,12 @@ export default defineTool({
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     if (!data)
       return {
-        content: [{ type: "text", text: `Ofício '${hour}' não disponível para ${iso}. Gere em /liturgia/horas.` }],
+        content: [
+          {
+            type: "text",
+            text: `Ofício '${hour}' não disponível para ${iso}. Gere em /liturgia/horas.`,
+          },
+        ],
         isError: true,
       };
     return {

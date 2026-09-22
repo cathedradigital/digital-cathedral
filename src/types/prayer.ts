@@ -4,14 +4,7 @@
  */
 
 export type PrayerBlockKind =
-  | 'intro'
-  | 'mystery'
-  | 'station'
-  | 'hour'
-  | 'meditation'
-  | 'prayer'
-  | 'decade'
-  | 'closing';
+  "intro" | "mystery" | "station" | "hour" | "meditation" | "prayer" | "decade" | "closing";
 
 export interface PrayerBlockRef {
   bible?: string[];
@@ -53,7 +46,7 @@ export interface PrayerBlock {
   optionLabel?: string;
 }
 
-export type PrayerCurationStatus = 'stub' | 'partial' | 'complete';
+export type PrayerCurationStatus = "stub" | "partial" | "complete";
 
 export function isPrayerBlockArray(value: unknown): value is PrayerBlock[] {
   return (
@@ -61,10 +54,10 @@ export function isPrayerBlockArray(value: unknown): value is PrayerBlock[] {
     value.every(
       (b) =>
         b &&
-        typeof b === 'object' &&
-        typeof (b as PrayerBlock).id === 'string' &&
-        typeof (b as PrayerBlock).kind === 'string' &&
-        typeof (b as PrayerBlock).title === 'string',
+        typeof b === "object" &&
+        typeof (b as PrayerBlock).id === "string" &&
+        typeof (b as PrayerBlock).kind === "string" &&
+        typeof (b as PrayerBlock).title === "string",
     )
   );
 }

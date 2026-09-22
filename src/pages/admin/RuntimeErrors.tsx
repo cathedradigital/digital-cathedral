@@ -38,8 +38,8 @@ export default function RuntimeErrors() {
         <div>
           <h1 className="text-2xl font-display">Runtime Errors</h1>
           <p className="text-sm text-muted-foreground">
-            Últimos {items.length} erros capturados neste navegador
-            (window.onerror + unhandledrejection).
+            Últimos {items.length} erros capturados neste navegador (window.onerror +
+            unhandledrejection).
           </p>
         </div>
         <div className="flex gap-2">
@@ -80,9 +80,7 @@ export default function RuntimeErrors() {
                   · {it.viewport.w}×{it.viewport.h}
                 </span>
               </div>
-              <p className="font-mono text-sm text-destructive break-words">
-                {it.message}
-              </p>
+              <p className="font-mono text-sm text-destructive break-words">{it.message}</p>
               {it.focused && (
                 <p className="text-[11px] text-muted-foreground font-mono">
                   focus: {it.focused.tag}
@@ -101,9 +99,7 @@ export default function RuntimeErrors() {
                   </pre>
                 </details>
               )}
-              <p className="text-[10px] font-mono opacity-50">
-                {it.userAgent}
-              </p>
+              <p className="text-[10px] font-mono opacity-50">{it.userAgent}</p>
             </li>
           ))}
         </ul>

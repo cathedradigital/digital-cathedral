@@ -7,13 +7,8 @@
  *
  * Nunca lança — em caso de falha crítica retorna null.
  */
-import type {
-  EditorialClosureProps,
-} from '@/components/reader/EditorialClosure';
-import {
-  validateEditorialClosure,
-  type ClosureValidationReport,
-} from './closureSchema';
+import type { EditorialClosureProps } from "@/components/reader/EditorialClosure";
+import { validateEditorialClosure, type ClosureValidationReport } from "./closureSchema";
 
 type ClosureLike = {
   editorial_closure?: unknown;
@@ -24,7 +19,7 @@ export function resolveEditorialClosure(
 ): EditorialClosureProps | null {
   const report = validateEditorialClosure(source?.editorial_closure);
   if (!report.ok || !report.data) {
-    if (report.warnings.length && typeof console !== 'undefined') {
+    if (report.warnings.length && typeof console !== "undefined") {
       // Silencioso em prod — apenas debug.
       // console.debug('[resolveEditorialClosure]', report.warnings);
     }
@@ -35,16 +30,17 @@ export function resolveEditorialClosure(
     reflection: d.reflection || undefined,
     application: d.application || undefined,
     prayer: d.prayer || undefined,
-    next: d.next as EditorialClosureProps['next'],
-    nexus: d.nexus as EditorialClosureProps['nexus'],
+    next: d.next as EditorialClosureProps["next"],
+    nexus: d.nexus as EditorialClosureProps["nexus"],
     source: d.source,
   };
 }
 
 /** Variante que devolve também o relatório — usada pelo admin validator. */
-export function resolveEditorialClosureWithReport(
-  source: ClosureLike | null | undefined,
-): { props: EditorialClosureProps | null; report: ClosureValidationReport } {
+export function resolveEditorialClosureWithReport(source: ClosureLike | null | undefined): {
+  props: EditorialClosureProps | null;
+  report: ClosureValidationReport;
+} {
   const report = validateEditorialClosure(source?.editorial_closure);
   const props = resolveEditorialClosure(source);
   return { props, report };

@@ -12,8 +12,8 @@ import type {
   KnowledgeNodeKind,
   KnowledgeRelation,
   KnowledgeRelationKind,
-} from './types';
-import { SEED_NODES, SEED_RELATIONS } from './seed';
+} from "./types";
+import { SEED_NODES, SEED_RELATIONS } from "./seed";
 
 const nodes = new Map<KnowledgeNodeId, KnowledgeNode>();
 const outgoing = new Map<KnowledgeNodeId, KnowledgeRelation[]>();

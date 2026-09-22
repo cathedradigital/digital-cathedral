@@ -18,10 +18,13 @@ export function iceTier(score: number): IceTier {
 }
 
 export function iceTierLabel(tier: IceTier): string {
-  return tier === "gold" ? "Ouro"
-    : tier === "silver" ? "Prata"
-    : tier === "bronze" ? "Bronze"
-    : "Revisão";
+  return tier === "gold"
+    ? "Ouro"
+    : tier === "silver"
+      ? "Prata"
+      : tier === "bronze"
+        ? "Bronze"
+        : "Revisão";
 }
 
 /** Média ponderada pelo `doctrinal_weight` do registro. */
@@ -31,28 +34,42 @@ export function weightedAverage(
   if (items.length === 0) return 0;
   const sumW = items.reduce((s, r) => s + (r.doctrinal_weight || 1), 0);
   if (sumW === 0) return 0;
-  return Math.round(
-    items.reduce((s, r) => s + r.score * (r.doctrinal_weight || 1), 0) / sumW,
-  );
+  return Math.round(items.reduce((s, r) => s + r.score * (r.doctrinal_weight || 1), 0) / sumW);
 }
 
-export function aggregateTotals(rows: Array<{
-  score: number;
-  editorial_score: number;
-  nexus_score: number;
-  status: string;
-  doctrinal_weight?: number | null;
-}>): EntityTotals {
+export function aggregateTotals(
+  rows: Array<{
+    score: number;
+    editorial_score: number;
+    nexus_score: number;
+    status: string;
+    doctrinal_weight?: number | null;
+  }>,
+): EntityTotals {
   const total = rows.length;
-  const published = rows.filter(r => r.status === "published").length;
+  const published = rows.filter((r) => r.status === "published").length;
   const drafts = total - published;
-  const gold = rows.filter(r => iceTier(r.score) === "gold").length;
-  const silver = rows.filter(r => iceTier(r.score) === "silver").length;
-  const bronze = rows.filter(r => iceTier(r.score) === "bronze").length;
-  const needs_review = rows.filter(r => iceTier(r.score) === "review").length;
+  const gold = rows.filter((r) => iceTier(r.score) === "gold").length;
+  const silver = rows.filter((r) => iceTier(r.score) === "silver").length;
+  const bronze = rows.filter((r) => iceTier(r.score) === "bronze").length;
+  const needs_review = rows.filter((r) => iceTier(r.score) === "review").length;
   const avg = total ? Math.round(rows.reduce((s, r) => s + r.score, 0) / total) : 0;
-  const avg_editorial = total ? Math.round(rows.reduce((s, r) => s + r.editorial_score, 0) / total) : 0;
+  const avg_editorial = total
+    ? Math.round(rows.reduce((s, r) => s + r.editorial_score, 0) / total)
+    : 0;
   const avg_nexus = total ? Math.round(rows.reduce((s, r) => s + r.nexus_score, 0) / total) : 0;
   const avg_weighted = weightedAverage(rows);
-  return { total, published, drafts, gold, silver, bronze, needs_review, avg, avg_editorial, avg_nexus, avg_weighted };
+  return {
+    total,
+    published,
+    drafts,
+    gold,
+    silver,
+    bronze,
+    needs_review,
+    avg,
+    avg_editorial,
+    avg_nexus,
+    avg_weighted,
+  };
 }

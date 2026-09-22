@@ -8,17 +8,17 @@
  * Consumo previsto: LiturgiaPage, DailyLiturgy (Átrio), Header, LiturgyAdapter.
  */
 
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { getSaintsByDate } from '@/services/saintsService';
-import { toIsoDateKey } from '@/core/liturgy/LiturgyProvider';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { getSaintsByDate } from "@/services/saintsService";
+import { toIsoDateKey } from "@/core/liturgy/LiturgyProvider";
 
 export interface SaintOfDay {
   name: string;
   title?: string | null;
   slug?: string | null;
   image?: string | null;
-  source: 'official' | 'santoral' | 'none';
+  source: "official" | "santoral" | "none";
 }
 
 interface OfficialSaintPayload {
@@ -32,18 +32,18 @@ async function fetchOfficial(): Promise<OfficialSaintPayload | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12_000);
   try {
-    const { data, error } = await supabase.functions.invoke('saint-of-the-day', {
+    const { data, error } = await supabase.functions.invoke("saint-of-the-day", {
       // signal é suportado pelo runtime do supabase-js
       signal: controller.signal,
     } as any);
     if (error) {
-      window.dispatchEvent(new CustomEvent('supabase-unreachable'));
+      window.dispatchEvent(new CustomEvent("supabase-unreachable"));
       return null;
     }
 
-    if (!data || typeof data !== 'object') return null;
+    if (!data || typeof data !== "object") return null;
     const d = data as OfficialSaintPayload;
-    if (!d.name || d.name === 'Santo do Dia') return null;
+    if (!d.name || d.name === "Santo do Dia") return null;
     return d;
   } catch {
     return null;
@@ -65,7 +65,7 @@ async function fetchFor(date: Date): Promise<SaintOfDay | null> {
         title: official.title ?? null,
         slug: official.slug ?? null,
         image: official.image ?? null,
-        source: 'official',
+        source: "official",
       };
     }
   }
@@ -78,7 +78,7 @@ async function fetchFor(date: Date): Promise<SaintOfDay | null> {
       title: s.title ?? null,
       slug: (s as any).slug ?? null,
       image: s.image ?? null,
-      source: 'santoral',
+      source: "santoral",
     };
   }
 
@@ -87,7 +87,7 @@ async function fetchFor(date: Date): Promise<SaintOfDay | null> {
 
 export function useSaintOfDay(date: Date = new Date()) {
   return useQuery({
-    queryKey: ['saint-of-day', toIsoDateKey(date)],
+    queryKey: ["saint-of-day", toIsoDateKey(date)],
     queryFn: () => fetchFor(date),
     staleTime: 1000 * 60 * 60, // 1h
     gcTime: 1000 * 60 * 60 * 24,

@@ -2,9 +2,9 @@
  * Lógica pura de filtragem, ordenação e realce para o Explorer de Magistério.
  * Isolada em módulo próprio para permitir testes unitários sem montar o React.
  */
-import type { MagisteriumDocument } from '@/data/magisterium-urls';
+import type { MagisteriumDocument } from "@/data/magisterium-urls";
 
-export type MagisteriumSort = 'canonical' | 'chronological-asc' | 'chronological-desc';
+export type MagisteriumSort = "canonical" | "chronological-asc" | "chronological-desc";
 
 /** Tamanho fixo da página do Explorer. Ajustado ao grid 3-col para não gerar
  *  linhas “órfãs” em desktop. */
@@ -20,10 +20,10 @@ export interface MagisteriumFilterState {
 }
 
 export const DEFAULT_FILTER_STATE: MagisteriumFilterState = {
-  search: '',
+  search: "",
   category: null,
   themes: [],
-  sort: 'canonical',
+  sort: "canonical",
   page: 1,
 };
 
@@ -36,7 +36,7 @@ export function matchesSearch(doc: MagisteriumDocument, query: string): boolean 
     doc.title.toLowerCase().includes(q) ||
     doc.author.toLowerCase().includes(q) ||
     (doc.abbr?.toLowerCase().includes(q) ?? false) ||
-    doc.themes.some(t => t.toLowerCase().includes(q)) ||
+    doc.themes.some((t) => t.toLowerCase().includes(q)) ||
     doc.summary.toLowerCase().includes(q)
   );
 }
@@ -46,13 +46,13 @@ export function filterAndSortDocuments(
   state: MagisteriumFilterState,
   categoryOrder: Record<string, number>,
 ): MagisteriumDocument[] {
-  const filtered = docs.filter(doc => {
+  const filtered = docs.filter((doc) => {
     if (state.category && doc.category !== state.category) return false;
-    if (state.themes.length > 0 && !state.themes.every(t => doc.themes.includes(t))) return false;
+    if (state.themes.length > 0 && !state.themes.every((t) => doc.themes.includes(t))) return false;
     return matchesSearch(doc, state.search);
   });
 
-  if (state.sort === 'canonical') {
+  if (state.sort === "canonical") {
     return [...filtered].sort((a, b) => {
       const ca = categoryOrder[a.category] ?? 999;
       const cb = categoryOrder[b.category] ?? 999;
@@ -60,7 +60,7 @@ export function filterAndSortDocuments(
       return dateKey(a).localeCompare(dateKey(b));
     });
   }
-  const dir = state.sort === 'chronological-asc' ? 1 : -1;
+  const dir = state.sort === "chronological-asc" ? 1 : -1;
   return [...filtered].sort((a, b) => dir * dateKey(a).localeCompare(dateKey(b)));
 }
 
@@ -68,28 +68,28 @@ export function filterAndSortDocuments(
 // URL persistence
 // ---------------------------------------------------------------------------
 
-const PARAM_KEYS = { q: 'q', cat: 'cat', theme: 'theme', sort: 'sort', page: 'page' } as const;
-const VALID_SORTS: MagisteriumSort[] = ['canonical', 'chronological-asc', 'chronological-desc'];
+const PARAM_KEYS = { q: "q", cat: "cat", theme: "theme", sort: "sort", page: "page" } as const;
+const VALID_SORTS: MagisteriumSort[] = ["canonical", "chronological-asc", "chronological-desc"];
 
 export function stateToSearchParams(state: MagisteriumFilterState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.search) params.set(PARAM_KEYS.q, state.search);
   if (state.category) params.set(PARAM_KEYS.cat, state.category);
   for (const t of state.themes) params.append(PARAM_KEYS.theme, t);
-  if (state.sort !== 'canonical') params.set(PARAM_KEYS.sort, state.sort);
+  if (state.sort !== "canonical") params.set(PARAM_KEYS.sort, state.sort);
   if (state.page > 1) params.set(PARAM_KEYS.page, String(state.page));
   return params;
 }
 
 export function searchParamsToState(params: URLSearchParams): MagisteriumFilterState {
   const rawSort = params.get(PARAM_KEYS.sort);
-  const sort = (VALID_SORTS as string[]).includes(rawSort ?? '')
+  const sort = (VALID_SORTS as string[]).includes(rawSort ?? "")
     ? (rawSort as MagisteriumSort)
-    : 'canonical';
+    : "canonical";
   const rawPage = Number(params.get(PARAM_KEYS.page));
   const page = Number.isInteger(rawPage) && rawPage >= 1 ? rawPage : 1;
   return {
-    search: params.get(PARAM_KEYS.q) ?? '',
+    search: params.get(PARAM_KEYS.q) ?? "",
     category: params.get(PARAM_KEYS.cat),
     themes: params.getAll(PARAM_KEYS.theme),
     sort,
@@ -147,7 +147,7 @@ export function paginate<T>(
 // Highlight
 // ---------------------------------------------------------------------------
 
-const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export interface HighlightSegment {
   text: string;
@@ -157,9 +157,9 @@ export interface HighlightSegment {
 export function highlightSegments(text: string, query: string): HighlightSegment[] {
   const q = query.trim();
   if (!q || !text) return [{ text, match: false }];
-  const re = new RegExp(`(${escapeRegex(q)})`, 'gi');
+  const re = new RegExp(`(${escapeRegex(q)})`, "gi");
   const parts = text.split(re);
   return parts
-    .filter(p => p.length > 0)
-    .map(part => ({ text: part, match: part.toLowerCase() === q.toLowerCase() }));
+    .filter((p) => p.length > 0)
+    .map((part) => ({ text: part, match: part.toLowerCase() === q.toLowerCase() }));
 }

@@ -1,13 +1,13 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/db';
-import { BADGE_DEFINITIONS } from '@/lib/badges';
-import { Progress } from '@/components/ui/progress';
+import { Icons } from "@/constants";
+import React, { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/db";
+import { BADGE_DEFINITIONS } from "@/lib/badges";
+import { Progress } from "@/components/ui/progress";
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 const AchievementsPage: React.FC = () => {
   const { user, profile } = useAuth();
@@ -24,13 +24,13 @@ const AchievementsPage: React.FC = () => {
   const loadAchievements = async () => {
     setLoading(true);
     const [achRes, userAchRes] = await Promise.all([
-      supabase.from('achievements').select('*'),
-      supabase.from('user_achievements').select('achievement_id').eq('user_id', user!.id)
+      supabase.from("achievements").select("*"),
+      supabase.from("user_achievements").select("achievement_id").eq("user_id", user!.id),
     ]);
 
     if (achRes.data) setDbAchievements(achRes.data);
     if (userAchRes.data) {
-      setEarnedAchievementIds(new Set(userAchRes.data.map(a => a.achievement_id)));
+      setEarnedAchievementIds(new Set(userAchRes.data.map((a) => a.achievement_id)));
     }
     setLoading(false);
   };
@@ -43,15 +43,19 @@ const AchievementsPage: React.FC = () => {
     <div className="w-full space-y-spacing-2xl py-spacing-2xl md:py-spacing-4xl px-spacing-lg">
       {/* Header */}
       <div className="text-center space-y-spacing-lg">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="inline-flex items-center gap-spacing-sm px-spacing-md py-spacing-xs bg-primary/5 rounded-premium-full border border-primary/10"
         >
           <Icons.Trophy className="w-spacing-md h-spacing-md text-primary" />
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Sacra Victoria</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+            Sacra Victoria
+          </span>
         </motion.div>
-        <h1 className="text-premium-4xl md:text-premium-6xl font-display font-bold text-foreground tracking-tight">Suas Conquistas</h1>
+        <h1 className="text-premium-4xl md:text-premium-6xl font-display font-bold text-foreground tracking-tight">
+          Suas Conquistas
+        </h1>
         <p className="text-muted-foreground font-serif italic text-premium-lg">
           "Combati o bom combate, terminei a corrida, guardei a fé." — 2 Timóteo 4,7
         </p>
@@ -66,7 +70,9 @@ const AchievementsPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-spacing-2xs">
               <h3 className="text-premium-2xl font-bold font-serif">Seu Galardão</h3>
-              <p className="text-premium-sm text-muted-foreground/60">Você conquistou {totalEarned} de {totalPossible} marcos espirituais.</p>
+              <p className="text-premium-sm text-muted-foreground/60">
+                Você conquistou {totalEarned} de {totalPossible} marcos espirituais.
+              </p>
             </div>
             <div className="text-premium-4xl font-display font-bold text-primary">{progress}%</div>
           </div>
@@ -92,8 +98,8 @@ const AchievementsPage: React.FC = () => {
                   transition={{ delay: i * 0.05 }}
                   className={`relative rounded-[2rem] border p-spacing-lg transition-all duration-700 ${
                     unlocked
-                      ? 'bg-primary/[0.03] border-primary/20 shadow-premium'
-                      : 'bg-muted/30 border-border opacity-40'
+                      ? "bg-primary/[0.03] border-primary/20 shadow-premium"
+                      : "bg-muted/30 border-border opacity-40"
                   }`}
                 >
                   <div className="flex items-start gap-spacing-md">
@@ -103,11 +109,18 @@ const AchievementsPage: React.FC = () => {
                     <div className="flex-1 space-y-spacing-xs">
                       <div className="flex items-center justify-between">
                         <h3 className="font-bold text-foreground font-serif">{ach.name}</h3>
-                        {!unlocked && <Icons.Lock className="w-spacing-sm h-spacing-sm text-muted-foreground/40" />}
+                        {!unlocked && (
+                          <Icons.Lock className="w-spacing-sm h-spacing-sm text-muted-foreground/40" />
+                        )}
                       </div>
-                      <p className="text-premium-xs text-muted-foreground leading-relaxed">{ach.description}</p>
+                      <p className="text-premium-xs text-muted-foreground leading-relaxed">
+                        {ach.description}
+                      </p>
                       {unlocked && (
-                        <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/10 text-primary bg-primary/5">
+                        <Badge
+                          variant="outline"
+                          className="text-[8px] font-black uppercase tracking-widest border-primary/10 text-primary bg-primary/5"
+                        >
                           Conquistado
                         </Badge>
                       )}
@@ -132,15 +145,21 @@ const AchievementsPage: React.FC = () => {
                 <motion.div
                   key={badge.id}
                   className={`p-spacing-lg rounded-[2rem] border transition-all duration-700 flex flex-col items-center text-center space-y-spacing-md ${
-                    unlocked ? 'bg-card border-primary/10 shadow-premium' : 'bg-muted/10 border-border opacity-30'
+                    unlocked
+                      ? "bg-card border-primary/10 shadow-premium"
+                      : "bg-muted/10 border-border opacity-30"
                   }`}
                 >
-                  <div className={`text-premium-3xl w-spacing-2xl h-spacing-2xl rounded-premium-full flex items-center justify-center ${unlocked ? 'bg-primary/10' : 'bg-muted'}`}>
-                    {unlocked ? '🏆' : <Icons.Lock className="w-spacing-md h-spacing-md" />}
+                  <div
+                    className={`text-premium-3xl w-spacing-2xl h-spacing-2xl rounded-premium-full flex items-center justify-center ${unlocked ? "bg-primary/10" : "bg-muted"}`}
+                  >
+                    {unlocked ? "🏆" : <Icons.Lock className="w-spacing-md h-spacing-md" />}
                   </div>
                   <div className="space-y-spacing-2xs">
                     <h4 className="font-bold text-premium-sm">{badge.name}</h4>
-                    <p className="text-[10px] text-muted-foreground line-clamp-spacing-xs">{badge.description}</p>
+                    <p className="text-[10px] text-muted-foreground line-clamp-spacing-xs">
+                      {badge.description}
+                    </p>
                   </div>
                 </motion.div>
               );

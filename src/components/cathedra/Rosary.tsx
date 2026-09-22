@@ -39,7 +39,12 @@ function formatElapsed(ms: number): string {
 function formatStartedAt(iso: string): string {
   try {
     const d = new Date(iso);
-    return d.toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } catch {
     return "";
   }
@@ -106,8 +111,7 @@ const Rosary: React.FC = () => {
 
     const hasHash = window.location.hash === "#preparation";
     const navEntry = performance.getEntriesByType("navigation")[0] as
-      | PerformanceNavigationTiming
-      | undefined;
+      PerformanceNavigationTiming | undefined;
     const isHistoryRestore = navEntry?.type === "back_forward";
 
     if (!hasHash && !isHistoryRestore) return;
@@ -142,7 +146,6 @@ const Rosary: React.FC = () => {
       window.removeEventListener("pageshow", onPageshow);
     };
   }, [focusHeading]);
-
 
   const todaySet = useMemo(() => suggestSetForToday(), []);
 
@@ -240,8 +243,6 @@ const Rosary: React.FC = () => {
     [selectedSet],
   );
 
-
-
   /* -------------------------------------------------------------------------- */
   /* Landing — seleção do conjunto                                              */
   /* -------------------------------------------------------------------------- */
@@ -261,8 +262,8 @@ const Rosary: React.FC = () => {
             Santo Rosário
           </h1>
           <p className="text-premium-lg text-muted-foreground font-serif italic max-w-prose mx-auto">
-            Quatro conjuntos, vinte mistérios, uma só oração — para ser rezada em silêncio,
-            passo a passo ou em mãos livres.
+            Quatro conjuntos, vinte mistérios, uma só oração — para ser rezada em silêncio, passo a
+            passo ou em mãos livres.
           </p>
         </header>
 
@@ -364,8 +365,6 @@ const Rosary: React.FC = () => {
     );
   }
 
-
-
   /* -------------------------------------------------------------------------- */
   /* Preparação — modo, intenção, resumo                                        */
   /* -------------------------------------------------------------------------- */
@@ -428,8 +427,12 @@ const Rosary: React.FC = () => {
                 <Icons.ChevronRight className="w-4 h-4 mr-1" />
                 Retomar oração
               </Button>
-              <p id="rosary-resume-hint" className="text-[10px] font-black uppercase tracking-[0.22em] text-muted-foreground">
-                {formatElapsed(resumeElapsedMs)} rezados{resumeStartedAt ? ` · ${formatStartedAt(resumeStartedAt)}` : ""}
+              <p
+                id="rosary-resume-hint"
+                className="text-[10px] font-black uppercase tracking-[0.22em] text-muted-foreground"
+              >
+                {formatElapsed(resumeElapsedMs)} rezados
+                {resumeStartedAt ? ` · ${formatStartedAt(resumeStartedAt)}` : ""}
               </p>
             </div>
           )}
@@ -453,7 +456,11 @@ const Rosary: React.FC = () => {
         <h2 id="rosary-mode-title" className="font-display text-premium-xl text-foreground">
           Escolha o modo
         </h2>
-        <div role="radiogroup" aria-labelledby="rosary-mode-title" className="grid grid-cols-1 md:grid-cols-3 gap-spacing-md">
+        <div
+          role="radiogroup"
+          aria-labelledby="rosary-mode-title"
+          className="grid grid-cols-1 md:grid-cols-3 gap-spacing-md"
+        >
           {(
             [
               {
@@ -498,7 +505,9 @@ const Rosary: React.FC = () => {
                   className="sr-only"
                 />
                 <div className="flex items-center gap-spacing-sm">
-                  <Icon className={cn("w-5 h-5", active ? "text-secondary" : "text-muted-foreground")} />
+                  <Icon
+                    className={cn("w-5 h-5", active ? "text-secondary" : "text-muted-foreground")}
+                  />
                   <span className="font-display text-premium-lg text-foreground">{opt.title}</span>
                 </div>
                 <p className="mt-2 text-premium-xs text-muted-foreground font-serif leading-relaxed">
@@ -535,10 +544,7 @@ const Rosary: React.FC = () => {
         </h2>
         <ol className="grid gap-spacing-sm">
           {set.mysteries.map((m, i) => (
-            <li
-              key={m.id}
-              className="rounded-premium border border-border bg-card p-spacing-lg"
-            >
+            <li key={m.id} className="rounded-premium border border-border bg-card p-spacing-lg">
               <div className="flex items-start gap-spacing-md">
                 <span className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-premium-full bg-secondary/10 text-secondary font-black">
                   {i + 1}

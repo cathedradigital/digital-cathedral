@@ -3,7 +3,7 @@
  * Handles initialization of storage buckets and OAuth providers
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 
 interface StorageBucketConfig {
   name: string;
@@ -14,15 +14,15 @@ interface StorageBucketConfig {
 
 const STORAGE_BUCKETS: StorageBucketConfig[] = [
   {
-    name: 'avatars',
+    name: "avatars",
     isPublic: true,
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
     maxFileSize: 5 * 1024 * 1024, // 5MB
   },
   {
-    name: 'public-assets',
+    name: "public-assets",
     isPublic: true,
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4'],
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "application/pdf", "video/mp4"],
     maxFileSize: 50 * 1024 * 1024, // 50MB
   },
 ];
@@ -32,7 +32,7 @@ const STORAGE_BUCKETS: StorageBucketConfig[] = [
  * This is typically called during app startup or admin setup
  */
 export async function initializeStorageBuckets(): Promise<void> {
-  console.log('Initializing storage buckets...');
+  console.log("Initializing storage buckets...");
 
   for (const bucket of STORAGE_BUCKETS) {
     try {
@@ -52,7 +52,7 @@ export async function initializeStorageBuckets(): Promise<void> {
     }
   }
 
-  console.log('Storage bucket initialization complete');
+  console.log("Storage bucket initialization complete");
 }
 
 /**
@@ -61,7 +61,7 @@ export async function initializeStorageBuckets(): Promise<void> {
 export async function uploadToStorage(
   bucketName: string,
   filePath: string,
-  file: File
+  file: File,
 ): Promise<{ path: string; url: string } | null> {
   try {
     const { data, error } = await supabase.storage
@@ -74,16 +74,14 @@ export async function uploadToStorage(
     }
 
     // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(filePath);
+    const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
     return {
       path: data.path,
       url: publicUrlData.publicUrl,
     };
   } catch (error) {
-    console.error('Upload failed:', error);
+    console.error("Upload failed:", error);
     return null;
   }
 }
@@ -108,8 +106,8 @@ export const OAUTH_CONFIG = {
  */
 export function getAvailableOAuthProviders(): string[] {
   const providers: string[] = [];
-  if (OAUTH_CONFIG.google.enabled) providers.push('google');
-  if (OAUTH_CONFIG.apple.enabled) providers.push('apple');
+  if (OAUTH_CONFIG.google.enabled) providers.push("google");
+  if (OAUTH_CONFIG.apple.enabled) providers.push("apple");
   return providers;
 }
 

@@ -1,27 +1,36 @@
-import { useCallback, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { useCallback, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { Download, FileText, Play } from 'lucide-react';
-import { toast } from 'sonner';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Download, FileText, Play } from "lucide-react";
+import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
-type ChannelFilter = 'all' | 'webhook' | 'slack';
-type StatusFilter = 'all' | 'pending' | 'in_flight' | 'succeeded' | 'failed';
+type ChannelFilter = "all" | "webhook" | "slack";
+type StatusFilter = "all" | "pending" | "in_flight" | "succeeded" | "failed";
 
 interface ReportRow {
-  channel: 'webhook' | 'slack';
-  status: 'pending' | 'in_flight' | 'succeeded' | 'failed';
+  channel: "webhook" | "slack";
+  status: "pending" | "in_flight" | "succeeded" | "failed";
   count: number;
   avg_attempts: number | null;
   max_attempts_seen: number | null;
@@ -29,7 +38,7 @@ interface ReportRow {
   last_seen: string | null;
 }
 interface FailRateRow {
-  channel: 'webhook' | 'slack';
+  channel: "webhook" | "slack";
   failed: number;
   succeeded: number;
   total: number;
@@ -43,11 +52,11 @@ interface Report {
   rows: ReportRow[];
 }
 
-const STATUS_LABEL: Record<ReportRow['status'], string> = {
-  pending: 'Pendente',
-  in_flight: 'Em voo',
-  succeeded: 'Sucesso',
-  failed: 'Falhou',
+const STATUS_LABEL: Record<ReportRow["status"], string> = {
+  pending: "Pendente",
+  in_flight: "Em voo",
+  succeeded: "Sucesso",
+  failed: "Falhou",
 };
 
 function toIsoStart(d: string): string {
@@ -63,13 +72,17 @@ function todayIso(offsetDays = 0): string {
   return d.toISOString().slice(0, 10);
 }
 function fmtDt(dt: string | null): string {
-  if (!dt) return '—';
-  try { return new Date(dt).toLocaleString('pt-BR'); } catch { return dt; }
+  if (!dt) return "—";
+  try {
+    return new Date(dt).toLocaleString("pt-BR");
+  } catch {
+    return dt;
+  }
 }
 function downloadBlob(name: string, data: string, mime: string) {
   const blob = new Blob([data], { type: mime });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = name;
   document.body.appendChild(a);
@@ -81,8 +94,8 @@ function downloadBlob(name: string, data: string, mime: string) {
 export function FailuresReportCard() {
   const [from, setFrom] = useState<string>(todayIso(-7));
   const [to, setTo] = useState<string>(todayIso(0));
-  const [channel, setChannel] = useState<ChannelFilter>('all');
-  const [status, setStatus] = useState<StatusFilter>('failed');
+  const [channel, setChannel] = useState<ChannelFilter>("all");
+  const [status, setStatus] = useState<StatusFilter>("failed");
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -93,24 +106,24 @@ export function FailuresReportCard() {
 
   const run = useCallback(async () => {
     if (!canRun) {
-      toast.error('Faixa de datas inválida');
+      toast.error("Faixa de datas inválida");
       return;
     }
     setLoading(true);
     try {
       const { data, error } = await supabase.rpc(
-        'admin_notif_failures_report' as never,
+        "admin_notif_failures_report" as never,
         {
           p_from: toIsoStart(from),
           p_to: toIsoEnd(to),
-          p_channel: channel === 'all' ? null : channel,
-          p_status: status === 'all' ? null : status,
+          p_channel: channel === "all" ? null : channel,
+          p_status: status === "all" ? null : status,
         } as never,
       );
       if (error) throw error;
       setReport(data as unknown as Report);
     } catch (e) {
-      toast.error('Falha ao gerar relatório', { description: (e as Error).message });
+      toast.error("Falha ao gerar relatório", { description: (e as Error).message });
     } finally {
       setLoading(false);
     }
@@ -118,18 +131,18 @@ export function FailuresReportCard() {
 
   const downloadJson = useCallback(() => {
     if (!report) return;
-    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
     downloadBlob(
       `pg-stat-notif-report-${ts}.json`,
       JSON.stringify(report, null, 2),
-      'application/json',
+      "application/json",
     );
   }, [report]);
 
   const downloadCsv = useCallback(() => {
     if (!report) return;
     const esc = (v: unknown): string => {
-      if (v == null) return '';
+      if (v == null) return "";
       const s = String(v);
       return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
@@ -139,39 +152,50 @@ export function FailuresReportCard() {
     lines.push(`# generated_at,${esc(report.generated_at)}`);
     lines.push(`# from,${esc(f.from)}`);
     lines.push(`# to,${esc(f.to)}`);
-    lines.push(`# channel,${esc(f.channel ?? 'all')}`);
-    lines.push(`# status,${esc(f.status ?? 'all')}`);
-    lines.push(`# totals,failed=${report.totals.failed};pending=${report.totals.pending};in_flight=${report.totals.in_flight};succeeded=${report.totals.succeeded};total=${report.totals.total}`);
-    lines.push('');
+    lines.push(`# channel,${esc(f.channel ?? "all")}`);
+    lines.push(`# status,${esc(f.status ?? "all")}`);
+    lines.push(
+      `# totals,failed=${report.totals.failed};pending=${report.totals.pending};in_flight=${report.totals.in_flight};succeeded=${report.totals.succeeded};total=${report.totals.total}`,
+    );
+    lines.push("");
     // seção 1: taxa de falha por canal
-    lines.push('section,channel,failed,succeeded,total,fail_rate_pct');
+    lines.push("section,channel,failed,succeeded,total,fail_rate_pct");
     for (const r of report.fail_rate_by_channel) {
-      lines.push([
-        'fail_rate_by_channel',
-        esc(r.channel), esc(r.failed), esc(r.succeeded), esc(r.total),
-        r.fail_rate == null ? '' : esc(r.fail_rate.toFixed(2)),
-      ].join(','));
+      lines.push(
+        [
+          "fail_rate_by_channel",
+          esc(r.channel),
+          esc(r.failed),
+          esc(r.succeeded),
+          esc(r.total),
+          r.fail_rate == null ? "" : esc(r.fail_rate.toFixed(2)),
+        ].join(","),
+      );
     }
-    lines.push('');
+    lines.push("");
     // seção 2: agregado por canal e status
-    lines.push('section,channel,status,count,avg_attempts,max_attempts_seen,first_seen,last_seen');
+    lines.push("section,channel,status,count,avg_attempts,max_attempts_seen,first_seen,last_seen");
     for (const r of report.rows) {
-      lines.push([
-        'aggregate',
-        esc(r.channel), esc(r.status), esc(r.count),
-        r.avg_attempts == null ? '' : esc(r.avg_attempts),
-        r.max_attempts_seen == null ? '' : esc(r.max_attempts_seen),
-        esc(r.first_seen), esc(r.last_seen),
-      ].join(','));
+      lines.push(
+        [
+          "aggregate",
+          esc(r.channel),
+          esc(r.status),
+          esc(r.count),
+          r.avg_attempts == null ? "" : esc(r.avg_attempts),
+          r.max_attempts_seen == null ? "" : esc(r.max_attempts_seen),
+          esc(r.first_seen),
+          esc(r.last_seen),
+        ].join(","),
+      );
     }
-    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
     downloadBlob(
       `pg-stat-notif-report-${ts}.csv`,
-      '\uFEFF' + lines.join('\r\n'),
-      'text/csv;charset=utf-8',
+      "\uFEFF" + lines.join("\r\n"),
+      "text/csv;charset=utf-8",
     );
   }, [report]);
-
 
   const downloadPdf = useCallback(() => {
     if (!report) return;
@@ -179,33 +203,36 @@ export function FailuresReportCard() {
     const pageW = doc.internal.pageSize.getWidth();
 
     doc.setFontSize(16);
-    doc.text('Relatório de falhas de notificações', 14, 18);
+    doc.text("Relatório de falhas de notificações", 14, 18);
 
     doc.setFontSize(10);
     doc.setTextColor(100);
     const f = report.filters;
     doc.text(
-      `Período: ${new Date(f.from).toLocaleString('pt-BR')} → ${new Date(f.to).toLocaleString('pt-BR')}`,
-      14, 26,
+      `Período: ${new Date(f.from).toLocaleString("pt-BR")} → ${new Date(f.to).toLocaleString("pt-BR")}`,
+      14,
+      26,
     );
-    doc.text(`Canal: ${f.channel ?? 'todos'}   Status: ${f.status ?? 'todos'}`, 14, 32);
-    doc.text(`Gerado em: ${new Date(report.generated_at).toLocaleString('pt-BR')}`, 14, 38);
+    doc.text(`Canal: ${f.channel ?? "todos"}   Status: ${f.status ?? "todos"}`, 14, 32);
+    doc.text(`Gerado em: ${new Date(report.generated_at).toLocaleString("pt-BR")}`, 14, 38);
 
     // Totals block
     doc.setTextColor(0);
     doc.setFontSize(11);
-    doc.text('Totais', 14, 50);
+    doc.text("Totais", 14, 50);
     autoTable(doc, {
       startY: 53,
-      head: [['Falhou', 'Pendente', 'Em voo', 'Sucesso', 'Total']],
-      body: [[
-        String(report.totals.failed),
-        String(report.totals.pending),
-        String(report.totals.in_flight),
-        String(report.totals.succeeded),
-        String(report.totals.total),
-      ]],
-      theme: 'grid',
+      head: [["Falhou", "Pendente", "Em voo", "Sucesso", "Total"]],
+      body: [
+        [
+          String(report.totals.failed),
+          String(report.totals.pending),
+          String(report.totals.in_flight),
+          String(report.totals.succeeded),
+          String(report.totals.total),
+        ],
+      ],
+      theme: "grid",
       styles: { fontSize: 9 },
       headStyles: { fillColor: [11, 31, 58] },
     });
@@ -214,18 +241,18 @@ export function FailuresReportCard() {
 
     // Fail rate per channel
     doc.setFontSize(11);
-    doc.text('Taxa de falha por canal', 14, y + 10);
+    doc.text("Taxa de falha por canal", 14, y + 10);
     autoTable(doc, {
       startY: y + 13,
-      head: [['Canal', 'Falhou', 'Sucesso', 'Total', 'Taxa de falha (%)']],
-      body: report.fail_rate_by_channel.map(r => [
+      head: [["Canal", "Falhou", "Sucesso", "Total", "Taxa de falha (%)"]],
+      body: report.fail_rate_by_channel.map((r) => [
         r.channel,
         String(r.failed),
         String(r.succeeded),
         String(r.total),
-        r.fail_rate == null ? '—' : r.fail_rate.toFixed(2),
+        r.fail_rate == null ? "—" : r.fail_rate.toFixed(2),
       ]),
-      theme: 'grid',
+      theme: "grid",
       styles: { fontSize: 9 },
       headStyles: { fillColor: [11, 31, 58] },
     });
@@ -234,38 +261,41 @@ export function FailuresReportCard() {
 
     // Aggregated rows
     doc.setFontSize(11);
-    doc.text('Agregado por canal e status', 14, y + 10);
+    doc.text("Agregado por canal e status", 14, y + 10);
     autoTable(doc, {
       startY: y + 13,
-      head: [['Canal', 'Status', 'Contagem', 'Média tent.', 'Máx tent.', 'Primeira', 'Última']],
-      body: report.rows.map(r => [
+      head: [["Canal", "Status", "Contagem", "Média tent.", "Máx tent.", "Primeira", "Última"]],
+      body: report.rows.map((r) => [
         r.channel,
         STATUS_LABEL[r.status],
         String(r.count),
-        r.avg_attempts == null ? '—' : String(r.avg_attempts),
-        r.max_attempts_seen == null ? '—' : String(r.max_attempts_seen),
+        r.avg_attempts == null ? "—" : String(r.avg_attempts),
+        r.max_attempts_seen == null ? "—" : String(r.max_attempts_seen),
         fmtDt(r.first_seen),
         fmtDt(r.last_seen),
       ]),
-      theme: 'striped',
+      theme: "striped",
       styles: { fontSize: 8 },
       headStyles: { fillColor: [11, 31, 58] },
     });
 
     // Footer
-    const pages = (doc as unknown as { internal: { getNumberOfPages: () => number } })
-      .internal.getNumberOfPages();
+    const pages = (
+      doc as unknown as { internal: { getNumberOfPages: () => number } }
+    ).internal.getNumberOfPages();
     for (let i = 1; i <= pages; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(150);
       doc.text(
         `Cathedra Digital · pg_stat_pending_notifications · página ${i}/${pages}`,
-        pageW / 2, 290, { align: 'center' },
+        pageW / 2,
+        290,
+        { align: "center" },
       );
     }
 
-    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
     doc.save(`pg-stat-notif-report-${ts}.pdf`);
   }, [report]);
 
@@ -285,7 +315,9 @@ export function FailuresReportCard() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <Label htmlFor="rep-from" className="text-xs">De</Label>
+            <Label htmlFor="rep-from" className="text-xs">
+              De
+            </Label>
             <Input
               id="rep-from"
               type="date"
@@ -296,7 +328,9 @@ export function FailuresReportCard() {
             />
           </div>
           <div>
-            <Label htmlFor="rep-to" className="text-xs">Até</Label>
+            <Label htmlFor="rep-to" className="text-xs">
+              Até
+            </Label>
             <Input
               id="rep-to"
               type="date"
@@ -310,7 +344,9 @@ export function FailuresReportCard() {
           <div>
             <Label className="text-xs">Canal</Label>
             <Select value={channel} onValueChange={(v) => setChannel(v as ChannelFilter)}>
-              <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="webhook">Webhook</SelectItem>
@@ -321,7 +357,9 @@ export function FailuresReportCard() {
           <div>
             <Label className="text-xs">Status</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
-              <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="failed">Falhou</SelectItem>
@@ -335,14 +373,22 @@ export function FailuresReportCard() {
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground">Atalhos:</span>
-          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(1)}>24 h</Button>
-          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(7)}>7 d</Button>
-          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(30)}>30 d</Button>
-          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(90)}>90 d</Button>
+          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(1)}>
+            24 h
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(7)}>
+            7 d
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(30)}>
+            30 d
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7" onClick={() => setPreset(90)}>
+            90 d
+          </Button>
 
           <div className="ml-auto flex gap-2">
             <Button size="sm" onClick={run} disabled={!canRun || loading}>
-              <Play className={`h-4 w-4 mr-1 ${loading ? 'animate-pulse' : ''}`} />
+              <Play className={`h-4 w-4 mr-1 ${loading ? "animate-pulse" : ""}`} />
               Gerar
             </Button>
             <Button size="sm" variant="secondary" onClick={downloadJson} disabled={!report}>
@@ -369,7 +415,9 @@ export function FailuresReportCard() {
 
             {report.fail_rate_by_channel.length > 0 && (
               <div className="overflow-x-auto">
-                <p className="text-xs font-medium text-muted-foreground mb-1">Taxa de falha por canal</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  Taxa de falha por canal
+                </p>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -388,7 +436,7 @@ export function FailuresReportCard() {
                         <TableCell className="text-right tabular-nums">{r.succeeded}</TableCell>
                         <TableCell className="text-right tabular-nums">{r.total}</TableCell>
                         <TableCell className="text-right tabular-nums">
-                          {r.fail_rate == null ? '—' : r.fail_rate.toFixed(2)}
+                          {r.fail_rate == null ? "—" : r.fail_rate.toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -398,7 +446,9 @@ export function FailuresReportCard() {
             )}
 
             <div className="overflow-x-auto">
-              <p className="text-xs font-medium text-muted-foreground mb-1">Agregado por canal e status</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">
+                Agregado por canal e status
+              </p>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -425,10 +475,10 @@ export function FailuresReportCard() {
                       <TableCell>{STATUS_LABEL[r.status]}</TableCell>
                       <TableCell className="text-right tabular-nums">{r.count}</TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {r.avg_attempts == null ? '—' : r.avg_attempts}
+                        {r.avg_attempts == null ? "—" : r.avg_attempts}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
-                        {r.max_attempts_seen == null ? '—' : r.max_attempts_seen}
+                        {r.max_attempts_seen == null ? "—" : r.max_attempts_seen}
                       </TableCell>
                       <TableCell className="text-xs">{fmtDt(r.first_seen)}</TableCell>
                       <TableCell className="text-xs">{fmtDt(r.last_seen)}</TableCell>

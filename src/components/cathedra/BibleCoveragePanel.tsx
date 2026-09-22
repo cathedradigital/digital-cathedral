@@ -1,9 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 type Finding = {
   id: string;
@@ -23,7 +30,7 @@ type RunMeta = {
   total_chapters_checked: number | null;
 };
 
-const BLOCKING_TYPES = new Set(['missing_book', 'missing_chapter', 'empty_chapter']);
+const BLOCKING_TYPES = new Set(["missing_book", "missing_chapter", "empty_chapter"]);
 
 /**
  * Mostra qual a cobertura atual dos 73 livros segundo a última diagnose:
@@ -38,25 +45,33 @@ export const BibleCoveragePanel: React.FC = () => {
     setLoading(true);
     try {
       const { data: runs, error: e1 } = await supabase
-        .from('bible_diagnostic_runs')
-        .select('id, started_at, status, total_books_checked, total_chapters_checked')
-        .in('status', ['ok', 'warning', 'error'])
-        .order('started_at', { ascending: false })
+        .from("bible_diagnostic_runs")
+        .select("id, started_at, status, total_books_checked, total_chapters_checked")
+        .in("status", ["ok", "warning", "error"])
+        .order("started_at", { ascending: false })
         .limit(1);
       if (e1) throw e1;
       const last = runs?.[0] as RunMeta | undefined;
-      if (!last) { setRun(null); setFindings([]); return; }
+      if (!last) {
+        setRun(null);
+        setFindings([]);
+        return;
+      }
       setRun(last);
 
-      const { data, error } = await supabase.functions.invoke('bible-canon-diagnose', {
-        body: { action: 'get_findings', run_id: last.id },
+      const { data, error } = await supabase.functions.invoke("bible-canon-diagnose", {
+        body: { action: "get_findings", run_id: last.id },
       });
       if (error) throw error;
-      setFindings(((data?.rows as Finding[]) ?? []));
-    } finally { setLoading(false); }
+      setFindings((data?.rows as Finding[]) ?? []);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const summary = useMemo(() => {
     const byType: Record<string, number> = {};
@@ -65,7 +80,7 @@ export const BibleCoveragePanel: React.FC = () => {
     for (const f of findings) {
       byType[f.finding_type] = (byType[f.finding_type] ?? 0) + 1;
       if (BLOCKING_TYPES.has(f.finding_type)) blocking++;
-      const key = f.abbrev || '—';
+      const key = f.abbrev || "—";
       if (!byBook[key]) byBook[key] = { name: f.book_name || key, findings: [] };
       byBook[key].findings.push(f);
     }
@@ -74,9 +89,12 @@ export const BibleCoveragePanel: React.FC = () => {
         abbr,
         name: v.name,
         total: v.findings.length,
-        blocking: v.findings.filter(f => BLOCKING_TYPES.has(f.finding_type)).length,
-        chapters: v.findings.filter(f => f.chapter != null).map(f => f.chapter!).sort((a, b) => a - b),
-        types: Array.from(new Set(v.findings.map(f => f.finding_type))),
+        blocking: v.findings.filter((f) => BLOCKING_TYPES.has(f.finding_type)).length,
+        chapters: v.findings
+          .filter((f) => f.chapter != null)
+          .map((f) => f.chapter!)
+          .sort((a, b) => a - b),
+        types: Array.from(new Set(v.findings.map((f) => f.finding_type))),
       }))
       .sort((a, b) => b.blocking - a.blocking || b.total - a.total);
     return { byType, books, blocking };
@@ -89,13 +107,19 @@ export const BibleCoveragePanel: React.FC = () => {
           <div>
             <CardTitle className="text-lg">Cobertura dos 73 livros</CardTitle>
             <CardDescription>
-              {run
-                ? <>Última diagnose: {new Date(run.started_at).toLocaleString('pt-BR')} · status <strong>{run.status}</strong> · {run.total_books_checked ?? 0} livros · {run.total_chapters_checked ?? 0} capítulos verificados</>
-                : 'Nenhuma diagnose registrada ainda.'}
+              {run ? (
+                <>
+                  Última diagnose: {new Date(run.started_at).toLocaleString("pt-BR")} · status{" "}
+                  <strong>{run.status}</strong> · {run.total_books_checked ?? 0} livros ·{" "}
+                  {run.total_chapters_checked ?? 0} capítulos verificados
+                </>
+              ) : (
+                "Nenhuma diagnose registrada ainda."
+              )}
             </CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-            {loading ? 'Carregando…' : 'Atualizar'}
+            {loading ? "Carregando…" : "Atualizar"}
           </Button>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -108,7 +132,7 @@ export const BibleCoveragePanel: React.FC = () => {
             {Object.entries(summary.byType).map(([t, n]) => (
               <Badge
                 key={t}
-                variant={BLOCKING_TYPES.has(t) ? 'destructive' : 'outline'}
+                variant={BLOCKING_TYPES.has(t) ? "destructive" : "outline"}
                 className="font-mono text-xs"
               >
                 {t}: {n}
@@ -141,21 +165,31 @@ export const BibleCoveragePanel: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {summary.books.map(b => (
-                <TableRow key={b.abbr} className={b.blocking > 0 ? 'bg-red-50/40 dark:bg-red-950/10' : ''}>
+              {summary.books.map((b) => (
+                <TableRow
+                  key={b.abbr}
+                  className={b.blocking > 0 ? "bg-red-50/40 dark:bg-red-950/10" : ""}
+                >
                   <TableCell className="font-medium">{b.name}</TableCell>
                   <TableCell className="font-mono text-xs">{b.abbr}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {b.types.map(t => (
-                        <Badge key={t} variant={BLOCKING_TYPES.has(t) ? 'destructive' : 'outline'} className="text-[10px]">
+                      {b.types.map((t) => (
+                        <Badge
+                          key={t}
+                          variant={BLOCKING_TYPES.has(t) ? "destructive" : "outline"}
+                          className="text-[10px]"
+                        >
                           {t}
                         </Badge>
                       ))}
                     </div>
                   </TableCell>
-                  <TableCell className="font-mono text-xs max-w-[260px] truncate" title={b.chapters.join(', ')}>
-                    {b.chapters.length ? b.chapters.join(', ') : '—'}
+                  <TableCell
+                    className="font-mono text-xs max-w-[260px] truncate"
+                    title={b.chapters.join(", ")}
+                  >
+                    {b.chapters.length ? b.chapters.join(", ") : "—"}
                   </TableCell>
                   <TableCell className="text-right font-semibold">{b.blocking}</TableCell>
                   <TableCell className="text-right">{b.total}</TableCell>

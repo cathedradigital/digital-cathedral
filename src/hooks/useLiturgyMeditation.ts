@@ -10,11 +10,11 @@
  *      sobreviver a refresh e alimentar fallback quando IA falhar.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { telemetry } from '@/utils/navigation-telemetry';
-import type { DailyLiturgy } from '@/core/liturgy/LiturgyProvider';
+import { useCallback, useEffect, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { telemetry } from "@/utils/navigation-telemetry";
+import type { DailyLiturgy } from "@/core/liturgy/LiturgyProvider";
 
 export interface FatherCitation {
   author: string;
@@ -45,10 +45,7 @@ export interface ChurchHistoryBlock {
   document: string | null;
 }
 
-export type MeditationFailureCode =
-  | 'ai_credits_exhausted'
-  | 'ai_rate_limited'
-  | 'ai_unavailable';
+export type MeditationFailureCode = "ai_credits_exhausted" | "ai_rate_limited" | "ai_unavailable";
 
 export interface LiturgyMeditationRow {
   iso_date: string;
@@ -70,7 +67,7 @@ export interface LiturgyMeditationRow {
   fallback_code?: MeditationFailureCode | string;
   fallback_message?: string;
   /** Fonte do último fallback: cache local anterior, banco antigo, ou builder local. */
-  fallback_source?: 'local-cache' | 'local-builder' | 'previous-day';
+  fallback_source?: "local-cache" | "local-builder" | "previous-day";
   /** Estimativa (ISO) para próxima tentativa automática, quando aplicável. */
   fallback_retry_at?: string;
 }
@@ -82,13 +79,13 @@ type LiturgyMeditationResponse = {
 };
 
 const DEFAULT_AI_FALLBACK_MESSAGE =
-  'A meditação editorial automática está temporariamente indisponível. As leituras permanecem disponíveis para oração.';
+  "A meditação editorial automática está temporariamente indisponível. As leituras permanecem disponíveis para oração.";
 
 const AI_CREDITS_EXHAUSTED_MESSAGE =
-  'Os créditos de IA da plataforma se esgotaram. A meditação editorial voltará assim que forem recarregados.';
+  "Os créditos de IA da plataforma se esgotaram. A meditação editorial voltará assim que forem recarregados.";
 
 const AI_RATE_LIMIT_MESSAGE =
-  'Muitas requisições simultâneas ao gerador de meditação. Tente novamente em instantes.';
+  "Muitas requisições simultâneas ao gerador de meditação. Tente novamente em instantes.";
 
 /** Janela estimada até nova tentativa automática, em minutos, por código. */
 const RETRY_WINDOW_MINUTES: Record<MeditationFailureCode, number> = {
@@ -97,16 +94,16 @@ const RETRY_WINDOW_MINUTES: Record<MeditationFailureCode, number> = {
   ai_unavailable: 10,
 };
 
-const CACHE_KEY_PREFIX = 'cathedra:liturgy-meditation:v1:';
+const CACHE_KEY_PREFIX = "cathedra:liturgy-meditation:v1:";
 const CACHE_MAX_ENTRIES = 14;
-const FALLBACK_EVENTS_KEY = 'cathedra:liturgy-meditation:fallback-events:v1';
+const FALLBACK_EVENTS_KEY = "cathedra:liturgy-meditation:fallback-events:v1";
 const FALLBACK_EVENTS_MAX = 500;
 
 export interface FallbackEventLog {
   at: string;
   iso_date: string;
   code: MeditationFailureCode | string;
-  source: 'local-cache' | 'local-builder' | 'previous-day';
+  source: "local-cache" | "local-builder" | "previous-day";
   retry_at: string | null;
   message: string | null;
 }
@@ -158,7 +155,7 @@ export function clearFallbackEvents(): void {
 // ── Persistência local ─────────────────────────────────────────────
 function safeStorage(): Storage | null {
   try {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     return window.localStorage;
   } catch {
     return null;
@@ -220,7 +217,7 @@ function readMostRecentLocal(beforeIso: string): LiturgyMeditationRow | null {
       const k = s.key(i);
       if (!k || !k.startsWith(CACHE_KEY_PREFIX)) continue;
       try {
-        const row = JSON.parse(s.getItem(k) ?? 'null') as LiturgyMeditationRow | null;
+        const row = JSON.parse(s.getItem(k) ?? "null") as LiturgyMeditationRow | null;
         if (row && !row.fallback && row.iso_date && row.iso_date < beforeIso) {
           candidates.push(row);
         }
@@ -238,9 +235,9 @@ function readMostRecentLocal(beforeIso: string): LiturgyMeditationRow | null {
 
 function messageForCode(code: MeditationFailureCode | string | undefined): string {
   switch (code) {
-    case 'ai_credits_exhausted':
+    case "ai_credits_exhausted":
       return AI_CREDITS_EXHAUSTED_MESSAGE;
-    case 'ai_rate_limited':
+    case "ai_rate_limited":
       return AI_RATE_LIMIT_MESSAGE;
     default:
       return DEFAULT_AI_FALLBACK_MESSAGE;
@@ -248,29 +245,38 @@ function messageForCode(code: MeditationFailureCode | string | undefined): strin
 }
 
 function retryAtFor(code: MeditationFailureCode | string | undefined): string {
-  const known = (code as MeditationFailureCode) in RETRY_WINDOW_MINUTES
-    ? (code as MeditationFailureCode)
-    : 'ai_unavailable';
+  const known =
+    (code as MeditationFailureCode) in RETRY_WINDOW_MINUTES
+      ? (code as MeditationFailureCode)
+      : "ai_unavailable";
   const minutes = RETRY_WINDOW_MINUTES[known];
   return new Date(Date.now() + minutes * 60_000).toISOString();
 }
 
 async function fetchExisting(isoDate: string): Promise<LiturgyMeditationRow | null> {
   const { data, error } = await supabase
-    .from('liturgy_meditations' as any)
-    .select('*')
-    .eq('iso_date', isoDate)
+    .from("liturgy_meditations" as any)
+    .select("*")
+    .eq("iso_date", isoDate)
     .maybeSingle();
   if (error) return null;
   return (data as unknown as LiturgyMeditationRow | null) ?? null;
 }
 
-async function readInvokeFailure(error: unknown): Promise<{ code: MeditationFailureCode; message: string }> {
+async function readInvokeFailure(
+  error: unknown,
+): Promise<{ code: MeditationFailureCode; message: string }> {
   const context = (error as { context?: unknown })?.context;
   if (context instanceof Response) {
     try {
-      const payload = await context.clone().json() as { code?: string; message?: string; detail?: string };
-      const code = (payload.code as MeditationFailureCode) ?? inferCode(context.status, payload.message ?? payload.detail);
+      const payload = (await context.clone().json()) as {
+        code?: string;
+        message?: string;
+        detail?: string;
+      };
+      const code =
+        (payload.code as MeditationFailureCode) ??
+        inferCode(context.status, payload.message ?? payload.detail);
       return {
         code,
         message: payload.message ?? messageForCode(code),
@@ -286,13 +292,13 @@ async function readInvokeFailure(error: unknown): Promise<{ code: MeditationFail
 }
 
 function inferCode(status?: number, message?: string): MeditationFailureCode {
-  if (status === 402 || /402|payment required|credit|insufficient|quota/i.test(message ?? '')) {
-    return 'ai_credits_exhausted';
+  if (status === 402 || /402|payment required|credit|insufficient|quota/i.test(message ?? "")) {
+    return "ai_credits_exhausted";
   }
-  if (status === 429 || /429|rate limit|too many requests/i.test(message ?? '')) {
-    return 'ai_rate_limited';
+  if (status === 429 || /429|rate limit|too many requests/i.test(message ?? "")) {
+    return "ai_rate_limited";
   }
-  return 'ai_unavailable';
+  return "ai_unavailable";
 }
 
 function buildClientFallbackMeditation(
@@ -306,9 +312,9 @@ function buildClientFallbackMeditation(
     return {
       ...localSame,
       fallback: true,
-      fallback_code: (failure?.code as MeditationFailureCode) ?? 'ai_unavailable',
+      fallback_code: (failure?.code as MeditationFailureCode) ?? "ai_unavailable",
       fallback_message: failure?.message ?? messageForCode(failure?.code),
-      fallback_source: 'local-cache',
+      fallback_source: "local-cache",
       fallback_retry_at: retryAtFor(failure?.code),
     };
   }
@@ -320,16 +326,16 @@ function buildClientFallbackMeditation(
       ...previous,
       iso_date: isoDate,
       fallback: true,
-      fallback_code: (failure?.code as MeditationFailureCode) ?? 'ai_unavailable',
+      fallback_code: (failure?.code as MeditationFailureCode) ?? "ai_unavailable",
       fallback_message: failure?.message ?? messageForCode(failure?.code),
-      fallback_source: 'previous-day',
+      fallback_source: "previous-day",
       fallback_retry_at: retryAtFor(failure?.code),
     };
   }
 
   // 3. Último recurso: montar a partir das leituras do dia.
-  const gospelRef = readings.evangelho?.referencia ?? 'Evangelho do dia';
-  const celebration = readings.liturgia || readings.dia || 'Liturgia do dia';
+  const gospelRef = readings.evangelho?.referencia ?? "Evangelho do dia";
+  const celebration = readings.liturgia || readings.dia || "Liturgia do dia";
   const psalmRefrain = readings.salmo?.refrao;
 
   return {
@@ -343,28 +349,34 @@ function buildClientFallbackMeditation(
     magisterium: [],
     logos: {
       observe: `Leia novamente ${gospelRef} e acolha o gesto central de Cristo sem pressa.`,
-      reflect: 'Pergunte onde essa Palavra toca sua vida concreta hoje, especialmente nas decisões pequenas.',
-      pray: 'Fale com o Senhor a partir da frase que mais permaneceu no coração.',
-      live: 'Escolha um ato simples de fidelidade antes do fim do dia.',
+      reflect:
+        "Pergunte onde essa Palavra toca sua vida concreta hoje, especialmente nas decisões pequenas.",
+      pray: "Fale com o Senhor a partir da frase que mais permaneceu no coração.",
+      live: "Escolha um ato simples de fidelidade antes do fim do dia.",
     },
-    final_prayer: 'Senhor, guardai em mim a vossa Palavra. Dai-me um coração atento, humilde e perseverante, para que a liturgia deste dia se torne vida concreta. Amém.',
+    final_prayer:
+      "Senhor, guardai em mim a vossa Palavra. Dai-me um coração atento, humilde e perseverante, para que a liturgia deste dia se torne vida concreta. Amém.",
     church_history: null,
-    action_of_day: 'Releia o Evangelho em silêncio por três minutos e pratique uma obra concreta de caridade.',
+    action_of_day:
+      "Releia o Evangelho em silêncio por três minutos e pratique uma obra concreta de caridade.",
     version: null,
     model: null,
-    provider: 'local-fallback',
+    provider: "local-fallback",
     prompt_hash: null,
     generated_at: new Date().toISOString(),
     fallback: true,
-    fallback_code: (failure?.code as MeditationFailureCode) ?? 'ai_unavailable',
+    fallback_code: (failure?.code as MeditationFailureCode) ?? "ai_unavailable",
     fallback_message: failure?.message ?? messageForCode(failure?.code),
-    fallback_source: 'local-builder',
+    fallback_source: "local-builder",
     fallback_retry_at: retryAtFor(failure?.code),
   };
 }
 
-async function generate(isoDate: string, readings: DailyLiturgy): Promise<LiturgyMeditationRow | null> {
-  const { data, error } = await supabase.functions.invoke('liturgy-meditation', {
+async function generate(
+  isoDate: string,
+  readings: DailyLiturgy,
+): Promise<LiturgyMeditationRow | null> {
+  const { data, error } = await supabase.functions.invoke("liturgy-meditation", {
     body: {
       iso_date: isoDate,
       readings: {
@@ -390,7 +402,10 @@ async function generate(isoDate: string, readings: DailyLiturgy): Promise<Liturg
     else {
       // Enriquecer fallback do servidor com fonte local se disponível.
       return buildClientFallbackMeditation(isoDate, readings, {
-        code: (payload?.code as MeditationFailureCode) ?? (row.fallback_code as MeditationFailureCode) ?? 'ai_unavailable',
+        code:
+          (payload?.code as MeditationFailureCode) ??
+          (row.fallback_code as MeditationFailureCode) ??
+          "ai_unavailable",
         message: payload?.message ?? row.fallback_message ?? messageForCode(row.fallback_code),
       });
     }
@@ -398,7 +413,7 @@ async function generate(isoDate: string, readings: DailyLiturgy): Promise<Liturg
   }
   if (payload?.code || payload?.message) {
     return buildClientFallbackMeditation(isoDate, readings, {
-      code: (payload.code as MeditationFailureCode) ?? 'ai_unavailable',
+      code: (payload.code as MeditationFailureCode) ?? "ai_unavailable",
       message: payload.message ?? DEFAULT_AI_FALLBACK_MESSAGE,
     });
   }
@@ -410,7 +425,7 @@ export function useLiturgyMeditation(isoDate: string, readings: DailyLiturgy | n
   const enabled = !!readings?.evangelho?.texto;
 
   const query = useQuery({
-    queryKey: ['liturgy-meditation', isoDate],
+    queryKey: ["liturgy-meditation", isoDate],
     queryFn: async () => {
       const cached = await fetchExisting(isoDate);
       if (cached) {
@@ -435,13 +450,15 @@ export function useLiturgyMeditation(isoDate: string, readings: DailyLiturgy | n
     if (query.data || query.isFetching) return;
     (async () => {
       const row = await generate(isoDate, readings);
-      if (row) qc.setQueryData(['liturgy-meditation', isoDate], row);
-    })().catch(() => { /* silencia — bloco degrada */ });
+      if (row) qc.setQueryData(["liturgy-meditation", isoDate], row);
+    })().catch(() => {
+      /* silencia — bloco degrada */
+    });
   }, [enabled, readings, isoDate, query.data, query.isFetching, qc]);
 
   const retry = useCallback(async () => {
     if (!readings) return;
-    await qc.invalidateQueries({ queryKey: ['liturgy-meditation', isoDate] });
+    await qc.invalidateQueries({ queryKey: ["liturgy-meditation", isoDate] });
     await query.refetch();
   }, [qc, isoDate, readings, query]);
 
@@ -455,8 +472,8 @@ export function useLiturgyMeditation(isoDate: string, readings: DailyLiturgy | n
   useEffect(() => {
     const row = query.data;
     if (!row || !row.fallback) return;
-    const code = (row.fallback_code as MeditationFailureCode | undefined) ?? 'ai_unavailable';
-    const source = row.fallback_source ?? 'local-builder';
+    const code = (row.fallback_code as MeditationFailureCode | undefined) ?? "ai_unavailable";
+    const source = row.fallback_source ?? "local-builder";
     const key = `${row.iso_date}|${code}|${source}`;
     if (lastLoggedRef.current === key) return;
     lastLoggedRef.current = key;
@@ -467,7 +484,7 @@ export function useLiturgyMeditation(isoDate: string, readings: DailyLiturgy | n
       retry_at: row.fallback_retry_at ?? null,
       message: row.fallback_message ?? null,
     };
-    telemetry.log('liturgy.meditation.fallback', 'warn', payload);
+    telemetry.log("liturgy.meditation.fallback", "warn", payload);
     persistFallbackEvent({ ...payload, at: new Date().toISOString() });
   }, [query.data]);
 

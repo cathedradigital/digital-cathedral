@@ -6,13 +6,22 @@
  * como placeholders "Não configurado" até seu manifesto ganhar `ready: true`.
  */
 import { useMemo } from "react";
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Target, ArrowRight, Lock, ShieldCheck, Trophy, PieChart, Activity, Mail } from "lucide-react";
+import {
+  Target,
+  ArrowRight,
+  Lock,
+  ShieldCheck,
+  Trophy,
+  PieChart,
+  Activity,
+  Mail,
+} from "lucide-react";
 import { IACalculator } from "@/components/admin/IACalculator";
 import { IAMetricsDashboard } from "@/components/admin/IAMetricsDashboard";
 import { LandingAnalyticsDashboard } from "@/components/admin/LandingAnalyticsDashboard";
@@ -25,14 +34,24 @@ import type { EntityManifest } from "@/lib/editorial-engine/types";
 
 function tierClasses(tier: string) {
   switch (tier) {
-    case "gold":   return { text: "text-emerald-700", bar: "bg-emerald-500",  border: "border-l-emerald-500" };
-    case "silver": return { text: "text-sky-700",     bar: "bg-sky-500",      border: "border-l-sky-500" };
-    case "bronze": return { text: "text-amber-700",   bar: "bg-amber-500",    border: "border-l-amber-500" };
-    default:       return { text: "text-red-700",     bar: "bg-red-500",      border: "border-l-red-500" };
+    case "gold":
+      return { text: "text-emerald-700", bar: "bg-emerald-500", border: "border-l-emerald-500" };
+    case "silver":
+      return { text: "text-sky-700", bar: "bg-sky-500", border: "border-l-sky-500" };
+    case "bronze":
+      return { text: "text-amber-700", bar: "bg-amber-500", border: "border-l-amber-500" };
+    default:
+      return { text: "text-red-700", bar: "bg-red-500", border: "border-l-red-500" };
   }
 }
 
-function statusLabel(s: { frozen: boolean; ice: number; gatePassing: number; gateTotal: number; ready: boolean }): string {
+function statusLabel(s: {
+  frozen: boolean;
+  ice: number;
+  gatePassing: number;
+  gateTotal: number;
+  ready: boolean;
+}): string {
   if (!s.ready) return "Não configurado";
   if (s.gateTotal === 0) return "Aguardando primeira auditoria";
   if (s.frozen) return "Pronto para Certificação";
@@ -59,10 +78,15 @@ function EntityRow({ manifest }: { manifest: EntityManifest }) {
                   {iceTierLabel(s.tier)}
                 </Badge>
               ) : (
-                <Badge variant="outline" className="text-[10px] text-muted-foreground">Placeholder</Badge>
+                <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                  Placeholder
+                </Badge>
               )}
               {s.frozen && (
-                <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-[10px] text-amber-700">
+                <Badge
+                  variant="outline"
+                  className="border-amber-500/50 bg-amber-500/10 text-[10px] text-amber-700"
+                >
                   <Trophy className="mr-1 h-2.5 w-2.5" /> Certificável
                 </Badge>
               )}
@@ -72,27 +96,46 @@ function EntityRow({ manifest }: { manifest: EntityManifest }) {
             <div className="mt-3">
               <div className="mb-1 flex items-center justify-between text-[11px]">
                 <span className="text-muted-foreground">ICE</span>
-                <span className={`font-semibold tabular-nums ${manifest.ready ? t.text : "text-muted-foreground"}`}>
+                <span
+                  className={`font-semibold tabular-nums ${manifest.ready ? t.text : "text-muted-foreground"}`}
+                >
                   {manifest.ready && s.snapshot ? `${pct}%` : "—"}
                 </span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div className={`h-full transition-all ${t.bar}`} style={{ width: manifest.ready ? `${pct}%` : "0%" }} />
+                <div
+                  className={`h-full transition-all ${t.bar}`}
+                  style={{ width: manifest.ready ? `${pct}%` : "0%" }}
+                />
               </div>
             </div>
 
             <div className="mt-3 grid grid-cols-4 gap-3 text-[11px]">
-              <Stat label="Editorial" value={manifest.ready && s.snapshot ? `${Math.round(s.editorial)}%` : "—"} />
-              <Stat label="Nexus"     value={manifest.ready && s.snapshot ? `${Math.round(s.nexus)}%` : "—"} />
-              <Stat label="Gate"      value={manifest.ready && s.gateTotal > 0 ? `${s.gatePassing}/${s.gateTotal}` : "—"} />
-              <Stat label="Freeze"    value={manifest.ready ? `${s.freezePassCount}/${s.freezeTotalCount}` : "—"} />
+              <Stat
+                label="Editorial"
+                value={manifest.ready && s.snapshot ? `${Math.round(s.editorial)}%` : "—"}
+              />
+              <Stat
+                label="Nexus"
+                value={manifest.ready && s.snapshot ? `${Math.round(s.nexus)}%` : "—"}
+              />
+              <Stat
+                label="Gate"
+                value={manifest.ready && s.gateTotal > 0 ? `${s.gatePassing}/${s.gateTotal}` : "—"}
+              />
+              <Stat
+                label="Freeze"
+                value={manifest.ready ? `${s.freezePassCount}/${s.freezeTotalCount}` : "—"}
+              />
             </div>
           </div>
 
           {manifest.ready ? (
             <div className="flex gap-1">
               <Button asChild variant="ghost" size="sm">
-                <Link to={manifest.auditRoute}>Abrir <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+                <Link to={manifest.auditRoute}>
+                  Abrir <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                </Link>
               </Button>
               {(["glossary", "prayers", "catechism"] as const).includes(manifest.id as any) && (
                 <Button asChild variant="outline" size="sm">
@@ -122,15 +165,15 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 /** Painel agregado do "Sistema" — média ponderada de todas as entidades prontas. */
 function SystemPanel() {
-  const summaries = editorialRegistry.map(m => ({ m, s: useEditorialSummary(m) }));
-  const ready = summaries.filter(x => x.m.ready && x.s.snapshot);
+  const summaries = editorialRegistry.map((m) => ({ m, s: useEditorialSummary(m) }));
+  const ready = summaries.filter((x) => x.m.ready && x.s.snapshot);
   const totalWeight = ready.reduce((s, x) => s + x.m.weight, 0);
   const weightedIce = totalWeight
     ? Math.round(ready.reduce((s, x) => s + x.s.ice * x.m.weight, 0) / totalWeight)
     : 0;
   const readyCount = ready.length;
   const totalCount = editorialRegistry.length;
-  const allFrozen = ready.length > 0 && ready.every(x => x.s.frozen);
+  const allFrozen = ready.length > 0 && ready.every((x) => x.s.frozen);
 
   const systemStatus = allFrozen
     ? "Pronto para Certificação"
@@ -151,17 +194,27 @@ function SystemPanel() {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">ICE global (ponderado)</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              ICE global (ponderado)
+            </p>
             <p className="font-serif text-3xl tabular-nums">{weightedIce}%</p>
             <Progress value={weightedIce} className="mt-2 h-1.5" />
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Módulos plugados</p>
-            <p className="font-serif text-3xl tabular-nums">{readyCount}/{totalCount}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Módulos plugados
+            </p>
+            <p className="font-serif text-3xl tabular-nums">
+              {readyCount}/{totalCount}
+            </p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Certificáveis</p>
-            <p className="font-serif text-3xl tabular-nums">{ready.filter(x => x.s.frozen).length}</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Certificáveis
+            </p>
+            <p className="font-serif text-3xl tabular-nums">
+              {ready.filter((x) => x.s.frozen).length}
+            </p>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Status</p>
@@ -189,7 +242,8 @@ export default function MissionControl() {
         <div>
           <h1 className="font-serif text-2xl leading-none">Cathedra Mission Control</h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Sala de controle do ecossistema editorial · agregando todos os módulos plugados no Editorial Engine.
+            Sala de controle do ecossistema editorial · agregando todos os módulos plugados no
+            Editorial Engine.
           </p>
         </div>
       </div>
@@ -209,11 +263,11 @@ export default function MissionControl() {
             <PieChart className="h-4 w-4" /> Custos IA
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="knowledge" className="space-y-8">
           <SystemPanel />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-            {entities.map(m => (
+            {entities.map((m) => (
               <EntityRow key={m.id} manifest={m} />
             ))}
           </div>
@@ -235,8 +289,8 @@ export default function MissionControl() {
 
       <p className="mt-6 text-[11px] text-muted-foreground">
         Módulos com selo <b>Placeholder</b> aguardam registro do manifesto no Editorial Engine
-        (`src/lib/editorial-engine/manifests/`). Ganhar o selo <b>Ouro</b> ({">= 95% ICE"}) e
-        os 5 critérios do gate torna a entidade <b>Certificável</b>.
+        (`src/lib/editorial-engine/manifests/`). Ganhar o selo <b>Ouro</b> ({">= 95% ICE"}) e os 5
+        critérios do gate torna a entidade <b>Certificável</b>.
       </p>
     </div>
   );

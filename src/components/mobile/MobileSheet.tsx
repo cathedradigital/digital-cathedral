@@ -58,10 +58,7 @@ export function MobileSheet({
       >
         {showHandle && (
           <div className="flex justify-center pt-2 pb-1">
-            <span
-              aria-hidden="true"
-              className="h-1 w-10 rounded-full bg-stitch-outline-variant"
-            />
+            <span aria-hidden="true" className="h-1 w-10 rounded-full bg-stitch-outline-variant" />
           </div>
         )}
 

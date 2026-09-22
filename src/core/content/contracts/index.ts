@@ -7,6 +7,6 @@ export type {
   ReaderSection,
   ReaderMetadata,
   ReaderNavigation,
-} from './ReaderContent';
-export type { SearchResult } from './SearchResult';
-export type { NavigationTarget } from './NavigationTarget';
+} from "./ReaderContent";
+export type { SearchResult } from "./SearchResult";
+export type { NavigationTarget } from "./NavigationTarget";

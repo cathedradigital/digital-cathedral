@@ -13,48 +13,53 @@ import {
   type ReaderAutoNexusOutput,
   type ReaderNexusBucket,
   BUCKET_LABEL,
-} from './ReaderAutoNexus';
+} from "./ReaderAutoNexus";
 
-import { bibleReaderAutoNexus } from './bibleAutoNexus';
-import { catechismReaderAutoNexus } from './catechismAutoNexus';
-import { magisteriumReaderAutoNexus } from './magisteriumAutoNexus';
-import { saintReaderAutoNexus } from './saintAutoNexus';
-import { liturgyReaderAutoNexus } from './liturgyAutoNexus';
+import { bibleReaderAutoNexus } from "./bibleAutoNexus";
+import { catechismReaderAutoNexus } from "./catechismAutoNexus";
+import { magisteriumReaderAutoNexus } from "./magisteriumAutoNexus";
+import { saintReaderAutoNexus } from "./saintAutoNexus";
+import { liturgyReaderAutoNexus } from "./liturgyAutoNexus";
 
 // Wrappers para os 3 adapters legados: adaptam a assinatura ao contrato ReaderAutoNexus.
-import { resolvePrayerAutoNexus, type PrayerNexusInput } from './prayerAutoNexus';
-import { resolveAutoNexus, type GlossaryLike } from './glossaryAutoNexus';
-import { resolveJourneyAutoNexus, type JourneyLike } from './journeyAutoNexus';
+import { resolvePrayerAutoNexus, type PrayerNexusInput } from "./prayerAutoNexus";
+import { resolveAutoNexus, type GlossaryLike } from "./glossaryAutoNexus";
+import { resolveJourneyAutoNexus, type JourneyLike } from "./journeyAutoNexus";
 
 const prayerReaderAutoNexus: ReaderAutoNexus<PrayerNexusInput> = {
-  kind: 'prayer',
-  label: 'Oração',
+  kind: "prayer",
+  label: "Oração",
   buildSuggestions(input) {
     const r = resolvePrayerAutoNexus(input);
     return {
       selfId: r.selfId,
       suggestions: r.suggestions,
-      byBucket: r.byBucket as ReaderAutoNexusOutput['byBucket'],
+      byBucket: r.byBucket as ReaderAutoNexusOutput["byBucket"],
       labels: BUCKET_LABEL,
     };
   },
 };
 
 const glossaryReaderAutoNexus: ReaderAutoNexus<GlossaryLike> = {
-  kind: 'glossary',
-  label: 'Verbete',
+  kind: "glossary",
+  label: "Verbete",
   buildSuggestions(input) {
     const r = resolveAutoNexus(input);
     // Deriva sugestões (1 por bucket) a partir do byKind já resolvido.
     const buckets: ReaderNexusBucket[] = [
-      'bible', 'catechism', 'magisterium', 'saint', 'prayer', 'journey',
+      "bible",
+      "catechism",
+      "magisterium",
+      "saint",
+      "prayer",
+      "journey",
     ];
     const suggestions = buckets
       .map((b) => r.byKind[b]?.[0])
       .filter((n): n is NonNullable<typeof n> => !!n?.url)
       .map((n, i) => ({
-        intent: i === 0 ? ('study' as const) : ('deepen' as const),
-        eyebrow: BUCKET_LABEL[n.node.kind as ReaderNexusBucket] ?? 'Continuar',
+        intent: i === 0 ? ("study" as const) : ("deepen" as const),
+        eyebrow: BUCKET_LABEL[n.node.kind as ReaderNexusBucket] ?? "Continuar",
         label: n.node.label,
         target: n,
         weight: 1,
@@ -62,15 +67,15 @@ const glossaryReaderAutoNexus: ReaderAutoNexus<GlossaryLike> = {
     return {
       selfId: r.selfId,
       suggestions,
-      byBucket: r.byKind as ReaderAutoNexusOutput['byBucket'],
+      byBucket: r.byKind as ReaderAutoNexusOutput["byBucket"],
       labels: r.labels,
     };
   },
 };
 
 const journeyReaderAutoNexus: ReaderAutoNexus<JourneyLike> = {
-  kind: 'journey',
-  label: 'Jornada',
+  kind: "journey",
+  label: "Jornada",
   buildSuggestions(input) {
     const r = resolveJourneyAutoNexus(input);
     const suggestions = Object.entries(r.byKind)
@@ -78,8 +83,8 @@ const journeyReaderAutoNexus: ReaderAutoNexus<JourneyLike> = {
       .filter((n) => !!n.url)
       .slice(0, 6)
       .map((n, i) => ({
-        intent: i === 0 ? ('apply' as const) : ('study' as const),
-        eyebrow: r.labels[n.node.kind] ?? 'Continuar',
+        intent: i === 0 ? ("apply" as const) : ("study" as const),
+        eyebrow: r.labels[n.node.kind] ?? "Continuar",
         label: n.node.label,
         target: n,
         weight: 1,
@@ -87,7 +92,7 @@ const journeyReaderAutoNexus: ReaderAutoNexus<JourneyLike> = {
     return {
       selfId: null,
       suggestions,
-      byBucket: r.byKind as ReaderAutoNexusOutput['byBucket'],
+      byBucket: r.byKind as ReaderAutoNexusOutput["byBucket"],
       labels: r.labels,
     };
   },

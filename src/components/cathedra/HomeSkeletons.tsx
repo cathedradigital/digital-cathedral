@@ -1,4 +1,4 @@
-import { ContentSkeleton, SkeletonGrid } from './primitives';
+import { ContentSkeleton, SkeletonGrid } from "./primitives";
 
 /**
  * HomeSkeletons — API pública preservada (SectionSkeleton, RitualSkeleton, HeroSkeleton).

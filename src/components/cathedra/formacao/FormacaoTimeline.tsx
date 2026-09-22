@@ -8,15 +8,15 @@
  *  - Clique navega direto para o Reader (JornadaStepPage).
  */
 
-import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { useAuth } from '@/hooks/useAuth';
-import { JourneyService } from '@/core/journey';
-import type { Journey, JourneyProgress, JourneyStep } from '@/core/journey';
+import React, { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { useAuth } from "@/hooks/useAuth";
+import { JourneyService } from "@/core/journey";
+import type { Journey, JourneyProgress, JourneyStep } from "@/core/journey";
 
-type StepState = 'done' | 'current' | 'future';
+type StepState = "done" | "current" | "future";
 
 const FormacaoTimeline: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const FormacaoTimeline: React.FC = () => {
           setProgress(p ?? []);
         }
       } catch (err) {
-        console.error('[FormacaoTimeline] load failed', err);
+        console.error("[FormacaoTimeline] load failed", err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -71,12 +71,12 @@ const FormacaoTimeline: React.FC = () => {
     let currentAssigned = false;
     for (const s of steps) {
       if (doneIds.has(s.id)) {
-        map.set(s.id, 'done');
+        map.set(s.id, "done");
       } else if (!currentAssigned) {
-        map.set(s.id, 'current');
+        map.set(s.id, "current");
         currentAssigned = true;
       } else {
-        map.set(s.id, 'future');
+        map.set(s.id, "future");
       }
     }
     return map;
@@ -104,7 +104,7 @@ const FormacaoTimeline: React.FC = () => {
 
       <ol className="relative" role="list">
         {steps.map((step, idx) => {
-          const st = stateByStepId.get(step.id) ?? 'future';
+          const st = stateByStepId.get(step.id) ?? "future";
           const isLast = idx === steps.length - 1;
           return (
             <motion.li
@@ -119,7 +119,7 @@ const FormacaoTimeline: React.FC = () => {
                 <span
                   aria-hidden="true"
                   className={`absolute left-[7px] md:left-[9px] top-6 bottom-0 w-px ${
-                    st === 'done' ? 'bg-primary/40' : 'bg-border'
+                    st === "done" ? "bg-primary/40" : "bg-border"
                   }`}
                 />
               )}
@@ -128,37 +128,35 @@ const FormacaoTimeline: React.FC = () => {
               <span
                 aria-hidden="true"
                 className={`absolute left-0 top-1.5 flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded-full transition-colors ${
-                  st === 'done'
-                    ? 'bg-primary text-primary-foreground'
-                    : st === 'current'
-                      ? 'bg-primary/20 ring-2 ring-primary'
-                      : 'bg-background border border-border'
+                  st === "done"
+                    ? "bg-primary text-primary-foreground"
+                    : st === "current"
+                      ? "bg-primary/20 ring-2 ring-primary"
+                      : "bg-background border border-border"
                 }`}
               >
-                {st === 'done' && <Icons.Check className="w-3 h-3" />}
+                {st === "done" && <Icons.Check className="w-3 h-3" />}
               </span>
 
               <button
                 type="button"
                 onClick={() => openStep(step)}
                 className={`group text-left w-full min-h-11 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-opacity ${
-                  st === 'future' ? 'opacity-60 hover:opacity-100' : 'opacity-100'
+                  st === "future" ? "opacity-60 hover:opacity-100" : "opacity-100"
                 }`}
                 aria-label={`Abrir capítulo ${step.step_order}: ${step.title} (${
-                  st === 'done' ? 'concluído' : st === 'current' ? 'em andamento' : 'próximo'
+                  st === "done" ? "concluído" : st === "current" ? "em andamento" : "próximo"
                 })`}
               >
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground mb-1">
                   Capítulo {step.step_order}
-                  {st === 'current' && (
-                    <span className="ml-2 text-primary">· Em andamento</span>
-                  )}
+                  {st === "current" && <span className="ml-2 text-primary">· Em andamento</span>}
                 </p>
                 <h3
                   className={`font-display leading-snug transition-colors ${
-                    st === 'current'
-                      ? 'text-2xl md:text-3xl text-foreground'
-                      : 'text-xl md:text-2xl text-foreground/90 group-hover:text-foreground'
+                    st === "current"
+                      ? "text-2xl md:text-3xl text-foreground"
+                      : "text-xl md:text-2xl text-foreground/90 group-hover:text-foreground"
                   }`}
                   style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >

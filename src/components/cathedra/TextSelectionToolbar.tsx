@@ -1,9 +1,9 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { Button } from '@/components/ui/button';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
+import { Button } from "@/components/ui/button";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
 
 interface TextSelectionToolbarProps {
   onHighlight: (color: string) => void;
@@ -14,17 +14,17 @@ interface TextSelectionToolbarProps {
   activeColor?: string | null;
 }
 
-export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({ 
-  onHighlight, 
+export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
+  onHighlight,
   onAddNote,
   onDeleteHighlight,
   onAskLogos,
   activeHighlightId,
-  activeColor
+  activeColor,
 }) => {
   const { settings } = useReadingSettings();
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
-  const [selectedText, setSelectedText] = useState('');
+  const [selectedText, setSelectedText] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,11 +33,11 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
       if (selection && selection.toString().trim().length > 0) {
         const range = selection.getRangeAt(0);
         const rect = range.getBoundingClientRect();
-        
+
         setSelectedText(selection.toString());
         setPosition({
           top: rect.top + window.scrollY - 60,
-          left: rect.left + rect.width / 2
+          left: rect.left + rect.width / 2,
         });
       } else {
         // Only clear if clicking outside the toolbar
@@ -47,15 +47,15 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
       }
     };
 
-    document.addEventListener('mouseup', handleMouseUp);
-    return () => document.removeEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => document.removeEventListener("mouseup", handleMouseUp);
   }, []);
 
   const highlightColors = [
-    { name: 'yellow', value: 'bg-yellow-200/60 dark:bg-yellow-500/30' },
-    { name: 'green', value: 'bg-green-200/60 dark:bg-green-500/30' },
-    { name: 'blue', value: 'bg-blue-200/60 dark:bg-blue-500/30' },
-    { name: 'red', value: 'bg-red-200/60 dark:bg-red-500/30' }
+    { name: "yellow", value: "bg-yellow-200/60 dark:bg-yellow-500/30" },
+    { name: "green", value: "bg-green-200/60 dark:bg-green-500/30" },
+    { name: "blue", value: "bg-blue-200/60 dark:bg-blue-500/30" },
+    { name: "red", value: "bg-red-200/60 dark:bg-red-500/30" },
   ];
 
   return (
@@ -63,24 +63,24 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
       {position && (
         <motion.div
           ref={containerRef}
-          initial={{ opacity: 0, y: 15, scale: 0.9, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, y: 15, scale: 0.9, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, y: 15, scale: 0.9, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: 15, scale: 0.9, filter: "blur(10px)" }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          style={{ 
-            position: 'absolute', 
-            top: position.top, 
+          style={{
+            position: "absolute",
+            top: position.top,
             left: position.left,
-            transform: 'translateX(-50%)',
-            zIndex: 1000
+            transform: "translateX(-50%)",
+            zIndex: 1000,
           }}
           className="flex flex-col gap-spacing-xs p-spacing-xs bg-card/90 backdrop-blur-2xl border border-primary/10 rounded-[1.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] min-w-[240px]"
         >
           <div className="flex items-center justify-between px-spacing-xs pt-spacing-2xs">
             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/40">
-              {activeHighlightId ? 'Editar Destaque' : 'Ações de Leitura'}
+              {activeHighlightId ? "Editar Destaque" : "Ações de Leitura"}
             </p>
-            <button 
+            <button
               onClick={() => setPosition(null)}
               className="text-primary/60 hover:text-primary transition-colors"
             >
@@ -98,13 +98,15 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
                     setPosition(null);
                   }}
                   className={`w-spacing-lg h-spacing-lg rounded-premium-full ${color.value} border-2 transition-all hover:scale-110 ${
-                    activeColor === color.name ? 'border-primary shadow-premium-sm' : 'border-white/20'
+                    activeColor === color.name
+                      ? "border-primary shadow-premium-sm"
+                      : "border-white/20"
                   }`}
                   title={`Destaque ${color.name}`}
                 />
               ))}
             </div>
-            
+
             <div className="flex items-center gap-spacing-2xs flex-1">
               <Button
                 variant="ghost"
@@ -126,7 +128,11 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
                   if (!settings.totalSilence) setPosition(null);
                 }}
                 className="h-spacing-xl rounded-premium px-spacing-sm text-[10px] font-bold uppercase tracking-widest gap-spacing-xs hover:bg-primary/5 flex-1 text-primary/60"
-                title={settings.totalSilence ? "Aprofundar em silêncio (Logos IA)" : "Aprofundar com Logos IA"}
+                title={
+                  settings.totalSilence
+                    ? "Aprofundar em silêncio (Logos IA)"
+                    : "Aprofundar com Logos IA"
+                }
               >
                 <Icons.Sparkles className="w-spacing-sm h-spacing-sm stroke-[1]" /> Logos
               </Button>
@@ -147,7 +153,7 @@ export const TextSelectionToolbar: React.FC<TextSelectionToolbarProps> = ({
               )}
             </div>
           </div>
-          
+
           {selectedText && !activeHighlightId && (
             <div className="px-spacing-sm py-spacing-xs border-t border-primary/5 mt-spacing-2xs">
               <p className="text-[10px] text-muted-foreground italic line-clamp-spacing-2xs leading-relaxed">

@@ -7,22 +7,17 @@
  * comportamento nativo em listas curtas.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
-import { List, useDynamicRowHeight, type RowComponentProps } from 'react-window';
-import { cn } from '@/lib/utils';
-import type { FaqItem } from '@/lib/glossary/sanitizeFaq';
+import { useCallback, useEffect, useRef } from "react";
+import { List, useDynamicRowHeight, type RowComponentProps } from "react-window";
+import { cn } from "@/lib/utils";
+import type { FaqItem } from "@/lib/glossary/sanitizeFaq";
 
 interface RowProps {
   items: FaqItem[];
   onRowResize: (index: number, height: number) => void;
 }
 
-function FaqRow({
-  index,
-  style,
-  items,
-  onRowResize,
-}: RowComponentProps<RowProps>) {
+function FaqRow({ index, style, items, onRowResize }: RowComponentProps<RowProps>) {
   const item = items[index];
   const ref = useRef<HTMLDivElement>(null);
 
@@ -39,7 +34,7 @@ function FaqRow({
   }, [index, onRowResize]);
 
   if (!item) return null;
-  const answer = typeof item.answer === 'string' ? item.answer : '';
+  const answer = typeof item.answer === "string" ? item.answer : "";
   const paragraphs = answer.trim() ? answer.split(/\n{2,}/) : [];
 
   return (
@@ -65,7 +60,9 @@ function FaqRow({
           <div className="px-6 pb-6 pt-2 font-stitch-serif text-stitch-body text-stitch-on-surface leading-relaxed border-t border-stitch-outline-variant/30">
             {paragraphs.length > 0 ? (
               paragraphs.map((p, k) => (
-                <p key={k} className={cn('mb-3 last:mb-0')}>{p}</p>
+                <p key={k} className={cn("mb-3 last:mb-0")}>
+                  {p}
+                </p>
               ))
             ) : (
               <p className="mb-0 italic text-stitch-on-surface-variant">Resposta em preparação.</p>

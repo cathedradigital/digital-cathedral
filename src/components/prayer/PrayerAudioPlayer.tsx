@@ -11,16 +11,16 @@
  *
  * P1 — Botão consolidado no Design System via `<Button variant="pill">`.
  */
-import React from 'react';
-import { Headphones } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Headphones } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   audioUrl?: string | null;
   label?: string;
 }
 
-export const PrayerAudioPlayer: React.FC<Props> = ({ audioUrl, label = 'Áudio da oração' }) => {
+export const PrayerAudioPlayer: React.FC<Props> = ({ audioUrl, label = "Áudio da oração" }) => {
   if (!audioUrl) {
     return (
       <Button

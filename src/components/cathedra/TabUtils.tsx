@@ -1,39 +1,42 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 
 /**
  * Hook to manage arrow navigation between focusable elements (tabs).
  * Supports horizontal (Left/Right) navigation.
  */
 export function useTabNavigation() {
-  const handleKeyDown = useCallback((
-    e: React.KeyboardEvent, 
-    currentIndex: number, 
-    totalCount: number, 
-    onSelect: (index: number) => void,
-    tabPrefixId: string = 'tab-'
-  ) => {
-    let nextIndex = -1;
-    
-    if (e.key === 'ArrowRight') {
-      nextIndex = (currentIndex + 1) % totalCount;
-    } else if (e.key === 'ArrowLeft') {
-      nextIndex = (currentIndex - 1 + totalCount) % totalCount;
-    } else if (e.key === 'Home') {
-      nextIndex = 0;
-    } else if (e.key === 'End') {
-      nextIndex = totalCount - 1;
-    }
+  const handleKeyDown = useCallback(
+    (
+      e: React.KeyboardEvent,
+      currentIndex: number,
+      totalCount: number,
+      onSelect: (index: number) => void,
+      tabPrefixId: string = "tab-",
+    ) => {
+      let nextIndex = -1;
 
-    if (nextIndex !== -1) {
-      e.preventDefault();
-      const nextTab = document.getElementById(`${tabPrefixId}${nextIndex}`);
-      if (nextTab) {
-        nextTab.focus();
-        // Option to auto-select tab on focus (common in some implementations)
-        // onSelect(nextIndex); 
+      if (e.key === "ArrowRight") {
+        nextIndex = (currentIndex + 1) % totalCount;
+      } else if (e.key === "ArrowLeft") {
+        nextIndex = (currentIndex - 1 + totalCount) % totalCount;
+      } else if (e.key === "Home") {
+        nextIndex = 0;
+      } else if (e.key === "End") {
+        nextIndex = totalCount - 1;
       }
-    }
-  }, []);
+
+      if (nextIndex !== -1) {
+        e.preventDefault();
+        const nextTab = document.getElementById(`${tabPrefixId}${nextIndex}`);
+        if (nextTab) {
+          nextTab.focus();
+          // Option to auto-select tab on focus (common in some implementations)
+          // onSelect(nextIndex);
+        }
+      }
+    },
+    [],
+  );
 
   return { handleKeyDown };
 }
@@ -50,40 +53,46 @@ export function useRovingTabindex(totalCount: number, containerRef?: React.RefOb
     setActiveIndex(0);
   }, [totalCount]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number, onSelect?: (index: number) => void) => {
-    // Prevent focus loss during rapid navigation by checking if element exists
-    const root = containerRef?.current || document;
-    const getElements = () => Array.from(root.querySelectorAll('[data-roving-item="true"], [data-roving-item]')) as HTMLElement[];
-    
-    let nextIndex = -1;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      nextIndex = (index + 1) % totalCount;
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      nextIndex = (index - 1 + totalCount) % totalCount;
-    } else if (e.key === 'Home') {
-      nextIndex = 0;
-    } else if (e.key === 'End') {
-      nextIndex = totalCount - 1;
-    }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent, index: number, onSelect?: (index: number) => void) => {
+      // Prevent focus loss during rapid navigation by checking if element exists
+      const root = containerRef?.current || document;
+      const getElements = () =>
+        Array.from(
+          root.querySelectorAll('[data-roving-item="true"], [data-roving-item]'),
+        ) as HTMLElement[];
 
-    if (nextIndex !== -1) {
-      e.preventDefault();
-      setActiveIndex(nextIndex);
-      
-      // Focus the next element after state update
-      setTimeout(() => {
-        const els = getElements();
-        if (els[nextIndex]) {
-          els[nextIndex].focus();
-        }
-      }, 0);
-    }
+      let nextIndex = -1;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        nextIndex = (index + 1) % totalCount;
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        nextIndex = (index - 1 + totalCount) % totalCount;
+      } else if (e.key === "Home") {
+        nextIndex = 0;
+      } else if (e.key === "End") {
+        nextIndex = totalCount - 1;
+      }
 
-    if ((e.key === 'Enter' || e.key === ' ') && onSelect) {
-      e.preventDefault();
-      onSelect(index);
-    }
-  }, [totalCount]);
+      if (nextIndex !== -1) {
+        e.preventDefault();
+        setActiveIndex(nextIndex);
+
+        // Focus the next element after state update
+        setTimeout(() => {
+          const els = getElements();
+          if (els[nextIndex]) {
+            els[nextIndex].focus();
+          }
+        }, 0);
+      }
+
+      if ((e.key === "Enter" || e.key === " ") && onSelect) {
+        e.preventDefault();
+        onSelect(index);
+      }
+    },
+    [totalCount],
+  );
 
   return { activeIndex, setActiveIndex, handleKeyDown };
 }
@@ -92,29 +101,29 @@ export function useRovingTabindex(totalCount: number, containerRef?: React.RefOb
  * Shared utility for tab attributes to ensure consistency.
  */
 export const getTabProps = (
-  id: string, 
-  panelId: string, 
-  isSelected: boolean, 
-  className?: string
+  id: string,
+  panelId: string,
+  isSelected: boolean,
+  className?: string,
 ) => ({
   id,
-  role: 'tab',
-  'aria-selected': isSelected,
-  'aria-controls': panelId,
+  role: "tab",
+  "aria-selected": isSelected,
+  "aria-controls": panelId,
   tabIndex: isSelected ? 0 : -1,
-  className
+  className,
 });
 
 export const getTabPanelProps = (
-  id: string, 
-  tabId: string, 
-  isVisible: boolean, 
-  className?: string
+  id: string,
+  tabId: string,
+  isVisible: boolean,
+  className?: string,
 ) => ({
   id,
-  role: 'tabpanel',
-  'aria-labelledby': tabId,
+  role: "tabpanel",
+  "aria-labelledby": tabId,
   tabIndex: isVisible ? 0 : -1,
   hidden: !isVisible,
-  className
+  className,
 });

@@ -1,5 +1,5 @@
-import type { ProfileAdapter, AtriumUser } from '../types';
-import type { AtriumProfile } from '../../types';
+import type { ProfileAdapter, AtriumUser } from "../types";
+import type { AtriumProfile } from "../../types";
 
 /**
  * ProfileAdapterMock — permite trocar o perfil de teste via querystring:
@@ -12,30 +12,30 @@ import type { AtriumProfile } from '../../types';
  * a interface `getCurrent()` não muda.
  */
 
-const VALID: AtriumProfile[] = ['visitor', 'recurrent', 'catechist', 'priest', 'seminarian'];
+const VALID: AtriumProfile[] = ["visitor", "recurrent", "catechist", "priest", "seminarian"];
 
 const NAMES: Record<AtriumProfile, string | undefined> = {
   visitor: undefined,
-  recurrent: 'João',
-  catechist: 'Catequista Ana',
-  priest: 'Pe. Miguel',
-  seminarian: 'Seminarista Pedro',
+  recurrent: "João",
+  catechist: "Catequista Ana",
+  priest: "Pe. Miguel",
+  seminarian: "Seminarista Pedro",
 };
 
 function readProfileFromUrl(): AtriumProfile {
-  if (typeof window === 'undefined') return 'recurrent';
-  const p = new URLSearchParams(window.location.search).get('profile');
-  return (VALID.includes(p as AtriumProfile) ? p : 'recurrent') as AtriumProfile;
+  if (typeof window === "undefined") return "recurrent";
+  const p = new URLSearchParams(window.location.search).get("profile");
+  return (VALID.includes(p as AtriumProfile) ? p : "recurrent") as AtriumProfile;
 }
 
 /** Cache in-adapter: uma promise por perfil detectado na URL. */
 const cache = new Map<AtriumProfile, Promise<AtriumUser>>();
 
 function invalidateOnUrlChange() {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   const clear = () => cache.clear();
-  window.addEventListener('popstate', clear);
-  window.addEventListener('hashchange', clear);
+  window.addEventListener("popstate", clear);
+  window.addEventListener("hashchange", clear);
 }
 invalidateOnUrlChange();
 
@@ -47,7 +47,7 @@ export const ProfileAdapterMock: ProfileAdapter = {
     const p = Promise.resolve<AtriumUser>({
       profile,
       displayName: NAMES[profile],
-      isAuthenticated: profile !== 'visitor',
+      isAuthenticated: profile !== "visitor",
     });
     cache.set(profile, p);
     return p;

@@ -1,10 +1,10 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import { Icons } from '@/constants';
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/constants";
 import * as Sentry from "@sentry/react";
-import { trackNavigationError } from '@/lib/telemetry';
-import { supabase } from '@/lib/db';
-import { RefreshCcw, Home, AlertTriangle } from 'lucide-react';
+import { trackNavigationError } from "@/lib/telemetry";
+import { supabase } from "@/lib/db";
+import { RefreshCcw, Home, AlertTriangle } from "lucide-react";
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ interface State {
 
 export class PreviewFallback extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -29,10 +29,10 @@ export class PreviewFallback extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const errorId = trackNavigationError(error, { componentStack: errorInfo.componentStack });
-    console.error('[PreviewFallback]', error, errorInfo);
-    
+    console.error("[PreviewFallback]", error, errorInfo);
+
     Sentry.captureException(error, {
-      extra: { componentStack: errorInfo.componentStack, ...errorInfo }
+      extra: { componentStack: errorInfo.componentStack, ...errorInfo },
     });
   }
 
@@ -49,21 +49,19 @@ export class PreviewFallback extends Component<Props, State> {
               Preview em Restauração
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Não conseguimos carregar esta parte da experiência. Isso pode ser um problema temporário de conexão ou um erro inesperado.
+              Não conseguimos carregar esta parte da experiência. Isso pode ser um problema
+              temporário de conexão ou um erro inesperado.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs">
-            <Button
-              onClick={() => window.location.reload()}
-              className="flex-1 gap-2"
-            >
+            <Button onClick={() => window.location.reload()} className="flex-1 gap-2">
               <RefreshCcw className="w-4 h-4" />
               Recarregar Preview
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.location.href = '/'}
+              onClick={() => (window.location.href = "/")}
               className="flex-1 gap-2"
             >
               <Home className="w-4 h-4" />

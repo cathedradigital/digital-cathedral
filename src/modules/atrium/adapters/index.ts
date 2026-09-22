@@ -4,14 +4,14 @@
  * Sprint 2.0.6: trocar `Mock` por `Supabase` sem alterar componentes.
  */
 
-import type { AtriumAdapters } from './types';
-import { JourneyAdapterMock } from './mocks/JourneyAdapterMock';
-import { SearchAdapterMock } from './mocks/SearchAdapterMock';
-import { ThemeAdapterMock } from './mocks/ThemeAdapterMock';
-import { LiturgyAdapterReal } from './real/LiturgyAdapterReal';
-import { RecommendationAdapterMock } from './mocks/RecommendationAdapterMock';
-import { ProfileAdapterMock } from './mocks/ProfileAdapterMock';
-import { AnnouncementAdapterMock } from './mocks/AnnouncementAdapterMock';
+import type { AtriumAdapters } from "./types";
+import { JourneyAdapterMock } from "./mocks/JourneyAdapterMock";
+import { SearchAdapterMock } from "./mocks/SearchAdapterMock";
+import { ThemeAdapterMock } from "./mocks/ThemeAdapterMock";
+import { LiturgyAdapterReal } from "./real/LiturgyAdapterReal";
+import { RecommendationAdapterMock } from "./mocks/RecommendationAdapterMock";
+import { ProfileAdapterMock } from "./mocks/ProfileAdapterMock";
+import { AnnouncementAdapterMock } from "./mocks/AnnouncementAdapterMock";
 
 export const atriumAdapters: AtriumAdapters = {
   journey: JourneyAdapterMock,
@@ -23,4 +23,4 @@ export const atriumAdapters: AtriumAdapters = {
   announcement: AnnouncementAdapterMock,
 };
 
-export * from './types';
+export * from "./types";

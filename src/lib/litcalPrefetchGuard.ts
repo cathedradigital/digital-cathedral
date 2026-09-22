@@ -13,12 +13,12 @@
  *    em background deve passar por este guard.
  */
 
-const STORAGE_KEY = '__litcal_no_prefetch__';
+const STORAGE_KEY = "__litcal_no_prefetch__";
 
 const fromURL = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
   try {
-    return new URLSearchParams(window.location.search).get('litcal_no_prefetch') === '1';
+    return new URLSearchParams(window.location.search).get("litcal_no_prefetch") === "1";
   } catch {
     return false;
   }
@@ -26,18 +26,22 @@ const fromURL = (): boolean => {
 
 /** Snapshot inicial — chame uma vez no boot para travar para a sessão inteira. */
 export const initLiturgicalPrefetchGuard = () => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   if (fromURL()) {
-    try { window.sessionStorage.setItem(STORAGE_KEY, '1'); } catch { /* silent */ }
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      /* silent */
+    }
   }
 };
 
 /** True quando QUALQUER prefetch do calendário litúrgico deve ser bloqueado. */
 export const isLiturgicalPrefetchDisabled = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
   if (fromURL()) return true;
   try {
-    return window.sessionStorage.getItem(STORAGE_KEY) === '1';
+    return window.sessionStorage.getItem(STORAGE_KEY) === "1";
   } catch {
     return false;
   }

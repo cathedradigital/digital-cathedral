@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Icons } from '@/constants';
-import { useLang } from '@/hooks/useLang';
-import { Button } from '@/components/ui/button';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useState } from "react";
+import { Icons } from "@/constants";
+import { useLang } from "@/hooks/useLang";
+import { Button } from "@/components/ui/button";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,10 +15,10 @@ import {
 
 interface AudioButtonProps {
   className?: string;
-  variant?: 'outline' | 'ghost' | 'default';
+  variant?: "outline" | "ghost" | "default";
 }
 
-const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'outline' }) => {
+const AudioButton: React.FC<AudioButtonProps> = ({ className = "", variant = "outline" }) => {
   const { t } = useLang();
   const { settings, updateSettings } = useReadingSettings();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -35,21 +35,23 @@ const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'ou
 
   const toggle = () => {
     if (isSpeaking && !isPaused) {
-       window.dispatchEvent(new CustomEvent('toggle-audio', { detail: { action: 'pause' } }));
+      window.dispatchEvent(new CustomEvent("toggle-audio", { detail: { action: "pause" } }));
     } else if (isSpeaking && isPaused) {
-       window.dispatchEvent(new CustomEvent('toggle-audio', { detail: { action: 'play' } }));
+      window.dispatchEvent(new CustomEvent("toggle-audio", { detail: { action: "play" } }));
     } else {
-       window.dispatchEvent(new CustomEvent('toggle-audio'));
+      window.dispatchEvent(new CustomEvent("toggle-audio"));
     }
   };
 
   const stop = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.dispatchEvent(new CustomEvent('toggle-audio', { detail: { action: 'stop' } }));
+    window.dispatchEvent(new CustomEvent("toggle-audio", { detail: { action: "stop" } }));
   };
 
   const setRate = (rate: number) => {
-    window.dispatchEvent(new CustomEvent('toggle-audio', { detail: { action: 'rate', value: rate } }));
+    window.dispatchEvent(
+      new CustomEvent("toggle-audio", { detail: { action: "rate", value: rate } }),
+    );
   };
 
   if (settings.totalSilence) return null;
@@ -58,10 +60,13 @@ const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'ou
     <div className="flex items-center gap-spacing-2xs">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
+          <Button
             variant={variant}
             size="icon"
-            className={cn(className, "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2")}
+            className={cn(
+              className,
+              "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+            )}
             title="Velocidade e Opções"
             aria-label="Opções de Áudio e Velocidade"
           >
@@ -69,11 +74,13 @@ const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'ou
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-background/95 backdrop-blur-xl border-primary/10">
-          <DropdownMenuLabel className="text-[10px] uppercase tracking-widest font-black">Velocidade</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-[10px] uppercase tracking-widest font-black">
+            Velocidade
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(rate => (
-            <DropdownMenuItem 
-              key={rate} 
+          {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((rate) => (
+            <DropdownMenuItem
+              key={rate}
               onClick={() => setRate(rate)}
               className={settings.audioPlaybackRate === rate ? "text-primary font-bold" : ""}
             >
@@ -83,12 +90,21 @@ const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'ou
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Button 
+      <Button
         onClick={toggle}
         variant={variant}
-        className={cn(className, "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2")}
-        title={isSpeaking && !isPaused ? t('audio_pause') : t('audio_read')}
-        aria-label={isSpeaking && !isPaused ? "Pausar Áudio" : isSpeaking && isPaused ? "Retomar Áudio" : "Ouvir Bíblia"}
+        className={cn(
+          className,
+          "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        )}
+        title={isSpeaking && !isPaused ? t("audio_pause") : t("audio_read")}
+        aria-label={
+          isSpeaking && !isPaused
+            ? "Pausar Áudio"
+            : isSpeaking && isPaused
+              ? "Retomar Áudio"
+              : "Ouvir Bíblia"
+        }
       >
         {isSpeaking && !isPaused ? (
           <Icons.Pause className="w-spacing-md h-spacing-md" />
@@ -96,12 +112,16 @@ const AudioButton: React.FC<AudioButtonProps> = ({ className = '', variant = 'ou
           <Icons.Volume2 className="w-spacing-md h-spacing-md group-hover:scale-110 transition-transform" />
         )}
         <span className="hidden md:inline-block ml-spacing-xs">
-          {isSpeaking && !isPaused ? "Pausar" : isSpeaking && isPaused ? "Retomar" : t('audio_read')}
+          {isSpeaking && !isPaused
+            ? "Pausar"
+            : isSpeaking && isPaused
+              ? "Retomar"
+              : t("audio_read")}
         </span>
       </Button>
 
       {isSpeaking && (
-        <Button 
+        <Button
           onClick={stop}
           variant="ghost"
           size="icon"

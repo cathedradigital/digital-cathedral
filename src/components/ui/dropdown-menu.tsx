@@ -1,7 +1,6 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-
 
 import { cn } from "@/lib/utils";
 
@@ -142,7 +141,11 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn("px-spacing-xs py-spacing-2xs text-premium-sm font-semibold", inset && "pl-spacing-xl", className)}
+    className={cn(
+      "px-spacing-xs py-spacing-2xs text-premium-sm font-semibold",
+      inset && "pl-spacing-xl",
+      className,
+    )}
     {...props}
   />
 ));
@@ -152,12 +155,21 @@ const DropdownMenuSeparator = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <DropdownMenuPrimitive.Separator ref={ref} className={cn("-mx-spacing-2xs my-spacing-2xs h-px bg-muted", className)} {...props} />
+  <DropdownMenuPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-spacing-2xs my-spacing-2xs h-px bg-muted", className)}
+    {...props}
+  />
 ));
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={cn("ml-auto text-premium-xs tracking-widest opacity-60", className)} {...props} />;
+  return (
+    <span
+      className={cn("ml-auto text-premium-xs tracking-widest opacity-60", className)}
+      {...props}
+    />
+  );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 

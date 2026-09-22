@@ -1,12 +1,12 @@
-import React, { useState, useTransition, useEffect } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Icons } from '../../constants';
-import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
-import BibleVersePopover from './BibleVersePopover';
-import CatechismPopover from './CatechismPopover';
-import { Button } from '@/components/ui/button';
-import { type Saint } from '@/data/saints';
+import React, { useState, useTransition, useEffect } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Icons } from "../../constants";
+import { parseTheologicalReferences } from "@/lib/theologicalRefParser";
+import BibleVersePopover from "./BibleVersePopover";
+import CatechismPopover from "./CatechismPopover";
+import { Button } from "@/components/ui/button";
+import { type Saint } from "@/data/saints";
 
 interface Props {
   saint: Saint;
@@ -18,9 +18,17 @@ interface Props {
 const RichText: React.FC<{ text: string; className?: string }> = ({ text, className }) => (
   <div className={className}>
     {parseTheologicalReferences(text).map((seg, i) => {
-      if (seg.type === 'bibleRef')
-        return <BibleVersePopover key={i} abbr={seg.abbr!} chapter={seg.chapter!} verse={seg.verse} label={seg.value} />;
-      if (seg.type === 'catechismRef')
+      if (seg.type === "bibleRef")
+        return (
+          <BibleVersePopover
+            key={i}
+            abbr={seg.abbr!}
+            chapter={seg.chapter!}
+            verse={seg.verse}
+            label={seg.value}
+          />
+        );
+      if (seg.type === "catechismRef")
         return <CatechismPopover key={i} paragraph={seg.paragraph!} />;
       return <span key={i}>{seg.value}</span>;
     })}
@@ -30,15 +38,15 @@ const RichText: React.FC<{ text: string; className?: string }> = ({ text, classN
 const TAB_SKELETON_MS = 220;
 
 const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => {
-  const [tab, setTab] = useState<'historia' | 'virtude' | 'padroeiro' | 'reflexao'>(
-    autoReflect ? 'reflexao' : 'historia'
+  const [tab, setTab] = useState<"historia" | "virtude" | "padroeiro" | "reflexao">(
+    autoReflect ? "reflexao" : "historia",
   );
   const [isPending, startTransition] = useTransition();
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [reflecting, setReflecting] = useState(false);
 
   useEffect(() => {
-    if (autoReflect) setTab('reflexao');
+    if (autoReflect) setTab("reflexao");
   }, [autoReflect]);
 
   const changeTab = (next: typeof tab) => {
@@ -49,7 +57,7 @@ const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => 
     return () => clearTimeout(t);
   };
 
-  const virtues = saint.virtues && saint.virtues.length > 0 ? saint.virtues : ['Santidade'];
+  const virtues = saint.virtues && saint.virtues.length > 0 ? saint.virtues : ["Santidade"];
   const patronOf = saint.patronOf && saint.patronOf.length > 0 ? saint.patronOf : [];
   const loading = isPending || showSkeleton;
 
@@ -60,19 +68,31 @@ const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => 
           className="grid grid-cols-2 md:grid-cols-4 w-full bg-secondary/40 p-spacing-2xs rounded-premium h-auto"
           aria-label="Seções do santo"
         >
-          <TabsTrigger value="historia" className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs">
+          <TabsTrigger
+            value="historia"
+            className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs"
+          >
             <Icons.Info className="w-spacing-sm h-spacing-sm" aria-hidden="true" />
             História
           </TabsTrigger>
-          <TabsTrigger value="virtude" className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs">
+          <TabsTrigger
+            value="virtude"
+            className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs"
+          >
             <Icons.Shield className="w-spacing-sm h-spacing-sm" aria-hidden="true" />
             Virtude
           </TabsTrigger>
-          <TabsTrigger value="padroeiro" className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs">
+          <TabsTrigger
+            value="padroeiro"
+            className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs"
+          >
             <Icons.Heart className="w-spacing-sm h-spacing-sm" aria-hidden="true" />
             Padroeiro(a)
           </TabsTrigger>
-          <TabsTrigger value="reflexao" className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs">
+          <TabsTrigger
+            value="reflexao"
+            className="text-premium-xs font-black uppercase tracking-widest gap-spacing-2xs"
+          >
             <Icons.Sparkles className="w-spacing-sm h-spacing-sm" aria-hidden="true" />
             Refletir
           </TabsTrigger>
@@ -96,12 +116,12 @@ const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => 
               <TabsContent value="historia" className="focus-visible:outline-none">
                 <div className="prose prose-sm dark:prose-invert max-w-none">
                   <RichText
-                    text={saint.bio || ''}
+                    text={saint.bio || ""}
                     className="text-premium-lg font-serif italic text-foreground/90 leading-relaxed border-l-4 border-primary/20 pl-spacing-lg py-spacing-2xs"
                   />
                   {saint.fullBio && (
                     <div className="mt-spacing-lg text-muted-foreground leading-relaxed text-premium-sm space-y-spacing-md">
-                      {saint.fullBio.split('\n\n').map((p, i) => (
+                      {saint.fullBio.split("\n\n").map((p, i) => (
                         <RichText key={i} text={p} />
                       ))}
                     </div>
@@ -128,9 +148,11 @@ const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => 
                     </div>
                   )}
                   <p className="text-premium-sm text-muted-foreground font-serif italic pt-spacing-md">
-                    A vida de {saint.name} é um convite a cultivar{' '}
-                    <span className="text-primary font-bold not-italic">{virtues[0].toLowerCase()}</span> nas
-                    circunstâncias ordinárias do dia.
+                    A vida de {saint.name} é um convite a cultivar{" "}
+                    <span className="text-primary font-bold not-italic">
+                      {virtues[0].toLowerCase()}
+                    </span>{" "}
+                    nas circunstâncias ordinárias do dia.
                   </p>
                 </div>
               </TabsContent>
@@ -165,8 +187,8 @@ const SaintDetailTabs: React.FC<Props> = ({ saint, onReflect, autoReflect }) => 
               <TabsContent value="reflexao" className="focus-visible:outline-none">
                 <div className="space-y-spacing-md">
                   <p className="text-premium-sm text-muted-foreground font-serif italic">
-                    Refletir com Logos sobre a vida e o testemunho de {saint.name}, aplicando à sua jornada
-                    espiritual de hoje.
+                    Refletir com Logos sobre a vida e o testemunho de {saint.name}, aplicando à sua
+                    jornada espiritual de hoje.
                   </p>
                   <Button
                     onClick={() => {

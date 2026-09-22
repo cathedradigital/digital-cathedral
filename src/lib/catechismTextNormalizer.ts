@@ -30,7 +30,7 @@ const FOOTNOTE_GLUED_RE = /([a-záàâãéêíóôõúç])(\d{1,3})(?=[\s.,;:)])
 function fixQuotes(text: string): string {
   let open = true;
   return text.replace(/"/g, () => {
-    const q = open ? '\u201C' : '\u201D';
+    const q = open ? "\u201C" : "\u201D";
     open = !open;
     return q;
   });
@@ -73,7 +73,7 @@ export interface NormalizationReport {
 
 function countMatches(text: string, re: RegExp): number {
   let n = 0;
-  const local = new RegExp(re.source, re.flags.includes('g') ? re.flags : re.flags + 'g');
+  const local = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g");
   while (local.exec(text) !== null) n++;
   return n;
 }
@@ -85,18 +85,15 @@ function countMatches(text: string, re: RegExp): number {
  */
 export function normalizeCatechismTextWithReport(
   input: string | null | undefined,
-  options: NormalizeOptions = {}
+  options: NormalizeOptions = {},
 ): NormalizationReport {
   const opts = { ...DEFAULTS, ...options };
   const originalLength = input?.length ?? 0;
-  const t0 =
-    typeof performance !== 'undefined' && performance.now
-      ? performance.now()
-      : Date.now();
+  const t0 = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 
   if (!input) {
     return {
-      text: '',
+      text: "",
       changed: false,
       changes: emptyChanges(),
       originalLength: 0,
@@ -109,44 +106,44 @@ export function normalizeCatechismTextWithReport(
   const changes = emptyChanges();
 
   changes.crlfReplaced = countMatches(text, CRLF_RE);
-  text = text.replace(CRLF_RE, '\n');
+  text = text.replace(CRLF_RE, "\n");
 
   changes.invisibleCharsRemoved = countMatches(text, INVISIBLE_CHARS_RE);
-  text = text.replace(INVISIBLE_CHARS_RE, '');
+  text = text.replace(INVISIBLE_CHARS_RE, "");
 
   changes.nbspReplaced = countMatches(text, NBSP_RE);
-  text = text.replace(NBSP_RE, ' ');
+  text = text.replace(NBSP_RE, " ");
 
   if (opts.fixFootnotes) {
     changes.footnotesSeparated = countMatches(text, FOOTNOTE_GLUED_RE);
-    text = text.replace(FOOTNOTE_GLUED_RE, '$1');
+    text = text.replace(FOOTNOTE_GLUED_RE, "$1");
   }
 
   if (opts.extractInlineLists) {
     changes.bulletsExtracted = countMatches(text, BULLET_INLINE_RE);
-    text = text.replace(BULLET_INLINE_RE, '$1\n\n- ');
+    text = text.replace(BULLET_INLINE_RE, "$1\n\n- ");
     changes.numberedExtracted = countMatches(text, NUMBERED_INLINE_RE);
-    text = text.replace(NUMBERED_INLINE_RE, '$1\n\n$2. ');
+    text = text.replace(NUMBERED_INLINE_RE, "$1\n\n$2. ");
   }
 
   changes.spacesBeforePunctRemoved = countMatches(text, SPACE_BEFORE_PUNCT_RE);
-  text = text.replace(SPACE_BEFORE_PUNCT_RE, '$1');
+  text = text.replace(SPACE_BEFORE_PUNCT_RE, "$1");
 
   changes.missingSpacesAfterPunct = countMatches(text, MISSING_SPACE_AFTER_PUNCT_RE);
-  text = text.replace(MISSING_SPACE_AFTER_PUNCT_RE, '$1 ');
+  text = text.replace(MISSING_SPACE_AFTER_PUNCT_RE, "$1 ");
 
-  text = text.replace(TRAILING_WS_RE, '');
+  text = text.replace(TRAILING_WS_RE, "");
   text = text.replace(LEADING_WS_RE, (match, offset, str) => {
     const rest = str.slice(offset);
     if (/^[-*]\s|^\d+\.\s/.test(rest.trimStart())) return match;
-    return '';
+    return "";
   });
 
   changes.multiSpacesCollapsed = countMatches(text, MULTI_SPACE_RE);
-  text = text.replace(MULTI_SPACE_RE, ' ');
+  text = text.replace(MULTI_SPACE_RE, " ");
 
   changes.excessBreaksCollapsed = countMatches(text, EXCESS_BREAKS_RE);
-  text = text.replace(EXCESS_BREAKS_RE, '\n\n');
+  text = text.replace(EXCESS_BREAKS_RE, "\n\n");
 
   if (opts.normalizeQuotes) {
     changes.quotesConverted = countMatches(text, /"/g);
@@ -155,10 +152,7 @@ export function normalizeCatechismTextWithReport(
 
   text = text.trim();
 
-  const t1 =
-    typeof performance !== 'undefined' && performance.now
-      ? performance.now()
-      : Date.now();
+  const t1 = typeof performance !== "undefined" && performance.now ? performance.now() : Date.now();
 
   const changed = text !== input;
 
@@ -174,7 +168,7 @@ export function normalizeCatechismTextWithReport(
 
 export function normalizeCatechismText(
   input: string | null | undefined,
-  options: NormalizeOptions = {}
+  options: NormalizeOptions = {},
 ): string {
   return normalizeCatechismTextWithReport(input, options).text;
 }
@@ -234,7 +228,7 @@ function cacheKey(paragraph: number | string, input: string, options: NormalizeO
 export function normalizeCatechismTextCached(
   paragraph: number | string,
   input: string | null | undefined,
-  options: NormalizeOptions = {}
+  options: NormalizeOptions = {},
 ): NormalizationReport {
   if (!input) return normalizeCatechismTextWithReport(input, options);
   const key = cacheKey(paragraph, input, options);

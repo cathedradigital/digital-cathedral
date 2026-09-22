@@ -1,53 +1,65 @@
-import React, { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Icons } from '../../constants';
-import { Button } from '@/components/ui/button';
-import { FuzzySearchInput } from './FuzzySearchInput';
-import { useDebounce } from '@/hooks/useDebounce';
+import React, { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Icons } from "../../constants";
+import { Button } from "@/components/ui/button";
+import { FuzzySearchInput } from "./FuzzySearchInput";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   searchSaintsAdvanced,
   getSaintsFilterFacets,
   type SaintsFilterInput,
   type SaintsSortOption,
-} from '@/services/saintsService';
-import type { Saint } from '@/data/saints';
-import SacredImage from './SacredImage';
-import StaggeredList from './StaggeredList';
-import { CATEGORY_LABELS } from './SaintDetail.categories';
+} from "@/services/saintsService";
+import type { Saint } from "@/data/saints";
+import SacredImage from "./SacredImage";
+import StaggeredList from "./StaggeredList";
+import { CATEGORY_LABELS } from "./SaintDetail.categories";
 
 interface Props {
   onOpenSaint: (saint: Saint) => void;
 }
 
 const QUICK_CHIPS: Array<{ label: string; category: string; icon: React.ReactNode }> = [
-  { label: 'Doutores', category: 'doctor', icon: <Icons.BookOpen className="w-spacing-sm h-spacing-sm" /> },
-  { label: 'Papas', category: 'pope', icon: <Icons.Crown className="w-spacing-sm h-spacing-sm" /> },
-  { label: 'Mártires', category: 'martyr', icon: <Icons.Flame className="w-spacing-sm h-spacing-sm" /> },
-  { label: 'Fundadores', category: 'founder', icon: <Icons.Building2 className="w-spacing-sm h-spacing-sm" /> },
+  {
+    label: "Doutores",
+    category: "doctor",
+    icon: <Icons.BookOpen className="w-spacing-sm h-spacing-sm" />,
+  },
+  { label: "Papas", category: "pope", icon: <Icons.Crown className="w-spacing-sm h-spacing-sm" /> },
+  {
+    label: "Mártires",
+    category: "martyr",
+    icon: <Icons.Flame className="w-spacing-sm h-spacing-sm" />,
+  },
+  {
+    label: "Fundadores",
+    category: "founder",
+    icon: <Icons.Building2 className="w-spacing-sm h-spacing-sm" />,
+  },
 ];
 
 const SORT_OPTIONS: Array<{ value: SaintsSortOption; label: string }> = [
-  { value: 'name-asc', label: 'Nome (A–Z)' },
-  { value: 'name-desc', label: 'Nome (Z–A)' },
-  { value: 'feast-asc', label: 'Festa litúrgica (Jan → Dez)' },
-  { value: 'feast-desc', label: 'Festa litúrgica (Dez → Jan)' },
+  { value: "name-asc", label: "Nome (A–Z)" },
+  { value: "name-desc", label: "Nome (Z–A)" },
+  { value: "feast-asc", label: "Festa litúrgica (Jan → Dez)" },
+  { value: "feast-desc", label: "Festa litúrgica (Dez → Jan)" },
 ];
 
 const PAGE_SIZE = 24;
 
 const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | undefined>();
   const [century, setCentury] = useState<number | undefined>();
   const [country, setCountry] = useState<string | undefined>();
   const [virtue, setVirtue] = useState<string | undefined>();
-  const [sort, setSort] = useState<SaintsSortOption>('name-asc');
+  const [sort, setSort] = useState<SaintsSortOption>("name-asc");
   const [page, setPage] = useState(1);
 
   const debouncedQuery = useDebounce(query, 300);
 
   const { data: facets } = useQuery({
-    queryKey: ['saints-facets'],
+    queryKey: ["saints-facets"],
     queryFn: getSaintsFilterFacets,
     staleTime: 1000 * 60 * 30,
   });
@@ -56,16 +68,19 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
   const vocationsEmpty = !!facets && facets.vocations.length === 0;
   const showEnrichmentNotice = countriesEmpty || vocationsEmpty;
 
-  const filters: SaintsFilterInput = useMemo(() => ({
-    query: debouncedQuery,
-    category,
-    century,
-    country,
-    virtue,
-    sort,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  }), [debouncedQuery, category, century, country, virtue, sort, page]);
+  const filters: SaintsFilterInput = useMemo(
+    () => ({
+      query: debouncedQuery,
+      category,
+      century,
+      country,
+      virtue,
+      sort,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+    }),
+    [debouncedQuery, category, century, country, virtue, sort, page],
+  );
 
   // Reset page when filters change (mas não quando muda apenas offset)
   const filterKey = `${debouncedQuery}|${category}|${century}|${country}|${virtue}|${sort}`;
@@ -75,7 +90,7 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
   }, [filterKey]);
 
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ['saints-advanced', filters],
+    queryKey: ["saints-advanced", filters],
     queryFn: () => searchSaintsAdvanced(filters),
     placeholderData: (prev) => prev,
   });
@@ -85,37 +100,45 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const clearAll = () => {
-    setQuery('');
+    setQuery("");
     setCategory(undefined);
     setCentury(undefined);
     setCountry(undefined);
     setVirtue(undefined);
-    setSort('name-asc');
+    setSort("name-asc");
     setPage(1);
   };
 
   const anyFilter = !!(debouncedQuery || category || century || country || virtue);
 
   return (
-    <section aria-labelledby="filters-heading" className="space-y-spacing-lg max-w-5xl mx-auto px-spacing-md">
-      <h2 id="filters-heading" className="sr-only">Filtros da Biblioteca dos Santos</h2>
+    <section
+      aria-labelledby="filters-heading"
+      className="space-y-spacing-lg max-w-5xl mx-auto px-spacing-md"
+    >
+      <h2 id="filters-heading" className="sr-only">
+        Filtros da Biblioteca dos Santos
+      </h2>
 
       {showEnrichmentNotice && (
         <div
           role="status"
           className="flex items-start gap-spacing-sm rounded-premium border border-amber-500/30 bg-amber-500/5 p-spacing-md text-premium-xs text-foreground"
         >
-          <Icons.Info className="w-spacing-md h-spacing-md text-amber-600 shrink-0 mt-[2px]" aria-hidden="true" />
+          <Icons.Info
+            className="w-spacing-md h-spacing-md text-amber-600 shrink-0 mt-[2px]"
+            aria-hidden="true"
+          />
           <div className="space-y-spacing-2xs">
             <p className="font-black uppercase tracking-widest text-amber-700 dark:text-amber-400">
               Enriquecimento editorial em andamento
             </p>
             <p className="text-muted-foreground leading-relaxed">
               {countriesEmpty && vocationsEmpty
-                ? 'Os campos País e Vocação ainda estão sendo preenchidos para os santos da base. Enquanto isso, use Categoria, Século, Virtude e a busca por nome.'
+                ? "Os campos País e Vocação ainda estão sendo preenchidos para os santos da base. Enquanto isso, use Categoria, Século, Virtude e a busca por nome."
                 : countriesEmpty
-                ? 'O campo País ainda está sendo preenchido. Enquanto isso, o filtro está desativado — use Categoria, Século, Virtude ou nome.'
-                : 'O campo Vocação ainda está sendo preenchido. Enquanto isso, o filtro está desativado — use Categoria, Século, Virtude ou nome.'}
+                  ? "O campo País ainda está sendo preenchido. Enquanto isso, o filtro está desativado — use Categoria, Século, Virtude ou nome."
+                  : "O campo Vocação ainda está sendo preenchido. Enquanto isso, o filtro está desativado — use Categoria, Século, Virtude ou nome."}
             </p>
           </div>
         </div>
@@ -141,8 +164,8 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
               aria-pressed={active}
               className={`inline-flex items-center gap-spacing-2xs px-spacing-md py-spacing-2xs rounded-premium-full text-premium-xs font-black uppercase tracking-widest border transition-all focus-visible:ring-2 focus-visible:ring-primary outline-none ${
                 active
-                  ? 'bg-primary text-primary-foreground border-primary shadow-premium'
-                  : 'bg-secondary/40 text-foreground border-border hover:border-primary/40'
+                  ? "bg-primary text-primary-foreground border-primary shadow-premium"
+                  : "bg-secondary/40 text-foreground border-border hover:border-primary/40"
               }`}
             >
               {chip.icon}
@@ -156,26 +179,29 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-spacing-md">
         <FilterSelect
           label="Categoria"
-          value={category ?? ''}
+          value={category ?? ""}
           onChange={(v) => setCategory(v || undefined)}
           options={Object.entries(CATEGORY_LABELS).map(([v, l]) => ({ value: v, label: l }))}
         />
         <FilterSelect
           label="Século"
-          value={century ? String(century) : ''}
+          value={century ? String(century) : ""}
           onChange={(v) => setCentury(v ? Number(v) : undefined)}
-          options={(facets?.centuries ?? []).map((c) => ({ value: String(c), label: `Século ${c}` }))}
+          options={(facets?.centuries ?? []).map((c) => ({
+            value: String(c),
+            label: `Século ${c}`,
+          }))}
         />
         <FilterSelect
-          label={countriesEmpty ? 'País (em breve)' : 'País'}
-          value={country ?? ''}
+          label={countriesEmpty ? "País (em breve)" : "País"}
+          value={country ?? ""}
           onChange={(v) => setCountry(v || undefined)}
           options={(facets?.countries ?? []).map((c) => ({ value: c, label: c }))}
           disabled={countriesEmpty}
         />
         <FilterSelect
           label="Virtude"
-          value={virtue ?? ''}
+          value={virtue ?? ""}
           onChange={(v) => setVirtue(v || undefined)}
           options={(facets?.virtues ?? []).slice(0, 30).map((v) => ({ value: v, label: v }))}
         />
@@ -185,20 +211,24 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-spacing-sm">
         <p className="text-premium-xs uppercase tracking-widest text-muted-foreground">
           {isLoading
-            ? 'Buscando…'
-            : `${total} ${total === 1 ? 'santo encontrado' : 'santos encontrados'}`}
-          {anyFilter && ' · com filtros'}
+            ? "Buscando…"
+            : `${total} ${total === 1 ? "santo encontrado" : "santos encontrados"}`}
+          {anyFilter && " · com filtros"}
         </p>
         <div className="flex items-center gap-spacing-sm">
           <label className="flex items-center gap-spacing-2xs">
-            <span className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">Ordenar</span>
+            <span className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">
+              Ordenar
+            </span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SaintsSortOption)}
               className="h-spacing-xl px-spacing-sm rounded-premium border border-border bg-background text-premium-xs text-foreground focus-visible:ring-2 focus-visible:ring-primary outline-none"
             >
               {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </label>
@@ -234,7 +264,7 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
               >
                 <div className="relative h-spacing-4xl overflow-hidden">
                   <SacredImage
-                    src={saint.image || ''}
+                    src={saint.image || ""}
                     alt={saint.name}
                     category={saint.category}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -296,8 +326,8 @@ const SaintsFilters: React.FC<Props> = ({ onOpenSaint }) => {
         <div className="text-center py-spacing-3xl bg-muted/20 rounded-[2rem] border border-dashed border-border">
           <p className="text-premium-sm font-serif italic text-muted-foreground">
             {anyFilter
-              ? 'Nenhum santo encontrado com esses filtros. Tente afrouxar os critérios.'
-              : 'Escolha um filtro, uma ordenação ou digite um nome para explorar.'}
+              ? "Nenhum santo encontrado com esses filtros. Tente afrouxar os critérios."
+              : "Escolha um filtro, uma ordenação ou digite um nome para explorar."}
           </p>
         </div>
       )}
@@ -312,8 +342,10 @@ const FilterSelect: React.FC<{
   options: Array<{ value: string; label: string }>;
   disabled?: boolean;
 }> = ({ label, value, onChange, options, disabled }) => (
-  <label className={`flex flex-col gap-spacing-2xs ${disabled ? 'opacity-60' : ''}`}>
-    <span className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">{label}</span>
+  <label className={`flex flex-col gap-spacing-2xs ${disabled ? "opacity-60" : ""}`}>
+    <span className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">
+      {label}
+    </span>
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
@@ -322,7 +354,9 @@ const FilterSelect: React.FC<{
     >
       <option value="">Todos</option>
       {options.map((o) => (
-        <option key={o.value} value={o.value}>{o.label}</option>
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
       ))}
     </select>
   </label>

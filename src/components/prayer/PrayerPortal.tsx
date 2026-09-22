@@ -19,22 +19,30 @@
  * Contraste: rótulos micro em `text-stitch-secondary font-black`; corpo
  * sempre em `text-stitch-on-surface`. `-variant` reservado a citações.
  */
-import React, { useMemo } from 'react';
-import { Link, useSearchParams } from '@/lib/rr-compat';
-import { Clock, Sparkles, PlayCircle, RotateCcw, BookOpen, Church, Circle, type LucideIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { EditorialHero } from '@/components/editorial/harmony';
-import PrayerModeSelector, { type PrayerMode } from '@/components/prayer/PrayerModeSelector';
-import ContemplativeSettingsDialog from '@/components/prayer/rosary/ContemplativeSettingsDialog';
-import { resolveMysteryPalette } from '@/components/prayer/rosary/sectionPalette';
-import { readMysteryMeta } from '@/components/prayer/rosary/mysteryMeta';
-import { usePrayerEngineSession } from '@/prayer-engine/usePrayerEngineSession';
-import type { Prayer } from '@/hooks/usePrayers';
-import type { DBMystery, DBSection } from '@/prayer-engine/loadPrayerHierarchy';
-import { cn } from '@/lib/utils';
+import React, { useMemo } from "react";
+import { Link, useSearchParams } from "@/lib/rr-compat";
+import {
+  Clock,
+  Sparkles,
+  PlayCircle,
+  RotateCcw,
+  BookOpen,
+  Church,
+  Circle,
+  type LucideIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { EditorialHero } from "@/components/editorial/harmony";
+import PrayerModeSelector, { type PrayerMode } from "@/components/prayer/PrayerModeSelector";
+import ContemplativeSettingsDialog from "@/components/prayer/rosary/ContemplativeSettingsDialog";
+import { resolveMysteryPalette } from "@/components/prayer/rosary/sectionPalette";
+import { readMysteryMeta } from "@/components/prayer/rosary/mysteryMeta";
+import { usePrayerEngineSession } from "@/prayer-engine/usePrayerEngineSession";
+import type { Prayer } from "@/hooks/usePrayers";
+import type { DBMystery, DBSection } from "@/prayer-engine/loadPrayerHierarchy";
+import { cn } from "@/lib/utils";
 
-export type PrayerPortalTheme = 'church' | 'passion' | 'dawn' | 'noon' | 'sunset' | 'night';
-
+export type PrayerPortalTheme = "church" | "passion" | "dawn" | "noon" | "sunset" | "night";
 
 /**
  * Bloco de destaque universal — usado por orações que não têm mistérios
@@ -48,7 +56,7 @@ export interface PortalHighlight {
   /** Subtítulo opcional (ex.: latim, cor litúrgica). */
   subtitle?: string;
   /** Meta list (Evangelho / cor / fruto / etc). */
-  meta?: Array<{ label: string; value: string; icon?: 'book' | 'sparkles' | 'church' | 'clock' }>;
+  meta?: Array<{ label: string; value: string; icon?: "book" | "sparkles" | "church" | "clock" }>;
   /** Cor de acento HSL (bolinha). Default: `stitch-secondary`. */
   accentClassName?: string;
 }
@@ -78,12 +86,11 @@ interface Props {
   accentIcon?: LucideIcon;
 }
 
-
 const OPENING_QUOTE: Record<string, { text: string; ref: string }> = {
-  rosario: { text: 'Permanecei em mim, e eu em vós.', ref: 'Jo 15,4' },
-  'via-sacra': { text: 'Se alguém quer vir após mim, tome a sua cruz.', ref: 'Mt 16,24' },
-  viacrucis: { text: 'Se alguém quer vir após mim, tome a sua cruz.', ref: 'Mt 16,24' },
-  'liturgia-das-horas': { text: 'Sete vezes por dia eu vos louvo.', ref: 'Sl 118,164' },
+  rosario: { text: "Permanecei em mim, e eu em vós.", ref: "Jo 15,4" },
+  "via-sacra": { text: "Se alguém quer vir após mim, tome a sua cruz.", ref: "Mt 16,24" },
+  viacrucis: { text: "Se alguém quer vir após mim, tome a sua cruz.", ref: "Mt 16,24" },
+  "liturgia-das-horas": { text: "Sete vezes por dia eu vos louvo.", ref: "Sl 118,164" },
 };
 
 const ICON_MAP = {
@@ -94,7 +101,7 @@ const ICON_MAP = {
 } as const;
 
 function formatDuration(seconds?: number | null): string {
-  if (!seconds || seconds <= 0) return '';
+  if (!seconds || seconds <= 0) return "";
   const min = Math.max(1, Math.round(seconds / 60));
   return `≈ ${min} min`;
 }
@@ -108,9 +115,9 @@ const PrayerPortal: React.FC<Props> = ({
   quote: quoteProp,
   showRhythm = true,
   onEnter,
-  backHref = '/oracao',
-  backLabel = '← Voltar ao Livro de Orações',
-  theme = 'church',
+  backHref = "/oracao",
+  backLabel = "← Voltar ao Livro de Orações",
+  theme = "church",
   accentIcon,
 }) => {
   const AccentIcon = accentIcon ?? Sparkles;
@@ -118,10 +125,11 @@ const PrayerPortal: React.FC<Props> = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const session = usePrayerEngineSession(prayer.id);
   const [mode, setMode] = React.useState<PrayerMode>(() => {
-    const stored = typeof window !== 'undefined'
-      ? (localStorage.getItem('cathedra.prayer.mode') as PrayerMode | null)
-      : null;
-    return stored ?? 'guided';
+    const stored =
+      typeof window !== "undefined"
+        ? (localStorage.getItem("cathedra.prayer.mode") as PrayerMode | null)
+        : null;
+    return stored ?? "guided";
   });
 
   const palette = resolveMysteryPalette(activeSection?.slug);
@@ -144,18 +152,23 @@ const PrayerPortal: React.FC<Props> = ({
   const resolvedHighlight: PortalHighlight | null = useMemo(() => {
     if (highlight) return highlight;
     if (!dayMystery) return null;
-    const items: PortalHighlight['meta'] = [];
-    if (dayMystery.gospel_ref) items.push({ label: 'Evangelho', value: dayMystery.gospel_ref, icon: 'book' });
-    if (dayMystery.fruit) items.push({ label: 'Fruto espiritual', value: dayMystery.fruit, icon: 'sparkles' });
+    const items: PortalHighlight["meta"] = [];
+    if (dayMystery.gospel_ref)
+      items.push({ label: "Evangelho", value: dayMystery.gospel_ref, icon: "book" });
+    if (dayMystery.fruit)
+      items.push({ label: "Fruto espiritual", value: dayMystery.fruit, icon: "sparkles" });
     if (meta?.related_saints && meta.related_saints.length > 0) {
       items.push({
-        label: 'Santos relacionados',
-        value: meta.related_saints.slice(0, 3).map((s) => s.name).join(' · '),
-        icon: 'church',
+        label: "Santos relacionados",
+        value: meta.related_saints
+          .slice(0, 3)
+          .map((s) => s.name)
+          .join(" · "),
+        icon: "church",
       });
     }
     return {
-      eyebrow: 'Mistério do dia',
+      eyebrow: "Mistério do dia",
       title: dayMystery.title,
       subtitle: dayMystery.subtitle ?? undefined,
       meta: items,
@@ -172,26 +185,25 @@ const PrayerPortal: React.FC<Props> = ({
   const sectionShortLabel = useMemo(() => {
     if (!activeSection?.title) return null;
     // "Mistérios Dolorosos" → "Mistério Doloroso"
-    return activeSection.title
-      .replace(/^Mistérios?\s+/i, 'Mistério ')
-      .replace(/s$/, '');
+    return activeSection.title.replace(/^Mistérios?\s+/i, "Mistério ").replace(/s$/, "");
   }, [activeSection?.title]);
   const resumeOrdinal = completedCount + 1;
   const resumeTitle = sectionShortLabel
     ? `${resumeOrdinal}º ${sectionShortLabel}`
-    : dayMystery?.title ?? 'Continuar oração';
+    : (dayMystery?.title ?? "Continuar oração");
 
-  const isReducedMotion = typeof window !== 'undefined'
-    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const isReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
   const [thresholdActive, setThresholdActive] = React.useState(false);
 
   const commitEnter = () => {
-    localStorage.setItem('cathedra.prayer.mode', mode);
+    localStorage.setItem("cathedra.prayer.mode", mode);
     if (onEnter) return onEnter();
     const next = new URLSearchParams(searchParams);
-    next.set('enter', '1');
-    next.set('mode', mode);
+    next.set("enter", "1");
+    next.set("mode", mode);
     setSearchParams(next, { replace: true });
   };
 
@@ -206,7 +218,6 @@ const PrayerPortal: React.FC<Props> = ({
     await session.reset();
     handleEnter();
   };
-
 
   return (
     <section
@@ -225,7 +236,9 @@ const PrayerPortal: React.FC<Props> = ({
         {quote && (
           <EditorialHero.Subtitle>
             <span className="italic text-stitch-on-surface">"{quote.text}"</span>
-            <span className="ml-2 not-italic font-stitch-body text-[13px] font-bold text-stitch-secondary">— {quote.ref}</span>
+            <span className="ml-2 not-italic font-stitch-body text-[13px] font-bold text-stitch-secondary">
+              — {quote.ref}
+            </span>
           </EditorialHero.Subtitle>
         )}
         <EditorialHero.Meta>
@@ -255,7 +268,10 @@ const PrayerPortal: React.FC<Props> = ({
           <div className="flex items-center gap-2">
             <Circle
               aria-hidden
-              className={cn('h-2.5 w-2.5 fill-current', resolvedHighlight.accentClassName ?? 'text-stitch-secondary')}
+              className={cn(
+                "h-2.5 w-2.5 fill-current",
+                resolvedHighlight.accentClassName ?? "text-stitch-secondary",
+              )}
             />
             <span className="font-stitch-body text-[11px] font-black uppercase tracking-[0.28em] text-stitch-secondary">
               {resolvedHighlight.eyebrow}
@@ -276,10 +292,16 @@ const PrayerPortal: React.FC<Props> = ({
           {resolvedHighlight.meta && resolvedHighlight.meta.length > 0 && (
             <dl className="mt-6 grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
               {resolvedHighlight.meta.map((item, idx) => {
-                const Icon = ICON_MAP[item.icon ?? 'sparkles'];
-                const spanAll = resolvedHighlight.meta && resolvedHighlight.meta.length % 2 === 1 && idx === resolvedHighlight.meta.length - 1;
+                const Icon = ICON_MAP[item.icon ?? "sparkles"];
+                const spanAll =
+                  resolvedHighlight.meta &&
+                  resolvedHighlight.meta.length % 2 === 1 &&
+                  idx === resolvedHighlight.meta.length - 1;
                 return (
-                  <div key={item.label} className={cn('flex items-start gap-2.5', spanAll && 'md:col-span-2')}>
+                  <div
+                    key={item.label}
+                    className={cn("flex items-start gap-2.5", spanAll && "md:col-span-2")}
+                  >
                     <Icon className="mt-0.5 h-4 w-4 flex-none text-stitch-secondary" aria-hidden />
                     <div>
                       <dt className="font-stitch-body text-[10px] font-black uppercase tracking-[0.22em] text-stitch-secondary">
@@ -338,9 +360,9 @@ const PrayerPortal: React.FC<Props> = ({
         <section
           aria-labelledby="portal-resume"
           className={cn(
-            'mt-14 rounded-2xl border-2 border-stitch-secondary/70 px-6 py-7 md:px-9 md:py-8',
-            'bg-[linear-gradient(180deg,hsl(var(--stitch-secondary)/0.14),hsl(var(--stitch-secondary)/0.06))]',
-            'shadow-[0_12px_40px_-18px_hsl(var(--stitch-secondary)/0.5)]',
+            "mt-14 rounded-2xl border-2 border-stitch-secondary/70 px-6 py-7 md:px-9 md:py-8",
+            "bg-[linear-gradient(180deg,hsl(var(--stitch-secondary)/0.14),hsl(var(--stitch-secondary)/0.06))]",
+            "shadow-[0_12px_40px_-18px_hsl(var(--stitch-secondary)/0.5)]",
           )}
           data-testid="portal-resume"
         >
@@ -360,11 +382,11 @@ const PrayerPortal: React.FC<Props> = ({
               onClick={handleEnter}
               data-testid="portal-continue"
               className={cn(
-                'h-12 flex-1 rounded-full px-8',
-                'bg-stitch-secondary text-stitch-secondary-foreground hover:bg-stitch-secondary/90',
-                'font-stitch-body text-[12px] font-black uppercase tracking-[0.28em]',
-                'shadow-[0_8px_24px_-10px_hsl(var(--stitch-secondary)/0.55)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2',
+                "h-12 flex-1 rounded-full px-8",
+                "bg-stitch-secondary text-stitch-secondary-foreground hover:bg-stitch-secondary/90",
+                "font-stitch-body text-[12px] font-black uppercase tracking-[0.28em]",
+                "shadow-[0_8px_24px_-10px_hsl(var(--stitch-secondary)/0.55)]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2",
               )}
             >
               <PlayCircle className="h-4 w-4" aria-hidden />
@@ -394,12 +416,12 @@ const PrayerPortal: React.FC<Props> = ({
             onClick={handleEnter}
             data-testid="portal-enter"
             className={cn(
-              'h-14 min-w-[260px] rounded-full px-10',
-              'bg-stitch-secondary text-stitch-secondary-foreground hover:bg-stitch-secondary/90',
-              'font-stitch-body text-[13px] font-black uppercase tracking-[0.32em]',
-              'shadow-[0_10px_30px_-12px_hsl(var(--stitch-secondary)/0.55)]',
-              'transition-transform duration-200 hover:scale-[1.02]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2',
+              "h-14 min-w-[260px] rounded-full px-10",
+              "bg-stitch-secondary text-stitch-secondary-foreground hover:bg-stitch-secondary/90",
+              "font-stitch-body text-[13px] font-black uppercase tracking-[0.32em]",
+              "shadow-[0_10px_30px_-12px_hsl(var(--stitch-secondary)/0.55)]",
+              "transition-transform duration-200 hover:scale-[1.02]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stitch-secondary focus-visible:ring-offset-2",
             )}
           >
             Entrar em oração
@@ -425,4 +447,3 @@ const PrayerPortal: React.FC<Props> = ({
 };
 
 export default PrayerPortal;
-

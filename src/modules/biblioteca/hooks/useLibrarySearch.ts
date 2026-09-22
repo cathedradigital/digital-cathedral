@@ -4,15 +4,15 @@
  * A UI consome APENAS este hook. Debounce, cache (React Query) e cancelamento
  * ficam encapsulados aqui — nenhum componente conhece a camada `supabase`.
  */
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import type { LibraryModule } from '../types';
-import { searchLibrary } from '../search/searchLibrary';
-import type { LibrarySearchResponse } from '../search/types';
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import type { LibraryModule } from "../types";
+import { searchLibrary } from "../search/searchLibrary";
+import type { LibrarySearchResponse } from "../search/types";
 
 export interface UseLibrarySearchInput {
   query: string;
-  types?: LibraryModule[] | 'all';
+  types?: LibraryModule[] | "all";
   perModule?: number;
   withNexus?: boolean;
   /** Debounce em ms. Default 220. */
@@ -40,7 +40,7 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 export function useLibrarySearch(input: UseLibrarySearchInput): UseLibrarySearchResult {
   const {
     query,
-    types = 'all',
+    types = "all",
     perModule,
     withNexus = true,
     debounceMs = 220,
@@ -48,15 +48,11 @@ export function useLibrarySearch(input: UseLibrarySearchInput): UseLibrarySearch
   } = input;
 
   const debouncedQuery = useDebouncedValue(query.trim(), debounceMs);
-  const typesKey = useMemo(
-    () => (types === 'all' ? 'all' : [...types].sort().join(',')),
-    [types],
-  );
+  const typesKey = useMemo(() => (types === "all" ? "all" : [...types].sort().join(",")), [types]);
 
   const q = useQuery<LibrarySearchResponse>({
-    queryKey: ['library-search', debouncedQuery, typesKey, perModule ?? null, withNexus],
-    queryFn: () =>
-      searchLibrary({ query: debouncedQuery, types, perModule, withNexus }),
+    queryKey: ["library-search", debouncedQuery, typesKey, perModule ?? null, withNexus],
+    queryFn: () => searchLibrary({ query: debouncedQuery, types, perModule, withNexus }),
     enabled: enabled && debouncedQuery.length >= 2,
     staleTime: 30_000,
     gcTime: 5 * 60_000,

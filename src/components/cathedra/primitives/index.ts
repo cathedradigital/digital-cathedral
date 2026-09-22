@@ -4,4 +4,4 @@ export {
   SkeletonCard,
   SkeletonGrid,
   SkeletonHero,
-} from './ContentSkeleton';
+} from "./ContentSkeleton";

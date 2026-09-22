@@ -13,14 +13,14 @@
  *   Único toolbar de leitura permitido no Reader Template Master.
  */
 
-import React, { useCallback } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { ArrowLeft, Type, Focus, Share2 } from 'lucide-react';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
-import { cn } from '@/lib/utils';
+import React, { useCallback } from "react";
+import { Link } from "@/lib/rr-compat";
+import { ArrowLeft, Type, Focus, Share2 } from "lucide-react";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
+import { cn } from "@/lib/utils";
 
-type FontSize = 'small' | 'medium' | 'large' | 'extra-large';
-const FONT_ORDER: FontSize[] = ['small', 'medium', 'large', 'extra-large'];
+type FontSize = "small" | "medium" | "large" | "extra-large";
+const FONT_ORDER: FontSize[] = ["small", "medium", "large", "extra-large"];
 
 export interface ReaderToolbarProps {
   kicker?: string;
@@ -32,7 +32,7 @@ export interface ReaderToolbarProps {
 }
 
 export const ReaderToolbar: React.FC<ReaderToolbarProps> = ({
-  kicker = 'Cathedra · Lectio',
+  kicker = "Cathedra · Lectio",
   title,
   subtitle,
   backHref,
@@ -52,7 +52,7 @@ export const ReaderToolbar: React.FC<ReaderToolbarProps> = ({
   }, [settings.immersiveMode, updateSettings]);
 
   const share = useCallback(async () => {
-    const url = shareUrl ?? (typeof window !== 'undefined' ? window.location.href : '');
+    const url = shareUrl ?? (typeof window !== "undefined" ? window.location.href : "");
     if (!url) return;
     try {
       if (navigator.share) {
@@ -68,8 +68,8 @@ export const ReaderToolbar: React.FC<ReaderToolbarProps> = ({
   return (
     <div
       className={cn(
-        'sticky top-0 z-40 border-b border-stitch-outline-variant/25',
-        'bg-stitch-background/85 backdrop-blur supports-[backdrop-filter]:bg-stitch-background/70',
+        "sticky top-0 z-40 border-b border-stitch-outline-variant/25",
+        "bg-stitch-background/85 backdrop-blur supports-[backdrop-filter]:bg-stitch-background/70",
         className,
       )}
       role="region"
@@ -110,7 +110,7 @@ export const ReaderToolbar: React.FC<ReaderToolbarProps> = ({
             icon={<Type className="h-4 w-4" />}
           />
           <ToolbarButton
-            label={settings.immersiveMode ? 'Sair do modo foco' : 'Modo foco'}
+            label={settings.immersiveMode ? "Sair do modo foco" : "Modo foco"}
             onClick={toggleFocus}
             active={settings.immersiveMode}
             icon={<Focus className="h-4 w-4" />}
@@ -144,17 +144,17 @@ const ToolbarButton = React.forwardRef<
     title={label}
     aria-pressed={active}
     className={cn(
-      'inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+      "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       active
-        ? 'border-stitch-secondary/60 bg-stitch-secondary/10 text-stitch-secondary'
-        : 'border-transparent text-stitch-on-surface-variant hover:border-stitch-outline-variant/40 hover:text-stitch-primary',
+        ? "border-stitch-secondary/60 bg-stitch-secondary/10 text-stitch-secondary"
+        : "border-transparent text-stitch-on-surface-variant hover:border-stitch-outline-variant/40 hover:text-stitch-primary",
     )}
     {...rest}
   >
     {icon}
   </button>
 ));
-ToolbarButton.displayName = 'ToolbarButton';
+ToolbarButton.displayName = "ToolbarButton";
 
 export default ReaderToolbar;

@@ -19,8 +19,18 @@ export default defineTool({
     });
     const max = limit ?? 20;
     const [outgoing, incoming] = await Promise.all([
-      sb.from("nexus_relations").select("relation_type,target_kind,target_ref,note").eq("source_kind", kind).eq("source_ref", ref).limit(max),
-      sb.from("nexus_relations").select("relation_type,source_kind,source_ref,note").eq("target_kind", kind).eq("target_ref", ref).limit(max),
+      sb
+        .from("nexus_relations")
+        .select("relation_type,target_kind,target_ref,note")
+        .eq("source_kind", kind)
+        .eq("source_ref", ref)
+        .limit(max),
+      sb
+        .from("nexus_relations")
+        .select("relation_type,source_kind,source_ref,note")
+        .eq("target_kind", kind)
+        .eq("target_ref", ref)
+        .limit(max),
     ]);
     const nodes = new Map<string, { kind: string; ref: string; via: string[] }>();
     for (const r of outgoing.data ?? []) {
@@ -41,16 +51,28 @@ export default defineTool({
 
     const [g, s, p, c] = await Promise.all([
       glossarySlugs.length
-        ? sb.from("glossary").select("slug,term,short_definition,category").in("slug", glossarySlugs).eq("status", "published")
+        ? sb
+            .from("glossary")
+            .select("slug,term,short_definition,category")
+            .in("slug", glossarySlugs)
+            .eq("status", "published")
         : Promise.resolve({ data: [] as any[] }),
       saintIds.length
         ? sb.from("saints").select("id,name,title,feast_day,bio,category").in("id", saintIds)
         : Promise.resolve({ data: [] as any[] }),
       prayerSlugs.length
-        ? sb.from("prayers").select("slug,title,category,kicker").in("slug", prayerSlugs).eq("is_published", true)
+        ? sb
+            .from("prayers")
+            .select("slug,title,category,kicker")
+            .in("slug", prayerSlugs)
+            .eq("is_published", true)
         : Promise.resolve({ data: [] as any[] }),
       collectionSlugs.length
-        ? sb.from("collections").select("slug,title,subtitle,category").in("slug", collectionSlugs).eq("status", "published")
+        ? sb
+            .from("collections")
+            .select("slug,title,subtitle,category")
+            .in("slug", collectionSlugs)
+            .eq("status", "published")
         : Promise.resolve({ data: [] as any[] }),
     ]);
 

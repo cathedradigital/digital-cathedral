@@ -1,38 +1,67 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import { toast } from 'sonner';
-import { RefreshCw, RotateCcw, Copy, FileSearch, Download, Link2, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Search, X } from 'lucide-react';
-import { SavedViewsBar, type PgStatViewConfig } from '@/components/admin/pg-stats/SavedViewsBar';
-import { SnapshotsPanel } from '@/components/admin/pg-stats/SnapshotsPanel';
-import { ExplainDialog } from '@/components/admin/pg-stats/ExplainDialog';
-import { AutoSnapshotConfigCard } from '@/components/admin/pg-stats/AutoSnapshotConfigCard';
-import { PendingNotificationsPanel } from '@/components/admin/pg-stats/PendingNotificationsPanel';
-import { FailuresReportCard } from '@/components/admin/pg-stats/FailuresReportCard';
-import { ChannelGatesPanel } from '@/components/admin/pg-stats/ChannelGatesPanel';
-import { fingerprintQuery, shortFingerprint } from '@/components/admin/pg-stats/queryFingerprint';
-import { useSnapshotHistory } from '@/components/admin/pg-stats/useSnapshotHistory';
-import { FingerprintDrilldown } from '@/components/admin/pg-stats/FingerprintDrilldown';
-import { Sparkline } from '@/components/admin/pg-stats/Sparkline';
-import { Switch } from '@/components/ui/switch';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { toast } from "sonner";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  RefreshCw,
+  RotateCcw,
+  Copy,
+  FileSearch,
+  Download,
+  Link2,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  X,
+} from "lucide-react";
+import { SavedViewsBar, type PgStatViewConfig } from "@/components/admin/pg-stats/SavedViewsBar";
+import { SnapshotsPanel } from "@/components/admin/pg-stats/SnapshotsPanel";
+import { ExplainDialog } from "@/components/admin/pg-stats/ExplainDialog";
+import { AutoSnapshotConfigCard } from "@/components/admin/pg-stats/AutoSnapshotConfigCard";
+import { PendingNotificationsPanel } from "@/components/admin/pg-stats/PendingNotificationsPanel";
+import { FailuresReportCard } from "@/components/admin/pg-stats/FailuresReportCard";
+import { ChannelGatesPanel } from "@/components/admin/pg-stats/ChannelGatesPanel";
+import { fingerprintQuery, shortFingerprint } from "@/components/admin/pg-stats/queryFingerprint";
+import { useSnapshotHistory } from "@/components/admin/pg-stats/useSnapshotHistory";
+import { FingerprintDrilldown } from "@/components/admin/pg-stats/FingerprintDrilldown";
+import { Sparkline } from "@/components/admin/pg-stats/Sparkline";
+import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function getInitialFromUrl<T extends string | number | boolean>(
-  key: string, fallback: T, parse: (v: string) => T | undefined,
+  key: string,
+  fallback: T,
+  parse: (v: string) => T | undefined,
 ): T {
-  if (typeof window === 'undefined') return fallback;
+  if (typeof window === "undefined") return fallback;
   const raw = new URLSearchParams(window.location.search).get(key);
   if (raw == null) return fallback;
   const parsed = parse(raw);
@@ -42,20 +71,20 @@ function getInitialFromUrl<T extends string | number | boolean>(
 interface SortHeaderProps {
   label: string;
   active: boolean;
-  dir: 'asc' | 'desc';
+  dir: "asc" | "desc";
   onClick: () => void;
-  align?: 'left' | 'right';
+  align?: "left" | "right";
 }
-function SortHeader({ label, active, dir, onClick, align = 'left' }: SortHeaderProps) {
-  const Icon = !active ? ArrowUpDown : dir === 'asc' ? ArrowUp : ArrowDown;
+function SortHeader({ label, active, dir, onClick, align = "left" }: SortHeaderProps) {
+  const Icon = !active ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={`Ordenar por ${label}${active ? ` (${dir === 'asc' ? 'crescente' : 'decrescente'})` : ''}`}
+      aria-label={`Ordenar por ${label}${active ? ` (${dir === "asc" ? "crescente" : "decrescente"})` : ""}`}
       className={`inline-flex items-center gap-1 hover:text-foreground transition-colors ${
-        active ? 'text-foreground font-medium' : 'text-muted-foreground'
-      } ${align === 'right' ? 'ml-auto' : ''}`}
+        active ? "text-foreground font-medium" : "text-muted-foreground"
+      } ${align === "right" ? "ml-auto" : ""}`}
     >
       {label}
       <Icon className="h-3 w-3" />
@@ -63,7 +92,7 @@ function SortHeader({ label, active, dir, onClick, align = 'left' }: SortHeaderP
   );
 }
 
-type OrderBy = 'total_exec_time' | 'mean_exec_time' | 'max_exec_time' | 'calls';
+type OrderBy = "total_exec_time" | "mean_exec_time" | "max_exec_time" | "calls";
 
 interface StatRow {
   query: string;
@@ -80,95 +109,122 @@ interface StatRow {
 }
 
 const ORDER_LABELS: Record<OrderBy, string> = {
-  total_exec_time: 'Tempo total',
-  mean_exec_time: 'Tempo médio',
-  max_exec_time: 'Tempo máximo (pico)',
-  calls: 'Nº de chamadas',
+  total_exec_time: "Tempo total",
+  mean_exec_time: "Tempo médio",
+  max_exec_time: "Tempo máximo (pico)",
+  calls: "Nº de chamadas",
 };
 
 const fmtMs = (v: number) => {
-  if (v == null) return '—';
+  if (v == null) return "—";
   if (v >= 1000) return `${(v / 1000).toFixed(2)} s`;
   return `${v.toFixed(2)} ms`;
 };
-const fmtInt = (v: number) => (v ?? 0).toLocaleString('pt-BR');
+const fmtInt = (v: number) => (v ?? 0).toLocaleString("pt-BR");
 
 function firstLine(q: string, max = 180) {
-  const clean = q.replace(/\s+/g, ' ').trim();
-  return clean.length > max ? clean.slice(0, max) + '…' : clean;
+  const clean = q.replace(/\s+/g, " ").trim();
+  return clean.length > max ? clean.slice(0, max) + "…" : clean;
 }
 
 function inferTable(q: string): string {
   const m = q.match(/\b(?:FROM|INTO|UPDATE|JOIN)\s+"?public"?\."?([a-z_][a-z0-9_]*)"?/i);
-  return m ? m[1] : '—';
+  return m ? m[1] : "—";
 }
 
-function inferOp(q: string): 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE' | 'OTHER' {
+function inferOp(q: string): "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "OTHER" {
   const s = q.trim().toUpperCase();
-  if (s.startsWith('WITH')) {
-    if (/INSERT INTO/.test(s)) return 'INSERT';
-    if (/UPDATE\s+"?PUBLIC/.test(s)) return 'UPDATE';
-    if (/DELETE FROM/.test(s)) return 'DELETE';
-    return 'SELECT';
+  if (s.startsWith("WITH")) {
+    if (/INSERT INTO/.test(s)) return "INSERT";
+    if (/UPDATE\s+"?PUBLIC/.test(s)) return "UPDATE";
+    if (/DELETE FROM/.test(s)) return "DELETE";
+    return "SELECT";
   }
-  if (s.startsWith('SELECT')) return 'SELECT';
-  if (s.startsWith('INSERT')) return 'INSERT';
-  if (s.startsWith('UPDATE')) return 'UPDATE';
-  if (s.startsWith('DELETE')) return 'DELETE';
-  return 'OTHER';
+  if (s.startsWith("SELECT")) return "SELECT";
+  if (s.startsWith("INSERT")) return "INSERT";
+  if (s.startsWith("UPDATE")) return "UPDATE";
+  if (s.startsWith("DELETE")) return "DELETE";
+  return "OTHER";
 }
 
-const OP_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  SELECT: 'default',
-  INSERT: 'secondary',
-  UPDATE: 'outline',
-  DELETE: 'destructive',
-  OTHER: 'outline',
+const OP_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  SELECT: "default",
+  INSERT: "secondary",
+  UPDATE: "outline",
+  DELETE: "destructive",
+  OTHER: "outline",
 };
 
 export default function PgStatStatements() {
   const { snapshots, loading: snapshotsLoading, reload: reloadSnapshots } = useSnapshotHistory(100);
   const [rows, setRows] = useState<StatRow[]>([]);
   const [orderBy, setOrderBy] = useState<OrderBy>(() =>
-    getInitialFromUrl<OrderBy>('orderBy', 'total_exec_time',
-      (v) => (['total_exec_time','mean_exec_time','max_exec_time','calls'].includes(v) ? (v as OrderBy) : undefined)));
+    getInitialFromUrl<OrderBy>("orderBy", "total_exec_time", (v) =>
+      ["total_exec_time", "mean_exec_time", "max_exec_time", "calls"].includes(v)
+        ? (v as OrderBy)
+        : undefined,
+    ),
+  );
   const [limit, setLimit] = useState<number>(() =>
-    getInitialFromUrl<number>('limit', 25, (v) => {
-      const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.min(200, n) : undefined;
-    }));
+    getInitialFromUrl<number>("limit", 25, (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n > 0 ? Math.min(200, n) : undefined;
+    }),
+  );
   const [minCalls, setMinCalls] = useState<number>(() =>
-    getInitialFromUrl<number>('minCalls', 1, (v) => {
-      const n = Number(v); return Number.isFinite(n) && n > 0 ? n : undefined;
-    }));
+    getInitialFromUrl<number>("minCalls", 1, (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n > 0 ? n : undefined;
+    }),
+  );
   const [tableFilter, setTableFilter] = useState<string>(() =>
-    getInitialFromUrl<string>('tableFilter', '', (v) => v));
-  const [opFilter, setOpFilter] = useState<'ALL' | 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE'>(() =>
-    getInitialFromUrl('opFilter', 'ALL' as const,
-      (v) => (['ALL','SELECT','INSERT','UPDATE','DELETE'].includes(v) ? v as typeof opFilter : undefined)));
+    getInitialFromUrl<string>("tableFilter", "", (v) => v),
+  );
+  const [opFilter, setOpFilter] = useState<"ALL" | "SELECT" | "INSERT" | "UPDATE" | "DELETE">(() =>
+    getInitialFromUrl("opFilter", "ALL" as const, (v) =>
+      ["ALL", "SELECT", "INSERT", "UPDATE", "DELETE"].includes(v)
+        ? (v as typeof opFilter)
+        : undefined,
+    ),
+  );
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
   const [explainOpen, setExplainOpen] = useState(false);
-  const [explainQuery, setExplainQuery] = useState('');
+  const [explainQuery, setExplainQuery] = useState("");
   const [groupByFingerprint, setGroupByFingerprint] = useState(() =>
-    getInitialFromUrl<boolean>('groupByFp', false, (v) => v === '1' || v === 'true'));
+    getInitialFromUrl<boolean>("groupByFp", false, (v) => v === "1" || v === "true"),
+  );
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(() =>
-    getInitialFromUrl<number>('pageSize', 25, (v) => {
-      const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.min(500, n) : undefined;
-    }));
+    getInitialFromUrl<number>("pageSize", 25, (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n > 0 ? Math.min(500, n) : undefined;
+    }),
+  );
   const [searchText, setSearchText] = useState<string>(() =>
-    getInitialFromUrl<string>('q', '', (v) => v));
-  type SortKey = 'rank' | 'fingerprint' | 'calls' | 'mean' | 'max' | 'total';
+    getInitialFromUrl<string>("q", "", (v) => v),
+  );
+  type SortKey = "rank" | "fingerprint" | "calls" | "mean" | "max" | "total";
   const [sortKey, setSortKey] = useState<SortKey>(() =>
-    getInitialFromUrl<SortKey>('sortKey', 'rank',
-      (v) => (['rank','fingerprint','calls','mean','max','total'].includes(v) ? v as SortKey : undefined)));
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>(() =>
-    getInitialFromUrl<'asc' | 'desc'>('sortDir', 'desc',
-      (v) => (v === 'asc' || v === 'desc' ? v : undefined)));
+    getInitialFromUrl<SortKey>("sortKey", "rank", (v) =>
+      ["rank", "fingerprint", "calls", "mean", "max", "total"].includes(v)
+        ? (v as SortKey)
+        : undefined,
+    ),
+  );
+  const [sortDir, setSortDir] = useState<"asc" | "desc">(() =>
+    getInitialFromUrl<"asc" | "desc">("sortDir", "desc", (v) =>
+      v === "asc" || v === "desc" ? v : undefined,
+    ),
+  );
 
   const currentView: PgStatViewConfig = {
-    orderBy, limit, minCalls, opFilter, tableFilter,
+    orderBy,
+    limit,
+    minCalls,
+    opFilter,
+    tableFilter,
   };
 
   const applyView = (cfg: PgStatViewConfig) => {
@@ -182,11 +238,14 @@ export default function PgStatStatements() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('admin_get_pg_stat_statements' as never, {
-        p_order_by: orderBy,
-        p_limit: limit,
-        p_min_calls: minCalls,
-      } as never);
+      const { data, error } = await supabase.rpc(
+        "admin_get_pg_stat_statements" as never,
+        {
+          p_order_by: orderBy,
+          p_limit: limit,
+          p_min_calls: minCalls,
+        } as never,
+      );
       if (error) throw error;
       setRows((data as StatRow[]) || []);
     } catch (e: unknown) {
@@ -202,12 +261,13 @@ export default function PgStatStatements() {
   }, [load]);
 
   const handleReset = useCallback(async () => {
-    if (!confirm('Zerar pg_stat_statements? Toda a janela histórica de medição será perdida.')) return;
+    if (!confirm("Zerar pg_stat_statements? Toda a janela histórica de medição será perdida."))
+      return;
     setResetting(true);
     try {
-      const { error } = await supabase.rpc('admin_reset_pg_stat_statements' as never);
+      const { error } = await supabase.rpc("admin_reset_pg_stat_statements" as never);
       if (error) throw error;
-      toast.success('Estatísticas zeradas. Nova janela iniciada.');
+      toast.success("Estatísticas zeradas. Nova janela iniciada.");
       await load();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -227,8 +287,9 @@ export default function PgStatStatements() {
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
-      if (opFilter !== 'ALL' && inferOp(r.query) !== opFilter) return false;
-      if (tableFilter && !inferTable(r.query).toLowerCase().includes(tableFilter.toLowerCase())) return false;
+      if (opFilter !== "ALL" && inferOp(r.query) !== opFilter) return false;
+      if (tableFilter && !inferTable(r.query).toLowerCase().includes(tableFilter.toLowerCase()))
+        return false;
       return true;
     });
   }, [rows, opFilter, tableFilter]);
@@ -240,7 +301,11 @@ export default function PgStatStatements() {
 
   const displayed = useMemo<DisplayRow[]>(() => {
     if (!groupByFingerprint) {
-      return filtered.map((r) => ({ ...r, fingerprint: fingerprintQuery(r.query), variant_count: 1 }));
+      return filtered.map((r) => ({
+        ...r,
+        fingerprint: fingerprintQuery(r.query),
+        variant_count: 1,
+      }));
     }
     const map = new Map<string, DisplayRow>();
     for (const r of filtered) {
@@ -268,10 +333,17 @@ export default function PgStatStatements() {
       }
     }
     // Base ordering from server-side orderBy (preserves original "rank" semantics)
-    const order = orderBy === 'total_exec_time' ? 'total_exec_ms'
-      : orderBy === 'mean_exec_time' ? 'mean_exec_ms'
-      : orderBy === 'max_exec_time' ? 'max_exec_ms' : 'calls';
-    return [...map.values()].sort((a, b) => (b[order as keyof DisplayRow] as number) - (a[order as keyof DisplayRow] as number));
+    const order =
+      orderBy === "total_exec_time"
+        ? "total_exec_ms"
+        : orderBy === "mean_exec_time"
+          ? "mean_exec_ms"
+          : orderBy === "max_exec_time"
+            ? "max_exec_ms"
+            : "calls";
+    return [...map.values()].sort(
+      (a, b) => (b[order as keyof DisplayRow] as number) - (a[order as keyof DisplayRow] as number),
+    );
   }, [filtered, groupByFingerprint, orderBy]);
 
   // Client-side text search on fingerprint + normalized query (single sample) + table name
@@ -280,8 +352,10 @@ export default function PgStatStatements() {
     if (!q) return displayed;
     return displayed.filter((r) => {
       const hay =
-        r.fingerprint.toLowerCase() + ' ' +
-        r.query.toLowerCase() + ' ' +
+        r.fingerprint.toLowerCase() +
+        " " +
+        r.query.toLowerCase() +
+        " " +
         inferTable(r.query).toLowerCase();
       return hay.includes(q);
     });
@@ -289,17 +363,22 @@ export default function PgStatStatements() {
 
   // Client-side sort (overrides the base rank ordering when sortKey !== 'rank')
   const sorted = useMemo<DisplayRow[]>(() => {
-    if (sortKey === 'rank') return searched;
-    const dir = sortDir === 'asc' ? 1 : -1;
+    if (sortKey === "rank") return searched;
+    const dir = sortDir === "asc" ? 1 : -1;
     const cmp = (a: DisplayRow, b: DisplayRow): number => {
       switch (sortKey) {
-        case 'fingerprint':
+        case "fingerprint":
           return a.fingerprint.localeCompare(b.fingerprint) * dir;
-        case 'calls': return (a.calls - b.calls) * dir;
-        case 'mean': return (a.mean_exec_ms - b.mean_exec_ms) * dir;
-        case 'max': return (a.max_exec_ms - b.max_exec_ms) * dir;
-        case 'total': return (a.total_exec_ms - b.total_exec_ms) * dir;
-        default: return 0;
+        case "calls":
+          return (a.calls - b.calls) * dir;
+        case "mean":
+          return (a.mean_exec_ms - b.mean_exec_ms) * dir;
+        case "max":
+          return (a.max_exec_ms - b.max_exec_ms) * dir;
+        case "total":
+          return (a.total_exec_ms - b.total_exec_ms) * dir;
+        default:
+          return 0;
       }
     };
     return [...searched].sort(cmp);
@@ -310,7 +389,10 @@ export default function PgStatStatements() {
     const sortedSnaps = [...snapshots].sort(
       (a, b) => new Date(a.taken_at).getTime() - new Date(b.taken_at).getTime(),
     );
-    const out = new Map<string, Array<{ when: string; calls: number; mean: number; p95: number }>>();
+    const out = new Map<
+      string,
+      Array<{ when: string; calls: number; mean: number; p95: number }>
+    >();
     for (const s of sortedSnaps) {
       const perFp = new Map<string, { calls: number; total: number; max: number }>();
       for (const r of s.rows || []) {
@@ -338,17 +420,33 @@ export default function PgStatStatements() {
 
   const clickSort = (key: SortKey) => {
     if (sortKey === key) {
-      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
-      setSortDir(key === 'fingerprint' ? 'asc' : 'desc');
+      setSortDir(key === "fingerprint" ? "asc" : "desc");
     }
   };
 
-  const clearSort = () => { setSortKey('rank'); setSortDir('desc'); };
+  const clearSort = () => {
+    setSortKey("rank");
+    setSortDir("desc");
+  };
 
   // Pagination
-  useEffect(() => { setPage(1); }, [orderBy, limit, minCalls, opFilter, tableFilter, groupByFingerprint, pageSize, searchText, sortKey, sortDir]);
+  useEffect(() => {
+    setPage(1);
+  }, [
+    orderBy,
+    limit,
+    minCalls,
+    opFilter,
+    tableFilter,
+    groupByFingerprint,
+    pageSize,
+    searchText,
+    sortKey,
+    sortDir,
+  ]);
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const pageStart = (page - 1) * pageSize;
   const pageEnd = pageStart + pageSize;
@@ -357,31 +455,31 @@ export default function PgStatStatements() {
   const copyShareLink = async () => {
     try {
       const params = new URLSearchParams(window.location.search);
-      params.set('orderBy', orderBy);
-      params.set('limit', String(limit));
-      params.set('minCalls', String(minCalls));
-      params.set('opFilter', opFilter);
-      params.set('tableFilter', tableFilter);
-      params.set('groupByFp', groupByFingerprint ? '1' : '0');
-      params.set('pageSize', String(pageSize));
-      if (searchText) params.set('q', searchText); else params.delete('q');
-      params.set('sortKey', sortKey);
-      params.set('sortDir', sortDir);
+      params.set("orderBy", orderBy);
+      params.set("limit", String(limit));
+      params.set("minCalls", String(minCalls));
+      params.set("opFilter", opFilter);
+      params.set("tableFilter", tableFilter);
+      params.set("groupByFp", groupByFingerprint ? "1" : "0");
+      params.set("pageSize", String(pageSize));
+      if (searchText) params.set("q", searchText);
+      else params.delete("q");
+      params.set("sortKey", sortKey);
+      params.set("sortDir", sortDir);
       const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
       await navigator.clipboard.writeText(url);
-      window.history.replaceState(null, '', url);
-      toast.success('Link copiado — filtros e intervalos A×B preservados');
+      window.history.replaceState(null, "", url);
+      toast.success("Link copiado — filtros e intervalos A×B preservados");
     } catch {
-      toast.error('Falha ao copiar link');
+      toast.error("Falha ao copiar link");
     }
   };
-
-
 
   const toggleExpand = (i: number) => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      if (next.has(i)) next.delete(i); else next.add(i);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
       return next;
     });
   };
@@ -389,9 +487,9 @@ export default function PgStatStatements() {
   const copyQuery = async (q: string) => {
     try {
       await navigator.clipboard.writeText(q);
-      toast.success('Query copiada');
+      toast.success("Query copiada");
     } catch {
-      toast.error('Falha ao copiar');
+      toast.error("Falha ao copiar");
     }
   };
 
@@ -403,9 +501,11 @@ export default function PgStatStatements() {
   const downloadBlob = (name: string, content: string, mime: string) => {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = name;
-    document.body.appendChild(a); a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
@@ -413,46 +513,81 @@ export default function PgStatStatements() {
   const exportJSON = () => {
     const payload = {
       exported_at: new Date().toISOString(),
-      filters: { orderBy, limit, minCalls, opFilter, tableFilter, groupByFingerprint,
-        searchText, sortKey, sortDir },
+      filters: {
+        orderBy,
+        limit,
+        minCalls,
+        opFilter,
+        tableFilter,
+        groupByFingerprint,
+        searchText,
+        sortKey,
+        sortDir,
+      },
       window_started_at: statsSince ?? null,
       rows: sorted,
     };
     downloadBlob(
-      `pg_stat_statements_${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
+      `pg_stat_statements_${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
       JSON.stringify(payload, null, 2),
-      'application/json',
+      "application/json",
     );
     toast.success(`Exportados ${sorted.length} registros (JSON)`);
   };
 
   const exportCSV = () => {
     const escape = (v: unknown) => {
-      const s = v == null ? '' : String(v);
+      const s = v == null ? "" : String(v);
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const header = [
-      'rank','op','table','calls','mean_ms','max_ms','min_ms','stddev_ms',
-      'total_ms','pct_total','rows_returned','cache_hit','cache_read',
-      'variants','fingerprint','query',
+      "rank",
+      "op",
+      "table",
+      "calls",
+      "mean_ms",
+      "max_ms",
+      "min_ms",
+      "stddev_ms",
+      "total_ms",
+      "pct_total",
+      "rows_returned",
+      "cache_hit",
+      "cache_read",
+      "variants",
+      "fingerprint",
+      "query",
     ];
-    const lines = [header.join(',')];
+    const lines = [header.join(",")];
     sorted.forEach((r, i) => {
       const pct = totalMsAll > 0 ? (r.total_exec_ms / totalMsAll) * 100 : 0;
-      lines.push([
-        i + 1, inferOp(r.query), inferTable(r.query),
-        r.calls, r.mean_exec_ms.toFixed(3), r.max_exec_ms.toFixed(3),
-        r.min_exec_ms.toFixed(3), r.stddev_exec_ms.toFixed(3),
-        r.total_exec_ms.toFixed(3), pct.toFixed(2),
-        r.rows_returned, r.shared_blks_hit, r.shared_blks_read,
-        r.variant_count, r.fingerprint,
-        r.query.replace(/\s+/g, ' ').trim(),
-      ].map(escape).join(','));
+      lines.push(
+        [
+          i + 1,
+          inferOp(r.query),
+          inferTable(r.query),
+          r.calls,
+          r.mean_exec_ms.toFixed(3),
+          r.max_exec_ms.toFixed(3),
+          r.min_exec_ms.toFixed(3),
+          r.stddev_exec_ms.toFixed(3),
+          r.total_exec_ms.toFixed(3),
+          pct.toFixed(2),
+          r.rows_returned,
+          r.shared_blks_hit,
+          r.shared_blks_read,
+          r.variant_count,
+          r.fingerprint,
+          r.query.replace(/\s+/g, " ").trim(),
+        ]
+          .map(escape)
+          .join(","),
+      );
     });
     downloadBlob(
-      `pg_stat_statements_${new Date().toISOString().replace(/[:.]/g, '-')}.csv`,
-      lines.join('\n'),
-      'text/csv;charset=utf-8',
+      `pg_stat_statements_${new Date().toISOString().replace(/[:.]/g, "-")}.csv`,
+      lines.join("\n"),
+      "text/csv;charset=utf-8",
     );
     toast.success(`Exportados ${sorted.length} registros (CSV)`);
   };
@@ -460,22 +595,41 @@ export default function PgStatStatements() {
   // ---- Fingerprint aggregate + evolution across snapshots (respects op/table filters) ----
   const fingerprintExportRows = useMemo(() => {
     const passFilters = (q: string) => {
-      if (opFilter !== 'ALL' && inferOp(q) !== opFilter) return false;
-      if (tableFilter && !inferTable(q).toLowerCase().includes(tableFilter.toLowerCase())) return false;
+      if (opFilter !== "ALL" && inferOp(q) !== opFilter) return false;
+      if (tableFilter && !inferTable(q).toLowerCase().includes(tableFilter.toLowerCase()))
+        return false;
       return true;
     };
-    const agg = new Map<string, {
-      fingerprint: string; example: string;
-      calls: number; totalMs: number; meanMs: number; p95Ms: number;
-      evolution: Array<{ taken_at: string; calls: number; mean_ms: number; total_ms: number; p95_ms: number }>;
-    }>();
+    const agg = new Map<
+      string,
+      {
+        fingerprint: string;
+        example: string;
+        calls: number;
+        totalMs: number;
+        meanMs: number;
+        p95Ms: number;
+        evolution: Array<{
+          taken_at: string;
+          calls: number;
+          mean_ms: number;
+          total_ms: number;
+          p95_ms: number;
+        }>;
+      }
+    >();
     // live rows first (current window)
     for (const r of rows) {
       if (!passFilters(r.query)) continue;
       const fp = fingerprintQuery(r.query);
       const cur = agg.get(fp) || {
-        fingerprint: fp, example: r.query,
-        calls: 0, totalMs: 0, meanMs: 0, p95Ms: 0, evolution: [],
+        fingerprint: fp,
+        example: r.query,
+        calls: 0,
+        totalMs: 0,
+        meanMs: 0,
+        p95Ms: 0,
+        evolution: [],
       };
       cur.calls += r.calls;
       cur.totalMs += r.total_exec_ms;
@@ -500,8 +654,13 @@ export default function PgStatStatements() {
       for (const [fp, v] of perFp) {
         if (!agg.has(fp)) {
           agg.set(fp, {
-            fingerprint: fp, example: '',
-            calls: 0, totalMs: 0, meanMs: 0, p95Ms: 0, evolution: [],
+            fingerprint: fp,
+            example: "",
+            calls: 0,
+            totalMs: 0,
+            meanMs: 0,
+            p95Ms: 0,
+            evolution: [],
           });
         }
         agg.get(fp)!.evolution.push({
@@ -527,42 +686,52 @@ export default function PgStatStatements() {
       rows: fingerprintExportRows,
     };
     downloadBlob(
-      `pg_stat_fingerprints_${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
+      `pg_stat_fingerprints_${new Date().toISOString().replace(/[:.]/g, "-")}.json`,
       JSON.stringify(payload, null, 2),
-      'application/json',
+      "application/json",
     );
     toast.success(`${fingerprintExportRows.length} fingerprints exportados (JSON)`);
   };
 
   const exportFingerprintCSV = () => {
     const escape = (v: unknown) => {
-      const s = v == null ? '' : String(v);
+      const s = v == null ? "" : String(v);
       return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
     const header = [
-      'fingerprint','calls_live','mean_ms_live','p95_ms_live','total_ms_live',
-      'snapshots_present','evolution_json','example',
+      "fingerprint",
+      "calls_live",
+      "mean_ms_live",
+      "p95_ms_live",
+      "total_ms_live",
+      "snapshots_present",
+      "evolution_json",
+      "example",
     ];
-    const lines = [header.join(',')];
+    const lines = [header.join(",")];
     for (const r of fingerprintExportRows) {
-      lines.push([
-        r.fingerprint,
-        r.calls, r.meanMs.toFixed(3), r.p95Ms.toFixed(3), r.totalMs.toFixed(3),
-        r.evolution.length,
-        JSON.stringify(r.evolution),
-        r.example,
-      ].map(escape).join(','));
+      lines.push(
+        [
+          r.fingerprint,
+          r.calls,
+          r.meanMs.toFixed(3),
+          r.p95Ms.toFixed(3),
+          r.totalMs.toFixed(3),
+          r.evolution.length,
+          JSON.stringify(r.evolution),
+          r.example,
+        ]
+          .map(escape)
+          .join(","),
+      );
     }
     downloadBlob(
-      `pg_stat_fingerprints_${new Date().toISOString().replace(/[:.]/g, '-')}.csv`,
-      lines.join('\n'),
-      'text/csv;charset=utf-8',
+      `pg_stat_fingerprints_${new Date().toISOString().replace(/[:.]/g, "-")}.csv`,
+      lines.join("\n"),
+      "text/csv;charset=utf-8",
     );
     toast.success(`${fingerprintExportRows.length} fingerprints exportados (CSV)`);
   };
-
-
-
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-6 space-y-4">
@@ -582,10 +751,14 @@ export default function PgStatStatements() {
             <div>
               <Label htmlFor="order-by">Ordenar por</Label>
               <Select value={orderBy} onValueChange={(v) => setOrderBy(v as OrderBy)}>
-                <SelectTrigger id="order-by"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="order-by">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {(Object.keys(ORDER_LABELS) as OrderBy[]).map((k) => (
-                    <SelectItem key={k} value={k}>{ORDER_LABELS[k]}</SelectItem>
+                    <SelectItem key={k} value={k}>
+                      {ORDER_LABELS[k]}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -594,7 +767,11 @@ export default function PgStatStatements() {
             <div>
               <Label htmlFor="limit">Top N</Label>
               <Input
-                id="limit" type="number" min={1} max={200} value={limit}
+                id="limit"
+                type="number"
+                min={1}
+                max={200}
+                value={limit}
                 onChange={(e) => setLimit(Math.max(1, Math.min(200, Number(e.target.value) || 25)))}
               />
             </div>
@@ -602,7 +779,10 @@ export default function PgStatStatements() {
             <div>
               <Label htmlFor="min-calls">Mín. chamadas</Label>
               <Input
-                id="min-calls" type="number" min={1} value={minCalls}
+                id="min-calls"
+                type="number"
+                min={1}
+                value={minCalls}
                 onChange={(e) => setMinCalls(Math.max(1, Number(e.target.value) || 1))}
               />
             </div>
@@ -610,7 +790,9 @@ export default function PgStatStatements() {
             <div>
               <Label htmlFor="op">Operação</Label>
               <Select value={opFilter} onValueChange={(v) => setOpFilter(v as typeof opFilter)}>
-                <SelectTrigger id="op"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="op">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">Todas</SelectItem>
                   <SelectItem value="SELECT">SELECT</SelectItem>
@@ -624,15 +806,17 @@ export default function PgStatStatements() {
             <div>
               <Label htmlFor="table-filter">Filtrar tabela</Label>
               <Input
-                id="table-filter" placeholder="ex: app_metrics"
-                value={tableFilter} onChange={(e) => setTableFilter(e.target.value)}
+                id="table-filter"
+                placeholder="ex: app_metrics"
+                value={tableFilter}
+                onChange={(e) => setTableFilter(e.target.value)}
               />
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 mt-4">
             <Button onClick={load} disabled={loading} size="sm">
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
               Atualizar
             </Button>
             <Button onClick={handleReset} disabled={resetting} size="sm" variant="outline">
@@ -649,10 +833,16 @@ export default function PgStatStatements() {
                 <DropdownMenuItem onClick={exportCSV}>Tabela atual · CSV</DropdownMenuItem>
                 <DropdownMenuItem onClick={exportJSON}>Tabela atual · JSON</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={exportFingerprintCSV} disabled={fingerprintExportRows.length === 0}>
+                <DropdownMenuItem
+                  onClick={exportFingerprintCSV}
+                  disabled={fingerprintExportRows.length === 0}
+                >
                   Fingerprints + evolução · CSV
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={exportFingerprintJSON} disabled={fingerprintExportRows.length === 0}>
+                <DropdownMenuItem
+                  onClick={exportFingerprintJSON}
+                  disabled={fingerprintExportRows.length === 0}
+                >
                   Fingerprints + evolução · JSON
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -660,7 +850,6 @@ export default function PgStatStatements() {
             <Button size="sm" variant="outline" onClick={copyShareLink}>
               <Link2 className="h-4 w-4 mr-2" /> Copiar link
             </Button>
-
 
             <div className="flex items-center gap-2 ml-2 rounded-md border px-3 py-1.5">
               <Switch
@@ -675,21 +864,18 @@ export default function PgStatStatements() {
 
             {statsSince && (
               <div className="text-xs text-muted-foreground ml-auto">
-                Janela desde <strong>{new Date(statsSince).toLocaleString('pt-BR')}</strong>
-                {windowSeconds != null && (
-                  <> ({(windowSeconds / 3600).toFixed(1)} h)</>
-                )}
-                {' · '}
+                Janela desde <strong>{new Date(statsSince).toLocaleString("pt-BR")}</strong>
+                {windowSeconds != null && <> ({(windowSeconds / 3600).toFixed(1)} h)</>}
+                {" · "}
                 Tempo acumulado (top {sorted.length}): <strong>{fmtMs(totalMsAll)}</strong>
               </div>
             )}
           </div>
 
-
           <p className="text-xs text-muted-foreground mt-3">
-            <strong>Nota:</strong> <code>pg_stat_statements</code> é cumulativo desde o último reset —
-            não há filtro por intervalo arbitrário. Use “Zerar janela” para começar uma nova medição
-            (ex: antes de um deploy, para comparar antes/depois).
+            <strong>Nota:</strong> <code>pg_stat_statements</code> é cumulativo desde o último reset
+            — não há filtro por intervalo arbitrário. Use “Zerar janela” para começar uma nova
+            medição (ex: antes de um deploy, para comparar antes/depois).
           </p>
         </CardContent>
       </Card>
@@ -711,19 +897,15 @@ export default function PgStatStatements() {
 
       <FailuresReportCard />
 
-
-
-
       <SnapshotsPanel snapshots={snapshots} loading={snapshotsLoading} reload={reloadSnapshots} />
-
 
       <Card>
         <CardHeader className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <CardTitle className="text-base">
               Resultado ({sorted.length}
-              {sorted.length !== displayed.length && <> de {displayed.length}</>}
-              ){groupByFingerprint ? ' — agrupado por fingerprint' : ''}
+              {sorted.length !== displayed.length && <> de {displayed.length}</>})
+              {groupByFingerprint ? " — agrupado por fingerprint" : ""}
             </CardTitle>
             <div className="relative ml-auto w-full sm:w-72">
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -738,14 +920,14 @@ export default function PgStatStatements() {
                 <button
                   type="button"
                   aria-label="Limpar busca"
-                  onClick={() => setSearchText('')}
+                  onClick={() => setSearchText("")}
                   className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-0.5 hover:bg-muted"
                 >
                   <X className="h-3 w-3" />
                 </button>
               )}
             </div>
-            {sortKey !== 'rank' && (
+            {sortKey !== "rank" && (
               <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={clearSort}>
                 Limpar ordenação
               </Button>
@@ -758,29 +940,50 @@ export default function PgStatStatements() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-10">
-                    <SortHeader label="#" active={sortKey === 'rank'} dir={sortDir} onClick={clearSort} />
+                    <SortHeader
+                      label="#"
+                      active={sortKey === "rank"}
+                      dir={sortDir}
+                      onClick={clearSort}
+                    />
                   </TableHead>
                   <TableHead>Op</TableHead>
                   <TableHead>Tabela</TableHead>
                   <TableHead className="text-right">
-                    <SortHeader label="Chamadas" align="right"
-                      active={sortKey === 'calls'} dir={sortDir}
-                      onClick={() => clickSort('calls')} />
+                    <SortHeader
+                      label="Chamadas"
+                      align="right"
+                      active={sortKey === "calls"}
+                      dir={sortDir}
+                      onClick={() => clickSort("calls")}
+                    />
                   </TableHead>
                   <TableHead className="text-right">
-                    <SortHeader label="Média" align="right"
-                      active={sortKey === 'mean'} dir={sortDir}
-                      onClick={() => clickSort('mean')} />
+                    <SortHeader
+                      label="Média"
+                      align="right"
+                      active={sortKey === "mean"}
+                      dir={sortDir}
+                      onClick={() => clickSort("mean")}
+                    />
                   </TableHead>
                   <TableHead className="text-right">
-                    <SortHeader label="Máx" align="right"
-                      active={sortKey === 'max'} dir={sortDir}
-                      onClick={() => clickSort('max')} />
+                    <SortHeader
+                      label="Máx"
+                      align="right"
+                      active={sortKey === "max"}
+                      dir={sortDir}
+                      onClick={() => clickSort("max")}
+                    />
                   </TableHead>
                   <TableHead className="text-right">
-                    <SortHeader label="Total" align="right"
-                      active={sortKey === 'total'} dir={sortDir}
-                      onClick={() => clickSort('total')} />
+                    <SortHeader
+                      label="Total"
+                      align="right"
+                      active={sortKey === "total"}
+                      dir={sortDir}
+                      onClick={() => clickSort("total")}
+                    />
                   </TableHead>
                   <TableHead className="text-right">% total</TableHead>
                   {groupByFingerprint && (
@@ -788,17 +991,25 @@ export default function PgStatStatements() {
                   )}
                   <TableHead>
                     {groupByFingerprint ? (
-                      <SortHeader label="Fingerprint"
-                        active={sortKey === 'fingerprint'} dir={sortDir}
-                        onClick={() => clickSort('fingerprint')} />
-                    ) : 'Query'}
+                      <SortHeader
+                        label="Fingerprint"
+                        active={sortKey === "fingerprint"}
+                        dir={sortDir}
+                        onClick={() => clickSort("fingerprint")}
+                      />
+                    ) : (
+                      "Query"
+                    )}
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pageRows.length === 0 && !loading && (
                   <TableRow>
-                    <TableCell colSpan={groupByFingerprint ? 10 : 9} className="text-center text-muted-foreground py-8">
+                    <TableCell
+                      colSpan={groupByFingerprint ? 10 : 9}
+                      className="text-center text-muted-foreground py-8"
+                    >
                       Nenhuma consulta encontrada com os filtros atuais.
                     </TableCell>
                   </TableRow>
@@ -812,7 +1023,7 @@ export default function PgStatStatements() {
                   const display = groupByFingerprint
                     ? shortFingerprint(r.fingerprint, 100)
                     : firstLine(r.query, 100);
-                  const evo = groupByFingerprint ? (evolutionByFp.get(r.fingerprint) || []) : [];
+                  const evo = groupByFingerprint ? evolutionByFp.get(r.fingerprint) || [] : [];
                   const p95Series = evo.map((e) => e.p95);
                   const meanSeries = evo.map((e) => e.mean);
                   const callsSeries = evo.map((e) => e.calls);
@@ -820,10 +1031,15 @@ export default function PgStatStatements() {
                   const trim = <T,>(arr: T[]) => (arr.length > lastN ? arr.slice(-lastN) : arr);
                   return (
                     <React.Fragment key={i}>
-                      <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => toggleExpand(i)}>
+                      <TableRow
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => toggleExpand(i)}
+                      >
                         <TableCell className="text-muted-foreground">{i + 1}</TableCell>
                         <TableCell>
-                          <Badge variant={OP_VARIANT[op]} className="text-xs">{op}</Badge>
+                          <Badge variant={OP_VARIANT[op]} className="text-xs">
+                            {op}
+                          </Badge>
                         </TableCell>
                         <TableCell className="font-mono text-xs">{table}</TableCell>
                         <TableCell className="text-right">
@@ -836,11 +1052,15 @@ export default function PgStatStatements() {
                         </TableCell>
                         <TableCell className="text-right">{fmtMs(r.mean_exec_ms)}</TableCell>
                         <TableCell className="text-right">
-                          <span className={r.max_exec_ms > 200 ? 'text-destructive font-medium' : ''}>
+                          <span
+                            className={r.max_exec_ms > 200 ? "text-destructive font-medium" : ""}
+                          >
                             {fmtMs(r.max_exec_ms)}
                           </span>
                         </TableCell>
-                        <TableCell className="text-right font-medium">{fmtMs(r.total_exec_ms)}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          {fmtMs(r.total_exec_ms)}
+                        </TableCell>
                         <TableCell className="text-right text-xs">{pct.toFixed(1)}%</TableCell>
                         {groupByFingerprint && (
                           <TableCell onClick={(e) => e.stopPropagation()}>
@@ -848,13 +1068,28 @@ export default function PgStatStatements() {
                               className="flex flex-col gap-0.5 leading-none"
                               title={
                                 evo.length === 0
-                                  ? 'Sem histórico de snapshots'
-                                  : `${evo.length} snapshot(s) — última janela: ${new Date(evo[evo.length - 1].when).toLocaleString('pt-BR')}`
+                                  ? "Sem histórico de snapshots"
+                                  : `${evo.length} snapshot(s) — última janela: ${new Date(evo[evo.length - 1].when).toLocaleString("pt-BR")}`
                               }
                             >
-                              <Sparkline values={trim(p95Series)} strokeClass="stroke-destructive" fillClass="fill-destructive/10" ariaLabel={`Evolução p95 · ${evo.length} pontos`} />
-                              <Sparkline values={trim(meanSeries)} strokeClass="stroke-primary" fillClass="fill-primary/10" ariaLabel={`Evolução média · ${evo.length} pontos`} />
-                              <Sparkline values={trim(callsSeries)} strokeClass="stroke-muted-foreground" fillClass="fill-muted-foreground/10" ariaLabel={`Evolução chamadas · ${evo.length} pontos`} />
+                              <Sparkline
+                                values={trim(p95Series)}
+                                strokeClass="stroke-destructive"
+                                fillClass="fill-destructive/10"
+                                ariaLabel={`Evolução p95 · ${evo.length} pontos`}
+                              />
+                              <Sparkline
+                                values={trim(meanSeries)}
+                                strokeClass="stroke-primary"
+                                fillClass="fill-primary/10"
+                                ariaLabel={`Evolução média · ${evo.length} pontos`}
+                              />
+                              <Sparkline
+                                values={trim(callsSeries)}
+                                strokeClass="stroke-muted-foreground"
+                                fillClass="fill-muted-foreground/10"
+                                ariaLabel={`Evolução chamadas · ${evo.length} pontos`}
+                              />
                             </div>
                           </TableCell>
                         )}
@@ -868,27 +1103,43 @@ export default function PgStatStatements() {
                             <div className="space-y-2 py-2">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">
-                                  min {fmtMs(r.min_exec_ms)} · stddev {fmtMs(r.stddev_exec_ms)} ·
-                                  {' '}rows {fmtInt(r.rows_returned)} ·
-                                  {' '}cache hit {fmtInt(r.shared_blks_hit)} / read {fmtInt(r.shared_blks_read)}
-                                  {groupByFingerprint && <> · variantes: <strong>{r.variant_count}</strong></>}
+                                  min {fmtMs(r.min_exec_ms)} · stddev {fmtMs(r.stddev_exec_ms)} ·{" "}
+                                  rows {fmtInt(r.rows_returned)} · cache hit{" "}
+                                  {fmtInt(r.shared_blks_hit)} / read {fmtInt(r.shared_blks_read)}
+                                  {groupByFingerprint && (
+                                    <>
+                                      {" "}
+                                      · variantes: <strong>{r.variant_count}</strong>
+                                    </>
+                                  )}
                                 </span>
                                 <Button
-                                  size="sm" variant="ghost" className="ml-auto h-7"
-                                  onClick={(e) => { e.stopPropagation(); openExplain(r.query); }}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="ml-auto h-7"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openExplain(r.query);
+                                  }}
                                 >
                                   <FileSearch className="h-3 w-3 mr-1" /> EXPLAIN
                                 </Button>
                                 <Button
-                                  size="sm" variant="ghost" className="h-7"
-                                  onClick={(e) => { e.stopPropagation(); void copyQuery(r.query); }}
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-7"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    void copyQuery(r.query);
+                                  }}
                                 >
                                   <Copy className="h-3 w-3 mr-1" /> Copiar query
                                 </Button>
                               </div>
                               {groupByFingerprint && (
                                 <pre className="text-xs bg-background p-3 rounded border overflow-x-auto whitespace-pre-wrap break-all">
-                                  <span className="text-muted-foreground">fingerprint:</span> {r.fingerprint}
+                                  <span className="text-muted-foreground">fingerprint:</span>{" "}
+                                  {r.fingerprint}
                                 </pre>
                               )}
                               {groupByFingerprint ? (
@@ -912,7 +1163,6 @@ export default function PgStatStatements() {
                                 </pre>
                               )}
                             </div>
-
                           </TableCell>
                         </TableRow>
                       )}
@@ -928,26 +1178,42 @@ export default function PgStatStatements() {
                 Mostrando {pageStart + 1}–{Math.min(pageEnd, sorted.length)} de {sorted.length}
               </span>
               <div className="flex items-center gap-1 ml-2">
-                <Label htmlFor="page-size" className="text-xs">Por página</Label>
+                <Label htmlFor="page-size" className="text-xs">
+                  Por página
+                </Label>
                 <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
                   <SelectTrigger id="page-size" className="h-7 w-20 text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {[10, 25, 50, 100, 200, 500].map((n) => (
-                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                      <SelectItem key={n} value={String(n)}>
+                        {n}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center gap-1 ml-auto">
-                <Button size="sm" variant="outline" className="h-7 px-2"
-                  disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-2"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
                   <ChevronLeft className="h-3 w-3" />
                 </Button>
-                <span className="px-2">Página {page} / {totalPages}</span>
-                <Button size="sm" variant="outline" className="h-7 px-2"
-                  disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                <span className="px-2">
+                  Página {page} / {totalPages}
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-2"
+                  disabled={page >= totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
                   <ChevronRight className="h-3 w-3" />
                 </Button>
               </div>
@@ -960,4 +1226,3 @@ export default function PgStatStatements() {
     </div>
   );
 }
-

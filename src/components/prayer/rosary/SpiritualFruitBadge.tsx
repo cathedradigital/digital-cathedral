@@ -1,10 +1,10 @@
 /**
  * SpiritualFruitBadge — bloco discreto exibindo virtude/fruto do mistério.
  */
-import React from 'react';
-import { Leaf } from 'lucide-react';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta } from './mysteryMeta';
+import React from "react";
+import { Leaf } from "lucide-react";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta } from "./mysteryMeta";
 
 const SpiritualFruitBadge: React.FC<{ mystery: DBMystery }> = ({ mystery }) => {
   const meta = readMysteryMeta(mystery);

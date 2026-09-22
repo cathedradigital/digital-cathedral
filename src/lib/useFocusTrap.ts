@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 /**
  * Focus trap para conter Tab/Shift+Tab dentro de um container enquanto ativo.
@@ -10,38 +10,31 @@ import { useEffect } from 'react';
  * - Seguro no SSR (checa `typeof document`).
  */
 const FOCUSABLE_SELECTOR = [
-  'a[href]',
-  'button:not([disabled])',
+  "a[href]",
+  "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
+  "select:not([disabled])",
+  "textarea:not([disabled])",
   '[tabindex]:not([tabindex="-1"])',
-].join(',');
+].join(",");
 
-export function useFocusTrap(
-  containerRef: React.RefObject<HTMLElement | null>,
-  active: boolean,
-) {
+export function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active: boolean) {
   useEffect(() => {
-    if (!active || typeof document === 'undefined') return;
+    if (!active || typeof document === "undefined") return;
     const container = containerRef.current;
     if (!container) return;
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const getFocusable = (): HTMLElement[] => {
-      const list = Array.from(
-        container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
+      const list = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
       return list.filter(
-        (el) =>
-          !el.hasAttribute('data-focus-trap-ignore') &&
-          el.offsetParent !== null,
+        (el) => !el.hasAttribute("data-focus-trap-ignore") && el.offsetParent !== null,
       );
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== "Tab") return;
       const focusable = getFocusable();
       if (focusable.length === 0) {
         e.preventDefault();
@@ -64,10 +57,10 @@ export function useFocusTrap(
       }
     };
 
-    container.addEventListener('keydown', onKeyDown);
+    container.addEventListener("keydown", onKeyDown);
     return () => {
-      container.removeEventListener('keydown', onKeyDown);
-      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+      container.removeEventListener("keydown", onKeyDown);
+      if (previouslyFocused && typeof previouslyFocused.focus === "function") {
         try {
           previouslyFocused.focus();
         } catch {

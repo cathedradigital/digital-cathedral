@@ -11,12 +11,12 @@
  *   - fallback: KnowledgeGraph.search(prayer.title)
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import { KnowledgeRegistry } from '../KnowledgeRegistry';
-import type { KnowledgeNodeId, ResolvedNode } from '../types';
-import type { ContinuationSuggestion } from '../continuation';
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import { KnowledgeRegistry } from "../KnowledgeRegistry";
+import type { KnowledgeNodeId, ResolvedNode } from "../types";
+import type { ContinuationSuggestion } from "../continuation";
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
 
 /* --------------------- entradas agnósticas ao Supabase --------------------- */
 
@@ -34,16 +34,16 @@ export interface PrayerNexusInput {
 }
 
 /* Ordem oficial dos buckets (define a ordem visual das sugestões). */
-const BUCKETS = ['bible', 'catechism', 'glossary', 'journey', 'saint', 'liturgy'] as const;
+const BUCKETS = ["bible", "catechism", "glossary", "journey", "saint", "liturgy"] as const;
 type Bucket = (typeof BUCKETS)[number];
 
 const BUCKET_EYEBROW: Record<Bucket, string> = {
-  bible: 'Meditar na Escritura',
-  catechism: 'Aprofundar no Catecismo',
-  glossary: 'Estudar o verbete',
-  journey: 'Continuar a formação',
-  saint: 'Conhecer o santo',
-  liturgy: 'Rezar com a Liturgia',
+  bible: "Meditar na Escritura",
+  catechism: "Aprofundar no Catecismo",
+  glossary: "Estudar o verbete",
+  journey: "Continuar a formação",
+  saint: "Conhecer o santo",
+  liturgy: "Rezar com a Liturgia",
 };
 
 /* -------------------------------- cache LRU ------------------------------- */
@@ -52,15 +52,13 @@ const CACHE_MAX = 64;
 const cache = new Map<string, PrayerAutoNexusResult>();
 
 export function _fingerprintPrayer(p: PrayerNexusInput): string {
-  const join = (xs: (string | number)[] | null | undefined) =>
-    (xs ?? []).map(String).join('|');
-  const blocks =
-    (p.block_refs ?? [])
-      .map((r) => `${(r.bible ?? []).join(',')}#${(r.catechism ?? []).join(',')}`)
-      .join('§');
+  const join = (xs: (string | number)[] | null | undefined) => (xs ?? []).map(String).join("|");
+  const blocks = (p.block_refs ?? [])
+    .map((r) => `${(r.bible ?? []).join(",")}#${(r.catechism ?? []).join(",")}`)
+    .join("§");
   return [
     p.slug,
-    p.category ?? '',
+    p.category ?? "",
     join(p.related_bible),
     join(p.related_catechism),
     join(p.related_saints),
@@ -68,7 +66,7 @@ export function _fingerprintPrayer(p: PrayerNexusInput): string {
     join(p.related_journeys),
     join(p.related_liturgy),
     blocks,
-  ].join('#');
+  ].join("#");
 }
 
 export function clearPrayerAutoNexusCache(): void {
@@ -88,16 +86,20 @@ export interface PrayerAutoNexusResult {
   labels: Record<string, string>;
 }
 
-
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 /* -------------------------------- helpers --------------------------------- */
 
 function collectRefs(p: PrayerNexusInput): Record<Bucket, string[]> {
   const out: Record<Bucket, string[]> = {
-    bible: [], catechism: [], glossary: [], journey: [], saint: [], liturgy: [],
+    bible: [],
+    catechism: [],
+    glossary: [],
+    journey: [],
+    saint: [],
+    liturgy: [],
   };
   const pushUnique = (bucket: Bucket, raw: string) => {
     const v = raw.trim();
@@ -105,16 +107,16 @@ function collectRefs(p: PrayerNexusInput): Record<Bucket, string[]> {
     if (!out[bucket].includes(v)) out[bucket].push(v);
   };
 
-  (p.related_bible ?? []).forEach((r) => pushUnique('bible', r));
-  (p.related_catechism ?? []).forEach((r) => pushUnique('catechism', String(r)));
-  (p.related_glossary ?? []).forEach((r) => pushUnique('glossary', r));
-  (p.related_journeys ?? []).forEach((r) => pushUnique('journey', r));
-  (p.related_saints ?? []).forEach((r) => pushUnique('saint', r));
-  (p.related_liturgy ?? []).forEach((r) => pushUnique('liturgy', r));
+  (p.related_bible ?? []).forEach((r) => pushUnique("bible", r));
+  (p.related_catechism ?? []).forEach((r) => pushUnique("catechism", String(r)));
+  (p.related_glossary ?? []).forEach((r) => pushUnique("glossary", r));
+  (p.related_journeys ?? []).forEach((r) => pushUnique("journey", r));
+  (p.related_saints ?? []).forEach((r) => pushUnique("saint", r));
+  (p.related_liturgy ?? []).forEach((r) => pushUnique("liturgy", r));
 
   for (const br of p.block_refs ?? []) {
-    (br.bible ?? []).forEach((r) => pushUnique('bible', r));
-    (br.catechism ?? []).forEach((n) => pushUnique('catechism', String(n)));
+    (br.bible ?? []).forEach((r) => pushUnique("bible", r));
+    (br.catechism ?? []).forEach((n) => pushUnique("catechism", String(n)));
   }
   return out;
 }
@@ -128,7 +130,7 @@ export function resolvePrayerAutoNexus(input: PrayerNexusInput): PrayerAutoNexus
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'prayer', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "prayer", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -139,7 +141,12 @@ export function resolvePrayerAutoNexus(input: PrayerNexusInput): PrayerAutoNexus
   const refs = collectRefs(input);
 
   const byBucket: Record<Bucket, ResolvedNode[]> = {
-    bible: [], catechism: [], glossary: [], journey: [], saint: [], liturgy: [],
+    bible: [],
+    catechism: [],
+    glossary: [],
+    journey: [],
+    saint: [],
+    liturgy: [],
   };
 
   for (const bucket of BUCKETS) {
@@ -158,16 +165,14 @@ export function resolvePrayerAutoNexus(input: PrayerNexusInput): PrayerAutoNexus
   //    com vizinhança semântica do grafo — sem inventar URL.
   const emptyBuckets = BUCKETS.filter((b) => byBucket[b].length === 0);
   if (emptyBuckets.length > 0) {
-    const queries = [input.title, input.category ?? ''].filter((q) => q && q.length >= 3);
+    const queries = [input.title, input.category ?? ""].filter((q) => q && q.length >= 3);
     const seen = new Set<KnowledgeNodeId>();
     for (const q of queries) {
       const found = KnowledgeGraph.search(q, { limit: 24 });
       for (const n of found) {
         if (seen.has(n.id) || n.id === selfId) continue;
         seen.add(n.id);
-        const bucket = (BUCKETS as readonly string[]).includes(n.kind)
-          ? (n.kind as Bucket)
-          : null;
+        const bucket = (BUCKETS as readonly string[]).includes(n.kind) ? (n.kind as Bucket) : null;
         if (!bucket || byBucket[bucket].length > 0) continue;
         const resolved = KnowledgeGraph.resolve(n.id);
         if (resolved?.url) byBucket[bucket].push(resolved);
@@ -178,9 +183,7 @@ export function resolvePrayerAutoNexus(input: PrayerNexusInput): PrayerAutoNexus
   // 4. Ainda vazio? Neighbors do próprio nó (se houver arestas).
   if (selfId && KnowledgeRegistry.hasNode(selfId)) {
     KnowledgeGraph.neighbors(selfId).forEach((n) => {
-      const bucket = (BUCKETS as readonly string[]).includes(n.kind)
-        ? (n.kind as Bucket)
-        : null;
+      const bucket = (BUCKETS as readonly string[]).includes(n.kind) ? (n.kind as Bucket) : null;
       if (!bucket || byBucket[bucket].length > 0) return;
       const resolved = KnowledgeGraph.resolve(n.id);
       if (resolved?.url) byBucket[bucket].push(resolved);
@@ -213,17 +216,23 @@ export function resolvePrayerAutoNexus(input: PrayerNexusInput): PrayerAutoNexus
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'prayer', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "prayer", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
-function intentFor(bucket: Bucket): ContinuationSuggestion['intent'] {
+function intentFor(bucket: Bucket): ContinuationSuggestion["intent"] {
   switch (bucket) {
-    case 'bible': return 'study';
-    case 'catechism': return 'deepen';
-    case 'glossary': return 'study';
-    case 'journey': return 'apply';
-    case 'saint': return 'meet';
-    case 'liturgy': return 'pray';
+    case "bible":
+      return "study";
+    case "catechism":
+      return "deepen";
+    case "glossary":
+      return "study";
+    case "journey":
+      return "apply";
+    case "saint":
+      return "meet";
+    case "liturgy":
+      return "pray";
   }
 }

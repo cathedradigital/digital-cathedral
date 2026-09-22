@@ -56,83 +56,266 @@ export interface DumpPreview {
 // Construído a partir do BIBLE_CANON (fonte de verdade) + variantes comuns.
 const EXTRA_ALIASES: Record<string, string> = {
   // Pentateuco
-  gen: "Gn", genesis: "Gn", "gênesis": "Gn", genese: "Gn",
-  exo: "Ex", exodo: "Ex", "êxodo": "Ex", exodus: "Ex",
-  lev: "Lv", levitico: "Lv", "levítico": "Lv", leviticus: "Lv",
-  num: "Nm", numeros: "Nm", "números": "Nm", numbers: "Nm",
-  deu: "Dt", deuteronomio: "Dt", "deuteronômio": "Dt", deuteronomy: "Dt",
+  gen: "Gn",
+  genesis: "Gn",
+  gênesis: "Gn",
+  genese: "Gn",
+  exo: "Ex",
+  exodo: "Ex",
+  êxodo: "Ex",
+  exodus: "Ex",
+  lev: "Lv",
+  levitico: "Lv",
+  levítico: "Lv",
+  leviticus: "Lv",
+  num: "Nm",
+  numeros: "Nm",
+  números: "Nm",
+  numbers: "Nm",
+  deu: "Dt",
+  deuteronomio: "Dt",
+  deuteronômio: "Dt",
+  deuteronomy: "Dt",
   // Históricos
-  jos: "Js", josue: "Js", "josué": "Js", joshua: "Js",
-  jdg: "Jz", jui: "Jz", juizes: "Jz", "juízes": "Jz", judges: "Jz",
-  rut: "Rt", rute: "Rt", ruth: "Rt",
-  "1sa": "1Sm", "1samuel": "1Sm", "1 samuel": "1Sm", "1sam": "1Sm",
-  "2sa": "2Sm", "2samuel": "2Sm", "2 samuel": "2Sm", "2sam": "2Sm",
-  "1ki": "1Rs", "1reis": "1Rs", "1 reis": "1Rs", "1kings": "1Rs",
-  "2ki": "2Rs", "2reis": "2Rs", "2 reis": "2Rs", "2kings": "2Rs",
-  "1ch": "1Cr", "1cronicas": "1Cr", "1crônicas": "1Cr", "1chronicles": "1Cr",
-  "2ch": "2Cr", "2cronicas": "2Cr", "2crônicas": "2Cr", "2chronicles": "2Cr",
-  esd: "Ed", esdras: "Ed", ezr: "Ed", ezra: "Ed",
-  neh: "Ne", neemias: "Ne", nehemiah: "Ne",
-  tob: "Tb", tobias: "Tb", tobit: "Tb",
-  jdt: "Jdt", judite: "Jdt", judith: "Jdt",
-  est: "Et", ester: "Et", esther: "Et",
-  "1ma": "1Mc", "1macabeus": "1Mc", "1maccabees": "1Mc",
-  "2ma": "2Mc", "2macabeus": "2Mc", "2maccabees": "2Mc",
+  jos: "Js",
+  josue: "Js",
+  josué: "Js",
+  joshua: "Js",
+  jdg: "Jz",
+  jui: "Jz",
+  juizes: "Jz",
+  juízes: "Jz",
+  judges: "Jz",
+  rut: "Rt",
+  rute: "Rt",
+  ruth: "Rt",
+  "1sa": "1Sm",
+  "1samuel": "1Sm",
+  "1 samuel": "1Sm",
+  "1sam": "1Sm",
+  "2sa": "2Sm",
+  "2samuel": "2Sm",
+  "2 samuel": "2Sm",
+  "2sam": "2Sm",
+  "1ki": "1Rs",
+  "1reis": "1Rs",
+  "1 reis": "1Rs",
+  "1kings": "1Rs",
+  "2ki": "2Rs",
+  "2reis": "2Rs",
+  "2 reis": "2Rs",
+  "2kings": "2Rs",
+  "1ch": "1Cr",
+  "1cronicas": "1Cr",
+  "1crônicas": "1Cr",
+  "1chronicles": "1Cr",
+  "2ch": "2Cr",
+  "2cronicas": "2Cr",
+  "2crônicas": "2Cr",
+  "2chronicles": "2Cr",
+  esd: "Ed",
+  esdras: "Ed",
+  ezr: "Ed",
+  ezra: "Ed",
+  neh: "Ne",
+  neemias: "Ne",
+  nehemiah: "Ne",
+  tob: "Tb",
+  tobias: "Tb",
+  tobit: "Tb",
+  jdt: "Jdt",
+  judite: "Jdt",
+  judith: "Jdt",
+  est: "Et",
+  ester: "Et",
+  esther: "Et",
+  "1ma": "1Mc",
+  "1macabeus": "1Mc",
+  "1maccabees": "1Mc",
+  "2ma": "2Mc",
+  "2macabeus": "2Mc",
+  "2maccabees": "2Mc",
   // Sapienciais
   job: "Jó",
-  psa: "Sl", salmos: "Sl", psalms: "Sl", ps: "Sl",
-  prv: "Pv", pro: "Pv", pr: "Pv", proverbios: "Pv", "provérbios": "Pv", proverbs: "Pv",
-  ecl: "Ec", eclesiastes: "Ec", ecclesiastes: "Ec", qoh: "Ec",
-  sng: "Ct", cantares: "Ct", canticos: "Ct", "cânticos": "Ct", songofsongs: "Ct",
-  wis: "Sb", sabedoria: "Sb", wisdom: "Sb",
-  sir: "Eclo", eclesiastico: "Eclo", "eclesiástico": "Eclo", sirach: "Eclo", "ben sira": "Eclo",
+  psa: "Sl",
+  salmos: "Sl",
+  psalms: "Sl",
+  ps: "Sl",
+  prv: "Pv",
+  pro: "Pv",
+  pr: "Pv",
+  proverbios: "Pv",
+  provérbios: "Pv",
+  proverbs: "Pv",
+  ecl: "Ec",
+  eclesiastes: "Ec",
+  ecclesiastes: "Ec",
+  qoh: "Ec",
+  sng: "Ct",
+  cantares: "Ct",
+  canticos: "Ct",
+  cânticos: "Ct",
+  songofsongs: "Ct",
+  wis: "Sb",
+  sabedoria: "Sb",
+  wisdom: "Sb",
+  sir: "Eclo",
+  eclesiastico: "Eclo",
+  eclesiástico: "Eclo",
+  sirach: "Eclo",
+  "ben sira": "Eclo",
   // Proféticos
-  isa: "Is", isaias: "Is", "isaías": "Is", isaiah: "Is",
-  jer: "Jr", jeremias: "Jr", jeremiah: "Jr",
-  lam: "Lm", lamentacoes: "Lm", "lamentações": "Lm", lamentations: "Lm",
-  bar: "Br", baruc: "Br", baruch: "Br",
-  ezk: "Ez", ezequiel: "Ez", ezekiel: "Ez",
-  dan: "Dn", daniel: "Dn",
-  hos: "Os", oseias: "Os", "oséias": "Os", hosea: "Os",
-  jol: "Jl", joel: "Jl",
-  amo: "Am", amos: "Am", "amós": "Am",
-  oba: "Ab", abdias: "Ab", obadiah: "Ab",
-  jon: "Jn", jonas: "Jn", jonah: "Jn",
-  mic: "Mq", miqueias: "Mq", "miquéias": "Mq", micah: "Mq",
-  nam: "Na", naum: "Na", nahum: "Na",
-  hab: "Hc", habacuc: "Hc", habakkuk: "Hc",
-  zep: "Sf", sofonias: "Sf", zephaniah: "Sf",
-  hag: "Ag", ageu: "Ag", haggai: "Ag",
-  zec: "Zc", zacarias: "Zc", zechariah: "Zc",
-  mal: "Ml", malaquias: "Ml", malachi: "Ml",
+  isa: "Is",
+  isaias: "Is",
+  isaías: "Is",
+  isaiah: "Is",
+  jer: "Jr",
+  jeremias: "Jr",
+  jeremiah: "Jr",
+  lam: "Lm",
+  lamentacoes: "Lm",
+  lamentações: "Lm",
+  lamentations: "Lm",
+  bar: "Br",
+  baruc: "Br",
+  baruch: "Br",
+  ezk: "Ez",
+  ezequiel: "Ez",
+  ezekiel: "Ez",
+  dan: "Dn",
+  daniel: "Dn",
+  hos: "Os",
+  oseias: "Os",
+  oséias: "Os",
+  hosea: "Os",
+  jol: "Jl",
+  joel: "Jl",
+  amo: "Am",
+  amos: "Am",
+  amós: "Am",
+  oba: "Ab",
+  abdias: "Ab",
+  obadiah: "Ab",
+  jon: "Jn",
+  jonas: "Jn",
+  jonah: "Jn",
+  mic: "Mq",
+  miqueias: "Mq",
+  miquéias: "Mq",
+  micah: "Mq",
+  nam: "Na",
+  naum: "Na",
+  nahum: "Na",
+  hab: "Hc",
+  habacuc: "Hc",
+  habakkuk: "Hc",
+  zep: "Sf",
+  sofonias: "Sf",
+  zephaniah: "Sf",
+  hag: "Ag",
+  ageu: "Ag",
+  haggai: "Ag",
+  zec: "Zc",
+  zacarias: "Zc",
+  zechariah: "Zc",
+  mal: "Ml",
+  malaquias: "Ml",
+  malachi: "Ml",
   // NT
-  mat: "Mt", mateus: "Mt", matthew: "Mt",
-  mrk: "Mc", marcos: "Mc", mark: "Mc",
-  luk: "Lc", lucas: "Lc", luke: "Lc",
-  jhn: "Jo", joao: "Jo", "joão": "Jo", john: "Jo",
-  act: "At", atos: "At", acts: "At",
-  rom: "Rm", romanos: "Rm", romans: "Rm",
-  "1co": "1Co", "1corintios": "1Co", "1coríntios": "1Co", "1 cor": "1Co", "1corinthians": "1Co",
-  "2co": "2Co", "2corintios": "2Co", "2coríntios": "2Co", "2 cor": "2Co", "2corinthians": "2Co",
-  gal: "Gl", galatas: "Gl", "gálatas": "Gl", galatians: "Gl",
-  eph: "Ef", efesios: "Ef", "efésios": "Ef", ephesians: "Ef",
-  php: "Fp", filipenses: "Fp", philippians: "Fp",
-  col: "Cl", colossenses: "Cl", colossians: "Cl",
-  "1th": "1Ts", "1tessalonicenses": "1Ts", "1thessalonians": "1Ts",
-  "2th": "2Ts", "2tessalonicenses": "2Ts", "2thessalonians": "2Ts",
-  "1ti": "1Tm", "1timoteo": "1Tm", "1timóteo": "1Tm", "1timothy": "1Tm",
-  "2ti": "2Tm", "2timoteo": "2Tm", "2timóteo": "2Tm", "2timothy": "2Tm",
-  tit: "Tt", tito: "Tt", titus: "Tt",
-  phm: "Fm", filemon: "Fm", philemon: "Fm",
-  heb: "Hb", hebreus: "Hb", hebrews: "Hb", hbr: "Hb",
-  jas: "Tg", tiago: "Tg", james: "Tg",
-  "1pe": "1Pe", "1pedro": "1Pe", "1peter": "1Pe",
-  "2pe": "2Pe", "2pedro": "2Pe", "2peter": "2Pe",
-  "1jn": "1Jo", "1joao": "1Jo", "1joão": "1Jo", "1john": "1Jo",
-  "2jn": "2Jo", "2joao": "2Jo", "2joão": "2Jo", "2john": "2Jo",
-  "3jn": "3Jo", "3joao": "3Jo", "3joão": "3Jo", "3john": "3Jo",
-  jud: "Jd", judas: "Jd", jude: "Jd",
-  rev: "Ap", apocalipse: "Ap", revelation: "Ap",
+  mat: "Mt",
+  mateus: "Mt",
+  matthew: "Mt",
+  mrk: "Mc",
+  marcos: "Mc",
+  mark: "Mc",
+  luk: "Lc",
+  lucas: "Lc",
+  luke: "Lc",
+  jhn: "Jo",
+  joao: "Jo",
+  joão: "Jo",
+  john: "Jo",
+  act: "At",
+  atos: "At",
+  acts: "At",
+  rom: "Rm",
+  romanos: "Rm",
+  romans: "Rm",
+  "1co": "1Co",
+  "1corintios": "1Co",
+  "1coríntios": "1Co",
+  "1 cor": "1Co",
+  "1corinthians": "1Co",
+  "2co": "2Co",
+  "2corintios": "2Co",
+  "2coríntios": "2Co",
+  "2 cor": "2Co",
+  "2corinthians": "2Co",
+  gal: "Gl",
+  galatas: "Gl",
+  gálatas: "Gl",
+  galatians: "Gl",
+  eph: "Ef",
+  efesios: "Ef",
+  efésios: "Ef",
+  ephesians: "Ef",
+  php: "Fp",
+  filipenses: "Fp",
+  philippians: "Fp",
+  col: "Cl",
+  colossenses: "Cl",
+  colossians: "Cl",
+  "1th": "1Ts",
+  "1tessalonicenses": "1Ts",
+  "1thessalonians": "1Ts",
+  "2th": "2Ts",
+  "2tessalonicenses": "2Ts",
+  "2thessalonians": "2Ts",
+  "1ti": "1Tm",
+  "1timoteo": "1Tm",
+  "1timóteo": "1Tm",
+  "1timothy": "1Tm",
+  "2ti": "2Tm",
+  "2timoteo": "2Tm",
+  "2timóteo": "2Tm",
+  "2timothy": "2Tm",
+  tit: "Tt",
+  tito: "Tt",
+  titus: "Tt",
+  phm: "Fm",
+  filemon: "Fm",
+  philemon: "Fm",
+  heb: "Hb",
+  hebreus: "Hb",
+  hebrews: "Hb",
+  hbr: "Hb",
+  jas: "Tg",
+  tiago: "Tg",
+  james: "Tg",
+  "1pe": "1Pe",
+  "1pedro": "1Pe",
+  "1peter": "1Pe",
+  "2pe": "2Pe",
+  "2pedro": "2Pe",
+  "2peter": "2Pe",
+  "1jn": "1Jo",
+  "1joao": "1Jo",
+  "1joão": "1Jo",
+  "1john": "1Jo",
+  "2jn": "2Jo",
+  "2joao": "2Jo",
+  "2joão": "2Jo",
+  "2john": "2Jo",
+  "3jn": "3Jo",
+  "3joao": "3Jo",
+  "3joão": "3Jo",
+  "3john": "3Jo",
+  jud: "Jd",
+  judas: "Jd",
+  jude: "Jd",
+  rev: "Ap",
+  apocalipse: "Ap",
+  revelation: "Ap",
 };
 
 const ALIAS_TO_ABBR: Record<string, string> = (() => {
@@ -141,7 +324,12 @@ const ALIAS_TO_ABBR: Record<string, string> = (() => {
   for (const b of BIBLE_CANON) {
     map[b.abbr.toLowerCase()] = b.abbr;
     map[b.name.toLowerCase()] = b.abbr;
-    map[b.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")] = b.abbr;
+    map[
+      b.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+    ] = b.abbr;
   }
   // 2) extras explícitos (preservam ordem e podem sobrescrever para casos católicos)
   for (const [k, v] of Object.entries(EXTRA_ALIASES)) map[k] = v;
@@ -177,13 +365,17 @@ function parseCsvLine(line: string, sep: string): string[] {
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
     if (q) {
-      if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
-      else if (c === '"') q = false;
+      if (c === '"' && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else if (c === '"') q = false;
       else cur += c;
     } else {
       if (c === '"') q = true;
-      else if (c === sep) { out.push(cur); cur = ""; }
-      else cur += c;
+      else if (c === sep) {
+        out.push(cur);
+        cur = "";
+      } else cur += c;
     }
   }
   out.push(cur);
@@ -192,11 +384,14 @@ function parseCsvLine(line: string, sep: string): string[] {
 
 function validate(rec: Record<string, unknown>): CanonicalVerse | string {
   const abbr = resolveAbbr(rec.abbr ?? rec.book ?? rec.livro);
-  if (!abbr) return `abreviação desconhecida ("${String(rec.abbr ?? rec.book ?? rec.livro ?? "")}")`;
+  if (!abbr)
+    return `abreviação desconhecida ("${String(rec.abbr ?? rec.book ?? rec.livro ?? "")}")`;
   const chapter = Number(rec.chapter ?? rec.cap ?? rec.capitulo);
-  if (!Number.isInteger(chapter) || chapter < 1) return `capítulo inválido (${String(rec.chapter ?? rec.cap ?? rec.capitulo)})`;
+  if (!Number.isInteger(chapter) || chapter < 1)
+    return `capítulo inválido (${String(rec.chapter ?? rec.cap ?? rec.capitulo)})`;
   const verse = Number(rec.verse ?? rec.v ?? rec.versiculo ?? rec.versículo);
-  if (!Number.isInteger(verse) || verse < 1) return `versículo inválido (${String(rec.verse ?? rec.v ?? rec.versiculo)})`;
+  if (!Number.isInteger(verse) || verse < 1)
+    return `versículo inválido (${String(rec.verse ?? rec.v ?? rec.versiculo)})`;
   const text = String(rec.text ?? rec.texto ?? "").trim();
   if (!text) return `texto vazio`;
   return { abbr, chapter, verse, text };
@@ -214,8 +409,9 @@ export function convertText(content: string, format: DumpFormat): ConversionResu
 
   if (format === "json") {
     let arr: unknown;
-    try { arr = JSON.parse(content); }
-    catch (e) {
+    try {
+      arr = JSON.parse(content);
+    } catch (e) {
       rejected.push({ lineNumber: 0, reason: `JSON inválido: ${(e as Error).message}`, raw: null });
       return { verses, rejected };
     }
@@ -224,7 +420,8 @@ export function convertText(content: string, format: DumpFormat): ConversionResu
       return { verses, rejected };
     }
     arr.forEach((rec, i) => {
-      if (typeof rec !== "object" || rec === null) rejected.push({ lineNumber: i + 1, reason: "elemento não é objeto", raw: rec });
+      if (typeof rec !== "object" || rec === null)
+        rejected.push({ lineNumber: i + 1, reason: "elemento não é objeto", raw: rec });
       else push(rec as Record<string, unknown>, i + 1, rec);
     });
     return { verses, rejected };
@@ -239,7 +436,11 @@ export function convertText(content: string, format: DumpFormat): ConversionResu
         const rec = JSON.parse(t) as Record<string, unknown>;
         push(rec, i + 1, t);
       } catch (e) {
-        rejected.push({ lineNumber: i + 1, reason: `JSON inválido: ${(e as Error).message}`, raw: t });
+        rejected.push({
+          lineNumber: i + 1,
+          reason: `JSON inválido: ${(e as Error).message}`,
+          raw: t,
+        });
       }
     });
     return { verses, rejected };
@@ -253,7 +454,10 @@ export function convertText(content: string, format: DumpFormat): ConversionResu
     const line = lines[i];
     if (!line.trim()) continue;
     const cells = parseCsvLine(line, sep);
-    if (!header) { header = cells.map((c) => c.toLowerCase().trim()); continue; }
+    if (!header) {
+      header = cells.map((c) => c.toLowerCase().trim());
+      continue;
+    }
     const rec: Record<string, unknown> = {};
     for (let j = 0; j < header.length; j++) rec[header[j]] = cells[j];
     push(rec, i + 1, line);
@@ -270,17 +474,20 @@ export function previewDump(content: string, filename: string): DumpPreview {
   const byBookMap = new Map<string, { chapters: Set<number>; verses: number }>();
   for (const v of verses) {
     const st = byBookMap.get(v.abbr) ?? { chapters: new Set<number>(), verses: 0 };
-    st.chapters.add(v.chapter); st.verses += 1;
+    st.chapters.add(v.chapter);
+    st.verses += 1;
     byBookMap.set(v.abbr, st);
   }
 
   const seenAbbrs = new Set(byBookMap.keys());
-  const missingCanonBooks: string[] = BIBLE_CANON
-    .filter((b) => !seenAbbrs.has(b.abbr))
-    .map((b) => b.abbr);
+  const missingCanonBooks: string[] = BIBLE_CANON.filter((b) => !seenAbbrs.has(b.abbr)).map(
+    (b) => b.abbr,
+  );
 
-  if (verses.length === 0) warnings.push("Nenhum versículo válido encontrado — verifique formato/colunas.");
-  if (rejected.length > totalLines * 0.1) warnings.push(`Mais de 10% das linhas foram rejeitadas (${rejected.length}/${totalLines}).`);
+  if (verses.length === 0)
+    warnings.push("Nenhum versículo válido encontrado — verifique formato/colunas.");
+  if (rejected.length > totalLines * 0.1)
+    warnings.push(`Mais de 10% das linhas foram rejeitadas (${rejected.length}/${totalLines}).`);
   if (missingCanonBooks.length > 0 && verses.length > 0) {
     warnings.push(`${missingCanonBooks.length} livro(s) do canon ausentes no dump.`);
   }

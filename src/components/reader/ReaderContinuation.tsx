@@ -1,11 +1,21 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Book, User, Church, ScrollText, Heart, ArrowRight, Compass, Sparkles, Library } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { EditorialKicker } from '@/components/editorial/harmony';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import {
+  Book,
+  User,
+  Church,
+  ScrollText,
+  Heart,
+  ArrowRight,
+  Compass,
+  Sparkles,
+  Library,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { EditorialKicker } from "@/components/editorial/harmony";
 
 export interface ContinuationLink {
-  icon: 'bible' | 'saint' | 'catechism' | 'writings' | 'prayer' | 'journey' | 'logos' | 'library';
+  icon: "bible" | "saint" | "catechism" | "writings" | "prayer" | "journey" | "logos" | "library";
   label: string;
   href: string;
   category: string;
@@ -31,27 +41,27 @@ const ICON_MAP = {
 
 /**
  * ReaderContinuation — Experiência do Peregrino (Fase 7)
- * 
+ *
  * Garante que nenhuma leitura termine em um "fim" seco.
  * Oferece caminhos contextuais para continuar a jornada espiritual.
  */
-export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({ 
-  links, 
+export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
+  links,
   className,
-  title = "Continue sua caminhada" 
+  title = "Continue sua caminhada",
 }) => {
   // Fallback de links caso não sejam providos (Garante direção sempre)
   const displayLinks = links || [
-    { icon: 'bible', label: 'Explorar as Escrituras', href: '/bible', category: 'Bíblia' },
-    { icon: 'catechism', label: 'Estudar a Doutrina', href: '/catechism', category: 'Catecismo' },
-    { icon: 'saint', label: 'Vidas dos Santos', href: '/santos', category: 'Santoral' },
-    { icon: 'library', label: 'Voltar ao Acervo', href: '/acervo', category: 'Biblioteca' }
+    { icon: "bible", label: "Explorar as Escrituras", href: "/bible", category: "Bíblia" },
+    { icon: "catechism", label: "Estudar a Doutrina", href: "/catechism", category: "Catecismo" },
+    { icon: "saint", label: "Vidas dos Santos", href: "/santos", category: "Santoral" },
+    { icon: "library", label: "Voltar ao Acervo", href: "/acervo", category: "Biblioteca" },
   ];
 
   return (
     <div className={cn("space-y-spacing-lg max-w-[68ch] mx-auto", className)}>
       <EditorialKicker className="text-center md:text-left">{title}</EditorialKicker>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-sm">
         {displayLinks.map((link, idx) => {
           const Icon = ICON_MAP[link.icon] || Book;
@@ -77,7 +87,10 @@ export const ReaderContinuation: React.FC<ReaderContinuationProps> = ({
                   </p>
                 )}
               </div>
-              <ArrowRight size={16} className="text-primary/20 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+              <ArrowRight
+                size={16}
+                className="text-primary/20 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0"
+              />
             </Link>
           );
         })}

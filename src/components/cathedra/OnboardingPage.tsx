@@ -1,74 +1,82 @@
-import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { AppRoute } from '@/types';
-import { Icons } from '@/constants';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { BrandConceptOnboarding } from '../onboarding/BrandConceptOnboarding';
-import onboardingBible from '@/assets/onboarding-bible.webp';
-import onboardingPrayer from '@/assets/onboarding-prayer.webp';
-import onboardingStudy from '@/assets/onboarding-study.webp';
-import onboardingCommunity from '@/assets/onboarding-community.webp';
+import { AppRoute } from "@/types";
+import { Icons } from "@/constants";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { BrandConceptOnboarding } from "../onboarding/BrandConceptOnboarding";
+import onboardingBible from "@/assets/onboarding-bible.webp";
+import onboardingPrayer from "@/assets/onboarding-prayer.webp";
+import onboardingStudy from "@/assets/onboarding-study.webp";
+import onboardingCommunity from "@/assets/onboarding-community.webp";
 
 /* ── Intro slides ── */
 const SLIDES = [
   {
     icon: <Icons.Sparkles className="w-spacing-xl h-spacing-xl" />,
-    title: 'O Ecossistema Cathedra',
-    subtitle: 'Sua vida espiritual integrada',
-    description: 'Um ambiente digital sagrado que une oração, estudo, formação e comunidade em uma experiência única e personalizada.',
+    title: "O Ecossistema Cathedra",
+    subtitle: "Sua vida espiritual integrada",
+    description:
+      "Um ambiente digital sagrado que une oração, estudo, formação e comunidade em uma experiência única e personalizada.",
     image: onboardingBible,
   },
   {
     icon: <Icons.Sun className="w-spacing-xl h-spacing-xl" />,
     title: 'A Aba "Hoje"',
-    subtitle: 'Seu ponto de partida diário',
-    description: 'Encontre aqui o que você precisa para o dia: Liturgia, o Santo do dia, orações recomendadas e seu progresso espiritual.',
+    subtitle: "Seu ponto de partida diário",
+    description:
+      "Encontre aqui o que você precisa para o dia: Liturgia, o Santo do dia, orações recomendadas e seu progresso espiritual.",
     image: onboardingPrayer,
   },
   {
     icon: <Icons.BookOpen className="w-spacing-xl h-spacing-xl" />,
-    title: 'Biblioteca e Scriptuarium',
-    subtitle: 'O tesouro da Tradição',
-    description: 'Navegue pela Bíblia, Catecismo e documentos do Magistério. Use a busca inteligente para encontrar respostas em milênios de sabedoria.',
+    title: "Biblioteca e Scriptuarium",
+    subtitle: "O tesouro da Tradição",
+    description:
+      "Navegue pela Bíblia, Catecismo e documentos do Magistério. Use a busca inteligente para encontrar respostas em milênios de sabedoria.",
     image: onboardingBible,
   },
   {
     icon: <Icons.Zap className="w-spacing-xl h-spacing-xl" />,
-    title: 'Logos IA: Estudo Profundo',
-    subtitle: 'Inteligência Contemplativa',
-    description: 'Dúvidas sobre a fé? O Logos IA explica temas complexos usando apenas fontes seguras e tradicionais da Igreja Católica.',
+    title: "Logos IA: Estudo Profundo",
+    subtitle: "Inteligência Contemplativa",
+    description:
+      "Dúvidas sobre a fé? O Logos IA explica temas complexos usando apenas fontes seguras e tradicionais da Igreja Católica.",
     image: onboardingStudy,
   },
   {
     icon: <Icons.Compass className="w-spacing-xl h-spacing-xl" />,
-    title: 'Jornadas de Formação',
-    subtitle: 'Caminhos de Santidade',
-    description: 'Siga trilhas estruturadas de aprendizado. Do básico ao avançado, cada passo é uma nova descoberta na sua caminhada de fé.',
+    title: "Jornadas de Formação",
+    subtitle: "Caminhos de Santidade",
+    description:
+      "Siga trilhas estruturadas de aprendizado. Do básico ao avançado, cada passo é uma nova descoberta na sua caminhada de fé.",
     image: onboardingCommunity,
   },
   {
     icon: <Icons.Users className="w-spacing-xl h-spacing-xl" />,
-    title: 'Aula Magna e Comunidade',
-    subtitle: 'Crescendo em Fraternidade',
-    description: 'Partilhe reflexões, veja o que outros fiéis estão meditando e sinta-se parte de uma comunidade viva e orante.',
+    title: "Aula Magna e Comunidade",
+    subtitle: "Crescendo em Fraternidade",
+    description:
+      "Partilhe reflexões, veja o que outros fiéis estão meditando e sinta-se parte de uma comunidade viva e orante.",
     image: onboardingCommunity,
   },
   {
     icon: <Icons.Heart className="w-spacing-xl h-spacing-xl" />,
-    title: 'Uma Caminhada Espiritual',
-    subtitle: 'Navegação Simples',
-    description: 'Use a barra inferior para navegar entre Ler, Orar, Igreja e sua Biblioteca. Cada toque é um passo na sua formação.',
+    title: "Uma Caminhada Espiritual",
+    subtitle: "Navegação Simples",
+    description:
+      "Use a barra inferior para navegar entre Ler, Orar, Igreja e sua Biblioteca. Cada toque é um passo na sua formação.",
     image: onboardingPrayer,
   },
   {
     icon: <Icons.Compass className="w-spacing-xl h-spacing-xl" />,
-    title: 'Pronto para Começar?',
-    subtitle: 'Seu Diagnóstico Espiritual',
-    description: 'A seguir, faremos algumas perguntas para personalizar sua experiência e recomendar a jornada ideal para o seu momento.',
+    title: "Pronto para Começar?",
+    subtitle: "Seu Diagnóstico Espiritual",
+    description:
+      "A seguir, faremos algumas perguntas para personalizar sua experiência e recomendar a jornada ideal para o seu momento.",
     image: onboardingStudy,
   },
 ];
@@ -82,75 +90,155 @@ interface DiagnosisQuestion {
 
 const QUESTIONS: DiagnosisQuestion[] = [
   {
-    id: 'moment',
-    question: 'Como você descreveria seu momento espiritual atual?',
+    id: "moment",
+    question: "Como você descreveria seu momento espiritual atual?",
     options: [
-      { label: 'Estou começando a buscar Deus', value: 'beginning', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho fé, mas quero aprofundar', value: 'deepening', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Passo por um momento difícil', value: 'struggling', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
-      { label: 'Quero servir melhor a Igreja', value: 'serving', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Estou começando a buscar Deus",
+        value: "beginning",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho fé, mas quero aprofundar",
+        value: "deepening",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Passo por um momento difícil",
+        value: "struggling",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Quero servir melhor a Igreja",
+        value: "serving",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'prayer',
-    question: 'Qual é sua relação com a oração?',
+    id: "prayer",
+    question: "Qual é sua relação com a oração?",
     options: [
-      { label: 'Quase não rezo', value: 'rarely', icon: <Icons.Hand className="w-spacing-md h-spacing-md" /> },
-      { label: 'Rezo às vezes, mas sem constância', value: 'sometimes', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho vida de oração regular', value: 'regular', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Busco oração contemplativa', value: 'contemplative', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Quase não rezo",
+        value: "rarely",
+        icon: <Icons.Hand className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Rezo às vezes, mas sem constância",
+        value: "sometimes",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho vida de oração regular",
+        value: "regular",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Busco oração contemplativa",
+        value: "contemplative",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'knowledge',
-    question: 'Quanto você conhece da doutrina católica?',
+    id: "knowledge",
+    question: "Quanto você conhece da doutrina católica?",
     options: [
-      { label: 'Muito pouco, o básico', value: 'basic', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Conheço razoavelmente', value: 'moderate', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Estudo com frequência', value: 'advanced', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Tenho formação teológica', value: 'theological', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Muito pouco, o básico",
+        value: "basic",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Conheço razoavelmente",
+        value: "moderate",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Estudo com frequência",
+        value: "advanced",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Tenho formação teológica",
+        value: "theological",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'sacraments',
-    question: 'Como é sua vivência sacramental?',
+    id: "sacraments",
+    question: "Como é sua vivência sacramental?",
     options: [
-      { label: 'Não frequento os sacramentos', value: 'none', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
-      { label: 'Vou à Missa aos domingos', value: 'sunday', icon: <Icons.Church className="w-spacing-md h-spacing-md" /> },
-      { label: 'Missa frequente e confissão regular', value: 'frequent', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
-      { label: 'Vida sacramental intensa', value: 'intense', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Não frequento os sacramentos",
+        value: "none",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Vou à Missa aos domingos",
+        value: "sunday",
+        icon: <Icons.Church className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Missa frequente e confissão regular",
+        value: "frequent",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Vida sacramental intensa",
+        value: "intense",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
   {
-    id: 'goal',
-    question: 'O que você mais deseja nesta jornada?',
+    id: "goal",
+    question: "O que você mais deseja nesta jornada?",
     options: [
-      { label: 'Encontrar paz interior', value: 'peace', icon: <Icons.Heart className="w-spacing-md h-spacing-md" /> },
-      { label: 'Conhecer melhor a fé', value: 'knowledge', icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" /> },
-      { label: 'Criar uma rotina espiritual', value: 'routine', icon: <Icons.Sun className="w-spacing-md h-spacing-md" /> },
-      { label: 'Transformação profunda de vida', value: 'transformation', icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" /> },
+      {
+        label: "Encontrar paz interior",
+        value: "peace",
+        icon: <Icons.Heart className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Conhecer melhor a fé",
+        value: "knowledge",
+        icon: <Icons.BookOpen className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Criar uma rotina espiritual",
+        value: "routine",
+        icon: <Icons.Sun className="w-spacing-md h-spacing-md" />,
+      },
+      {
+        label: "Transformação profunda de vida",
+        value: "transformation",
+        icon: <Icons.Sparkles className="w-spacing-md h-spacing-md" />,
+      },
     ],
   },
 ];
 
 function getRecommendedCategory(answers: Record<string, string>): string {
   const { moment, prayer, knowledge, goal } = answers;
-  if (moment === 'beginning' || knowledge === 'basic') return 'fundamentos';
-  if (moment === 'struggling' || goal === 'peace') return 'mistico';
-  if (prayer === 'contemplative' || goal === 'transformation') return 'mistico';
-  if (goal === 'routine' || prayer === 'rarely' || prayer === 'sometimes') return 'rotina';
-  return 'fundamentos';
+  if (moment === "beginning" || knowledge === "basic") return "fundamentos";
+  if (moment === "struggling" || goal === "peace") return "mistico";
+  if (prayer === "contemplative" || goal === "transformation") return "mistico";
+  if (goal === "routine" || prayer === "rarely" || prayer === "sometimes") return "rotina";
+  return "fundamentos";
 }
 
 /* ── Component ── */
-type Phase = 'slides' | 'diagnosis' | 'brand_concept' | 'result';
+type Phase = "slides" | "diagnosis" | "brand_concept" | "result";
 
 const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
-  const [phase, setPhase] = useState<Phase>('slides');
+  const [phase, setPhase] = useState<Phase>("slides");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [diagStep, setDiagStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [recommendedCategory, setRecommendedCategory] = useState('');
+  const [recommendedCategory, setRecommendedCategory] = useState("");
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -160,18 +248,18 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   /* ── Slide navigation ── */
   const handleSlideNext = () => {
     if (isLastSlide) {
-      setPhase('diagnosis');
+      setPhase("diagnosis");
     } else {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => prev + 1);
     }
   };
 
   const handleSlidePrev = () => {
-    if (currentSlide > 0) setCurrentSlide(prev => prev - 1);
+    if (currentSlide > 0) setCurrentSlide((prev) => prev - 1);
   };
 
   const handleSkipSlides = () => {
-    setPhase('diagnosis');
+    setPhase("diagnosis");
   };
 
   /* ── Diagnosis ── */
@@ -194,40 +282,41 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
 
     // Icons.Map moment to spiritual profile for dashboard personalization
     const spiritualProfileMap: Record<string, string> = {
-      beginning: 'sedento_de_sentido',
-      deepening: 'firme_aprofundando',
-      struggling: 'ferido_em_busca',
-      serving: 'ardente_missionario'
+      beginning: "sedento_de_sentido",
+      deepening: "firme_aprofundando",
+      struggling: "ferido_em_busca",
+      serving: "ardente_missionario",
     };
-    const spiritualProfile = spiritualProfileMap[result.moment] || 'sedento_de_sentido';
+    const spiritualProfile = spiritualProfileMap[result.moment] || "sedento_de_sentido";
 
     try {
       if (user) {
-        await (supabase as any)
-          .from('user_sensitive_data')
-          .upsert({ 
-            user_id: user.id, 
+        await (supabase as any).from("user_sensitive_data").upsert(
+          {
+            user_id: user.id,
             diagnosis_result: { ...result, spiritual_profile: spiritualProfile },
-            email: user.email || ''
-          }, { onConflict: 'user_id' });
+            email: user.email || "",
+          },
+          { onConflict: "user_id" },
+        );
       }
     } catch (err) {
-      console.error('Failed to save diagnosis:', err);
+      console.error("Failed to save diagnosis:", err);
     }
 
-    localStorage.setItem('cathedra_onboarding_done', 'true');
+    localStorage.setItem("cathedra_onboarding_done", "true");
     setSaving(false);
-    setPhase('brand_concept');
+    setPhase("brand_concept");
   };
 
   const handleGoToJourney = async () => {
     try {
       const { data } = await supabase
-        .from('journeys')
-        .select('id')
-        .eq('category', recommendedCategory)
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true })
+        .from("journeys")
+        .select("id")
+        .eq("category", recommendedCategory)
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
         .limit(1)
         .maybeSingle();
 
@@ -242,16 +331,19 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   };
 
   /* ── Render: Result ── */
-  if (phase === 'result') {
+  if (phase === "result") {
     const categoryNames: Record<string, string> = {
-      fundamentos: 'Primeiros Passos na Fé',
-      rotina: 'Rotina Espiritual',
-      mistico: 'Aprofundamento Místico',
+      fundamentos: "Primeiros Passos na Fé",
+      rotina: "Rotina Espiritual",
+      mistico: "Aprofundamento Místico",
     };
-    const title = categoryNames[recommendedCategory] || 'Formação Integral';
+    const title = categoryNames[recommendedCategory] || "Formação Integral";
 
     return (
-      <div ref={ref} className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md">
+      <div
+        ref={ref}
+        className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md"
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -261,18 +353,24 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', delay: 0.2 }}
+              transition={{ type: "spring", delay: 0.2 }}
               className="w-spacing-3xl h-spacing-3xl mx-auto rounded-premium-full bg-primary/10 flex items-center justify-center"
             >
               <Icons.Compass className="w-spacing-xl h-spacing-xl text-primary" />
             </motion.div>
-            <h1 className="text-premium-2xl font-bold font-serif text-foreground">Sua Jornada Recomendada</h1>
-            <p className="text-muted-foreground text-premium-sm">Com base nas suas respostas, preparamos o caminho ideal para você.</p>
+            <h1 className="text-premium-2xl font-bold font-serif text-foreground">
+              Sua Jornada Recomendada
+            </h1>
+            <p className="text-muted-foreground text-premium-sm">
+              Com base nas suas respostas, preparamos o caminho ideal para você.
+            </p>
           </div>
 
           <div className="bg-card border border-primary/20 rounded-premium p-spacing-lg space-y-spacing-sm text-center">
             <h2 className="text-premium-xl font-bold text-foreground">{title}</h2>
-            <p className="text-muted-foreground text-premium-sm">Uma jornada guiada pensada especialmente para o seu momento espiritual.</p>
+            <p className="text-muted-foreground text-premium-sm">
+              Uma jornada guiada pensada especialmente para o seu momento espiritual.
+            </p>
           </div>
 
           <Button
@@ -287,26 +385,29 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   }
 
   /* ── Render: Brand Concept phase ── */
-  if (phase === 'brand_concept') {
+  if (phase === "brand_concept") {
     return (
-      <div ref={ref} className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md">
-        <BrandConceptOnboarding 
+      <div
+        ref={ref}
+        className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md"
+      >
+        <BrandConceptOnboarding
           onComplete={async (brandData) => {
             setSaving(true);
             try {
               if (user) {
                 await (supabase as any)
-                  .from('user_sensitive_data')
-                  .update({ 
-                    brand_concept: brandData
+                  .from("user_sensitive_data")
+                  .update({
+                    brand_concept: brandData,
                   })
-                  .eq('user_id', user.id);
+                  .eq("user_id", user.id);
               }
             } catch (err) {
-              console.error('Failed to save brand concept:', err);
+              console.error("Failed to save brand concept:", err);
             }
             setSaving(false);
-            setPhase('result');
+            setPhase("result");
           }}
         />
       </div>
@@ -314,26 +415,31 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   }
 
   /* ── Render: Diagnosis phase ── */
-  if (phase === 'diagnosis') {
+  if (phase === "diagnosis") {
     const question = QUESTIONS[diagStep];
-    const diagProgress = ((diagStep) / QUESTIONS.length) * 100;
+    const diagProgress = (diagStep / QUESTIONS.length) * 100;
 
     return (
-      <div ref={ref} className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md">
+      <div
+        ref={ref}
+        className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md"
+      >
         <div className="w-full max-w-spacing-lg lg:max-w-spacing-4xl space-y-spacing-lg lg:space-y-spacing-xl text-center">
           <div className="flex justify-center mb-spacing-lg">
             <Icons.Logo className="w-spacing-3xl h-spacing-3xl" variant="blue" />
           </div>
-          
+
           <div className="space-y-spacing-xs mb-spacing-xl">
             <div className="w-full h-spacing-2xs bg-muted rounded-premium overflow-hidden">
-              <motion.div 
+              <motion.div
                 className="h-full bg-primary"
                 initial={{ width: 0 }}
                 animate={{ width: `${diagProgress}%` }}
               />
             </div>
-            <p className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">Pergunta {diagStep + 1} de {QUESTIONS.length}</p>
+            <p className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">
+              Pergunta {diagStep + 1} de {QUESTIONS.length}
+            </p>
           </div>
 
           <AnimatePresence mode="wait">
@@ -344,7 +450,9 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-spacing-xl"
             >
-              <h2 className="text-premium-2xl lg:text-premium-4xl font-serif font-bold text-foreground leading-tight px-spacing-md">{question.question}</h2>
+              <h2 className="text-premium-2xl lg:text-premium-4xl font-serif font-bold text-foreground leading-tight px-spacing-md">
+                {question.question}
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-spacing-md">
                 {question.options.map((opt) => (
                   <Button
@@ -370,7 +478,10 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   const slide = SLIDES[currentSlide];
 
   return (
-    <div ref={ref} className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md">
+    <div
+      ref={ref}
+      className="min-h-[100dvh] flex flex-col items-center justify-center bg-background p-spacing-md"
+    >
       <div className="w-full max-w-spacing-lg lg:max-w-5xl space-y-spacing-lg lg:space-y-spacing-xl">
         <div className="flex justify-center">
           <Icons.Logo className="w-spacing-3xl h-spacing-3xl" variant="blue" />
@@ -385,12 +496,24 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
             transition={{ duration: 0.25 }}
             className="bg-card border border-border rounded-premium-full overflow-hidden lg:flex lg:items-center lg:min-h-[500px]"
           >
-            <img src={slide.image} alt={slide.title} className="w-full h-spacing-4xl md:h-spacing-4xl lg:h-full lg:w-spacing-2xs/2 object-cover" />
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-spacing-4xl md:h-spacing-4xl lg:h-full lg:w-spacing-2xs/2 object-cover"
+            />
             <div className="p-spacing-lg md:p-spacing-xl lg:p-spacing-3xl text-center lg:text-left lg:w-spacing-2xs/2 space-y-spacing-md lg:space-y-spacing-xl">
-              <div className="flex justify-center lg:justify-start text-primary mb-spacing-xs lg:mb-spacing-md">{slide.icon}</div>
-              <h1 className="text-premium-2xl md:text-premium-3xl lg:text-premium-5xl font-serif font-bold text-foreground leading-tight">{slide.title}</h1>
-              <p className="text-premium-xs lg:text-premium-xs font-black uppercase tracking-widest text-primary">{slide.subtitle}</p>
-              <p className="text-muted-foreground leading-relaxed text-premium-sm lg:text-premium-lg lg:max-w-spacing-md">{slide.description}</p>
+              <div className="flex justify-center lg:justify-start text-primary mb-spacing-xs lg:mb-spacing-md">
+                {slide.icon}
+              </div>
+              <h1 className="text-premium-2xl md:text-premium-3xl lg:text-premium-5xl font-serif font-bold text-foreground leading-tight">
+                {slide.title}
+              </h1>
+              <p className="text-premium-xs lg:text-premium-xs font-black uppercase tracking-widest text-primary">
+                {slide.subtitle}
+              </p>
+              <p className="text-muted-foreground leading-relaxed text-premium-sm lg:text-premium-lg lg:max-w-spacing-md">
+                {slide.description}
+              </p>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -401,9 +524,11 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
               key={i}
               onClick={() => setCurrentSlide(i)}
               aria-label={`Ir para slide ${i + 1} de ${SLIDES.length}`}
-              aria-current={i === currentSlide ? 'step' : undefined}
+              aria-current={i === currentSlide ? "step" : undefined}
               className={`w-spacing-xs h-spacing-xs rounded-premium-full transition-all ${
-                i === currentSlide ? 'bg-primary w-spacing-lg' : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                i === currentSlide
+                  ? "bg-primary w-spacing-lg"
+                  : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
               }`}
             />
           ))}
@@ -412,11 +537,17 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
 
         <div className="flex items-center justify-between">
           {currentSlide > 0 ? (
-            <Button onClick={handleSlidePrev} className="flex items-center gap-spacing-2xs text-premium-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Button
+              onClick={handleSlidePrev}
+              className="flex items-center gap-spacing-2xs text-premium-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
               <Icons.ChevronLeft className="w-spacing-md h-spacing-md" /> Voltar
             </Button>
           ) : (
-            <Button onClick={handleSkipSlides} className="text-premium-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Button
+              onClick={handleSkipSlides}
+              className="text-premium-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
               Pular
             </Button>
           )}
@@ -425,7 +556,7 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
             onClick={handleSlideNext}
             className="flex items-center gap-spacing-xs px-spacing-lg py-spacing-sm bg-foreground text-background rounded-premium-full font-black uppercase text-premium-xs tracking-widest hover:bg-primary hover:text-primary-foreground transition-all"
           >
-            {isLastSlide ? 'Iniciar Caminhada' : 'Próximo'}
+            {isLastSlide ? "Iniciar Caminhada" : "Próximo"}
             <Icons.ChevronRight className="w-spacing-md h-spacing-md" />
           </Button>
         </div>
@@ -434,6 +565,6 @@ const OnboardingPage = React.forwardRef<HTMLDivElement>((_, ref) => {
   );
 });
 
-OnboardingPage.displayName = 'OnboardingPage';
+OnboardingPage.displayName = "OnboardingPage";
 
 export default OnboardingPage;

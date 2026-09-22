@@ -15,24 +15,24 @@
  *   └─────────────────────────────────────────────────────┘
  */
 
-import React, { useMemo } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { useAuth } from '@/hooks/useAuth';
-import { useReadingMarks } from '@/hooks/useReadingMarks';
-import { useFavorites } from '@/hooks/useFavorites';
-import { Icons } from '../../constants';
+import React, { useMemo } from "react";
+import { Link } from "@/lib/rr-compat";
+import { useAuth } from "@/hooks/useAuth";
+import { useReadingMarks } from "@/hooks/useReadingMarks";
+import { useFavorites } from "@/hooks/useFavorites";
+import { Icons } from "../../constants";
 
 const CONTENT_LABEL: Record<string, string> = {
-  bible: 'Escrituras',
-  catechism: 'Catecismo',
-  magisterium: 'Magistério',
-  saint_work: 'Escritos',
-  patristic: 'Patrística',
-  doctor: 'Doutores',
-  classic: 'Clássicos',
-  prayer: 'Oração',
-  liturgy: 'Liturgia',
-  journey: 'Jornada',
+  bible: "Escrituras",
+  catechism: "Catecismo",
+  magisterium: "Magistério",
+  saint_work: "Escritos",
+  patristic: "Patrística",
+  doctor: "Doutores",
+  classic: "Clássicos",
+  prayer: "Oração",
+  liturgy: "Liturgia",
+  journey: "Jornada",
 };
 
 const AcervoContinueReadingPanel: React.FC = () => {
@@ -64,12 +64,17 @@ const AcervoContinueReadingPanel: React.FC = () => {
 
   // Sem sessão OU sem marks → não polui a home
   if (!user || loading) return null;
-  if (!stats.lastRead && stats.inProgress === 0 && stats.completed === 0 && favorites.length === 0) {
+  if (
+    !stats.lastRead &&
+    stats.inProgress === 0 &&
+    stats.completed === 0 &&
+    favorites.length === 0
+  ) {
     return null;
   }
 
   const { lastRead, inProgress, completed } = stats;
-  const contentLabel = lastRead ? CONTENT_LABEL[lastRead.content_type] ?? 'Leitura' : null;
+  const contentLabel = lastRead ? (CONTENT_LABEL[lastRead.content_type] ?? "Leitura") : null;
 
   return (
     <section
@@ -95,9 +100,9 @@ const AcervoContinueReadingPanel: React.FC = () => {
 
         {lastRead ? (
           <Link
-            to={lastRead.url ?? '/acervo/lista'}
+            to={lastRead.url ?? "/acervo/lista"}
             className="group flex items-center gap-spacing-md rounded-xl p-spacing-sm -m-spacing-sm hover:bg-primary/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label={`Retomar ${lastRead.label ?? 'leitura'}`}
+            aria-label={`Retomar ${lastRead.label ?? "leitura"}`}
           >
             <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
               <Icons.BookOpen className="w-5 h-5 md:w-6 md:h-6 text-primary" aria-hidden />
@@ -106,18 +111,24 @@ const AcervoContinueReadingPanel: React.FC = () => {
               {contentLabel && (
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-primary/60">
                   {contentLabel}
-                  {typeof lastRead.chapter === 'number' && ` · Cap. ${lastRead.chapter}`}
+                  {typeof lastRead.chapter === "number" && ` · Cap. ${lastRead.chapter}`}
                 </p>
               )}
               <p className="font-serif text-premium-md md:text-premium-lg text-foreground truncate">
-                {lastRead.label ?? 'Leitura salva'}
+                {lastRead.label ?? "Leitura salva"}
               </p>
             </div>
             <div className="hidden sm:flex items-center gap-spacing-xs text-primary font-medium text-premium-sm">
               Retomar
-              <Icons.ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden />
+              <Icons.ArrowRight
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                aria-hidden
+              />
             </div>
-            <Icons.ArrowRight className="sm:hidden w-5 h-5 text-primary flex-shrink-0" aria-hidden />
+            <Icons.ArrowRight
+              className="sm:hidden w-5 h-5 text-primary flex-shrink-0"
+              aria-hidden
+            />
           </Link>
         ) : (
           <p className="text-muted-foreground italic font-serif text-premium-sm">

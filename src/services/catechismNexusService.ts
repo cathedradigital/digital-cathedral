@@ -10,9 +10,9 @@
  * (`CuratedNexusEdge`) para o merge do grafo.
  */
 
-import { supabase } from '@/lib/db';
-import type { CuratedNexusEdge } from '@/core/knowledge/adapters/nexusGraphMerge';
-import { withCentrality } from './nexusCentrality';
+import { supabase } from "@/lib/db";
+import type { CuratedNexusEdge } from "@/core/knowledge/adapters/nexusGraphMerge";
+import { withCentrality } from "./nexusCentrality";
 
 interface RawRow {
   relation_type: string;
@@ -25,17 +25,17 @@ interface RawRow {
 
 function refId(ref: Record<string, unknown> | null): string | null {
   if (!ref) return null;
-  for (const k of ['slug', 'id', 'ref'] as const) {
+  for (const k of ["slug", "id", "ref"] as const) {
     const v = ref[k];
-    if (typeof v === 'string' && v.trim()) return v.trim();
-    if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+    if (typeof v === "string" && v.trim()) return v.trim();
+    if (typeof v === "number" && Number.isFinite(v)) return String(v);
   }
   return null;
 }
 
 function refTitle(ref: Record<string, unknown> | null): string | null {
   const t = ref?.title;
-  return typeof t === 'string' && t.trim() ? t.trim() : null;
+  return typeof t === "string" && t.trim() ? t.trim() : null;
 }
 
 /**
@@ -53,21 +53,20 @@ export async function getCatechismCuratedEdges(
   }
   if (paragraphs.length === 0) return [];
 
-  const cols =
-    'relation_type, source_kind, source_ref, target_kind, target_ref, note';
+  const cols = "relation_type, source_kind, source_ref, target_kind, target_ref, note";
 
   const [outgoing, incoming] = await Promise.all([
     supabase
-      .from('nexus_relations')
+      .from("nexus_relations")
       .select(cols)
-      .eq('source_kind', 'catechism_paragraph')
-      .in('source_ref->>id', paragraphs)
+      .eq("source_kind", "catechism_paragraph")
+      .in("source_ref->>id", paragraphs)
       .limit(200),
     supabase
-      .from('nexus_relations')
+      .from("nexus_relations")
       .select(cols)
-      .eq('target_kind', 'catechism_paragraph')
-      .in('target_ref->>id', paragraphs)
+      .eq("target_kind", "catechism_paragraph")
+      .in("target_ref->>id", paragraphs)
       .limit(200),
   ]);
 
@@ -76,17 +75,17 @@ export async function getCatechismCuratedEdges(
 
   const push = (kind: string, ref: Record<string, unknown> | null, note: string | null) => {
     const id = refId(ref);
-    if (!id || kind === 'catechism_paragraph' || kind === 'other') return;
+    if (!id || kind === "catechism_paragraph" || kind === "other") return;
     const key = `${kind}#${id}`;
     if (seen.has(key)) return;
     seen.add(key);
     edges.push({ kind, ref: id, title: refTitle(ref), note });
   };
 
-  for (const row of ((outgoing.data ?? []) as unknown as RawRow[])) {
+  for (const row of (outgoing.data ?? []) as unknown as RawRow[]) {
     push(row.target_kind, row.target_ref, row.note);
   }
-  for (const row of ((incoming.data ?? []) as unknown as RawRow[])) {
+  for (const row of (incoming.data ?? []) as unknown as RawRow[]) {
     push(row.source_kind, row.source_ref, row.note);
   }
 

@@ -22,7 +22,7 @@
  * Jornadas já concluídas e a jornada de origem nunca são recomendadas.
  */
 
-export type JourneyDifficulty = 'iniciante' | 'intermediario' | 'avancado';
+export type JourneyDifficulty = "iniciante" | "intermediario" | "avancado";
 
 export interface JourneyCandidate {
   id: string;
@@ -69,7 +69,7 @@ export interface NextPathRecommendation {
   /** Nós do Nexus em comum (para chips/badges). */
   sharedNodes: JourneyNexusNode[];
   /** Sinal dominante — usado para o eyebrow do card. */
-  signal: 'nexus' | 'category' | 'tags' | 'progression' | 'catalog';
+  signal: "nexus" | "category" | "tags" | "progression" | "catalog";
 }
 
 const W_SHARED_DIRECT = 6;
@@ -87,9 +87,9 @@ const DIFFICULTY_RANK: Record<string, number> = {
 };
 
 function normalize(value?: string | null): string {
-  return (value ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+  return (value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim()
     .toLowerCase();
 }
@@ -125,40 +125,43 @@ function buildReason(
   sharedTags: string[],
   progression: boolean,
   category?: string | null,
-): { reason: string; signal: NextPathRecommendation['signal'] } {
+): { reason: string; signal: NextPathRecommendation["signal"] } {
   if (shared.length > 0) {
     const direct = shared.filter(isDirect);
     const source = direct.length > 0 ? direct : shared;
     const labels = source.slice(0, 3).map((n) => n.label);
     const rest = source.length - labels.length;
-    const list = labels.join(', ') + (rest > 0 ? ` e mais ${rest}` : '');
+    const list = labels.join(", ") + (rest > 0 ? ` e mais ${rest}` : "");
     return {
       reason:
         direct.length > 0
           ? `Compartilha ${list} com a jornada que você concluiu.`
           : `Desemboca na mesma região do Nexus: ${list}.`,
-      signal: 'nexus',
+      signal: "nexus",
     };
   }
   if (sameCategory && category) {
     return {
       reason: `Aprofunda o mesmo eixo formativo: ${category}.`,
-      signal: 'category',
+      signal: "category",
     };
   }
   if (sharedTags.length > 0) {
     return {
-      reason: `Continua os mesmos temas: ${sharedTags.slice(0, 3).join(', ')}.`,
-      signal: 'tags',
+      reason: `Continua os mesmos temas: ${sharedTags.slice(0, 3).join(", ")}.`,
+      signal: "tags",
     };
   }
   if (progression) {
     return {
-      reason: 'Próximo grau de profundidade na sua formação.',
-      signal: 'progression',
+      reason: "Próximo grau de profundidade na sua formação.",
+      signal: "progression",
     };
   }
-  return { reason: 'Se você está lendo isto, provavelmente deveria continuar por aqui...', signal: 'catalog' };
+  return {
+    reason: "Se você está lendo isto, provavelmente deveria continuar por aqui...",
+    signal: "catalog",
+  };
 }
 
 export function resolveNextPath(input: NextPathInput): NextPathRecommendation[] {
@@ -170,9 +173,7 @@ export function resolveNextPath(input: NextPathInput): NextPathRecommendation[] 
     limit = 3,
   } = input;
 
-  const currentNodes = new Map(
-    nodesFor(current, nexusByJourney).map((n) => [n.key, n] as const),
-  );
+  const currentNodes = new Map(nodesFor(current, nexusByJourney).map((n) => [n.key, n] as const));
   const currentCategory = normalize(current.category);
   const currentTags = new Set((current.tags ?? []).map(normalize).filter(Boolean));
   const currentRank = DIFFICULTY_RANK[normalize(current.difficulty)] ?? null;
@@ -197,7 +198,7 @@ export function resolveNextPath(input: NextPathInput): NextPathRecommendation[] 
 
     const sharedTags = (candidate.tags ?? [])
       .filter((t) => currentTags.has(normalize(t)))
-      .map((t) => t.replace(/_/g, ' '));
+      .map((t) => t.replace(/_/g, " "));
 
     const candidateRank = DIFFICULTY_RANK[normalize(candidate.difficulty)] ?? null;
     const progression =

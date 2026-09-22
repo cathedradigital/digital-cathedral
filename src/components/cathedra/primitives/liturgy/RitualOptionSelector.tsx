@@ -5,8 +5,8 @@
  * Puro visual. O consumidor (`MissaContinuousReader`) decide qual bloco
  * renderizar com base em `selectedKey`.
  */
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface RitualOption {
   key: string;
@@ -36,7 +36,7 @@ export const RitualOptionSelector: React.FC<Props> = ({
       role="radiogroup"
       aria-label={title}
       className={cn(
-        'my-spacing-md rounded-2xl border border-primary/20 bg-primary/[0.03] p-spacing-sm md:p-spacing-md',
+        "my-spacing-md rounded-2xl border border-primary/20 bg-primary/[0.03] p-spacing-sm md:p-spacing-md",
         className,
       )}
     >
@@ -57,10 +57,10 @@ export const RitualOptionSelector: React.FC<Props> = ({
               type="button"
               onClick={() => onSelect(opt.key)}
               className={cn(
-                'rounded-full border px-spacing-sm py-spacing-3xs font-stitch-body text-[11px] font-bold uppercase tracking-widest transition-all',
+                "rounded-full border px-spacing-sm py-spacing-3xs font-stitch-body text-[11px] font-bold uppercase tracking-widest transition-all",
                 active
-                  ? 'border-primary bg-primary text-primary-foreground shadow-premium-hover'
-                  : 'border-border/60 bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground',
+                  ? "border-primary bg-primary text-primary-foreground shadow-premium-hover"
+                  : "border-border/60 bg-background/60 text-muted-foreground hover:border-primary/40 hover:text-foreground",
               )}
             >
               {opt.label}

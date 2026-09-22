@@ -20,7 +20,7 @@ export const PreviewSkeleton = () => {
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-2/3" />
         </div>
-        
+
         <Skeleton className="h-64 w-full rounded-xl" />
 
         <div className="space-y-2">

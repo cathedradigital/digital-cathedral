@@ -2,12 +2,12 @@
  * ReaderTypographyControl — três presets de conforto de leitura.
  * Persistência via `useReaderTypography` (localStorage).
  */
-import React from 'react';
-import { Type } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useReaderTypography, type ReaderDensity } from '@/hooks/useReaderTypography';
+import React from "react";
+import { Type } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useReaderTypography, type ReaderDensity } from "@/hooks/useReaderTypography";
 
-const ORDER: ReaderDensity[] = ['compact', 'normal', 'large'];
+const ORDER: ReaderDensity[] = ["compact", "normal", "large"];
 
 export const ReaderTypographyControl: React.FC = () => {
   const { density, setDensity, presets } = useReaderTypography();
@@ -27,10 +27,10 @@ export const ReaderTypographyControl: React.FC = () => {
             type="button"
             role="radio"
             aria-checked={active}
-            variant={active ? 'pill-active' : 'pill'}
+            variant={active ? "pill-active" : "pill"}
             size="pill"
             onClick={() => setDensity(d)}
-            className={active ? 'font-bold' : ''}
+            className={active ? "font-bold" : ""}
           >
             {presets[d].label}
           </Button>

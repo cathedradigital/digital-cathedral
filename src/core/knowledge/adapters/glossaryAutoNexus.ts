@@ -12,17 +12,12 @@
  * Contrato: adapters NÃO conhecem UI, React, Supabase. Puramente domínio.
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import { KnowledgeRegistry } from '../KnowledgeRegistry';
-import { buildId, slugify } from '../ids';
-import type {
-  KnowledgeNode,
-  KnowledgeNodeId,
-  KnowledgeNodeKind,
-  ResolvedNode,
-} from '../types';
-import type { RouteKey } from '@/core/navigation';
-import { recordNexusMetric } from './nexusMetrics';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import { KnowledgeRegistry } from "../KnowledgeRegistry";
+import { buildId, slugify } from "../ids";
+import type { KnowledgeNode, KnowledgeNodeId, KnowledgeNodeKind, ResolvedNode } from "../types";
+import type { RouteKey } from "@/core/navigation";
+import { recordNexusMetric } from "./nexusMetrics";
 
 /* ------------------------------------------------------------------ */
 /* Termo de entrada — subset agnóstico ao Supabase                     */
@@ -76,9 +71,9 @@ function parseBibleParts(raw: string): { book: string; chapter: number } | null 
 
 export const KIND_SPECS: Record<string, KindSpec> = {
   bible: {
-    kind: 'bible',
-    route: 'study.bible',
-    label: 'Escritura',
+    kind: "bible",
+    route: "study.bible",
+    label: "Escritura",
     buildSlug: (raw) => parseBibleParts(raw)?.book ?? null,
     buildSub: (raw) => {
       const p = parseBibleParts(raw);
@@ -90,61 +85,61 @@ export const KIND_SPECS: Record<string, KindSpec> = {
     },
   },
   catechism: {
-    kind: 'catechism',
-    route: 'study.catechism',
-    label: 'Catecismo',
+    kind: "catechism",
+    route: "study.catechism",
+    label: "Catecismo",
     buildSlug: (raw) => {
-      const n = raw.replace(/\D+/g, '');
+      const n = raw.replace(/\D+/g, "");
       return n || null;
     },
     buildRouteParams: (slug) => ({ paragraph: Number(slug) }),
   },
   magisterium: {
-    kind: 'magisterium',
-    route: 'study.magisterium',
-    label: 'Magistério',
+    kind: "magisterium",
+    route: "study.magisterium",
+    label: "Magistério",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ doc: slug }),
   },
   saint: {
-    kind: 'saint',
-    route: 'study.saint',
-    label: 'Santo',
+    kind: "saint",
+    route: "study.saint",
+    label: "Santo",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ slug }),
   },
   father: {
-    kind: 'father',
-    route: 'study.father',
-    label: 'Padre da Igreja',
+    kind: "father",
+    route: "study.father",
+    label: "Padre da Igreja",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ slug }),
   },
   liturgy: {
-    kind: 'liturgy',
-    route: 'study.liturgy',
-    label: 'Liturgia',
+    kind: "liturgy",
+    route: "study.liturgy",
+    label: "Liturgia",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ ref: slug }),
   },
   prayer: {
-    kind: 'prayer',
-    route: 'pray.prayer',
-    label: 'Oração',
+    kind: "prayer",
+    route: "pray.prayer",
+    label: "Oração",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ slug }),
   },
   journey: {
-    kind: 'journey',
-    route: 'study.journey',
-    label: 'Jornada',
+    kind: "journey",
+    route: "study.journey",
+    label: "Jornada",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ id: slug }),
   },
   glossary: {
-    kind: 'glossary',
-    route: 'study.glossary',
-    label: 'Verbete',
+    kind: "glossary",
+    route: "study.glossary",
+    label: "Verbete",
     buildSlug: slugFrom,
     buildRouteParams: (slug) => ({ slug }),
   },
@@ -152,26 +147,26 @@ export const KIND_SPECS: Record<string, KindSpec> = {
 
 /** Aliases dos `nexus_refs.kind` para as chaves canônicas acima. */
 const KIND_ALIASES: Record<string, string> = {
-  bible: 'bible',
-  escritura: 'bible',
-  catechism: 'catechism',
-  cic: 'catechism',
-  magisterium: 'magisterium',
-  magisterio: 'magisterium',
-  saint: 'saint',
-  santo: 'saint',
-  father: 'father',
-  padre: 'father',
-  liturgy: 'liturgy',
-  liturgia: 'liturgy',
-  prayer: 'prayer',
-  oracao: 'prayer',
-  journey: 'journey',
-  jornada: 'journey',
-  formacao: 'journey',
-  glossary: 'glossary',
-  term: 'glossary',
-  verbete: 'glossary',
+  bible: "bible",
+  escritura: "bible",
+  catechism: "catechism",
+  cic: "catechism",
+  magisterium: "magisterium",
+  magisterio: "magisterium",
+  saint: "saint",
+  santo: "saint",
+  father: "father",
+  padre: "father",
+  liturgy: "liturgy",
+  liturgia: "liturgy",
+  prayer: "prayer",
+  oracao: "prayer",
+  journey: "journey",
+  jornada: "journey",
+  formacao: "journey",
+  glossary: "glossary",
+  term: "glossary",
+  verbete: "glossary",
 };
 
 /* ------------------------------------------------------------------ */
@@ -202,9 +197,7 @@ export function ensureNode(
     id,
     kind: spec.kind,
     label: (labelOverride ?? raw).trim(),
-    ...(spec.route && routeParams
-      ? { route: spec.route, routeParams }
-      : {}),
+    ...(spec.route && routeParams ? { route: spec.route, routeParams } : {}),
   };
   KnowledgeRegistry.register(node);
   return id;
@@ -226,14 +219,14 @@ export interface AutoNexusResult {
 }
 
 const FIELD_TO_KIND: Array<{ field: keyof GlossaryLike; kindKey: string }> = [
-  { field: 'bible_verses', kindKey: 'bible' },
-  { field: 'catechism_references', kindKey: 'catechism' },
-  { field: 'magisterium_references', kindKey: 'magisterium' },
-  { field: 'saints_refs', kindKey: 'saint' },
-  { field: 'fathers_refs', kindKey: 'father' },
-  { field: 'liturgy_refs', kindKey: 'liturgy' },
-  { field: 'prayer_refs', kindKey: 'prayer' },
-  { field: 'journey_refs', kindKey: 'journey' },
+  { field: "bible_verses", kindKey: "bible" },
+  { field: "catechism_references", kindKey: "catechism" },
+  { field: "magisterium_references", kindKey: "magisterium" },
+  { field: "saints_refs", kindKey: "saint" },
+  { field: "fathers_refs", kindKey: "father" },
+  { field: "liturgy_refs", kindKey: "liturgy" },
+  { field: "prayer_refs", kindKey: "prayer" },
+  { field: "journey_refs", kindKey: "journey" },
 ];
 
 function dedupe(nodes: ResolvedNode[]): ResolvedNode[] {
@@ -260,9 +253,9 @@ const cache = new Map<string, AutoNexusResult>();
  * por testes unitários e uso pelo `nexusMetrics`.
  */
 export function _fingerprintGlossary(term: GlossaryLike): string {
-  const join = (xs: string[] | null | undefined) => (xs ?? []).join('|');
+  const join = (xs: string[] | null | undefined) => (xs ?? []).join("|");
   return [
-    term.slug ?? '',
+    term.slug ?? "",
     join(term.bible_verses),
     join(term.catechism_references),
     join(term.magisterium_references),
@@ -271,8 +264,8 @@ export function _fingerprintGlossary(term: GlossaryLike): string {
     join(term.liturgy_refs),
     join(term.prayer_refs),
     join(term.journey_refs),
-    (term.nexus_refs ?? []).map((r) => `${r?.kind ?? ''}:${r?.target ?? ''}`).join('|'),
-  ].join('#');
+    (term.nexus_refs ?? []).map((r) => `${r?.kind ?? ""}:${r?.target ?? ""}`).join("|"),
+  ].join("#");
 }
 
 /** Testes/hot-reload podem limpar a cache. */
@@ -282,13 +275,13 @@ export function clearAutoNexusCache(): void {
 
 export function resolveAutoNexus(term: GlossaryLike): AutoNexusResult {
   const key = _fingerprintGlossary(term);
-  const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const started = typeof performance !== "undefined" ? performance.now() : Date.now();
   const hit = cache.get(key);
   if (hit) {
     // move-to-end para LRU simples
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'glossary', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "glossary", hit: true, ms: nowMs() - started, key });
     return hit;
   }
   const result = computeAutoNexus(term);
@@ -297,12 +290,12 @@ export function resolveAutoNexus(term: GlossaryLike): AutoNexusResult {
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'glossary', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "glossary", hit: false, ms: nowMs() - started, key });
   return result;
 }
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 function computeAutoNexus(term: GlossaryLike): AutoNexusResult {
@@ -314,9 +307,7 @@ function computeAutoNexus(term: GlossaryLike): AutoNexusResult {
   };
 
   // 1. Registra o próprio verbete como nó de conhecimento.
-  const selfId = term.slug
-    ? ensureNode(KIND_SPECS.glossary, term.slug, term.term)
-    : null;
+  const selfId = term.slug ? ensureNode(KIND_SPECS.glossary, term.slug, term.term) : null;
 
   // 2. Ingesta dos arrays estruturados do verbete.
   for (const { field, kindKey } of FIELD_TO_KIND) {
@@ -330,9 +321,9 @@ function computeAutoNexus(term: GlossaryLike): AutoNexusResult {
 
   // 3. Ingesta dos nexus_refs livres.
   for (const ref of term.nexus_refs ?? []) {
-    const alias = (ref?.kind ?? '').toLowerCase().trim();
+    const alias = (ref?.kind ?? "").toLowerCase().trim();
     const kindKey = KIND_ALIASES[alias];
-    const target = (ref?.target ?? '').toString();
+    const target = (ref?.target ?? "").toString();
     if (!kindKey || !target) continue;
     const spec = KIND_SPECS[kindKey];
     const id = ensureNode(spec, target, ref?.label);
@@ -358,9 +349,15 @@ function computeAutoNexus(term: GlossaryLike): AutoNexusResult {
   for (const r of discoveredResolved) {
     const k = r.node.kind;
     const kindKey =
-      k === 'bible' || k === 'catechism' || k === 'magisterium' ||
-      k === 'saint' || k === 'father' || k === 'liturgy' ||
-      k === 'prayer' || k === 'journey' || k === 'glossary'
+      k === "bible" ||
+      k === "catechism" ||
+      k === "magisterium" ||
+      k === "saint" ||
+      k === "father" ||
+      k === "liturgy" ||
+      k === "prayer" ||
+      k === "journey" ||
+      k === "glossary"
         ? k
         : null;
     if (!kindKey) continue;

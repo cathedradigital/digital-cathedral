@@ -1,11 +1,9 @@
-import { Button } from '@/components/ui/button';
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { Icons } from '../../constants';
+import { Button } from "@/components/ui/button";
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { Icons } from "../../constants";
 import * as Sentry from "@sentry/react";
-import { trackNavigationError } from '@/lib/telemetry';
-import { supabase } from '@/lib/db';
-
-
+import { trackNavigationError } from "@/lib/telemetry";
+import { supabase } from "@/lib/db";
 
 interface Props {
   children: ReactNode;
@@ -19,10 +17,9 @@ interface State {
   componentStack?: string;
 }
 
-
 class AppErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -33,14 +30,14 @@ class AppErrorBoundary extends Component<Props, State> {
     const errorId = trackNavigationError(error, { componentStack: errorInfo.componentStack });
     // Nunca mascarar: mantém no console para debugging do usuário e do time.
     // eslint-disable-next-line no-console
-    console.error('[AppErrorBoundary]', error, errorInfo);
+    console.error("[AppErrorBoundary]", error, errorInfo);
     this.setState({ errorId, componentStack: errorInfo.componentStack ?? undefined });
 
     Sentry.captureException(error, {
       extra: {
         componentStack: errorInfo.componentStack,
-        ...errorInfo
-      }
+        ...errorInfo,
+      },
     });
 
     // Persistência no admin: analytics_events (INSERT exige auth.uid = user_id;
@@ -53,14 +50,17 @@ class AppErrorBoundary extends Component<Props, State> {
       const { data: auth } = await supabase.auth.getUser();
       const uid = auth?.user?.id;
       if (!uid) return; // RLS bloqueia anônimo — Sentry já registrou.
-      const loc = typeof window !== 'undefined' ? window.location : null;
+      const loc = typeof window !== "undefined" ? window.location : null;
       // Sanitiza query params — não gravar tokens/segredos que possam vir na URL.
-      const rawQuery = loc?.search ?? '';
-      const safeQuery = rawQuery.replace(/([?&](?:access_token|token|apikey|key|secret|password)=)[^&]+/gi, '$1[REDACTED]');
-      await supabase.from('analytics_events').insert({
-        event_name: 'client_error',
+      const rawQuery = loc?.search ?? "";
+      const safeQuery = rawQuery.replace(
+        /([?&](?:access_token|token|apikey|key|secret|password)=)[^&]+/gi,
+        "$1[REDACTED]",
+      );
+      await supabase.from("analytics_events").insert({
+        event_name: "client_error",
         user_id: uid,
-        session_id: sessionStorage.getItem('sid') ?? null,
+        session_id: sessionStorage.getItem("sid") ?? null,
         url: loc?.pathname ?? null,
         properties: {
           ref_id: errorId,
@@ -68,30 +68,30 @@ class AppErrorBoundary extends Component<Props, State> {
           query: safeQuery,
           hash: loc?.hash ?? null,
           message: error?.message ?? null,
-          stack: (error?.stack ?? '').slice(0, 4000),
-          component_stack: (errorInfo.componentStack ?? '').slice(0, 4000),
-          user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+          stack: (error?.stack ?? "").slice(0, 4000),
+          component_stack: (errorInfo.componentStack ?? "").slice(0, 4000),
+          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
         },
       });
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('[AppErrorBoundary] persistência ignorada:', (e as Error)?.message);
+      console.warn("[AppErrorBoundary] persistência ignorada:", (e as Error)?.message);
     }
   }
 
   private copyDetails = async () => {
     const { errorId, errorMessage, errorStack, componentStack } = this.state;
     const payload = [
-      `Ref: ${errorId ?? '(sem id)'}`,
-      `URL: ${typeof window !== 'undefined' ? window.location.href : '-'}`,
-      `Mensagem: ${errorMessage ?? '(sem mensagem)'}`,
-      '',
-      'Stack:',
-      errorStack ?? '(sem stack)',
-      '',
-      'Component stack:',
-      componentStack ?? '(sem component stack)',
-    ].join('\n');
+      `Ref: ${errorId ?? "(sem id)"}`,
+      `URL: ${typeof window !== "undefined" ? window.location.href : "-"}`,
+      `Mensagem: ${errorMessage ?? "(sem mensagem)"}`,
+      "",
+      "Stack:",
+      errorStack ?? "(sem stack)",
+      "",
+      "Component stack:",
+      componentStack ?? "(sem component stack)",
+    ].join("\n");
     try {
       await navigator.clipboard.writeText(payload);
     } catch {
@@ -149,7 +149,6 @@ class AppErrorBoundary extends Component<Props, State> {
             )}
           </div>
 
-
           <div className="flex flex-col gap-spacing-sm w-full max-w-spacing-xs pt-spacing-md">
             <Button
               onClick={() => {
@@ -180,9 +179,9 @@ class AppErrorBoundary extends Component<Props, State> {
                     await reg.unregister();
                   }
                 } catch (e) {
-                  console.error('Failed to unregister service workers:', e);
+                  console.error("Failed to unregister service workers:", e);
                 }
-                window.location.href = '/';
+                window.location.href = "/";
               }}
               className="text-[8px] font-bold text-muted-foreground/40 hover:text-primary uppercase tracking-widest"
             >

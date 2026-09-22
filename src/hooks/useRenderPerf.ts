@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * Lightweight render performance probe.
@@ -31,7 +31,7 @@ export function useRenderPerf(componentName: string, _threshold = 5) {
       // Single, cheap log line. No table, no group, no network.
       // eslint-disable-next-line no-console
       console.debug(
-        `[perf] ${componentName} renders=${renderCount.current} dur=${duration.toFixed(0)}ms`
+        `[perf] ${componentName} renders=${renderCount.current} dur=${duration.toFixed(0)}ms`,
       );
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

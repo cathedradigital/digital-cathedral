@@ -5,8 +5,8 @@
  * searchers de módulo normalizam para este tipo e o `LibraryCard` renderiza
  * qualquer item sem ifs específicos.
  */
-import type { LucideIcon } from 'lucide-react';
-import type { LibraryIce, LibraryModule } from '../types';
+import type { LucideIcon } from "lucide-react";
+import type { LibraryIce, LibraryModule } from "../types";
 
 export interface LibraryResult {
   type: LibraryModule;
@@ -50,14 +50,13 @@ export interface LibraryResult {
   /** Sinônimos/aliases da entidade. */
   aliases?: string[];
   /** Nível de formação sugerido (usado pela Catequese na Sprint K). */
-  formationLevel?: 'fundamental' | 'intermediate' | 'advanced';
+  formationLevel?: "fundamental" | "intermediate" | "advanced";
 }
-
 
 export interface LibrarySearchOptions {
   query: string;
   /** Se vazio ou "all", pesquisa todos os módulos. */
-  types?: LibraryModule[] | 'all';
+  types?: LibraryModule[] | "all";
   /** Máx. de resultados por módulo antes da fusão. */
   perModule?: number;
   /** Se true, enriquece cada resultado com nexus_relations. */

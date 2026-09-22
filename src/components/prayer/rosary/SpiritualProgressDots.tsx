@@ -9,8 +9,8 @@
  *
  * Não altera estado — apenas leitura.
  */
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   total: number;
@@ -27,7 +27,7 @@ const SpiritualProgressDots: React.FC<Props> = ({
   completedIds = [],
   ids = [],
   label,
-  accentClass = 'text-stitch-secondary',
+  accentClass = "text-stitch-secondary",
 }) => {
   if (total <= 0) return null;
   const items = Array.from({ length: total });
@@ -46,20 +46,24 @@ const SpiritualProgressDots: React.FC<Props> = ({
               <span
                 aria-hidden
                 className={cn(
-                  'inline-block rounded-full transition-all duration-500',
+                  "inline-block rounded-full transition-all duration-500",
                   isCurrent
-                    ? cn('h-3 w-3 ring-2 ring-offset-2 ring-offset-transparent', accentClass, 'bg-current ring-current/40')
+                    ? cn(
+                        "h-3 w-3 ring-2 ring-offset-2 ring-offset-transparent",
+                        accentClass,
+                        "bg-current ring-current/40",
+                      )
                     : isDone
-                      ? cn('h-2.5 w-2.5', accentClass, 'bg-current/70')
-                      : 'h-2 w-2 border border-stitch-outline-variant/70 bg-transparent',
+                      ? cn("h-2.5 w-2.5", accentClass, "bg-current/70")
+                      : "h-2 w-2 border border-stitch-outline-variant/70 bg-transparent",
                 )}
               />
               {i < items.length - 1 && (
                 <span
                   aria-hidden
                   className={cn(
-                    'h-px w-6 transition-colors duration-500',
-                    isDone ? cn(accentClass, 'bg-current/60') : 'bg-stitch-outline-variant/50',
+                    "h-px w-6 transition-colors duration-500",
+                    isDone ? cn(accentClass, "bg-current/60") : "bg-stitch-outline-variant/50",
                   )}
                 />
               )}

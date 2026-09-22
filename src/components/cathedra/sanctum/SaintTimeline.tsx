@@ -1,21 +1,24 @@
-import React from 'react';
-import { Icons } from '../../../constants';
-import type { Saint } from '@/data/saints';
+import React from "react";
+import { Icons } from "../../../constants";
+import type { Saint } from "@/data/saints";
 
 const TIMELINE_ICON: Record<string, keyof typeof Icons> = {
-  birth: 'User',
-  conversion: 'Sparkles',
-  formation: 'BookOpen',
-  mission: 'Route',
-  work: 'Feather',
-  miracle: 'Star',
-  martyrdom: 'Flame',
-  death: 'XCircle',
-  canonization: 'Crown',
-  feast: 'Calendar',
+  birth: "User",
+  conversion: "Sparkles",
+  formation: "BookOpen",
+  mission: "Route",
+  work: "Feather",
+  miracle: "Star",
+  martyrdom: "Flame",
+  death: "XCircle",
+  canonization: "Crown",
+  feast: "Calendar",
 };
 
-const SectionTitle: React.FC<{ icon: keyof typeof Icons; children: React.ReactNode }> = ({ icon, children }) => {
+const SectionTitle: React.FC<{ icon: keyof typeof Icons; children: React.ReactNode }> = ({
+  icon,
+  children,
+}) => {
   const Icon = Icons[icon] as any;
   return (
     <div className="flex items-center gap-spacing-xs text-primary">
@@ -34,7 +37,7 @@ const SaintTimeline: React.FC<{ saint: Saint }> = ({ saint }) => {
       <SectionTitle icon="Calendar">Linha do tempo</SectionTitle>
       <ol className="relative border-l-2 border-primary/20 pl-spacing-lg space-y-spacing-lg">
         {saint.timeline.map((ev, i) => {
-          const iconName = TIMELINE_ICON[ev.type || 'work'] || 'Star';
+          const iconName = TIMELINE_ICON[ev.type || "work"] || "Star";
           const Icon = Icons[iconName] as any;
           return (
             <li key={i} className="relative">

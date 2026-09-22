@@ -7,26 +7,28 @@
  * leitura: sem grau, as arestas voltam com weight 0.
  */
 
-import { supabase } from '@/lib/db';
-import type { CuratedNexusEdge } from '@/core/knowledge/adapters/nexusGraphMerge';
+import { supabase } from "@/lib/db";
+import type { CuratedNexusEdge } from "@/core/knowledge/adapters/nexusGraphMerge";
 
-export async function withCentrality(
-  edges: CuratedNexusEdge[],
-): Promise<CuratedNexusEdge[]> {
+export async function withCentrality(edges: CuratedNexusEdge[]): Promise<CuratedNexusEdge[]> {
   if (edges.length === 0) return edges;
 
   const refs = Array.from(new Set(edges.map((e) => e.ref))).slice(0, 200);
 
   const { data, error } = await supabase
-    .from('nexus_node_degree')
-    .select('kind, ref, degree')
-    .in('ref', refs)
+    .from("nexus_node_degree")
+    .select("kind, ref, degree")
+    .in("ref", refs)
     .limit(500);
 
   if (error || !data) return edges.map((e) => ({ ...e, weight: 0 }));
 
   const degrees = new Map<string, number>();
-  for (const row of data as Array<{ kind: string | null; ref: string | null; degree: number | null }>) {
+  for (const row of data as Array<{
+    kind: string | null;
+    ref: string | null;
+    degree: number | null;
+  }>) {
     if (!row.kind || !row.ref) continue;
     degrees.set(`${row.kind}#${row.ref}`, row.degree ?? 0);
   }

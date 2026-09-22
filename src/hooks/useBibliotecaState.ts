@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Estado persistido da Biblioteca — busca, filtro axial e aba.
@@ -7,18 +7,12 @@ import { useCallback, useEffect, useState } from 'react';
  */
 
 export type BibliotecaTab =
-  | 'pesquisar'
-  | 'temas'
-  | 'escritos'
-  | 'autores'
-  | 'colecoes'
-  | 'favoritos'
-  | 'recentes';
+  "pesquisar" | "temas" | "escritos" | "autores" | "colecoes" | "favoritos" | "recentes";
 
-export type AxisFilter = 'tema' | 'pessoa' | 'documento' | 'periodo' | 'fonte' | null;
+export type AxisFilter = "tema" | "pessoa" | "documento" | "periodo" | "fonte" | null;
 
-const STATE_KEY = 'cathedra:biblioteca:state:v1';
-const RECENTS_KEY = 'cathedra:biblioteca:recents:v1';
+const STATE_KEY = "cathedra:biblioteca:state:v1";
+const RECENTS_KEY = "cathedra:biblioteca:recents:v1";
 const RECENTS_MAX = 12;
 
 export interface RecentEntry {
@@ -36,9 +30,9 @@ interface PersistedState {
 }
 
 const defaultState: PersistedState = {
-  query: '',
+  query: "",
   axis: null,
-  tab: 'escritos',
+  tab: "escritos",
 };
 
 function readState(): PersistedState {
@@ -67,18 +61,12 @@ export function useBibliotecaState() {
     writeState(state);
   }, [state]);
 
-  const setQuery = useCallback(
-    (query: string) => setState((s) => ({ ...s, query })),
-    [],
-  );
+  const setQuery = useCallback((query: string) => setState((s) => ({ ...s, query })), []);
   const setAxis = useCallback(
     (axis: AxisFilter) => setState((s) => ({ ...s, axis: s.axis === axis ? null : axis })),
     [],
   );
-  const setTab = useCallback(
-    (tab: BibliotecaTab) => setState((s) => ({ ...s, tab })),
-    [],
-  );
+  const setTab = useCallback((tab: BibliotecaTab) => setState((s) => ({ ...s, tab })), []);
   const reset = useCallback(() => setState(defaultState), []);
 
   return { ...state, setQuery, setAxis, setTab, reset };
@@ -108,7 +96,7 @@ function writeRecents(list: RecentEntry[]) {
 export function useBibliotecaRecents() {
   const [recents, setRecents] = useState<RecentEntry[]>(readRecents);
 
-  const pushRecent = useCallback((entry: Omit<RecentEntry, 'visitedAt'>) => {
+  const pushRecent = useCallback((entry: Omit<RecentEntry, "visitedAt">) => {
     setRecents((prev) => {
       const filtered = prev.filter((r) => r.id !== entry.id);
       const next: RecentEntry[] = [

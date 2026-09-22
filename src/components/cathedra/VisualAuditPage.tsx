@@ -1,11 +1,11 @@
-import { Icons } from '@/constants';
-import React, { useState, useEffect } from 'react';
-import { CathedraCard } from './CathedraCard';
-import { CathedraButton } from './CathedraButton';
+import { Icons } from "@/constants";
+import React, { useState, useEffect } from "react";
+import { CathedraCard } from "./CathedraCard";
+import { CathedraButton } from "./CathedraButton";
 
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from '@/lib/rr-compat';
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useNavigate } from "@/lib/rr-compat";
 
 interface Violation {
   file: string;
@@ -24,21 +24,21 @@ interface AuditReport {
 const VisualAuditPage: React.FC = () => {
   const [report, setReport] = useState<AuditReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     // In a real app, we'd fetch this from an API or Supabase
     // For now, we simulate by importing the JSON if possible or using a hardcoded version
-    // Since we are in the sandbox, we can try to fetch it if it's in public, 
+    // Since we are in the sandbox, we can try to fetch it if it's in public,
     // but it's easier to just "fetch" it via a simulated state since I can't easily import JSON as a module if it's dynamic.
     // However, I can try to read it.
     const fetchReport = async () => {
       try {
-        // We'll use a fetch to get the file if served, or just mock it for now 
+        // We'll use a fetch to get the file if served, or just mock it for now
         // until we find a way to serve it or provide it.
         // For this task, I'll provide the data directly.
-        const response = await fetch('/visual-audit-report.json');
+        const response = await fetch("/visual-audit-report.json");
         if (response.ok) {
           const data = await response.json();
           setReport(data);
@@ -48,11 +48,11 @@ const VisualAuditPage: React.FC = () => {
             timestamp: new Date().toISOString(),
             total_violations: 0,
             violations: [],
-            status: 'conforme'
+            status: "conforme",
           });
         }
       } catch (err) {
-        console.error('Erro ao carregar relatório', err);
+        console.error("Erro ao carregar relatório", err);
       } finally {
         setLoading(false);
       }
@@ -61,10 +61,12 @@ const VisualAuditPage: React.FC = () => {
     fetchReport();
   }, []);
 
-  const filteredViolations = report?.violations.filter(v => 
-    v.file.toLowerCase().includes(filter.toLowerCase()) || 
-    v.pattern.toLowerCase().includes(filter.toLowerCase())
-  ) || [];
+  const filteredViolations =
+    report?.violations.filter(
+      (v) =>
+        v.file.toLowerCase().includes(filter.toLowerCase()) ||
+        v.pattern.toLowerCase().includes(filter.toLowerCase()),
+    ) || [];
 
   const violationsByFile = filteredViolations.reduce((acc: Record<string, Violation[]>, v) => {
     if (!acc[v.file]) acc[v.file] = [];
@@ -84,9 +86,9 @@ const VisualAuditPage: React.FC = () => {
     <div className="max-w-7xl mx-auto p-spacing-lg space-y-spacing-xl animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-spacing-md">
         <div>
-          <CathedraButton 
-            variant="ghost" 
-            size="sm" 
+          <CathedraButton
+            variant="ghost"
+            size="sm"
             onClick={() => navigate(-1)}
             className="mb-spacing-md"
           >
@@ -100,15 +102,19 @@ const VisualAuditPage: React.FC = () => {
             Status dos componentes e tokens do Design System.
           </p>
         </div>
-        
+
         <div className="flex items-center gap-spacing-sm">
-          <Badge className={`px-spacing-md py-spacing-2xs rounded-premium-full text-[10px] font-black uppercase tracking-widest ${
-            report?.status === 'conforme' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
-          }`}>
-            {report?.status === 'conforme' ? 'Conforme' : 'Pendente'}
+          <Badge
+            className={`px-spacing-md py-spacing-2xs rounded-premium-full text-[10px] font-black uppercase tracking-widest ${
+              report?.status === "conforme"
+                ? "bg-green-500/10 text-green-500 border-green-500/20"
+                : "bg-red-500/10 text-red-500 border-red-500/20"
+            }`}
+          >
+            {report?.status === "conforme" ? "Conforme" : "Pendente"}
           </Badge>
           <div className="text-[10px] font-bold opacity-50 uppercase tracking-widest">
-            Última execução: {report ? new Date(report.timestamp).toLocaleString() : '-'}
+            Última execução: {report ? new Date(report.timestamp).toLocaleString() : "-"}
           </div>
         </div>
       </div>
@@ -116,7 +122,9 @@ const VisualAuditPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-spacing-lg">
         <CathedraCard className="md:col-span-1 p-spacing-lg space-y-spacing-lg">
           <div className="space-y-spacing-md">
-            <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Resumo</h3>
+            <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+              Resumo
+            </h3>
             <div className="space-y-spacing-xs">
               <div className="flex justify-between items-center text-premium-sm">
                 <span className="opacity-70">Total de Violações</span>
@@ -130,10 +138,12 @@ const VisualAuditPage: React.FC = () => {
           </div>
 
           <div className="space-y-spacing-md pt-spacing-md border-t border-border/10">
-            <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">Filtros</h3>
+            <h3 className="text-premium-xs font-black uppercase tracking-widest opacity-50">
+              Filtros
+            </h3>
             <div className="relative">
               <Icons.Search className="absolute left-spacing-sm top-spacing-2xs/2 -translate-y-1/2 w-spacing-md h-spacing-md opacity-40" />
-              <input 
+              <input
                 type="text"
                 placeholder="Filtrar arquivos..."
                 className="w-full bg-muted/20 border border-border/10 rounded-premium-sm py-spacing-xs pl-spacing-xl pr-spacing-md text-premium-sm outline-none focus:border-primary/50"
@@ -150,34 +160,46 @@ const VisualAuditPage: React.FC = () => {
               <div className="p-spacing-md bg-muted/10 border-b border-border/10 flex items-center justify-between">
                 <div className="flex items-center gap-spacing-sm">
                   <Icons.FileText className="w-spacing-md h-spacing-md opacity-50" />
-                  <span className="text-premium-xs font-black tracking-wider font-mono">{file}</span>
+                  <span className="text-premium-xs font-black tracking-wider font-mono">
+                    {file}
+                  </span>
                 </div>
-                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest">
-                  {violations.length} {violations.length === 1 ? 'Erro' : 'Erros'}
+                <Badge
+                  variant="outline"
+                  className="text-[9px] font-black uppercase tracking-widest"
+                >
+                  {violations.length} {violations.length === 1 ? "Erro" : "Erros"}
                 </Badge>
               </div>
               <div className="p-spacing-0">
                 <ScrollArea className="max-h-[300px]">
                   <div className="divide-y divide-border/5">
                     {violations.map((v, i) => (
-                      <div key={i} className="p-spacing-md flex items-start justify-between group hover:bg-primary/5 transition-colors">
+                      <div
+                        key={i}
+                        className="p-spacing-md flex items-start justify-between group hover:bg-primary/5 transition-colors"
+                      >
                         <div className="space-y-spacing-2xs">
                           <div className="flex items-center gap-spacing-xs">
                             <Icons.AlertTriangle className="w-spacing-sm h-spacing-sm text-yellow-500" />
                             <span className="text-premium-sm font-bold">{v.pattern}</span>
-                            <code className="text-[10px] bg-red-500/10 text-red-500 px-spacing-2xs py-spacing-3xs rounded font-mono">{v.match}</code>
+                            <code className="text-[10px] bg-red-500/10 text-red-500 px-spacing-2xs py-spacing-3xs rounded font-mono">
+                              {v.match}
+                            </code>
                           </div>
                           <p className="text-[10px] opacity-50 font-medium">
                             Linha {v.line} • Sugestão: Substituir por token premium correspondente.
                           </p>
                         </div>
-                        <CathedraButton 
-                          variant="ghost" 
-                          size="sm" 
+                        <CathedraButton
+                          variant="ghost"
+                          size="sm"
                           className="opacity-0 group-hover:opacity-100 h-spacing-xl rounded-premium-full text-[9px] font-black uppercase"
                           onClick={() => {
                             // In a real IDE integration we'd open the file
-                            toast.info(`Correção recomendada: use CathedraCard ou shadow-premium na linha ${v.line}`);
+                            toast.info(
+                              `Correção recomendada: use CathedraCard ou shadow-premium na linha ${v.line}`,
+                            );
                           }}
                         >
                           Ver Detalhes
@@ -202,6 +224,6 @@ const VisualAuditPage: React.FC = () => {
   );
 };
 
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export default VisualAuditPage;

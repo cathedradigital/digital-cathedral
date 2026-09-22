@@ -16,18 +16,15 @@
  *     └── collections / collection / membersOf / collectionsOf
  */
 
-import { KnowledgeRegistry } from './KnowledgeRegistry';
-import {
-  KnowledgeNavigator,
-  type ComposedStudyStep,
-} from './KnowledgeNavigator';
-import { KnowledgeResolver } from './KnowledgeResolver';
-import { KnowledgeIndex, type KnowledgeSearchOptions } from './KnowledgeIndex';
+import { KnowledgeRegistry } from "./KnowledgeRegistry";
+import { KnowledgeNavigator, type ComposedStudyStep } from "./KnowledgeNavigator";
+import { KnowledgeResolver } from "./KnowledgeResolver";
+import { KnowledgeIndex, type KnowledgeSearchOptions } from "./KnowledgeIndex";
 import {
   KnowledgeCollectionRegistry,
   type KnowledgeCollectionDescriptor,
   type KnowledgeCollectionId,
-} from './KnowledgeCollection';
+} from "./KnowledgeCollection";
 import type {
   KnowledgeNode,
   KnowledgeNodeId,
@@ -35,7 +32,7 @@ import type {
   KnowledgeRelation,
   KnowledgeRelationKind,
   ResolvedNode,
-} from './types';
+} from "./types";
 
 export const KnowledgeGraph = {
   // --- nós ---

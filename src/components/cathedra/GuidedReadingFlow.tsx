@@ -1,41 +1,42 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { AppRoute } from '@/types';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { AppRoute } from "@/types";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   {
-    id: 'bible',
-    title: 'Sagrada Escritura',
-    subtitle: 'O sopro de Deus na história',
-    icon: 'Book',
-    description: 'Comece com a luz da Palavra. Leia um capítulo dos Evangelhos para iluminar seu dia.',
+    id: "bible",
+    title: "Sagrada Escritura",
+    subtitle: "O sopro de Deus na história",
+    icon: "Book",
+    description:
+      "Comece com a luz da Palavra. Leia um capítulo dos Evangelhos para iluminar seu dia.",
     route: AppRoute.BIBLE,
-    color: 'bg-primary/5',
-    tag: 'Fundamento'
+    color: "bg-primary/5",
+    tag: "Fundamento",
   },
   {
-    id: 'catechism',
-    title: 'Santo Catecismo',
-    subtitle: 'A síntese da nossa fé',
-    icon: 'Church',
-    description: 'Aprofunde o entendimento. Explore os mistérios da fé através da doutrina segura.',
+    id: "catechism",
+    title: "Santo Catecismo",
+    subtitle: "A síntese da nossa fé",
+    icon: "Church",
+    description: "Aprofunde o entendimento. Explore os mistérios da fé através da doutrina segura.",
     route: AppRoute.CATECHISM,
-    color: 'bg-secondary/5',
-    tag: 'Doutrina'
+    color: "bg-secondary/5",
+    tag: "Doutrina",
   },
   {
-    id: 'magisterium',
-    title: 'Magistério Vivo',
-    subtitle: 'A voz da Igreja hoje',
-    icon: 'Feather',
-    description: 'Escute a voz do Pastor. Mergulhe nos documentos que guiam o mosteiro digital.',
+    id: "magisterium",
+    title: "Magistério Vivo",
+    subtitle: "A voz da Igreja hoje",
+    icon: "Feather",
+    description: "Escute a voz do Pastor. Mergulhe nos documentos que guiam o mosteiro digital.",
     route: AppRoute.MAGISTERIUM,
-    color: 'bg-accent',
-    tag: 'Tradição'
-  }
+    color: "bg-accent",
+    tag: "Tradição",
+  },
 ];
 
 export const GuidedReadingFlow: React.FC = () => {
@@ -44,7 +45,7 @@ export const GuidedReadingFlow: React.FC = () => {
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     } else {
       navigate(steps[currentStep].route);
     }
@@ -52,7 +53,7 @@ export const GuidedReadingFlow: React.FC = () => {
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
@@ -93,20 +94,20 @@ export const GuidedReadingFlow: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center gap-spacing-lg mt-spacing-md">
             {currentStep > 0 && (
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 onClick={prevStep}
                 className="rounded-premium-full px-spacing-xl h-spacing-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-all"
               >
                 Voltar
               </Button>
             )}
-            
-            <Button 
+
+            <Button
               onClick={nextStep}
               className="btn-premium-primary px-spacing-2xl h-spacing-3xl rounded-premium-full group shadow-premium"
             >
-              {currentStep === steps.length - 1 ? 'Iniciar Leitura' : 'Próximo Passo'}
+              {currentStep === steps.length - 1 ? "Iniciar Leitura" : "Próximo Passo"}
               <Icons.ArrowRight className="w-spacing-md h-spacing-md ml-spacing-sm group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -114,10 +115,10 @@ export const GuidedReadingFlow: React.FC = () => {
           {/* Progress indicators */}
           <div className="flex gap-spacing-md mt-spacing-xl">
             {steps.map((_, idx) => (
-              <div 
+              <div
                 key={idx}
                 className={`w-spacing-2xs h-spacing-2xs rounded-premium-full transition-all duration-1000 ${
-                  idx === currentStep ? 'bg-primary w-spacing-xl' : 'bg-primary/10'
+                  idx === currentStep ? "bg-primary w-spacing-xl" : "bg-primary/10"
                 }`}
               />
             ))}

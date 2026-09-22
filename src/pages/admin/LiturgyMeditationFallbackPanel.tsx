@@ -6,24 +6,28 @@
  * e `source` (local-cache, previous-day, local-builder), com alerta quando
  * há aumento anormal de `ai_credits_exhausted` nas últimas 24h.
  */
-import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from "react";
+import { AlertTriangle, RefreshCw, Trash2 } from "lucide-react";
 import {
   readFallbackEvents,
   clearFallbackEvents,
   type FallbackEventLog,
-} from '@/hooks/useLiturgyMeditation';
-import { Button } from '@/components/ui/button';
+} from "@/hooks/useLiturgyMeditation";
+import { Button } from "@/components/ui/button";
 
-const CODES = ['ai_credits_exhausted', 'ai_rate_limited', 'ai_unavailable'] as const;
-const SOURCES = ['local-cache', 'previous-day', 'local-builder'] as const;
+const CODES = ["ai_credits_exhausted", "ai_rate_limited", "ai_unavailable"] as const;
+const SOURCES = ["local-cache", "previous-day", "local-builder"] as const;
 
 function bucketByHour(events: FallbackEventLog[], hours: number) {
   const cutoff = Date.now() - hours * 60 * 60_000;
   return events.filter((e) => new Date(e.at).getTime() > cutoff);
 }
 
-function countBy<T extends string>(events: FallbackEventLog[], key: keyof FallbackEventLog, values: readonly T[]) {
+function countBy<T extends string>(
+  events: FallbackEventLog[],
+  key: keyof FallbackEventLog,
+  values: readonly T[],
+) {
   return values.reduce<Record<T, number>>(
     (acc, v) => {
       acc[v] = events.filter((e) => e[key] === v).length;
@@ -37,7 +41,9 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
   const [events, setEvents] = useState<FallbackEventLog[]>([]);
 
   const reload = () => setEvents(readFallbackEvents());
-  useEffect(() => { reload(); }, []);
+  useEffect(() => {
+    reload();
+  }, []);
 
   const last24h = useMemo(() => bucketByHour(events, 24), [events]);
   const last7d = useMemo(() => bucketByHour(events, 24 * 7), [events]);
@@ -49,14 +55,14 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
     });
   }, [events]);
 
-  const byCode24h = useMemo(() => countBy(last24h, 'code', CODES), [last24h]);
-  const bySource24h = useMemo(() => countBy(last24h, 'source', SOURCES), [last24h]);
-  const byCode7d = useMemo(() => countBy(last7d, 'code', CODES), [last7d]);
+  const byCode24h = useMemo(() => countBy(last24h, "code", CODES), [last24h]);
+  const bySource24h = useMemo(() => countBy(last24h, "source", SOURCES), [last24h]);
+  const byCode7d = useMemo(() => countBy(last7d, "code", CODES), [last7d]);
 
   const creditsSpike =
     byCode24h.ai_credits_exhausted > 0 &&
     byCode24h.ai_credits_exhausted >= 3 &&
-    byCode24h.ai_credits_exhausted >= countBy(previous24h, 'code', CODES).ai_credits_exhausted * 2;
+    byCode24h.ai_credits_exhausted >= countBy(previous24h, "code", CODES).ai_credits_exhausted * 2;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 space-y-6">
@@ -64,18 +70,28 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-primary">Fallback da Meditação Litúrgica</h1>
           <p className="text-sm text-muted-foreground">
-            Telemetria local dos eventos <code className="text-xs">liturgy.meditation.fallback</code>.
+            Telemetria local dos eventos{" "}
+            <code className="text-xs">liturgy.meditation.fallback</code>.
           </p>
         </div>
         <div className="flex gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={reload} aria-label="Recarregar eventos">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={reload}
+            aria-label="Recarregar eventos"
+          >
             <RefreshCw className="h-4 w-4" aria-hidden /> Atualizar
           </Button>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => { clearFallbackEvents(); reload(); }}
+            onClick={() => {
+              clearFallbackEvents();
+              reload();
+            }}
             aria-label="Limpar buffer local"
           >
             <Trash2 className="h-4 w-4" aria-hidden /> Limpar
@@ -92,15 +108,17 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
           <div>
             <p className="font-semibold text-destructive">Aumento anormal de créditos esgotados</p>
             <p className="text-sm text-muted-foreground">
-              {byCode24h.ai_credits_exhausted} eventos <code>ai_credits_exhausted</code> nas últimas 24h
-              (2× ou mais que o dia anterior). Verifique os créditos do Lovable AI Gateway.
+              {byCode24h.ai_credits_exhausted} eventos <code>ai_credits_exhausted</code> nas últimas
+              24h (2× ou mais que o dia anterior). Verifique os créditos do Lovable AI Gateway.
             </p>
           </div>
         </div>
       )}
 
       <section aria-labelledby="por-codigo" className="grid gap-4 md:grid-cols-3">
-        <h2 id="por-codigo" className="sr-only">Contagem por código nas últimas 24h</h2>
+        <h2 id="por-codigo" className="sr-only">
+          Contagem por código nas últimas 24h
+        </h2>
         {CODES.map((code) => (
           <div key={code} className="rounded-lg border bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">{code}</p>
@@ -111,7 +129,9 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
       </section>
 
       <section aria-labelledby="por-fonte" className="grid gap-4 md:grid-cols-3">
-        <h2 id="por-fonte" className="sr-only">Contagem por fonte nas últimas 24h</h2>
+        <h2 id="por-fonte" className="sr-only">
+          Contagem por fonte nas últimas 24h
+        </h2>
         {SOURCES.map((source) => (
           <div key={source} className="rounded-lg border bg-card p-4">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">{source}</p>
@@ -121,7 +141,9 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
       </section>
 
       <section aria-labelledby="eventos-recentes">
-        <h2 id="eventos-recentes" className="text-lg font-semibold mb-3">Eventos recentes</h2>
+        <h2 id="eventos-recentes" className="text-lg font-semibold mb-3">
+          Eventos recentes
+        </h2>
         {events.length === 0 ? (
           <p className="text-sm text-muted-foreground italic">
             Nenhum evento registrado no buffer local ainda.
@@ -141,11 +163,19 @@ const LiturgyMeditationFallbackPanel: React.FC = () => {
               <tbody>
                 {events.slice(0, 50).map((e, i) => (
                   <tr key={i} className="border-b last:border-b-0">
-                    <td className="p-2 text-muted-foreground">{new Date(e.at).toLocaleString('pt-BR')}</td>
+                    <td className="p-2 text-muted-foreground">
+                      {new Date(e.at).toLocaleString("pt-BR")}
+                    </td>
                     <td className="p-2">{e.iso_date}</td>
-                    <td className="p-2"><code className="text-xs">{e.code}</code></td>
-                    <td className="p-2"><code className="text-xs">{e.source}</code></td>
-                    <td className="p-2 text-muted-foreground">{e.retry_at ? new Date(e.retry_at).toLocaleTimeString('pt-BR') : '—'}</td>
+                    <td className="p-2">
+                      <code className="text-xs">{e.code}</code>
+                    </td>
+                    <td className="p-2">
+                      <code className="text-xs">{e.source}</code>
+                    </td>
+                    <td className="p-2 text-muted-foreground">
+                      {e.retry_at ? new Date(e.retry_at).toLocaleTimeString("pt-BR") : "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

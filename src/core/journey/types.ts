@@ -5,16 +5,10 @@
  * UI apresenta como "Formação" (coleção) e "Caminho" (unidade).
  */
 
-export type JourneyDifficulty = 'iniciante' | 'intermediario' | 'avancado' | string;
+export type JourneyDifficulty = "iniciante" | "intermediario" | "avancado" | string;
 
 export type JourneyStepType =
-  | 'reading'
-  | 'reflection'
-  | 'prayer'
-  | 'quiz'
-  | 'exercise'
-  | 'video'
-  | string;
+  "reading" | "reflection" | "prayer" | "quiz" | "exercise" | "video" | string;
 
 /**
  * Conteúdo do passo — JSONB livre no backend.
@@ -118,9 +112,9 @@ export interface ServiceResult<T> {
 }
 
 /** Input para criar/atualizar. */
-export type JourneyCreateInput = Omit<Journey, 'id' | 'created_at' | 'updated_at' | 'is_legacy'>;
+export type JourneyCreateInput = Omit<Journey, "id" | "created_at" | "updated_at" | "is_legacy">;
 export type JourneyPatch = Partial<JourneyCreateInput>;
 export type JourneyStepUpsertInput = Omit<
   JourneyStep,
-  'id' | 'created_at' | 'updated_at' | 'is_legacy'
+  "id" | "created_at" | "updated_at" | "is_legacy"
 > & { id?: string };

@@ -4,8 +4,8 @@
  * As sugestões de continuidade espiritual (LH, Santo, Rosário, Bíblia,
  * Catecismo) ficam no ReaderContinuation logo abaixo.
  */
-import React from 'react';
-import { Icons } from '@/constants';
+import React from "react";
+import { Icons } from "@/constants";
 
 interface Props {
   gospelSummary?: string | null;
@@ -31,9 +31,8 @@ export const MissaClosingActionCard: React.FC<Props> = ({ gospelSummary }) => (
             : `Escolha um gesto pequeno e verdadeiro para viver a Missa antes que este dia termine: um perdão dado, um telefonema adiado, um minuto de silêncio diante do sacrário, uma esmola escondida.`}
         </p>
         <blockquote className="mt-spacing-md border-l-2 border-primary/40 pl-spacing-sm font-stitch-display text-premium-base italic leading-relaxed text-foreground">
-          Senhor Jesus, que na Eucaristia vos entregastes por mim, fazei
-          que a graça deste altar se prolongue nas horas do meu dia,
-          e que aquilo que celebrei se torne vida em mim. Amém.
+          Senhor Jesus, que na Eucaristia vos entregastes por mim, fazei que a graça deste altar se
+          prolongue nas horas do meu dia, e que aquilo que celebrei se torne vida em mim. Amém.
         </blockquote>
       </div>
     </div>

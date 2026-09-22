@@ -6,7 +6,7 @@
  * divergence (e.g. /biblia vs /bible, ?chapter= vs ?ch=, ?verse= vs ?v=).
  */
 
-export const BIBLE_ROUTE = '/bible';
+export const BIBLE_ROUTE = "/bible";
 
 export interface BibleUrlInput {
   abbr: string;
@@ -18,10 +18,10 @@ export interface BibleUrlInput {
 
 export function buildBibleUrl({ abbr, chapter, verse, extra }: BibleUrlInput): string {
   const params = new URLSearchParams();
-  params.set('book', String(abbr));
-  params.set('ch', String(chapter));
-  if (verse !== undefined && verse !== null && verse !== '' && Number(verse) > 0) {
-    params.set('v', String(verse));
+  params.set("book", String(abbr));
+  params.set("ch", String(chapter));
+  if (verse !== undefined && verse !== null && verse !== "" && Number(verse) > 0) {
+    params.set("v", String(verse));
   }
   if (extra) {
     Object.entries(extra).forEach(([k, v]) => params.set(k, v));
@@ -30,13 +30,13 @@ export function buildBibleUrl({ abbr, chapter, verse, extra }: BibleUrlInput): s
 }
 
 export function buildBibleAbsoluteUrl(input: BibleUrlInput, origin?: string): string {
-  const base = origin ?? (typeof window !== 'undefined' ? window.location.origin : '');
+  const base = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
   return `${base}${buildBibleUrl(input)}`;
 }
 
 /** Parse a verse query value safely. Returns null if invalid. */
 export function parseVerseParam(raw: string | null | undefined): number | null {
-  if (raw === null || raw === undefined || raw === '') return null;
+  if (raw === null || raw === undefined || raw === "") return null;
   const n = Number(raw);
   if (!Number.isFinite(n) || !Number.isInteger(n) || n < 1 || n > 200) return null;
   return n;

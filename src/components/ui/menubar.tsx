@@ -1,7 +1,6 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
-
 
 import { cn } from "@/lib/utils";
 
@@ -21,7 +20,10 @@ const Menubar = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <MenubarPrimitive.Root
     ref={ref}
-    className={cn("flex h-spacing-xl items-center space-x-spacing-2xs rounded-premium border bg-background p-spacing-2xs", className)}
+    className={cn(
+      "flex h-spacing-xl items-center space-x-spacing-2xs rounded-premium border bg-background p-spacing-2xs",
+      className,
+    )}
     {...props}
   />
 ));
@@ -169,7 +171,11 @@ const MenubarLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <MenubarPrimitive.Label
     ref={ref}
-    className={cn("px-spacing-xs py-spacing-2xs text-premium-sm font-semibold", inset && "pl-spacing-xl", className)}
+    className={cn(
+      "px-spacing-xs py-spacing-2xs text-premium-sm font-semibold",
+      inset && "pl-spacing-xl",
+      className,
+    )}
     {...props}
   />
 ));
@@ -179,12 +185,21 @@ const MenubarSeparator = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <MenubarPrimitive.Separator ref={ref} className={cn("-mx-spacing-2xs my-spacing-2xs h-px bg-muted", className)} {...props} />
+  <MenubarPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-spacing-2xs my-spacing-2xs h-px bg-muted", className)}
+    {...props}
+  />
 ));
 MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName;
 
 const MenubarShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={cn("ml-auto text-premium-xs tracking-widest text-muted-foreground", className)} {...props} />;
+  return (
+    <span
+      className={cn("ml-auto text-premium-xs tracking-widest text-muted-foreground", className)}
+      {...props}
+    />
+  );
 };
 MenubarShortcut.displayname = "MenubarShortcut";
 

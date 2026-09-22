@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
 
 export interface LiturgyPsalmCardProps {
   reference: string;
@@ -36,7 +36,10 @@ export const LiturgyPsalmCard: React.FC<LiturgyPsalmCardProps> = ({
           <Icons.Music className="w-spacing-md h-spacing-md" />
         </div>
         <div>
-          <h2 id="reading-psalm-label" className="text-premium-xs font-black uppercase tracking-[0.25em] text-primary">
+          <h2
+            id="reading-psalm-label"
+            className="text-premium-xs font-black uppercase tracking-[0.25em] text-primary"
+          >
             Salmo Responsorial
           </h2>
           <p className="text-premium-xs font-bold text-secondary/60 uppercase tracking-[0.2em] mt-spacing-3xs">
@@ -69,7 +72,8 @@ export const LiturgyPsalmCard: React.FC<LiturgyPsalmCardProps> = ({
           className="rounded-premium-full ml-auto h-spacing-xl px-spacing-xl bg-secondary/10 border-none hover:bg-secondary/20 text-primary shadow-premium-md"
           onClick={onOpenLectio}
         >
-          <Icons.Lectio className="w-spacing-md h-spacing-md mr-spacing-xs text-secondary" /> Lectio Divina
+          <Icons.Lectio className="w-spacing-md h-spacing-md mr-spacing-xs text-secondary" /> Lectio
+          Divina
         </Button>
       </footer>
     </motion.article>

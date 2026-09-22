@@ -7,32 +7,36 @@
  *
  * Sem dependências novas.
  */
-import { useMemo, useState } from 'react';
-import { Search, ArrowRight, PencilLine } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { useMemo, useState } from "react";
+import { Search, ArrowRight, PencilLine } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
-import { KnowledgeIndex } from '@/core/knowledge/KnowledgeIndex';
-import { KnowledgeRegistry } from '@/core/knowledge/KnowledgeRegistry';
-import type { CollectionItemType } from './types';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { KnowledgeIndex } from "@/core/knowledge/KnowledgeIndex";
+import { KnowledgeRegistry } from "@/core/knowledge/KnowledgeRegistry";
+import type { CollectionItemType } from "./types";
 
 const TYPE_LABELS: Record<CollectionItemType, string> = {
-  glossary: 'Glossário',
-  prayer: 'Oração',
-  saint: 'Santo',
-  saint_work: 'Escrito',
-  bible: 'Bíblia',
-  liturgy: 'Liturgia',
-  catechism: 'Catecismo',
-  magisterium: 'Magistério',
-  journey: 'Jornada',
+  glossary: "Glossário",
+  prayer: "Oração",
+  saint: "Santo",
+  saint_work: "Escrito",
+  bible: "Bíblia",
+  liturgy: "Liturgia",
+  catechism: "Catecismo",
+  magisterium: "Magistério",
+  journey: "Jornada",
 };
 
-const REGISTRY_TYPES: CollectionItemType[] = ['glossary', 'prayer', 'saint', 'journey', 'liturgy'];
-const MANUAL_TYPES: CollectionItemType[] = ['bible', 'catechism'];
+const REGISTRY_TYPES: CollectionItemType[] = ["glossary", "prayer", "saint", "journey", "liturgy"];
+const MANUAL_TYPES: CollectionItemType[] = ["bible", "catechism"];
 
 export interface PickedContent {
   itemType: CollectionItemType;
@@ -46,17 +50,16 @@ interface Props {
 }
 
 export default function ContentPicker({ onPick, disabled }: Props) {
-  const [type, setType] = useState<CollectionItemType>('glossary');
-  const [query, setQuery] = useState('');
-  const [manualSlug, setManualSlug] = useState('');
+  const [type, setType] = useState<CollectionItemType>("glossary");
+  const [query, setQuery] = useState("");
+  const [manualSlug, setManualSlug] = useState("");
 
   const isManual = MANUAL_TYPES.includes(type);
 
   const results = useMemo(() => {
     if (isManual) return [];
     // Mapeia tipo → kind do KnowledgeRegistry (mesma nomenclatura para os 5 suportados)
-    const kind = type as unknown as
-      | 'glossary' | 'prayer' | 'saint' | 'journey' | 'liturgy';
+    const kind = type as unknown as "glossary" | "prayer" | "saint" | "journey" | "liturgy";
     if (!query.trim()) {
       return KnowledgeRegistry.nodesByKind(kind).slice(0, 12);
     }
@@ -74,10 +77,14 @@ export default function ContentPicker({ onPick, disabled }: Props) {
         <div>
           <Label className="text-xs">Tipo</Label>
           <Select value={type} onValueChange={(v) => setType(v as CollectionItemType)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               {(Object.keys(TYPE_LABELS) as CollectionItemType[]).map((k) => (
-                <SelectItem key={k} value={k}>{TYPE_LABELS[k]}</SelectItem>
+                <SelectItem key={k} value={k}>
+                  {TYPE_LABELS[k]}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -86,13 +93,13 @@ export default function ContentPicker({ onPick, disabled }: Props) {
         {isManual ? (
           <div>
             <Label className="text-xs">
-              {type === 'bible' ? 'Referência (ex.: João 3:16)' : 'Nº do parágrafo (ex.: 1066)'}
+              {type === "bible" ? "Referência (ex.: João 3:16)" : "Nº do parágrafo (ex.: 1066)"}
             </Label>
             <div className="flex gap-2">
               <Input
                 value={manualSlug}
                 onChange={(e) => setManualSlug(e.target.value)}
-                placeholder={type === 'bible' ? 'Livro Cap:Versículo' : '1234'}
+                placeholder={type === "bible" ? "Livro Cap:Versículo" : "1234"}
                 disabled={disabled}
               />
               <Button
@@ -100,7 +107,7 @@ export default function ContentPicker({ onPick, disabled }: Props) {
                 disabled={disabled || !manualSlug.trim()}
                 onClick={() => {
                   onPick({ itemType: type, itemSlug: manualSlug.trim() });
-                  setManualSlug('');
+                  setManualSlug("");
                 }}
               >
                 Adicionar
@@ -133,7 +140,7 @@ export default function ContentPicker({ onPick, disabled }: Props) {
           )}
           {results.map((node) => {
             // KnowledgeNodeId: "<kind>:<slug>" → extrai o slug.
-            const slug = node.id.split(':').slice(1).join(':') || node.id;
+            const slug = node.id.split(":").slice(1).join(":") || node.id;
             return (
               <li key={node.id} className="p-2 flex items-center justify-between gap-3">
                 <div className="min-w-0">

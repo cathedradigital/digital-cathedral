@@ -1,12 +1,15 @@
-import React from 'react';
+import React from "react";
 
 /** Normaliza para comparação sem acentos e sem caixa. */
 function norm(s: string): string {
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
 function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /**
@@ -16,7 +19,7 @@ function escapeRegExp(s: string): string {
 export function highlightText(
   text: string,
   query: string,
-  className = 'bg-secondary/30 text-foreground rounded-sm px-0.5',
+  className = "bg-secondary/30 text-foreground rounded-sm px-0.5",
 ): React.ReactNode {
   if (!text || !query || !query.trim()) return text;
 
@@ -33,20 +36,26 @@ export function highlightText(
 
   // Constrói normalizado + mapa de índices para o texto original,
   // preservando pontos de corte mesmo com diacríticos removidos.
-  let nText = '';
+  let nText = "";
   const map: number[] = []; // map[i] = índice no `text` para o char i em `nText`
   for (let i = 0; i < text.length; i++) {
-    const ch = text[i].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const ch = text[i]
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
     for (let k = 0; k < ch.length; k++) map.push(i);
     nText += ch;
   }
 
-  const pattern = new RegExp(tokens.map((t) => escapeRegExp(norm(t))).join('|'), 'g');
+  const pattern = new RegExp(tokens.map((t) => escapeRegExp(norm(t))).join("|"), "g");
   const nodes: React.ReactNode[] = [];
   let lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = pattern.exec(nText)) !== null) {
-    if (m[0].length === 0) { pattern.lastIndex++; continue; }
+    if (m[0].length === 0) {
+      pattern.lastIndex++;
+      continue;
+    }
     const start = map[m.index];
     const end = (map[m.index + m[0].length - 1] ?? start) + 1;
     if (start > lastIndex) nodes.push(text.slice(lastIndex, start));

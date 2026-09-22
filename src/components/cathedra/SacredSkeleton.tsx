@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { ContentSkeleton } from './primitives/ContentSkeleton';
+import React from "react";
+import { Card } from "@/components/ui/card";
+import { ContentSkeleton } from "./primitives/ContentSkeleton";
 
 /**
  * SacredSkeleton — consolidado no Sprint P2.2 (Logos 2030).
@@ -120,7 +120,11 @@ export const CatechismParagraphSkeleton: React.FC<{ paragraph?: number }> = () =
 );
 
 export const LogosChatSkeleton = () => (
-  <div className="flex flex-col h-full space-y-spacing-lg p-spacing-md" aria-hidden="true" aria-busy="true">
+  <div
+    className="flex flex-col h-full space-y-spacing-lg p-spacing-md"
+    aria-hidden="true"
+    aria-busy="true"
+  >
     <div className="flex justify-start gap-spacing-sm">
       <ContentSkeleton variant="circle" className="w-spacing-xl h-spacing-xl shrink-0" />
       <div className="space-y-spacing-xs">
@@ -158,10 +162,19 @@ export const ReadingSkeleton = () => (
     <div className="space-y-spacing-lg pt-spacing-xl">
       {[1, 2, 3, 4, 5, 6].map((i) => (
         <div key={i} className="flex gap-spacing-md">
-          <ContentSkeleton variant="block" className="h-spacing-md w-spacing-lg shrink-0 mt-spacing-2xs" />
+          <ContentSkeleton
+            variant="block"
+            className="h-spacing-md w-spacing-lg shrink-0 mt-spacing-2xs"
+          />
           <div className="space-y-spacing-xs flex-1">
-            <ContentSkeleton variant="block" className={`h-spacing-md ${i % 2 === 0 ? 'w-full' : 'w-[95%]'}`} />
-            <ContentSkeleton variant="block" className={`h-spacing-md ${i % 3 === 0 ? 'w-[50%]' : 'w-[90%]'}`} />
+            <ContentSkeleton
+              variant="block"
+              className={`h-spacing-md ${i % 2 === 0 ? "w-full" : "w-[95%]"}`}
+            />
+            <ContentSkeleton
+              variant="block"
+              className={`h-spacing-md ${i % 3 === 0 ? "w-[50%]" : "w-[90%]"}`}
+            />
           </div>
         </div>
       ))}

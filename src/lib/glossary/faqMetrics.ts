@@ -8,9 +8,9 @@
  * - Em dev, também loga um resumo no console.
  */
 
-import * as Sentry from '@sentry/react';
-import { trackEvent } from '@/lib/analytics';
-import type { SanitizeFaqStats } from './sanitizeFaq';
+import * as Sentry from "@sentry/react";
+import { trackEvent } from "@/lib/analytics";
+import type { SanitizeFaqStats } from "./sanitizeFaq";
 
 export interface FaqMetricsContext {
   route: string;
@@ -30,15 +30,15 @@ export function reportFaqMetrics(ctx: FaqMetricsContext, stats: SanitizeFaqStats
   };
 
   try {
-    trackEvent('glossary_faq_sanitized', payload);
+    trackEvent("glossary_faq_sanitized", payload);
   } catch {
     /* nunca deixa métrica quebrar a página */
   }
 
   try {
     Sentry.addBreadcrumb({
-      category: 'glossary.faq',
-      level: stats.dropped > 0 ? 'warning' : 'info',
+      category: "glossary.faq",
+      level: stats.dropped > 0 ? "warning" : "info",
       message: `FAQ sanitized ${ctx.route}`,
       data: payload,
     });
@@ -46,7 +46,7 @@ export function reportFaqMetrics(ctx: FaqMetricsContext, stats: SanitizeFaqStats
     if (!import.meta.env.DEV && stats.dropped > 0) {
       Sentry.captureMessage(
         `Glossary FAQ dropped ${stats.dropped}/${stats.total} items on ${ctx.route}`,
-        { level: 'warning', extra: payload },
+        { level: "warning", extra: payload },
       );
     }
   } catch {

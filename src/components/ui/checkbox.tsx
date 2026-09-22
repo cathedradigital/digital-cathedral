@@ -1,7 +1,6 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-
 
 import { cn } from "@/lib/utils";
 

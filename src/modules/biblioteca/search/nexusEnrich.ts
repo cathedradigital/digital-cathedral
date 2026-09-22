@@ -6,23 +6,23 @@
  * Consultamos via operador `->>` em ambas as chaves, bidirecional, em uma
  * única query por direção. Falhas são silenciosas — a busca lexical continua.
  */
-import { supabase } from '@/lib/db';
-import type { LibraryModule } from '../types';
-import type { RawHit } from './searchers';
+import { supabase } from "@/lib/db";
+import type { LibraryModule } from "../types";
+import type { RawHit } from "./searchers";
 
 const NEXUS_TO_MODULE: Record<string, LibraryModule> = {
-  glossary: 'glossary',
-  bible: 'bible',
-  bible_verse: 'bible',
-  catechism: 'catechism',
-  catechism_paragraph: 'catechism',
-  saint: 'saints',
-  prayer: 'prayers',
-  collection: 'collections',
-  journey: 'journeys',
-  magisterium: 'magisterium',
-  patristic: 'patristics',
-  liturgy: 'liturgy',
+  glossary: "glossary",
+  bible: "bible",
+  bible_verse: "bible",
+  catechism: "catechism",
+  catechism_paragraph: "catechism",
+  saint: "saints",
+  prayer: "prayers",
+  collection: "collections",
+  journey: "journeys",
+  magisterium: "magisterium",
+  patristic: "patristics",
+  liturgy: "liturgy",
 };
 
 export interface NexusSummary {
@@ -30,14 +30,14 @@ export interface NexusSummary {
   byKind: Partial<Record<LibraryModule, number>>;
 }
 
-const REF_KEYS = ['slug', 'ref'] as const;
+const REF_KEYS = ["slug", "ref"] as const;
 
 function extractRef(json: unknown): string | undefined {
-  if (!json || typeof json !== 'object') return undefined;
+  if (!json || typeof json !== "object") return undefined;
   const obj = json as Record<string, unknown>;
   for (const k of REF_KEYS) {
     const v = obj[k];
-    if (typeof v === 'string' && v.length > 0) return v;
+    if (typeof v === "string" && v.length > 0) return v;
   }
   return undefined;
 }
@@ -48,21 +48,21 @@ export async function enrichWithNexus(hits: RawHit[]): Promise<Map<string, Nexus
 
   const kinds = Array.from(new Set(refs.map((r) => r.kind)));
   const values = Array.from(new Set(refs.map((r) => r.ref)));
-  const list = values.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(',');
-  const orExpr = REF_KEYS.map((k) => `source_ref->>${k}.in.(${list})`).join(',');
-  const orExprTarget = REF_KEYS.map((k) => `target_ref->>${k}.in.(${list})`).join(',');
+  const list = values.map((v) => `"${v.replace(/"/g, '\\"')}"`).join(",");
+  const orExpr = REF_KEYS.map((k) => `source_ref->>${k}.in.(${list})`).join(",");
+  const orExprTarget = REF_KEYS.map((k) => `target_ref->>${k}.in.(${list})`).join(",");
 
   try {
     const [asSource, asTarget] = await Promise.all([
       supabase
-        .from('nexus_relations')
-        .select('source_kind, source_ref, target_kind')
-        .in('source_kind', kinds)
+        .from("nexus_relations")
+        .select("source_kind, source_ref, target_kind")
+        .in("source_kind", kinds)
         .or(orExpr),
       supabase
-        .from('nexus_relations')
-        .select('target_kind, target_ref, source_kind')
-        .in('target_kind', kinds)
+        .from("nexus_relations")
+        .select("target_kind, target_ref, source_kind")
+        .in("target_kind", kinds)
         .or(orExprTarget),
     ]);
 
@@ -87,7 +87,7 @@ export async function enrichWithNexus(hits: RawHit[]): Promise<Map<string, Nexus
     }
     return map;
   } catch (err) {
-    if (import.meta.env.DEV) console.warn('[enrichWithNexus] falhou', err);
+    if (import.meta.env.DEV) console.warn("[enrichWithNexus] falhou", err);
     return new Map();
   }
 }

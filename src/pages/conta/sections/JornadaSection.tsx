@@ -5,7 +5,7 @@
  * Usa EditorialHero + EditorialCard. Sem lógica nova de domínio: apenas
  * cross-links + contadores do hook `useAccountCounters`.
  */
-import { Link } from '@/lib/rr-compat';
+import { Link } from "@/lib/rr-compat";
 import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
 import { EditorialCard } from "@/components/editorial/harmony/EditorialCard";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,42 @@ export default function JornadaSection() {
   const level = getLevelInfo(xp);
 
   const tiles: Tile[] = [
-    { eyebrow: "Escritura",  title: "Leituras",  description: "Marcações e reflexões na Bíblia.",       href: "/biblia",     icon: BookOpen, count: c?.readingsMarks, countLabel: "marcações" },
-    { eyebrow: "Igreja",     title: "Orações",   description: "Sessões e progresso litúrgico.",         href: "/oracao",     icon: Heart,    count: c?.prayerSessions, countLabel: "sessões" },
-    { eyebrow: "Curadoria",  title: "Coleções",  description: "Percursos temáticos em andamento.",      href: "/colecoes",   icon: Library,  count: c?.collections, countLabel: "em andamento" },
-    { eyebrow: "Formação",   title: "Jornadas",  description: "Programas de aprofundamento.",           href: "/jornadas",   icon: Compass,  count: c?.journeys, countLabel: "ativas" },
+    {
+      eyebrow: "Escritura",
+      title: "Leituras",
+      description: "Marcações e reflexões na Bíblia.",
+      href: "/biblia",
+      icon: BookOpen,
+      count: c?.readingsMarks,
+      countLabel: "marcações",
+    },
+    {
+      eyebrow: "Igreja",
+      title: "Orações",
+      description: "Sessões e progresso litúrgico.",
+      href: "/oracao",
+      icon: Heart,
+      count: c?.prayerSessions,
+      countLabel: "sessões",
+    },
+    {
+      eyebrow: "Curadoria",
+      title: "Coleções",
+      description: "Percursos temáticos em andamento.",
+      href: "/colecoes",
+      icon: Library,
+      count: c?.collections,
+      countLabel: "em andamento",
+    },
+    {
+      eyebrow: "Formação",
+      title: "Jornadas",
+      description: "Programas de aprofundamento.",
+      href: "/jornadas",
+      icon: Compass,
+      count: c?.journeys,
+      countLabel: "ativas",
+    },
   ];
 
   return (
@@ -43,7 +75,8 @@ export default function JornadaSection() {
         <EditorialHero.Eyebrow>Minha Jornada</EditorialHero.Eyebrow>
         <EditorialHero.Title>Continue por onde parou</EditorialHero.Title>
         <EditorialHero.Subtitle>
-          Um panorama unificado do seu caminho pela plataforma: Escritura, Igreja, Curadoria e Formação.
+          Um panorama unificado do seu caminho pela plataforma: Escritura, Igreja, Curadoria e
+          Formação.
         </EditorialHero.Subtitle>
       </EditorialHero>
 
@@ -55,10 +88,14 @@ export default function JornadaSection() {
           </div>
           <p className="mt-2 font-serif text-2xl leading-none">{level.levelName}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {xp} XP · {level.nextLevel ? `próximo: ${level.nextLevel.name}` : "nível máximo alcançado"}
+            {xp} XP ·{" "}
+            {level.nextLevel ? `próximo: ${level.nextLevel.name}` : "nível máximo alcançado"}
           </p>
           <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full bg-primary transition-all" style={{ width: `${Math.round(level.progress * 100)}%` }} />
+            <div
+              className="h-full bg-primary transition-all"
+              style={{ width: `${Math.round(level.progress * 100)}%` }}
+            />
           </div>
         </div>
         <div className="rounded-lg border bg-card p-5">
@@ -66,12 +103,14 @@ export default function JornadaSection() {
             <Clock className="h-3.5 w-3.5" /> Última atividade
           </div>
           <p className="mt-2 text-sm">
-            Você tem <span className="font-semibold">{c?.journalEntries ?? 0}</span> entradas no diário e{" "}
-            <span className="font-semibold">{c?.notes ?? 0}</span> notas pessoais.
+            Você tem <span className="font-semibold">{c?.journalEntries ?? 0}</span> entradas no
+            diário e <span className="font-semibold">{c?.notes ?? 0}</span> notas pessoais.
           </p>
           <div className="mt-3 flex gap-2">
             <Button asChild size="sm" variant="secondary">
-              <Link to="/conta/diario">Abrir diário <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+              <Link to="/conta/diario">
+                Abrir diário <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -95,7 +134,9 @@ export default function JornadaSection() {
             <EditorialCard.Description>{t.description}</EditorialCard.Description>
             <EditorialCard.CTA>
               <Button asChild variant="ghost" size="sm">
-                <Link to={t.href}>Abrir <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+                <Link to={t.href}>
+                  Abrir <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                </Link>
               </Button>
             </EditorialCard.CTA>
           </EditorialCard>

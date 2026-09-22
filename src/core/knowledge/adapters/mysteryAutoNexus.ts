@@ -10,31 +10,28 @@
  * `KnowledgeGraph`.
  */
 
-import { KnowledgeGraph } from '../KnowledgeGraph';
-import type { ResolvedNode } from '../types';
-import type {
-  ReaderAutoNexusOutput,
-  ReaderNexusBucket,
-} from './ReaderAutoNexus';
-import { KIND_SPECS, ensureNode } from './glossaryAutoNexus';
-import { recordNexusMetric } from './nexusMetrics';
-import type { DBMystery } from '@/prayer-engine/loadPrayerHierarchy';
-import { readMysteryMeta } from '@/components/prayer/rosary/mysteryMeta';
+import { KnowledgeGraph } from "../KnowledgeGraph";
+import type { ResolvedNode } from "../types";
+import type { ReaderAutoNexusOutput, ReaderNexusBucket } from "./ReaderAutoNexus";
+import { KIND_SPECS, ensureNode } from "./glossaryAutoNexus";
+import { recordNexusMetric } from "./nexusMetrics";
+import type { DBMystery } from "@/prayer-engine/loadPrayerHierarchy";
+import { readMysteryMeta } from "@/components/prayer/rosary/mysteryMeta";
 
 /* Buckets projetados por um mistério (ordem canônica). */
-const BUCKETS = ['bible', 'catechism', 'saint', 'glossary', 'magisterium', 'father'] as const;
+const BUCKETS = ["bible", "catechism", "saint", "glossary", "magisterium", "father"] as const;
 
 type Bucket = (typeof BUCKETS)[number];
 
 function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }
 
 const cache = new Map<string, ReaderAutoNexusOutput>();
 const CACHE_MAX = 64;
 
 export function _fingerprintMystery(m: DBMystery): string {
-  return `${m.id}:${(m as { updated_at?: string }).updated_at ?? ''}`;
+  return `${m.id}:${(m as { updated_at?: string }).updated_at ?? ""}`;
 }
 
 export function clearMysteryAutoNexusCache(): void {
@@ -48,7 +45,7 @@ export function resolveMysteryAutoNexus(mystery: DBMystery): ReaderAutoNexusOutp
   if (hit) {
     cache.delete(key);
     cache.set(key, hit);
-    recordNexusMetric({ adapter: 'mystery', hit: true, ms: nowMs() - started, key });
+    recordNexusMetric({ adapter: "mystery", hit: true, ms: nowMs() - started, key });
     return hit;
   }
 
@@ -68,27 +65,24 @@ export function resolveMysteryAutoNexus(mystery: DBMystery): ReaderAutoNexusOutp
 
   // Bíblia — passagem primária + paralelas.
   const gospel = meta.primary_passage?.ref ?? mystery.gospel_ref;
-  if (gospel) pushNode('bible', gospel);
-  (meta.complementary_passages ?? []).forEach((ref) => pushNode('bible', ref));
+  if (gospel) pushNode("bible", gospel);
+  (meta.complementary_passages ?? []).forEach((ref) => pushNode("bible", ref));
 
   // Catecismo — referências completas + legado.
-  const catechismList =
-    meta.catechism_refs ?? (meta.catechism_ref ? [meta.catechism_ref] : []);
-  for (const c of catechismList) pushNode('catechism', String(c.paragraph));
+  const catechismList = meta.catechism_refs ?? (meta.catechism_ref ? [meta.catechism_ref] : []);
+  for (const c of catechismList) pushNode("catechism", String(c.paragraph));
 
   // Santos relacionados.
-  (meta.related_saints ?? []).forEach((s) =>
-    pushNode('saint', s.slug ?? s.name, s.name),
-  );
+  (meta.related_saints ?? []).forEach((s) => pushNode("saint", s.slug ?? s.name, s.name));
 
   // Padres da Igreja → bucket `father`.
   const fathers = meta.church_fathers ?? (meta.patristic_ref ? [meta.patristic_ref] : []);
-  for (const p of fathers) pushNode('father', p.author, p.author);
+  for (const p of fathers) pushNode("father", p.author, p.author);
 
   // Magistério.
   for (const m of meta.magisterium_refs ?? []) {
-    const raw = [m.author, m.document].filter(Boolean).join(' · ') || m.document;
-    if (raw) pushNode('magisterium', raw, m.document);
+    const raw = [m.author, m.document].filter(Boolean).join(" · ") || m.document;
+    if (raw) pushNode("magisterium", raw, m.document);
   }
 
   const labels: Record<string, string> = {};
@@ -108,6 +102,6 @@ export function resolveMysteryAutoNexus(mystery: DBMystery): ReaderAutoNexusOutp
     const first = cache.keys().next().value;
     if (first !== undefined) cache.delete(first);
   }
-  recordNexusMetric({ adapter: 'mystery', hit: false, ms: nowMs() - started, key });
+  recordNexusMetric({ adapter: "mystery", hit: false, ms: nowMs() - started, key });
   return out;
 }

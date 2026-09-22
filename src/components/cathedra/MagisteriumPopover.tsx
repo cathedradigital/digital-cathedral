@@ -1,15 +1,10 @@
-import { Button } from '@/components/ui/button';
-import React, { useState } from 'react';
-import { supabase } from '@/lib/db';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
-import { Icons } from '../../constants';
-import { MAGISTERIUM_URLS } from '@/data/magisterium-urls';
-import { useNavigate } from '@/lib/rr-compat';
-
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { supabase } from "@/lib/db";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Icons } from "../../constants";
+import { MAGISTERIUM_URLS } from "@/data/magisterium-urls";
+import { useNavigate } from "@/lib/rr-compat";
 
 interface MagisteriumPopoverProps {
   documentName: string;
@@ -23,8 +18,8 @@ const MagisteriumPopover: React.FC<MagisteriumPopoverProps> = ({
   onNavigate,
 }) => {
   const navigate = useNavigate();
-  const [excerpt, setExcerpt] = useState('');
-  const [title, setTitle] = useState('');
+  const [excerpt, setExcerpt] = useState("");
+  const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
 
@@ -41,7 +36,7 @@ const MagisteriumPopover: React.FC<MagisteriumPopoverProps> = ({
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('vatican-document', {
+      const { data, error } = await supabase.functions.invoke("vatican-document", {
         body: { url },
       });
 
@@ -49,13 +44,13 @@ const MagisteriumPopover: React.FC<MagisteriumPopoverProps> = ({
         setTitle(data.title || documentName);
         // Show first ~400 chars as preview
         const text = data.text as string;
-        setExcerpt(text.length > 400 ? text.slice(0, 400) + '…' : text);
+        setExcerpt(text.length > 400 ? text.slice(0, 400) + "…" : text);
       } else {
         setExcerpt(`Documento "${documentName}" — texto integral disponível no Magistério.`);
         setTitle(documentName);
       }
     } catch {
-      setExcerpt('Erro ao carregar documento.');
+      setExcerpt("Erro ao carregar documento.");
       setTitle(documentName);
     }
     setLoading(false);
@@ -99,8 +94,12 @@ const MagisteriumPopover: React.FC<MagisteriumPopoverProps> = ({
         <div className="p-spacing-sm">
           {loading && (
             <div className="space-y-spacing-xs py-spacing-xs">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-spacing-sm bg-muted rounded animate-pulse" style={{ width: `${50 + i * 15}%` }} />
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-spacing-sm bg-muted rounded animate-pulse"
+                  style={{ width: `${50 + i * 15}%` }}
+                />
               ))}
             </div>
           )}

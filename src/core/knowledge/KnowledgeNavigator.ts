@@ -5,13 +5,13 @@
  * consumidores conheçam a estrutura interna do KnowledgeRegistry.
  */
 
-import { KnowledgeRegistry } from './KnowledgeRegistry';
+import { KnowledgeRegistry } from "./KnowledgeRegistry";
 import type {
   KnowledgeNode,
   KnowledgeNodeId,
   KnowledgeNodeKind,
   KnowledgeRelationKind,
-} from './types';
+} from "./types";
 
 /** Ordem canônica de estágios do Estudo Composto (P0 do Cathedra 2.0). */
 export const COMPOSED_STUDY_STAGES: {
@@ -19,13 +19,13 @@ export const COMPOSED_STUDY_STAGES: {
   kind: KnowledgeNodeKind;
   relation: KnowledgeRelationKind;
 }[] = [
-  { stage: 'bible',       kind: 'bible',       relation: 'develops' },
-  { stage: 'catechism',   kind: 'catechism',   relation: 'defined-in' },
-  { stage: 'magisterium', kind: 'magisterium', relation: 'develops' },
-  { stage: 'fathers',     kind: 'father',      relation: 'commented-by' },
-  { stage: 'saints',      kind: 'saint',       relation: 'commented-by' },
-  { stage: 'application', kind: 'application', relation: 'applies-to' },
-  { stage: 'prayer',      kind: 'prayer',      relation: 'prayed-as' },
+  { stage: "bible", kind: "bible", relation: "develops" },
+  { stage: "catechism", kind: "catechism", relation: "defined-in" },
+  { stage: "magisterium", kind: "magisterium", relation: "develops" },
+  { stage: "fathers", kind: "father", relation: "commented-by" },
+  { stage: "saints", kind: "saint", relation: "commented-by" },
+  { stage: "application", kind: "application", relation: "applies-to" },
+  { stage: "prayer", kind: "prayer", relation: "prayed-as" },
 ];
 
 export interface ComposedStudyStep {
@@ -44,7 +44,10 @@ export const KnowledgeNavigator = {
     for (const stage of COMPOSED_STUDY_STAGES) {
       const candidates = KnowledgeRegistry.relationsFrom(themeId, stage.relation)
         .map((r) => ({ rel: r, node: KnowledgeRegistry.getNode(r.to) }))
-        .filter((x): x is { rel: typeof x.rel; node: KnowledgeNode } => Boolean(x.node) && x.node.kind === stage.kind)
+        .filter(
+          (x): x is { rel: typeof x.rel; node: KnowledgeNode } =>
+            Boolean(x.node) && x.node.kind === stage.kind,
+        )
         .sort((a, b) => (b.rel.weight ?? 0) - (a.rel.weight ?? 0));
       if (candidates.length) {
         steps.push({ stage: stage.stage, node: candidates[0].node });

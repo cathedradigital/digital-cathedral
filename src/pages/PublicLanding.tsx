@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Link, useNavigate } from '@/lib/rr-compat';
+import { Link, useNavigate } from "@/lib/rr-compat";
 import {
   BookOpen,
   Heart,
@@ -156,11 +156,7 @@ const PublicLanding = () => {
             size="lg"
             action={
               <div className="flex flex-wrap items-center gap-4">
-                <Button
-                  size="lg"
-                  onClick={() => navigate("/login")}
-                  className="rounded-full px-8"
-                >
+                <Button size="lg" onClick={() => navigate("/login")} className="rounded-full px-8">
                   Iniciar caminhada
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -180,7 +176,9 @@ const PublicLanding = () => {
           <EditorialSection id="ambientes">
             <div className="space-y-3 mb-8">
               <EditorialHeader kicker="Quinque Loca" title="Cinco ambientes, um só caminho" />
-              <p className="max-w-2xl text-base text-muted-foreground">Uma arquitetura contemplativa inspirada na tradição monástica.</p>
+              <p className="max-w-2xl text-base text-muted-foreground">
+                Uma arquitetura contemplativa inspirada na tradição monástica.
+              </p>
             </div>
             <EditorialGrid cols={3}>
               {AMBIENTES.map((a) => {
@@ -191,10 +189,7 @@ const PublicLanding = () => {
                       kicker={a.kicker}
                       title={
                         <span className="flex items-center gap-3">
-                          <Icon
-                            className="h-5 w-5 text-secondary"
-                            aria-hidden="true"
-                          />
+                          <Icon className="h-5 w-5 text-secondary" aria-hidden="true" />
                           {a.title}
                         </span>
                       }
@@ -217,7 +212,9 @@ const PublicLanding = () => {
           <EditorialSection id="liturgia">
             <div className="space-y-3 mb-8">
               <EditorialHeader kicker="Hodie · Hoje" title="Liturgia viva, todos os dias" />
-              <p className="max-w-2xl text-base text-muted-foreground">Missal do dia, Liturgia das Horas e Santo — atualizados automaticamente.</p>
+              <p className="max-w-2xl text-base text-muted-foreground">
+                Missal do dia, Liturgia das Horas e Santo — atualizados automaticamente.
+              </p>
             </div>
             <EditorialGrid cols={2}>
               <Link to="/liturgia" className="group">
@@ -254,8 +251,13 @@ const PublicLanding = () => {
           {/* ---------------- Diferenciais ---------------- */}
           <EditorialSection id="nexus">
             <div className="space-y-3 mb-8">
-              <EditorialHeader kicker="Symmetry of Truth" title="Uma inteligência a serviço da Tradição" />
-              <p className="max-w-2xl text-base text-muted-foreground">O que torna Cathedra diferente de qualquer app católico.</p>
+              <EditorialHeader
+                kicker="Symmetry of Truth"
+                title="Uma inteligência a serviço da Tradição"
+              />
+              <p className="max-w-2xl text-base text-muted-foreground">
+                O que torna Cathedra diferente de qualquer app católico.
+              </p>
             </div>
             <EditorialGrid cols={3}>
               {DIFERENCIAIS.map((d) => {
@@ -266,10 +268,7 @@ const PublicLanding = () => {
                     kicker={d.kicker}
                     title={
                       <span className="flex items-center gap-3">
-                        <Icon
-                          className="h-5 w-5 text-secondary"
-                          aria-hidden="true"
-                        />
+                        <Icon className="h-5 w-5 text-secondary" aria-hidden="true" />
                         {d.title}
                       </span>
                     }
@@ -285,8 +284,13 @@ const PublicLanding = () => {
           {/* ---------------- Planos ---------------- */}
           <EditorialSection id="planos">
             <div className="space-y-3 mb-8">
-              <EditorialHeader kicker="Sustente o Sanctuarium" title="Um caminho gratuito. Uma vocação a apoiar." />
-              <p className="max-w-2xl text-base text-muted-foreground">50% de cada assinatura PRO é convertida em doação a obras católicas.</p>
+              <EditorialHeader
+                kicker="Sustente o Sanctuarium"
+                title="Um caminho gratuito. Uma vocação a apoiar."
+              />
+              <p className="max-w-2xl text-base text-muted-foreground">
+                50% de cada assinatura PRO é convertida em doação a obras católicas.
+              </p>
             </div>
             <EditorialGrid cols={2}>
               {PLANOS.map((p) => {
@@ -316,9 +320,11 @@ const PublicLanding = () => {
                       onClick={() => navigate(p.href)}
                       size="lg"
                       variant={p.accent ? "default" : "outline"}
-                      className={p.accent
-                        ? "rounded-full px-6 bg-primary !text-primary-foreground hover:bg-primary/90"
-                        : "rounded-full px-6"}
+                      className={
+                        p.accent
+                          ? "rounded-full px-6 bg-primary !text-primary-foreground hover:bg-primary/90"
+                          : "rounded-full px-6"
+                      }
                     >
                       {p.cta}
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -345,49 +351,127 @@ const PublicLanding = () => {
       <footer className="mt-24 border-t border-border/40 bg-primary text-primary-foreground">
         <div className="app-container py-16 grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2 space-y-4">
-            <h2 className="font-display uppercase tracking-[0.4em] text-lg" style={{ color: 'var(--gold-on-dark)' }}>
+            <h2
+              className="font-display uppercase tracking-[0.4em] text-lg"
+              style={{ color: "var(--gold-on-dark)" }}
+            >
               Cathedra Digital
             </h2>
             <p className="text-sm text-primary-foreground/70 max-w-md leading-relaxed">
-              Sanctuarium Digital da Tradição Católica. Uma biblioteca viva
-              para contemplar a Verdade através dos séculos.
+              Sanctuarium Digital da Tradição Católica. Uma biblioteca viva para contemplar a
+              Verdade através dos séculos.
             </p>
-            <p className="text-xs text-primary-foreground/50">
-              Ad maiorem Dei gloriam
-            </p>
+            <p className="text-xs text-primary-foreground/50">Ad maiorem Dei gloriam</p>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--gold-on-dark)' }}>
-
+            <h3
+              className="text-xs uppercase tracking-[0.3em]"
+              style={{ color: "var(--gold-on-dark)" }}
+            >
               Ambientes
             </h3>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/bible" className="inline-flex min-h-[44px] items-center hover:text-secondary">Bíblia</Link></li>
-              <li><Link to="/catechism" className="inline-flex min-h-[44px] items-center hover:text-secondary">Catecismo</Link></li>
-              <li><Link to="/liturgia" className="inline-flex min-h-[44px] items-center hover:text-secondary">Liturgia</Link></li>
-              <li><Link to="/oracao" className="inline-flex min-h-[44px] items-center hover:text-secondary">Orações</Link></li>
-              <li><Link to="/logos" className="inline-flex min-h-[44px] items-center hover:text-secondary">Logos AI</Link></li>
+              <li>
+                <Link
+                  to="/bible"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Bíblia
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/catechism"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Catecismo
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/liturgia"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Liturgia
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/oracao"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Orações
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/logos"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Logos AI
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--gold-on-dark)' }}>
+            <h3
+              className="text-xs uppercase tracking-[0.3em]"
+              style={{ color: "var(--gold-on-dark)" }}
+            >
               Cathedra
             </h3>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
-              <li><Link to="/atrium" className="inline-flex min-h-[44px] items-center hover:text-secondary">Atrium</Link></li>
-              <li><Link to="/jornadas" className="inline-flex min-h-[44px] items-center hover:text-secondary">Jornadas</Link></li>
-              <li><Link to="/glossario" className="inline-flex min-h-[44px] items-center hover:text-secondary">Glossário</Link></li>
-              <li><Link to="/pricing" className="inline-flex min-h-[44px] items-center hover:text-secondary">Planos PRO</Link></li>
-              <li><Link to="/login" className="inline-flex min-h-[44px] items-center hover:text-secondary">Entrar</Link></li>
+              <li>
+                <Link
+                  to="/atrium"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Atrium
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/jornadas"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Jornadas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/glossario"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Glossário
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pricing"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Planos PRO
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/login"
+                  className="inline-flex min-h-[44px] items-center hover:text-secondary"
+                >
+                  Entrar
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-primary-foreground/10">
           <div className="app-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/60">
-            <span>© {new Date().getFullYear()} Cathedra Digital · Todos os direitos reservados.</span>
+            <span>
+              © {new Date().getFullYear()} Cathedra Digital · Todos os direitos reservados.
+            </span>
             <span className="tracking-[0.2em] uppercase">Soli Deo Gloria</span>
           </div>
         </div>

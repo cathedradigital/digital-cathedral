@@ -1,13 +1,12 @@
-import React from 'react';
-import { Icons } from '../../constants';
-import type { Saint } from '@/data/saints';
-import SaintAILearn from './SaintAILearn';
-import { parseTheologicalReferences } from '@/lib/theologicalRefParser';
-import BibleVersePopover from './BibleVersePopover';
-import CatechismPopover from './CatechismPopover';
-import { CATEGORY_LABELS } from './SaintDetail.categories';
-import SaintVirtues from './sanctum/SaintVirtues';
-
+import React from "react";
+import { Icons } from "../../constants";
+import type { Saint } from "@/data/saints";
+import SaintAILearn from "./SaintAILearn";
+import { parseTheologicalReferences } from "@/lib/theologicalRefParser";
+import BibleVersePopover from "./BibleVersePopover";
+import CatechismPopover from "./CatechismPopover";
+import { CATEGORY_LABELS } from "./SaintDetail.categories";
+import SaintVirtues from "./sanctum/SaintVirtues";
 
 /**
  * SantoProfile — Perfil editorial reutilizável de um Santo.
@@ -30,15 +29,26 @@ export interface SantoProfileProps {
 const renderRich = (text?: string) => {
   if (!text) return null;
   return parseTheologicalReferences(text).map((seg, i) => {
-    if (seg.type === 'bibleRef')
-      return <BibleVersePopover key={i} abbr={seg.abbr!} chapter={seg.chapter!} verse={seg.verse} label={seg.value} />;
-    if (seg.type === 'catechismRef')
-      return <CatechismPopover key={i} paragraph={seg.paragraph!} />;
+    if (seg.type === "bibleRef")
+      return (
+        <BibleVersePopover
+          key={i}
+          abbr={seg.abbr!}
+          chapter={seg.chapter!}
+          verse={seg.verse}
+          label={seg.value}
+        />
+      );
+    if (seg.type === "catechismRef") return <CatechismPopover key={i} paragraph={seg.paragraph!} />;
     return <span key={i}>{seg.value}</span>;
   });
 };
 
-const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, hideAILearn = false }) => {
+const SantoProfile: React.FC<SantoProfileProps> = ({
+  saint,
+  showHeader = false,
+  hideAILearn = false,
+}) => {
   const virtues = saint.virtues ?? [];
   const quotesRich = saint.quotesRich ?? [];
   const legacyQuotes = (saint.quotes ?? []).map((text) => ({ text }));
@@ -51,9 +61,11 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
       {showHeader && (
         <header className="space-y-spacing-xs">
           <p className="text-premium-xs font-black uppercase tracking-[0.2em] text-primary">
-            {CATEGORY_LABELS[saint.category] || 'Testemunha da Fé'}
+            {CATEGORY_LABELS[saint.category] || "Testemunha da Fé"}
           </p>
-          <h2 className="font-serif text-premium-3xl text-foreground leading-tight">{saint.name}</h2>
+          <h2 className="font-serif text-premium-3xl text-foreground leading-tight">
+            {saint.name}
+          </h2>
           {saint.title && (
             <p className="text-premium-sm text-muted-foreground font-serif italic">{saint.title}</p>
           )}
@@ -62,16 +74,50 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
 
       {/* ── Identidade ─────────────────────────────────────────── */}
       <section aria-labelledby="ident-heading" className="space-y-spacing-md">
-        <h3 id="ident-heading" className="sr-only">Identidade</h3>
+        <h3 id="ident-heading" className="sr-only">
+          Identidade
+        </h3>
         <dl className="grid grid-cols-2 md:grid-cols-4 gap-spacing-md">
-          <IdentityCell icon={<Icons.Calendar className="w-spacing-md h-spacing-md" />} label="Festa" value={saint.feastDay} />
-          <IdentityCell icon={<Icons.User className="w-spacing-md h-spacing-md" />} label="Nascimento" value={saint.born} />
-          <IdentityCell icon={<Icons.XCircle className="w-spacing-md h-spacing-md" />} label="Falecimento" value={saint.died} />
-          <IdentityCell icon={<Icons.Globe className="w-spacing-md h-spacing-md" />} label="País" value={saint.country} />
-          <IdentityCell icon={<Icons.Heart className="w-spacing-md h-spacing-md" />} label="Vocação" value={saint.vocation} />
-          <IdentityCell icon={<Icons.Star className="w-spacing-md h-spacing-md" />} label="Século" value={saint.century ? `Século ${saint.century}` : undefined} />
-          <IdentityCell icon={<Icons.Shield className="w-spacing-md h-spacing-md" />} label="Categoria" value={CATEGORY_LABELS[saint.category] || saint.category} />
-          <IdentityCell icon={<Icons.Star className="w-spacing-md h-spacing-md" />} label="Virtude principal" value={virtues[0]} />
+          <IdentityCell
+            icon={<Icons.Calendar className="w-spacing-md h-spacing-md" />}
+            label="Festa"
+            value={saint.feastDay}
+          />
+          <IdentityCell
+            icon={<Icons.User className="w-spacing-md h-spacing-md" />}
+            label="Nascimento"
+            value={saint.born}
+          />
+          <IdentityCell
+            icon={<Icons.XCircle className="w-spacing-md h-spacing-md" />}
+            label="Falecimento"
+            value={saint.died}
+          />
+          <IdentityCell
+            icon={<Icons.Globe className="w-spacing-md h-spacing-md" />}
+            label="País"
+            value={saint.country}
+          />
+          <IdentityCell
+            icon={<Icons.Heart className="w-spacing-md h-spacing-md" />}
+            label="Vocação"
+            value={saint.vocation}
+          />
+          <IdentityCell
+            icon={<Icons.Star className="w-spacing-md h-spacing-md" />}
+            label="Século"
+            value={saint.century ? `Século ${saint.century}` : undefined}
+          />
+          <IdentityCell
+            icon={<Icons.Shield className="w-spacing-md h-spacing-md" />}
+            label="Categoria"
+            value={CATEGORY_LABELS[saint.category] || saint.category}
+          />
+          <IdentityCell
+            icon={<Icons.Star className="w-spacing-md h-spacing-md" />}
+            label="Virtude principal"
+            value={virtues[0]}
+          />
         </dl>
       </section>
 
@@ -80,7 +126,12 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
         <section aria-labelledby="hist-heading" className="space-y-spacing-md">
           <div className="flex items-center gap-spacing-xs text-primary">
             <Icons.BookOpen className="w-spacing-md h-spacing-md" aria-hidden="true" />
-            <h3 id="hist-heading" className="text-premium-small font-black uppercase tracking-[0.2em]">História</h3>
+            <h3
+              id="hist-heading"
+              className="text-premium-small font-black uppercase tracking-[0.2em]"
+            >
+              História
+            </h3>
           </div>
 
           {(saint.fullBio || saint.bio) && (
@@ -93,7 +144,9 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
 
           {saint.historicalContext && (
             <div className="rounded-premium border border-border/60 bg-secondary/20 p-spacing-md space-y-spacing-2xs">
-              <p className="text-premium-xs font-black uppercase tracking-widest text-primary">Contexto histórico</p>
+              <p className="text-premium-xs font-black uppercase tracking-widest text-primary">
+                Contexto histórico
+              </p>
               <p className="text-premium-sm leading-relaxed text-muted-foreground font-serif italic">
                 {saint.historicalContext}
               </p>
@@ -109,7 +162,8 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
                     aria-hidden="true"
                   />
                   <p className="text-premium-xs font-black uppercase tracking-widest text-primary">
-                    {ev.year ?? '—'}{ev.place ? ` · ${ev.place}` : ''}
+                    {ev.year ?? "—"}
+                    {ev.place ? ` · ${ev.place}` : ""}
                   </p>
                   <p className="text-premium-sm text-foreground">{ev.event}</p>
                 </li>
@@ -122,13 +176,17 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
       {/* ── Virtudes ───────────────────────────────────────────── */}
       <SaintVirtues saint={saint} />
 
-
       {/* ── Ensinamentos ───────────────────────────────────────── */}
       {teachingQuotes.length > 0 && (
         <section aria-labelledby="ens-heading" className="space-y-spacing-md">
           <div className="flex items-center gap-spacing-xs text-primary">
             <Icons.Quote className="w-spacing-md h-spacing-md" aria-hidden="true" />
-            <h3 id="ens-heading" className="text-premium-small font-black uppercase tracking-[0.2em]">Ensinamentos</h3>
+            <h3
+              id="ens-heading"
+              className="text-premium-small font-black uppercase tracking-[0.2em]"
+            >
+              Ensinamentos
+            </h3>
           </div>
           <ul className="space-y-spacing-md" role="list">
             {teachingQuotes.slice(0, 6).map((q, i) => (
@@ -136,13 +194,17 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
                 key={i}
                 className="relative rounded-premium border border-border/60 bg-secondary/20 p-spacing-md group"
               >
-                <Icons.Quote className="absolute top-spacing-xs right-spacing-xs w-spacing-lg h-spacing-lg text-primary/10" aria-hidden="true" />
+                <Icons.Quote
+                  className="absolute top-spacing-xs right-spacing-xs w-spacing-lg h-spacing-lg text-primary/10"
+                  aria-hidden="true"
+                />
                 <p className="text-premium-sm text-foreground font-serif italic leading-relaxed">
                   {renderRich(q.text)}
                 </p>
                 {(q as any).source && (
                   <p className="text-premium-xs text-muted-foreground uppercase tracking-widest mt-spacing-2xs">
-                    {(q as any).source}{(q as any).reference ? ` · ${(q as any).reference}` : ''}
+                    {(q as any).source}
+                    {(q as any).reference ? ` · ${(q as any).reference}` : ""}
                   </p>
                 )}
               </li>
@@ -156,7 +218,12 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
         <section aria-labelledby="obras-heading" className="space-y-spacing-md">
           <div className="flex items-center gap-spacing-xs text-primary">
             <Icons.Book className="w-spacing-md h-spacing-md" aria-hidden="true" />
-            <h3 id="obras-heading" className="text-premium-small font-black uppercase tracking-[0.2em]">Escritos do Santo</h3>
+            <h3
+              id="obras-heading"
+              className="text-premium-small font-black uppercase tracking-[0.2em]"
+            >
+              Escritos do Santo
+            </h3>
           </div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-spacing-md" role="list">
             {works.map((w, i) => {
@@ -169,9 +236,13 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
                         <Icons.BookOpen className="w-spacing-md h-spacing-md" aria-hidden="true" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-premium-sm font-bold text-foreground truncate">{w.title}</p>
+                        <p className="text-premium-sm font-bold text-foreground truncate">
+                          {w.title}
+                        </p>
                         {anyW.type && (
-                          <p className="text-premium-xs uppercase tracking-widest text-primary">{anyW.type}</p>
+                          <p className="text-premium-xs uppercase tracking-widest text-primary">
+                            {anyW.type}
+                          </p>
                         )}
                         {anyW.description && (
                           <p className="text-premium-xs text-muted-foreground line-clamp-spacing-2xs mt-spacing-2xs">
@@ -179,10 +250,14 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
                           </p>
                         )}
                         {w.year && (
-                          <p className="text-premium-xs text-muted-foreground uppercase mt-spacing-2xs">{w.year}</p>
+                          <p className="text-premium-xs text-muted-foreground uppercase mt-spacing-2xs">
+                            {w.year}
+                          </p>
                         )}
                         {anyW.author && anyW.author !== saint.name && (
-                          <p className="text-premium-xs text-muted-foreground italic">por {anyW.author}</p>
+                          <p className="text-premium-xs text-muted-foreground italic">
+                            por {anyW.author}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -194,7 +269,11 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
                         className="shrink-0 text-primary hover:underline text-premium-xs font-black uppercase tracking-widest inline-flex items-center gap-spacing-2xs focus-visible:ring-2 focus-visible:ring-primary rounded-premium-full px-spacing-xs py-spacing-2xs"
                         aria-label={`Ler ${w.title} — abre em nova aba`}
                       >
-                        Ler <Icons.ArrowRight className="w-spacing-sm h-spacing-sm" aria-hidden="true" />
+                        Ler{" "}
+                        <Icons.ArrowRight
+                          className="w-spacing-sm h-spacing-sm"
+                          aria-hidden="true"
+                        />
                       </a>
                     )}
                   </div>
@@ -211,7 +290,11 @@ const SantoProfile: React.FC<SantoProfileProps> = ({ saint, showHeader = false, 
   );
 };
 
-const IdentityCell: React.FC<{ icon: React.ReactNode; label: string; value?: string | null }> = ({ icon, label, value }) => {
+const IdentityCell: React.FC<{ icon: React.ReactNode; label: string; value?: string | null }> = ({
+  icon,
+  label,
+  value,
+}) => {
   if (!value) return null;
   return (
     <div className="flex items-start gap-spacing-sm">
@@ -219,7 +302,9 @@ const IdentityCell: React.FC<{ icon: React.ReactNode; label: string; value?: str
         {icon}
       </div>
       <div className="min-w-0">
-        <dt className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">{label}</dt>
+        <dt className="text-premium-xs font-black uppercase tracking-widest text-muted-foreground">
+          {label}
+        </dt>
         <dd className="text-premium-sm font-bold text-foreground truncate">{value}</dd>
       </div>
     </div>

@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import { useReadingSettings } from '@/contexts/ReadingSettingsContext';
+import React from "react";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import { useReadingSettings } from "@/contexts/ReadingSettingsContext";
 
 interface Suggestion {
   id: string;
@@ -13,7 +13,7 @@ interface Suggestion {
 
 interface LogosContextualSuggestionsProps {
   context: string;
-  type: 'bible' | 'catechism' | 'magisterium';
+  type: "bible" | "catechism" | "magisterium";
   onSelectSuggestion: (prompt: string) => void;
   isVisible?: boolean;
 }
@@ -22,41 +22,42 @@ export const LogosContextualSuggestions: React.FC<LogosContextualSuggestionsProp
   context,
   type,
   onSelectSuggestion,
-  isVisible = true
+  isVisible = true,
 }) => {
   const { settings } = useReadingSettings();
 
   const suggestions: Suggestion[] = [
     {
-      id: 'deepen',
-      label: 'Aprofundar Mistério',
+      id: "deepen",
+      label: "Aprofundar Mistério",
       prompt: `Por favor, ajude-me a contemplar mais profundamente o significado teológico e espiritual deste trecho no contexto da Tradição: ${context}`,
-      icon: <Icons.Sparkles className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />
+      icon: <Icons.Sparkles className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />,
     },
     {
-      id: 'connections',
-      label: 'Pontes Sagradas',
+      id: "connections",
+      label: "Pontes Sagradas",
       prompt: `Quais conexões invisíveis existem entre este texto e outras passagens da Bíblia ou documentos da Igreja? ${context}`,
-      icon: <Icons.Compass className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />
+      icon: <Icons.Compass className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />,
     },
     {
-      id: 'reflection',
-      label: 'Via de Oração',
+      id: "reflection",
+      label: "Via de Oração",
       prompt: `Ofereça uma reflexão silenciosa e meditativa para auxiliar minha oração baseada neste texto: ${context}`,
-      icon: <Icons.Feather className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />
-    }
+      icon: <Icons.Feather className="w-spacing-sm h-spacing-sm" strokeWidth={0.5} />,
+    },
   ];
 
-  if (settings.totalSilence || !isVisible || settings.logosSuggestions === 'never') return null;
+  if (settings.totalSilence || !isVisible || settings.logosSuggestions === "never") return null;
 
   return (
     <div className="mt-spacing-4xl py-spacing-2xl border-t border-primary/5">
       <div className="flex items-center gap-spacing-md mb-spacing-xl opacity-30">
         <div className="w-px h-spacing-2xl bg-gradient-to-b from-transparent via-primary to-transparent" />
-        <p className="text-[10px] font-black uppercase tracking-[0.6em] text-primary">Caminhos de Aprofundamento</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.6em] text-primary">
+          Caminhos de Aprofundamento
+        </p>
       </div>
 
-      
       <div className="flex flex-wrap gap-spacing-md">
         {suggestions.map((suggestion) => (
           <motion.button

@@ -1,27 +1,27 @@
-import { supabase } from '@/lib/db';
-import type { LibraryAdapter, LibraryItem } from '../types';
+import { supabase } from "@/lib/db";
+import type { LibraryAdapter, LibraryItem } from "../types";
 
 export const collectionsAdapter: LibraryAdapter = {
-  module: 'collections',
-  label: 'Coleções',
+  module: "collections",
+  label: "Coleções",
 
   async list({ limit = 24, offset = 0, filters } = {}) {
     let query = supabase
-      .from('collections')
-      .select('id, title, slug, subtitle, description, category, status, updated_at')
-      .eq('status', 'published')
-      .order('updated_at', { ascending: false })
+      .from("collections")
+      .select("id, title, slug, subtitle, description, category, status, updated_at")
+      .eq("status", "published")
+      .order("updated_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (filters?.category) query = query.eq('category', filters.category);
+    if (filters?.category) query = query.eq("category", filters.category);
 
     const { data, error } = await query;
     if (error) throw error;
 
     return (data ?? []).map((row: any): LibraryItem => ({
       id: String(row.id),
-      module: 'collections',
-      title: row.title ?? '',
+      module: "collections",
+      title: row.title ?? "",
       slug: row.slug ?? String(row.id),
       summary: row.subtitle ?? row.description ?? undefined,
       category: row.category ?? undefined,

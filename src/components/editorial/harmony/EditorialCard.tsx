@@ -21,11 +21,11 @@
  * Sem lógica de domínio, sem fetch, sem rotas.
  */
 
-import React from 'react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { cn } from "@/lib/utils";
 
-type SlotKey = 'eyebrow' | 'title' | 'description' | 'references' | 'media' | 'cta';
-const SLOT = Symbol('editorial-card-slot');
+type SlotKey = "eyebrow" | "title" | "description" | "references" | "media" | "cta";
+const SLOT = Symbol("editorial-card-slot");
 
 type SlotComponent = React.FC<{ children?: React.ReactNode }> & { [SLOT]?: SlotKey };
 
@@ -36,16 +36,21 @@ function makeSlot(key: SlotKey): SlotComponent {
   return S;
 }
 
-const Eyebrow = makeSlot('eyebrow');
-const Title = makeSlot('title');
-const Description = makeSlot('description');
-const References = makeSlot('references');
-const Media = makeSlot('media');
-const CTA = makeSlot('cta');
+const Eyebrow = makeSlot("eyebrow");
+const Title = makeSlot("title");
+const Description = makeSlot("description");
+const References = makeSlot("references");
+const Media = makeSlot("media");
+const CTA = makeSlot("cta");
 
 function pickSlots(children: React.ReactNode) {
   const map: Record<SlotKey, React.ReactNode> = {
-    eyebrow: null, title: null, description: null, references: null, media: null, cta: null,
+    eyebrow: null,
+    title: null,
+    description: null,
+    references: null,
+    media: null,
+    cta: null,
   };
   React.Children.forEach(children, (c) => {
     if (!React.isValidElement(c)) return;
@@ -55,12 +60,12 @@ function pickSlots(children: React.ReactNode) {
   return map;
 }
 
-export type EditorialCardDensity = 'dense' | 'balanced' | 'minimal';
+export type EditorialCardDensity = "dense" | "balanced" | "minimal";
 
-export interface EditorialCardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
+export interface EditorialCardProps extends Omit<React.HTMLAttributes<HTMLElement>, "title"> {
   density?: EditorialCardDensity;
   /** Elemento raiz. Default: 'article'. Use 'a' para links, 'button' para ações. */
-  as?: 'article' | 'a' | 'div' | 'button';
+  as?: "article" | "a" | "div" | "button";
   href?: string;
   interactive?: boolean;
 }
@@ -77,21 +82,21 @@ interface EditorialCardCompound extends React.ForwardRefExoticComponent<
 }
 
 const CARD_PAD: Record<EditorialCardDensity, string> = {
-  dense: 'p-[var(--sp-l)]',
-  balanced: 'p-[var(--sp-m)] md:p-[var(--sp-l)]',
-  minimal: 'p-[var(--sp-m)]',
+  dense: "p-[var(--sp-l)]",
+  balanced: "p-[var(--sp-m)] md:p-[var(--sp-l)]",
+  minimal: "p-[var(--sp-m)]",
 };
 
 const CARD_GAP: Record<EditorialCardDensity, string> = {
-  dense: 'space-y-[var(--sp-s)]',
-  balanced: 'space-y-[var(--sp-s)]',
-  minimal: 'space-y-[var(--sp-xs)]',
+  dense: "space-y-[var(--sp-s)]",
+  balanced: "space-y-[var(--sp-s)]",
+  minimal: "space-y-[var(--sp-xs)]",
 };
 
 const TITLE_CLASS: Record<EditorialCardDensity, string> = {
-  dense: 'type-h3',
-  balanced: 'type-h3',
-  minimal: 'type-h3',
+  dense: "type-h3",
+  balanced: "type-h3",
+  minimal: "type-h3",
 };
 
 const EditorialCardBase = React.forwardRef<HTMLElement, EditorialCardProps>(
@@ -99,29 +104,30 @@ const EditorialCardBase = React.forwardRef<HTMLElement, EditorialCardProps>(
     const rootRef = React.useRef<HTMLElement | null>(null);
     const setRefs = (node: HTMLElement | null) => {
       rootRef.current = node;
-      if (typeof ref === 'function') ref(node);
+      if (typeof ref === "function") ref(node);
       else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = node;
     };
 
-    const [resolved, setResolved] = React.useState<EditorialCardDensity>(density ?? 'balanced');
+    const [resolved, setResolved] = React.useState<EditorialCardDensity>(density ?? "balanced");
     React.useLayoutEffect(() => {
       if (density) return;
-      const el = rootRef.current?.closest('[data-space]') as HTMLElement | null;
-      const space = el?.getAttribute('data-space');
-      if (space === 'library' || space === 'atrium') setResolved('dense');
-      else if (space === 'cloister') setResolved('minimal');
-      else setResolved('balanced');
+      const el = rootRef.current?.closest("[data-space]") as HTMLElement | null;
+      const space = el?.getAttribute("data-space");
+      if (space === "library" || space === "atrium") setResolved("dense");
+      else if (space === "cloister") setResolved("minimal");
+      else setResolved("balanced");
     }, [density]);
 
     const slots = pickSlots(children);
-    const showRefs = resolved === 'dense' && slots.references;
-    const showDesc = slots.description && resolved !== 'minimal'
-      ? slots.description
-      : resolved === 'minimal' && slots.description
+    const showRefs = resolved === "dense" && slots.references;
+    const showDesc =
+      slots.description && resolved !== "minimal"
         ? slots.description
-        : null;
+        : resolved === "minimal" && slots.description
+          ? slots.description
+          : null;
 
-    const Tag = (as ?? (href ? 'a' : 'article')) as React.ElementType;
+    const Tag = (as ?? (href ? "a" : "article")) as React.ElementType;
     const isInteractive = interactive ?? Boolean(href);
 
     return (
@@ -131,11 +137,11 @@ const EditorialCardBase = React.forwardRef<HTMLElement, EditorialCardProps>(
         data-editorial-card-universal
         data-density={resolved}
         className={cn(
-          'group relative flex flex-col rounded-[var(--radius)] border border-border/60 bg-card text-card-foreground',
-          'overflow-hidden',
+          "group relative flex flex-col rounded-[var(--radius)] border border-border/60 bg-card text-card-foreground",
+          "overflow-hidden",
           CARD_PAD[resolved],
           isInteractive &&
-            'transition-colors hover:border-[hsl(var(--rule-gold))]/60 focus-visible:outline-none focus-visible:border-[hsl(var(--rule-gold))]',
+            "transition-colors hover:border-[hsl(var(--rule-gold))]/60 focus-visible:outline-none focus-visible:border-[hsl(var(--rule-gold))]",
           className,
         )}
         {...rest}
@@ -145,17 +151,19 @@ const EditorialCardBase = React.forwardRef<HTMLElement, EditorialCardProps>(
             {slots.media}
           </div>
         )}
-        <div className={cn('flex-1 min-w-0', CARD_GAP[resolved])}>
-          {slots.eyebrow && resolved !== 'minimal' && (
+        <div className={cn("flex-1 min-w-0", CARD_GAP[resolved])}>
+          {slots.eyebrow && resolved !== "minimal" && (
             <p className="type-rubrica">{slots.eyebrow}</p>
           )}
           {slots.title && (
-            <h3 className={cn(TITLE_CLASS[resolved], 'text-foreground')}>
-              {slots.title}
-            </h3>
+            <h3 className={cn(TITLE_CLASS[resolved], "text-foreground")}>{slots.title}</h3>
           )}
           {showDesc && (
-            <p className={cn(resolved === 'minimal' ? 'type-caption' : 'type-body text-muted-foreground')}>
+            <p
+              className={cn(
+                resolved === "minimal" ? "type-caption" : "type-body text-muted-foreground",
+              )}
+            >
               {showDesc}
             </p>
           )}
@@ -174,7 +182,7 @@ const EditorialCardBase = React.forwardRef<HTMLElement, EditorialCardProps>(
     );
   },
 );
-EditorialCardBase.displayName = 'EditorialCard';
+EditorialCardBase.displayName = "EditorialCard";
 
 const EditorialCard = EditorialCardBase as unknown as EditorialCardCompound;
 EditorialCard.Eyebrow = Eyebrow;

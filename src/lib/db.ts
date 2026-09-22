@@ -17,8 +17,8 @@
  * Quando os 20 lotes estiverem aplicados, este arquivo pode voltar a apontar
  * para os tipos gerados, sem tocar nas telas.
  */
-import { supabase as generatedClient } from '../integrations/supabase/client';
-import type { Database as GeneratedDatabase, Json } from '../integrations/supabase/types';
+import { supabase as generatedClient } from "../integrations/supabase/client";
+import type { Database as GeneratedDatabase, Json } from "../integrations/supabase/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -38,7 +38,7 @@ type LooseResult = {
  * `await` resolve em `{ data, error }`, preservando o encadeamento do PostgREST.
  */
 type LooseQuery = {
-  then: PromiseLike<LooseResult>['then'];
+  then: PromiseLike<LooseResult>["then"];
   select: (...args: any[]) => LooseQuery;
   insert: (...args: any[]) => LooseQuery;
   update: (...args: any[]) => LooseQuery;
@@ -79,10 +79,10 @@ type LooseQuery = {
 };
 
 /** Cliente com nomes de tabela/RPC ainda não presentes no schema gerado. */
-type LooseClient = Omit<typeof generatedClient, 'from' | 'rpc' | 'schema'> & {
+type LooseClient = Omit<typeof generatedClient, "from" | "rpc" | "schema"> & {
   from: (table: string) => LooseQuery;
   rpc: (fn: string, args?: Record<string, any>, opts?: Record<string, any>) => LooseQuery;
-  schema: (name: string) => { from: (table: string) => LooseQuery; rpc: LooseClient['rpc'] };
+  schema: (name: string) => { from: (table: string) => LooseQuery; rpc: LooseClient["rpc"] };
 };
 
 export const supabase = generatedClient as unknown as LooseClient;
@@ -100,8 +100,8 @@ type LooseTable = {
   Relationships: any;
 };
 
-export type Database = Omit<GeneratedDatabase, 'public'> & {
-  public: Omit<GeneratedDatabase['public'], 'Tables' | 'Views' | 'Functions'> & {
+export type Database = Omit<GeneratedDatabase, "public"> & {
+  public: Omit<GeneratedDatabase["public"], "Tables" | "Views" | "Functions"> & {
     Tables: Record<string, LooseTable>;
     Views: Record<string, LooseTable>;
     Functions: Record<string, { Args: Record<string, any>; Returns: any }>;
@@ -114,5 +114,5 @@ export type TablesInsert<_Name extends string = string> = Record<string, any>;
 export type TablesUpdate<_Name extends string = string> = Record<string, any>;
 
 /** Enums vêm do schema real — já aplicados pelo lote 1. */
-export type Enums<Name extends keyof GeneratedDatabase['public']['Enums']> =
-  GeneratedDatabase['public']['Enums'][Name];
+export type Enums<Name extends keyof GeneratedDatabase["public"]["Enums"]> =
+  GeneratedDatabase["public"]["Enums"][Name];

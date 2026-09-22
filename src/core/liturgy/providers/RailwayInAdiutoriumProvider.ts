@@ -6,7 +6,7 @@
  * apenas isola o contorno para permitir troca futura sem tocar em UI/hooks.
  */
 
-import { supabase } from '@/lib/db';
+import { supabase } from "@/lib/db";
 import {
   type DailyLiturgy,
   type LiturgyProvider,
@@ -14,7 +14,7 @@ import {
   inferSeason,
   normalizeColorToken,
   toIsoDateKey,
-} from '../LiturgyProvider';
+} from "../LiturgyProvider";
 
 interface RawReadings {
   data?: string;
@@ -27,20 +27,20 @@ interface RawReadings {
   evangelho?: Reading | null;
 }
 
-function normalizeSecond(raw: RawReadings['segundaLeitura']): Reading | null {
+function normalizeSecond(raw: RawReadings["segundaLeitura"]): Reading | null {
   if (!raw) return null;
-  if (typeof raw === 'string') return null;
+  if (typeof raw === "string") return null;
   return raw;
 }
 
 export class RailwayInAdiutoriumProvider implements LiturgyProvider {
-  readonly id = 'railway-in-adiutorium';
-  readonly label = 'In Adiutorium (railway)';
+  readonly id = "railway-in-adiutorium";
+  readonly label = "In Adiutorium (railway)";
 
   async getDayLiturgy(date: Date): Promise<DailyLiturgy> {
-    const { data, error } = await supabase.functions.invoke('liturgical-calendar', {
+    const { data, error } = await supabase.functions.invoke("liturgical-calendar", {
       body: {
-        action: 'readings',
+        action: "readings",
         day: date.getDate(),
         month: date.getMonth() + 1,
         year: date.getFullYear(),
@@ -51,12 +51,12 @@ export class RailwayInAdiutoriumProvider implements LiturgyProvider {
 
     return {
       isoDate: toIsoDateKey(date),
-      data: raw.data ?? date.toLocaleDateString('pt-BR'),
-      liturgia: raw.liturgia ?? '',
-      cor: raw.cor ?? 'verde',
+      data: raw.data ?? date.toLocaleDateString("pt-BR"),
+      liturgia: raw.liturgia ?? "",
+      cor: raw.cor ?? "verde",
       colorToken: normalizeColorToken(raw.cor),
-      dia: raw.dia ?? '',
-      season: inferSeason(raw.liturgia ?? raw.dia ?? ''),
+      dia: raw.dia ?? "",
+      season: inferSeason(raw.liturgia ?? raw.dia ?? ""),
       primeiraLeitura: raw.primeiraLeitura ?? null,
       salmo: raw.salmo ?? null,
       segundaLeitura: normalizeSecond(raw.segundaLeitura),

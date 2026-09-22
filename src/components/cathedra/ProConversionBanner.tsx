@@ -1,16 +1,16 @@
-import { Icons } from '@/constants';
-import { Button } from '@/components/ui/button';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Icons } from "@/constants";
+import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
 
 interface ProConversionBannerProps {
   /** Where the banner is shown for analytics */
-  context: 'lectio' | 'jornada' | 'dashboard' | 'logos';
+  context: "lectio" | "jornada" | "dashboard" | "logos";
   /** Optional override to force visibility (e.g. for Logos deep response) */
   forceVisible?: boolean;
 }
@@ -39,21 +39,21 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
       // Count total reflections: journal entries + journey reflections
       const [journalRes, journeyRes] = await Promise.all([
         supabase
-          .from('spiritual_journal')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id),
+          .from("spiritual_journal")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
         supabase
-          .from('journey_progress')
-          .select('id', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .not('reflection', 'is', null),
+          .from("journey_progress")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .not("reflection", "is", null),
       ]);
 
       const total = (journalRes.count ?? 0) + (journeyRes.count ?? 0);
       setReflectionCount(total);
 
       // Show after 2+ reflections or if context is logos/jornada
-      if (total >= 2 || context === 'logos' || context === 'jornada') {
+      if (total >= 2 || context === "logos" || context === "jornada") {
         const sessionKey = `pro_banner_dismissed_${context}`;
         if (!sessionStorage.getItem(sessionKey)) {
           setVisible(true);
@@ -67,7 +67,7 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
   const handleDismiss = () => {
     setDismissed(true);
     setVisible(false);
-    sessionStorage.setItem(`pro_banner_dismissed_${context}`, '1');
+    sessionStorage.setItem(`pro_banner_dismissed_${context}`, "1");
   };
 
   if (!visible || dismissed || isPremium) return null;
@@ -80,7 +80,7 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
         initial={{ opacity: 0, y: 20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative overflow-hidden rounded-premium-full border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-spacing-lg md:p-spacing-xl shadow-premium"
       >
         {/* Dismiss */}
@@ -97,7 +97,7 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
           <motion.div
             className="w-spacing-2xl h-spacing-2xl rounded-premium-full bg-primary/15 flex items-center justify-center flex-shrink-0"
             animate={{ rotate: [0, -5, 5, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           >
             <Icons.Crown className="w-spacing-lg h-spacing-lg text-primary" />
           </motion.div>
@@ -106,7 +106,7 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
           <div className="flex-1 space-y-spacing-2xs min-w-spacing-0">
             <h4 className="text-premium-sm font-bold text-foreground">{copy.title}</h4>
             <p className="text-premium-xs text-muted-foreground leading-relaxed">{copy.message}</p>
-            {reflectionCount >= 2 && context !== 'logos' && (
+            {reflectionCount >= 2 && context !== "logos" && (
               <div className="flex items-center gap-spacing-2xs text-premium-xs text-primary/70">
                 <Icons.Flame className="w-spacing-sm h-spacing-sm" />
                 <span>{reflectionCount} reflexões escritas</span>
@@ -119,7 +119,8 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
             onClick={() => navigate(AppRoute.UPGRADE)}
             className="flex items-center gap-spacing-xs px-spacing-md py-spacing-sm bg-primary text-primary-foreground rounded-premium-full text-premium-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-premium whitespace-nowrap flex-shrink-0"
           >
-            Desbloquear experiência completa <Icons.ArrowRight className="w-spacing-sm h-spacing-sm" />
+            Desbloquear experiência completa{" "}
+            <Icons.ArrowRight className="w-spacing-sm h-spacing-sm" />
           </Button>
         </div>
       </motion.div>
@@ -128,38 +129,43 @@ const ProConversionBanner: React.FC<ProConversionBannerProps> = ({ context, forc
 };
 
 function getCopy(context: string, reflections: number): { title: string; message: string } {
-  if (context === 'logos') {
+  if (context === "logos") {
     return {
-      title: 'Existe um nível mais profundo disso.',
-      message: 'Sua busca por entendimento tocou em algo real. A experiência completa oferece conexões que a versão gratuita ainda não revela.',
+      title: "Existe um nível mais profundo disso.",
+      message:
+        "Sua busca por entendimento tocou em algo real. A experiência completa oferece conexões que a versão gratuita ainda não revela.",
     };
   }
 
-  if (context === 'jornada') {
+  if (context === "jornada") {
     return {
-      title: 'Continue essa transformação.',
-      message: 'Você avançou no seu caminho e o progresso é visível. Desbloqueie as próximas etapas e ferramentas exclusivas de contemplação.',
+      title: "Continue essa transformação.",
+      message:
+        "Você avançou no seu caminho e o progresso é visível. Desbloqueie as próximas etapas e ferramentas exclusivas de contemplação.",
     };
   }
 
   if (reflections >= 2) {
     return {
-      title: 'Você começou a entender…',
-      message: 'Aprofunde isso. Suas reflexões estão amadurecendo e a experiência completa oferece o espaço ilimitado que sua alma busca.',
+      title: "Você começou a entender…",
+      message:
+        "Aprofunde isso. Suas reflexões estão amadurecendo e a experiência completa oferece o espaço ilimitado que sua alma busca.",
     };
   }
 
   // Fallbacks
-  if (context === 'lectio') {
+  if (context === "lectio") {
     return {
-      title: 'A Palavra está agindo em você',
-      message: 'Sua escuta se tornou mais atenta. Com a experiência completa, você acessa o repositório total de meditações.',
+      title: "A Palavra está agindo em você",
+      message:
+        "Sua escuta se tornou mais atenta. Com a experiência completa, você acessa o repositório total de meditações.",
     };
   }
 
   return {
-    title: 'Aprofunde sua caminhada',
-    message: 'Suas reflexões mostram um novo horizonte. A experiência completa oferece o suporte necessário para que essa clareza se torne constante.',
+    title: "Aprofunde sua caminhada",
+    message:
+      "Suas reflexões mostram um novo horizonte. A experiência completa oferece o suporte necessário para que essa clareza se torne constante.",
   };
 }
 

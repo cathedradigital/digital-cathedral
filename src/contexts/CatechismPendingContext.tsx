@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 interface CatechismPendingContextValue {
   pending: number[];
@@ -12,7 +12,7 @@ export const CatechismPendingProvider: React.FC<{ children: React.ReactNode }> =
   const [pendingSet, setPendingSet] = useState<Set<number>>(() => new Set());
 
   const markPending = useCallback((paragraph: number) => {
-    setPendingSet(prev => {
+    setPendingSet((prev) => {
       if (prev.has(paragraph)) return prev;
       const next = new Set(prev);
       next.add(paragraph);
@@ -21,7 +21,7 @@ export const CatechismPendingProvider: React.FC<{ children: React.ReactNode }> =
   }, []);
 
   const clearPending = useCallback((paragraph: number) => {
-    setPendingSet(prev => {
+    setPendingSet((prev) => {
       if (!prev.has(paragraph)) return prev;
       const next = new Set(prev);
       next.delete(paragraph);
@@ -37,9 +37,7 @@ export const CatechismPendingProvider: React.FC<{ children: React.ReactNode }> =
   );
 
   return (
-    <CatechismPendingContext.Provider value={value}>
-      {children}
-    </CatechismPendingContext.Provider>
+    <CatechismPendingContext.Provider value={value}>{children}</CatechismPendingContext.Provider>
   );
 };
 

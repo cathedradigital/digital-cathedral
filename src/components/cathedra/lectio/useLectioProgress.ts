@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Step } from './constants';
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Step } from "./constants";
 
 export interface LectioProgress {
   passage: string;
@@ -9,8 +9,8 @@ export interface LectioProgress {
   updatedAt: number;
 }
 
-const STORAGE_KEY = 'cathedra:lectio:progress:v1';
-const INDEX_KEY = 'cathedra:lectio:index:v1';
+const STORAGE_KEY = "cathedra:lectio:progress:v1";
+const INDEX_KEY = "cathedra:lectio:index:v1";
 
 interface ProgressStore {
   current: string | null; // passage key of last active
@@ -109,8 +109,8 @@ export function useLastLectio() {
   const [last, setLast] = useState<LectioProgress | null>(() => getLastLectio());
   useEffect(() => {
     const handler = () => setLast(getLastLectio());
-    window.addEventListener('storage', handler);
-    return () => window.removeEventListener('storage', handler);
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
   }, []);
   return last;
 }
@@ -124,7 +124,7 @@ export const useSaveLectioNotes = (passage: string) =>
       const prev = store.byPassage[passage];
       store.byPassage[passage] = {
         passage,
-        step: prev?.step ?? 'lectio',
+        step: prev?.step ?? "lectio",
         seconds: prev?.seconds ?? 0,
         notes,
         updatedAt: Date.now(),

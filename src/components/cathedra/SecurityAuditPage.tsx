@@ -1,49 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from "react";
+import { Link } from "@/lib/rr-compat";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { Icons } from '@/constants';
-import { toast } from 'sonner';
+import { Icons } from "@/constants";
+import { toast } from "sonner";
 
 const SecurityAuditPage = () => {
   const [rollbackMode, setRollbackMode] = useState(false);
-  
+
   const checklist = [
-    { 
-      id: 'migration-padh', 
-      label: 'Migração P.A.D.H. (Icons.Database)', 
-      status: 'success', 
-      detail: 'Chaves JSON renomeadas de pch para padh em journey_steps.',
-      link: '/admin?tab=themes' // Mock link to related admin area
+    {
+      id: "migration-padh",
+      label: "Migração P.A.D.H. (Icons.Database)",
+      status: "success",
+      detail: "Chaves JSON renomeadas de pch para padh em journey_steps.",
+      link: "/admin?tab=themes", // Mock link to related admin area
     },
-    { 
-      id: 'redirects', 
-      label: 'Redirecionamentos de Legado', 
-      status: 'success', 
-      detail: 'Rotas /curso-pch e /pch apontando para /jornadas via App.tsx.',
-      link: '/jornadas'
+    {
+      id: "redirects",
+      label: "Redirecionamentos de Legado",
+      status: "success",
+      detail: "Rotas /curso-pch e /pch apontando para /jornadas via App.tsx.",
+      link: "/jornadas",
     },
-    { 
-      id: 'e2e-tests', 
-      label: 'Cobertura E2E (Bubble Integrity)', 
-      status: 'success', 
-      detail: 'Testes de navegação, deduplicação e ordem de prioridade ativos.',
-      link: '/diagnostics'
+    {
+      id: "e2e-tests",
+      label: "Cobertura E2E (Bubble Integrity)",
+      status: "success",
+      detail: "Testes de navegação, deduplicação e ordem de prioridade ativos.",
+      link: "/diagnostics",
     },
-    { 
-      id: 'secret-scan', 
-      label: 'Varredura de Segredos (SAST)', 
-      status: 'warning', 
-      detail: 'Scanner de chaves de API ativo em CI/CD e testes locais.',
-      link: '#'
-    }
+    {
+      id: "secret-scan",
+      label: "Varredura de Segredos (SAST)",
+      status: "warning",
+      detail: "Scanner de chaves de API ativo em CI/CD e testes locais.",
+      link: "#",
+    },
   ];
 
   const handleRollback = () => {
-    const sql = "UPDATE journey_steps SET content = content - 'padh' || jsonb_build_object('pch', content->'padh') WHERE content ? 'padh';";
+    const sql =
+      "UPDATE journey_steps SET content = content - 'padh' || jsonb_build_object('pch', content->'padh') WHERE content ? 'padh';";
     navigator.clipboard.writeText(sql);
-    toast.success('SQL de Rollback copiado para a área de transferência!');
+    toast.success("SQL de Rollback copiado para a área de transferência!");
   };
 
   return (
@@ -51,10 +52,16 @@ const SecurityAuditPage = () => {
       <header className="text-center space-y-spacing-md">
         <div className="inline-flex items-center gap-spacing-xs px-spacing-sm py-spacing-2xs bg-red-500/10 rounded-premium text-red-600 border border-red-500/20">
           <Icons.ShieldAlert className="w-spacing-md h-spacing-md" />
-          <span className="text-premium-xs font-black uppercase tracking-[0.2em]">Security Protocol v3.0</span>
+          <span className="text-premium-xs font-black uppercase tracking-[0.2em]">
+            Security Protocol v3.0
+          </span>
         </div>
-        <h1 className="text-premium-4xl font-serif font-bold text-foreground text-primary">Painel de Segurança & Integridade</h1>
-        <p className="text-muted-foreground italic font-serif">Controle de deploys, migrações e proteção de segredos.</p>
+        <h1 className="text-premium-4xl font-serif font-bold text-foreground text-primary">
+          Painel de Segurança & Integridade
+        </h1>
+        <p className="text-muted-foreground italic font-serif">
+          Controle de deploys, migrações e proteção de segredos.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-spacing-lg">
@@ -69,21 +76,36 @@ const SecurityAuditPage = () => {
             </CardHeader>
             <CardContent className="p-spacing-0">
               <div className="divide-y divide-border/40">
-                {checklist.map(item => (
-                  <div key={item.id} className="p-spacing-lg flex items-start justify-between hover:bg-muted/10 transition-colors group">
+                {checklist.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-spacing-lg flex items-start justify-between hover:bg-muted/10 transition-colors group"
+                  >
                     <div className="space-y-spacing-2xs">
                       <div className="flex items-center gap-spacing-xs">
-                        <span className="text-premium-sm font-bold text-foreground">{item.label}</span>
-                        {item.status === 'success' ? (
+                        <span className="text-premium-sm font-bold text-foreground">
+                          {item.label}
+                        </span>
+                        {item.status === "success" ? (
                           <Icons.CheckCircle className="w-spacing-sm h-spacing-sm text-green-500" />
                         ) : (
                           <Icons.AlertTriangle className="w-spacing-sm h-spacing-sm text-amber-500" />
                         )}
                       </div>
-                      <p className="text-premium-xs text-muted-foreground leading-relaxed">{item.detail}</p>
+                      <p className="text-premium-xs text-muted-foreground leading-relaxed">
+                        {item.detail}
+                      </p>
                     </div>
-                    <Button variant="ghost" size="sm" asChild className="opacity-0 group-hover:opacity-100 rounded-premium-full">
-                      <Link to={item.link} className="flex items-center gap-spacing-2xs text-premium-xs font-black uppercase tracking-widest">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="opacity-0 group-hover:opacity-100 rounded-premium-full"
+                    >
+                      <Link
+                        to={item.link}
+                        className="flex items-center gap-spacing-2xs text-premium-xs font-black uppercase tracking-widest"
+                      >
                         Detalhes <Icons.ExternalLink className="w-spacing-sm h-spacing-sm" />
                       </Link>
                     </Button>
@@ -99,13 +121,16 @@ const SecurityAuditPage = () => {
                 <div className="p-spacing-xs bg-red-500/10 rounded-premium text-red-600">
                   <Icons.RotateCcw className="w-spacing-md h-spacing-md" />
                 </div>
-                <h3 className="text-premium-sm font-bold uppercase tracking-widest">Rollback Crítico</h3>
+                <h3 className="text-premium-sm font-bold uppercase tracking-widest">
+                  Rollback Crítico
+                </h3>
               </div>
               <p className="text-premium-xs text-muted-foreground font-serif italic">
-                Em caso de erro no deploy da terminologia P.A.D.H., use o botão abaixo para obter o comando de reversão do banco.
+                Em caso de erro no deploy da terminologia P.A.D.H., use o botão abaixo para obter o
+                comando de reversão do banco.
               </p>
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 onClick={handleRollback}
                 className="w-full rounded-premium-full text-premium-xs font-black uppercase tracking-widest h-spacing-xl shadow-premium shadow-red-500/10"
               >
@@ -118,13 +143,15 @@ const SecurityAuditPage = () => {
                 <div className="p-spacing-xs bg-primary/10 rounded-premium text-primary">
                   <Icons.FileCode className="w-spacing-md h-spacing-md" />
                 </div>
-                <h3 className="text-premium-sm font-bold uppercase tracking-widest">Scan de Segredos</h3>
+                <h3 className="text-premium-sm font-bold uppercase tracking-widest">
+                  Scan de Segredos
+                </h3>
               </div>
               <p className="text-premium-xs text-muted-foreground font-serif italic">
                 Verifique se existem chaves de API expostas no código fonte ou artefatos de build.
               </p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full rounded-premium-full text-premium-xs font-black uppercase tracking-widest h-spacing-xl border-primary/20 hover:bg-primary/5"
               >
                 Simular Varredura
@@ -141,12 +168,20 @@ const SecurityAuditPage = () => {
             </h3>
             <div className="space-y-spacing-md">
               <div className="space-y-spacing-xs">
-                <p className="text-premium-xs font-bold text-muted-foreground uppercase">Última Varredura</p>
-                <p className="text-premium-xs font-mono bg-muted p-spacing-xs rounded-premium-full">2024-05-20 14:30</p>
+                <p className="text-premium-xs font-bold text-muted-foreground uppercase">
+                  Última Varredura
+                </p>
+                <p className="text-premium-xs font-mono bg-muted p-spacing-xs rounded-premium-full">
+                  2024-05-20 14:30
+                </p>
               </div>
               <div className="space-y-spacing-xs">
-                <p className="text-premium-xs font-bold text-muted-foreground uppercase">Ameaças Bloqueadas</p>
-                <p className="text-premium-xs font-bold text-foreground">0 detectadas esta semana</p>
+                <p className="text-premium-xs font-bold text-muted-foreground uppercase">
+                  Ameaças Bloqueadas
+                </p>
+                <p className="text-premium-xs font-bold text-foreground">
+                  0 detectadas esta semana
+                </p>
               </div>
             </div>
             <div className="pt-spacing-md border-t border-border/40 text-premium-xs text-muted-foreground italic leading-relaxed">

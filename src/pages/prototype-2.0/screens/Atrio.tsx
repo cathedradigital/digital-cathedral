@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import PrototypeShell from '../PrototypeShell';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import PrototypeShell from "../PrototypeShell";
 
-const BASE = '/prototype-2.0';
+const BASE = "/prototype-2.0";
 
 const Atrio: React.FC = () => {
   return (

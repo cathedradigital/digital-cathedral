@@ -65,8 +65,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Humildade.",
         themeIds: ["theme.encarnacao", "theme.maria"],
         links: [
-          { kind: "bible", label: "Ler Lc 1,26-38", href: "/bible?book=lc&chapter=1", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §484-489", href: "/catechism?p=484", eyebrow: "A Encarnação" },
+          {
+            kind: "bible",
+            label: "Ler Lc 1,26-38",
+            href: "/bible?book=lc&chapter=1",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §484-489",
+            href: "/catechism?p=484",
+            eyebrow: "A Encarnação",
+          },
         ],
       },
       {
@@ -80,8 +90,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Caridade fraterna.",
         themeIds: ["theme.maria", "theme.caridade"],
         links: [
-          { kind: "bible", label: "Magnificat — Lc 1,46-55", href: "/bible?book=lc&chapter=1", eyebrow: "Cântico" },
-          { kind: "catechism", label: "Catecismo §2619", href: "/catechism?p=2619", eyebrow: "Oração de Maria" },
+          {
+            kind: "bible",
+            label: "Magnificat — Lc 1,46-55",
+            href: "/bible?book=lc&chapter=1",
+            eyebrow: "Cântico",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §2619",
+            href: "/catechism?p=2619",
+            eyebrow: "Oração de Maria",
+          },
         ],
       },
       {
@@ -95,8 +115,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Pobreza de espírito.",
         themeIds: ["theme.encarnacao", "theme.natal"],
         links: [
-          { kind: "bible", label: "Ler Lc 2,1-20", href: "/bible?book=lc&chapter=2", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §525-526", href: "/catechism?p=525", eyebrow: "O Natal" },
+          {
+            kind: "bible",
+            label: "Ler Lc 2,1-20",
+            href: "/bible?book=lc&chapter=2",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §525-526",
+            href: "/catechism?p=525",
+            eyebrow: "O Natal",
+          },
         ],
       },
       {
@@ -110,7 +140,12 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Obediência a Deus.",
         themeIds: ["theme.maria", "theme.templo"],
         links: [
-          { kind: "bible", label: "Ler Lc 2,22-38", href: "/bible?book=lc&chapter=2", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Lc 2,22-38",
+            href: "/bible?book=lc&chapter=2",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -124,7 +159,12 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Fidelidade a Deus em primeiro lugar.",
         themeIds: ["theme.jesus", "theme.templo"],
         links: [
-          { kind: "bible", label: "Ler Lc 2,41-52", href: "/bible?book=lc&chapter=2", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Lc 2,41-52",
+            href: "/bible?book=lc&chapter=2",
+            eyebrow: "Evangelho",
+          },
         ],
       },
     ],
@@ -149,8 +189,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Fidelidade à graça batismal.",
         themeIds: ["theme.batismo", "theme.trindade"],
         links: [
-          { kind: "bible", label: "Ler Mt 3,13-17", href: "/bible?book=mt&chapter=3", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §1213-1216", href: "/catechism?p=1213", eyebrow: "Batismo" },
+          {
+            kind: "bible",
+            label: "Ler Mt 3,13-17",
+            href: "/bible?book=mt&chapter=3",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §1213-1216",
+            href: "/catechism?p=1213",
+            eyebrow: "Batismo",
+          },
         ],
       },
       {
@@ -158,14 +208,23 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "As Bodas de Caná",
         scripture: "Jo 2,1-11",
         scriptureHref: "/bible?book=jo&chapter=2",
-        meditation:
-          "“Fazei tudo o que Ele vos disser.” Maria intercede; Jesus revela sua glória.",
+        meditation: "“Fazei tudo o que Ele vos disser.” Maria intercede; Jesus revela sua glória.",
         intention: "Pela santidade dos esposos e pelas famílias em dificuldade.",
         fruit: "Confiança em Maria.",
         themeIds: ["theme.maria", "theme.matrimonio"],
         links: [
-          { kind: "bible", label: "Ler Jo 2,1-11", href: "/bible?book=jo&chapter=2", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §1613", href: "/catechism?p=1613", eyebrow: "Matrimônio" },
+          {
+            kind: "bible",
+            label: "Ler Jo 2,1-11",
+            href: "/bible?book=jo&chapter=2",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §1613",
+            href: "/catechism?p=1613",
+            eyebrow: "Matrimônio",
+          },
         ],
       },
       {
@@ -179,8 +238,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Conversão contínua.",
         themeIds: ["theme.reino", "theme.conversao"],
         links: [
-          { kind: "bible", label: "Ler Mc 1,14-15", href: "/bible?book=mc&chapter=1", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §1427-1429", href: "/catechism?p=1427", eyebrow: "Conversão" },
+          {
+            kind: "bible",
+            label: "Ler Mc 1,14-15",
+            href: "/bible?book=mc&chapter=1",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §1427-1429",
+            href: "/catechism?p=1427",
+            eyebrow: "Conversão",
+          },
         ],
       },
       {
@@ -188,13 +257,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Transfiguração de Jesus",
         scripture: "Mt 17,1-8",
         scriptureHref: "/bible?book=mt&chapter=17",
-        meditation:
-          "No Tabor, a divindade transparece na humanidade. Vislumbre da glória futura.",
+        meditation: "No Tabor, a divindade transparece na humanidade. Vislumbre da glória futura.",
         intention: "Pela esperança dos que atravessam o Getsêmani da vida.",
         fruit: "Desejo da santidade.",
         themeIds: ["theme.glorificacao"],
         links: [
-          { kind: "bible", label: "Ler Mt 17,1-8", href: "/bible?book=mt&chapter=17", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Mt 17,1-8",
+            href: "/bible?book=mt&chapter=17",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -208,8 +281,18 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Amor à Eucaristia.",
         themeIds: ["theme.eucaristia"],
         links: [
-          { kind: "bible", label: "Ler Lc 22,14-20", href: "/bible?book=lc&chapter=22", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §1322-1327", href: "/catechism?p=1322", eyebrow: "Eucaristia" },
+          {
+            kind: "bible",
+            label: "Ler Lc 22,14-20",
+            href: "/bible?book=lc&chapter=22",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §1322-1327",
+            href: "/catechism?p=1322",
+            eyebrow: "Eucaristia",
+          },
         ],
       },
     ],
@@ -228,13 +311,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Agonia de Jesus no Horto",
         scripture: "Lc 22,39-46",
         scriptureHref: "/bible?book=lc&chapter=22",
-        meditation:
-          "“Não a minha vontade, mas a Tua.” Cristo aceita o cálice por nós.",
+        meditation: "“Não a minha vontade, mas a Tua.” Cristo aceita o cálice por nós.",
         intention: "Pelos que sofrem angústia e tentação.",
         fruit: "Arrependimento dos pecados.",
         themeIds: ["theme.paixao"],
         links: [
-          { kind: "bible", label: "Ler Lc 22,39-46", href: "/bible?book=lc&chapter=22", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Lc 22,39-46",
+            href: "/bible?book=lc&chapter=22",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -242,13 +329,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Flagelação de Jesus",
         scripture: "Jo 19,1",
         scriptureHref: "/bible?book=jo&chapter=19",
-        meditation:
-          "Cada chaga na carne de Cristo é um pecado nosso curado por seu amor.",
+        meditation: "Cada chaga na carne de Cristo é um pecado nosso curado por seu amor.",
         intention: "Pela pureza de corpo e alma.",
         fruit: "Mortificação dos sentidos.",
         themeIds: ["theme.paixao", "theme.pureza"],
         links: [
-          { kind: "bible", label: "Ler Jo 19,1-5", href: "/bible?book=jo&chapter=19", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Jo 19,1-5",
+            href: "/bible?book=jo&chapter=19",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -262,7 +353,12 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Humildade do coração.",
         themeIds: ["theme.paixao"],
         links: [
-          { kind: "bible", label: "Ler Mt 27,27-31", href: "/bible?book=mt&chapter=27", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Mt 27,27-31",
+            href: "/bible?book=mt&chapter=27",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -276,7 +372,12 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         fruit: "Paciência nas provações.",
         themeIds: ["theme.paixao"],
         links: [
-          { kind: "bible", label: "Ler Jo 19,17-24", href: "/bible?book=jo&chapter=19", eyebrow: "Evangelho" },
+          {
+            kind: "bible",
+            label: "Ler Jo 19,17-24",
+            href: "/bible?book=jo&chapter=19",
+            eyebrow: "Evangelho",
+          },
         ],
       },
       {
@@ -284,14 +385,23 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Crucifixão e Morte de Jesus",
         scripture: "Lc 23,33-46",
         scriptureHref: "/bible?book=lc&chapter=23",
-        meditation:
-          "“Pai, perdoai-lhes.” “Está consumado.” O sacrifício perfeito é oferecido.",
+        meditation: "“Pai, perdoai-lhes.” “Está consumado.” O sacrifício perfeito é oferecido.",
         intention: "Pela salvação dos pecadores e pelos moribundos.",
         fruit: "Perdão às ofensas.",
         themeIds: ["theme.paixao", "theme.redencao"],
         links: [
-          { kind: "bible", label: "Ler Lc 23,33-46", href: "/bible?book=lc&chapter=23", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §613-618", href: "/catechism?p=613", eyebrow: "Redenção" },
+          {
+            kind: "bible",
+            label: "Ler Lc 23,33-46",
+            href: "/bible?book=lc&chapter=23",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §613-618",
+            href: "/catechism?p=613",
+            eyebrow: "Redenção",
+          },
         ],
       },
     ],
@@ -310,14 +420,23 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Ressurreição de Jesus",
         scripture: "Mc 16,1-7",
         scriptureHref: "/bible?book=mc&chapter=16",
-        meditation:
-          "A morte foi vencida. Cristo vive e nos chama à vida nova.",
+        meditation: "A morte foi vencida. Cristo vive e nos chama à vida nova.",
         intention: "Pela fé viva na Ressurreição.",
         fruit: "Fé firme.",
         themeIds: ["theme.pascoa", "theme.ressurreicao"],
         links: [
-          { kind: "bible", label: "Ler Mc 16,1-7", href: "/bible?book=mc&chapter=16", eyebrow: "Evangelho" },
-          { kind: "catechism", label: "Catecismo §638-655", href: "/catechism?p=638", eyebrow: "Ressurreição" },
+          {
+            kind: "bible",
+            label: "Ler Mc 16,1-7",
+            href: "/bible?book=mc&chapter=16",
+            eyebrow: "Evangelho",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §638-655",
+            href: "/catechism?p=638",
+            eyebrow: "Ressurreição",
+          },
         ],
       },
       {
@@ -325,13 +444,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Ascensão de Jesus ao Céu",
         scripture: "At 1,9-11",
         scriptureHref: "/bible?book=at&chapter=1",
-        meditation:
-          "Cristo sobe ao Pai. Preparai-vos: Ele vai preparar um lugar para nós.",
+        meditation: "Cristo sobe ao Pai. Preparai-vos: Ele vai preparar um lugar para nós.",
         intention: "Pelo desejo santo do Céu.",
         fruit: "Esperança do Céu.",
         themeIds: ["theme.pascoa"],
         links: [
-          { kind: "bible", label: "Ler At 1,9-11", href: "/bible?book=at&chapter=1", eyebrow: "Escritura" },
+          {
+            kind: "bible",
+            label: "Ler At 1,9-11",
+            href: "/bible?book=at&chapter=1",
+            eyebrow: "Escritura",
+          },
         ],
       },
       {
@@ -339,14 +462,23 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Vinda do Espírito Santo",
         scripture: "At 2,1-4",
         scriptureHref: "/bible?book=at&chapter=2",
-        meditation:
-          "Línguas de fogo. Homens tímidos tornam-se apóstolos intrépidos.",
+        meditation: "Línguas de fogo. Homens tímidos tornam-se apóstolos intrépidos.",
         intention: "Pelos dons do Espírito Santo em nossa vida.",
         fruit: "Ardor apostólico.",
         themeIds: ["theme.espirito-santo", "theme.pentecostes"],
         links: [
-          { kind: "bible", label: "Ler At 2,1-13", href: "/bible?book=at&chapter=2", eyebrow: "Escritura" },
-          { kind: "catechism", label: "Catecismo §731-741", href: "/catechism?p=731", eyebrow: "Pentecostes" },
+          {
+            kind: "bible",
+            label: "Ler At 2,1-13",
+            href: "/bible?book=at&chapter=2",
+            eyebrow: "Escritura",
+          },
+          {
+            kind: "catechism",
+            label: "Catecismo §731-741",
+            href: "/catechism?p=731",
+            eyebrow: "Pentecostes",
+          },
         ],
       },
       {
@@ -354,13 +486,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Assunção de Maria ao Céu",
         scripture: "Ap 12,1",
         scriptureHref: "/bible?book=ap&chapter=12",
-        meditation:
-          "A primeira redimida é elevada em corpo e alma. Sinal de nossa esperança.",
+        meditation: "A primeira redimida é elevada em corpo e alma. Sinal de nossa esperança.",
         intention: "Por uma morte cristã.",
         fruit: "Devoção filial a Maria.",
         themeIds: ["theme.maria"],
         links: [
-          { kind: "catechism", label: "Catecismo §966", href: "/catechism?p=966", eyebrow: "Assunção" },
+          {
+            kind: "catechism",
+            label: "Catecismo §966",
+            href: "/catechism?p=966",
+            eyebrow: "Assunção",
+          },
         ],
       },
       {
@@ -368,13 +504,17 @@ export const MYSTERY_SETS: Record<MysterySet, MysterySetData> = {
         title: "A Coroação de Maria como Rainha",
         scripture: "Ap 12,1; Sl 45,10",
         scriptureHref: "/bible?book=ap&chapter=12",
-        meditation:
-          "Rainha do Céu e da Terra, intercede por nós junto ao trono do Filho.",
+        meditation: "Rainha do Céu e da Terra, intercede por nós junto ao trono do Filho.",
         intention: "Pela intercessão de Maria em nossa vida.",
         fruit: "Perseverança final.",
         themeIds: ["theme.maria"],
         links: [
-          { kind: "catechism", label: "Catecismo §969", href: "/catechism?p=969", eyebrow: "Maternidade espiritual" },
+          {
+            kind: "catechism",
+            label: "Catecismo §969",
+            href: "/catechism?p=969",
+            eyebrow: "Maternidade espiritual",
+          },
         ],
       },
     ],

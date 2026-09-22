@@ -1,24 +1,24 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Icons } from '@/constants';
-import { useNavigate } from '@/lib/rr-compat';
-import { CathedraCard } from './CathedraCard';
-import { Button } from '@/components/ui/button';
-import { Profile, useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/db';
+import React from "react";
+import { motion } from "framer-motion";
+import { Icons } from "@/constants";
+import { useNavigate } from "@/lib/rr-compat";
+import { CathedraCard } from "./CathedraCard";
+import { Button } from "@/components/ui/button";
+import { Profile, useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/lib/db";
 
 interface SpiritualContinuityProps {
   data?: any;
   isLoading?: boolean;
   profile?: Profile | null;
-  variant?: 'default' | 'glass' | 'outline';
+  variant?: "default" | "glass" | "outline";
 }
 
-const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({ 
-  data: propData, 
-  isLoading: propLoading, 
+const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
+  data: propData,
+  isLoading: propLoading,
   profile: propProfile,
-  variant = 'default'
+  variant = "default",
 }) => {
   const navigate = useNavigate();
   const [internalData, setInternalData] = React.useState<any>(null);
@@ -32,21 +32,25 @@ const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
       // Edge function 'spiritual-continuity' está congelada (Sprint Zero freeze).
       // Fonte soberana: histórico local direto, sem chamar a função (evita 503).
       const { data: historyData } = await supabase
-        .from('user_history')
-        .select('title, route, visited_at')
-        .eq('user_id', user.id)
-        .order('visited_at', { ascending: false })
+        .from("user_history")
+        .select("title, route, visited_at")
+        .eq("user_id", user.id)
+        .order("visited_at", { ascending: false })
         .limit(1);
 
       if (historyData?.[0]) {
-        setInternalData({ recommendations: [{
-          title: historyData[0].title,
-          route: historyData[0].route,
-          description: 'Onde você parou'
-        }] });
+        setInternalData({
+          recommendations: [
+            {
+              title: historyData[0].title,
+              route: historyData[0].route,
+              description: "Onde você parou",
+            },
+          ],
+        });
       }
     } catch (err) {
-      console.error('Continuity Internal Error:', err);
+      console.error("Continuity Internal Error:", err);
     } finally {
       setInternalLoading(false);
     }
@@ -62,21 +66,26 @@ const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
     if (!user || propData) return;
 
     const channel = supabase
-      .channel('spiritual_continuity_sync')
+      .channel("spiritual_continuity_sync")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'user_history', filter: `user_id=eq.${user.id}` },
-        () => fetchContinuity()
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_history", filter: `user_id=eq.${user.id}` },
+        () => fetchContinuity(),
       )
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'itineraria_progress', filter: `user_id=eq.${user.id}` },
-        () => fetchContinuity()
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "itineraria_progress",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => fetchContinuity(),
       )
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'reading_marks', filter: `user_id=eq.${user.id}` },
-        () => fetchContinuity()
+        "postgres_changes",
+        { event: "*", schema: "public", table: "reading_marks", filter: `user_id=eq.${user.id}` },
+        () => fetchContinuity(),
       )
       .subscribe();
 
@@ -95,9 +104,9 @@ const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
 
   if (!nextItem) return null;
 
-  const title = nextItem.title || 'Continuação';
-  const subtitle = nextItem.description || 'Onde você parou';
-  const route = nextItem.route || '/';
+  const title = nextItem.title || "Continuação";
+  const subtitle = nextItem.description || "Onde você parou";
+  const route = nextItem.route || "/";
 
   return (
     <motion.div
@@ -105,9 +114,13 @@ const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className="w-full mb-spacing-lg md:mb-spacing-3xl"
     >
-      <CathedraCard variant={variant} padding="none" className="p-spacing-sm md:p-spacing-2xl border-primary/5 bg-primary/[0.005] hover:border-primary/20 transition-all duration-700 relative overflow-hidden group shadow-premium-none">
+      <CathedraCard
+        variant={variant}
+        padding="none"
+        className="p-spacing-sm md:p-spacing-2xl border-primary/5 bg-primary/[0.005] hover:border-primary/20 transition-all duration-700 relative overflow-hidden group shadow-premium-none"
+      >
         <div className="absolute top-spacing-0 right-0 w-spacing-4xl h-spacing-4xl bg-primary/[0.01] rounded-premium-full -mr-spacing-4xl -mt-spacing-4xl blur-3xl group-hover:bg-primary/[0.03] transition-all duration-1000" />
-        
+
         <div className="flex flex-col md:flex-row items-center justify-between gap-spacing-md md:gap-spacing-xl relative z-10">
           <div className="flex items-center gap-spacing-sm md:gap-spacing-lg">
             <div className="w-spacing-2xl h-spacing-2xl md:w-spacing-2xl md:h-spacing-2xl rounded-premium-full bg-primary/5 flex items-center justify-center text-primary/60 border border-primary/5">
@@ -115,20 +128,24 @@ const SpiritualContinuity: React.FC<SpiritualContinuityProps> = ({
             </div>
             <div className="space-y-spacing-2xs text-center md:text-left">
               <p className="text-[9px] font-black uppercase tracking-[0.4em] text-primary/40">
-                {propProfile?.name ? `Você parou aqui, ${propProfile.name.split(' ')[0]}` : 'Retome sua caminhada'}
+                {propProfile?.name
+                  ? `Você parou aqui, ${propProfile.name.split(" ")[0]}`
+                  : "Retome sua caminhada"}
               </p>
               <h3 className="text-premium-lg md:text-premium-2xl font-serif font-bold text-primary/80">
                 {title}
               </h3>
               <p className="text-premium-xs text-primary/60 italic font-serif leading-relaxed max-w-[40ch]">
-                {subtitle === 'Onde você parou' ? 'Continue sua imersão espiritual exatamente de onde interrompeu.' : subtitle}
+                {subtitle === "Onde você parou"
+                  ? "Continue sua imersão espiritual exatamente de onde interrompeu."
+                  : subtitle}
               </p>
             </div>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-center gap-spacing-md w-full md:w-auto">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="rounded-premium-full px-spacing-xl md:px-spacing-2xl h-spacing-2xl md:h-spacing-2xl border border-primary/10 hover:bg-primary/5 text-primary/60 font-bold uppercase tracking-widest text-[9px] md:text-[10px] transition-all duration-700 w-full md:w-auto"
               onClick={() => navigate(route)}
             >

@@ -1,0 +1,800 @@
+[
+  {
+    "rule": "@typescript-eslint/no-explicit-any",
+    "count": 937,
+    "errors": 937,
+    "warnings": 0,
+    "files": 243,
+    "examples": [
+      {
+        "file": "src/App.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 90,
+        "column": 31,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/App.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 95,
+        "column": 35,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/App.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 100,
+        "column": 31,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/App.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 461,
+        "column": 34,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/DoctorReviewQueue.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 123,
+        "column": 78,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/DoctorReviewQueue.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 135,
+        "column": 78,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/DoctorReviewQueue.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 137,
+        "column": 32,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/LandingAnalyticsDashboard.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 20,
+        "column": 31,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/LandingAnalyticsDashboard.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 30,
+        "column": 43,
+        "message": "Unexpected any. Specify a different type."
+      },
+      {
+        "file": "src/components/admin/LeadsDashboard.tsx",
+        "rule": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 31,
+        "column": 36,
+        "message": "Unexpected any. Specify a different type."
+      }
+    ]
+  },
+  {
+    "rule": "react-hooks/exhaustive-deps",
+    "count": 92,
+    "errors": 0,
+    "warnings": 92,
+    "files": 61,
+    "examples": [
+      {
+        "file": "src/components/admin/pg-stats/IntervalCompareCard.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 140,
+        "column": 59,
+        "message": "React Hook useMemo has a missing dependency: 'filterByRange'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/admin/pg-stats/IntervalCompareCard.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 141,
+        "column": 59,
+        "message": "React Hook useMemo has a missing dependency: 'filterByRange'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/cathedra/AZFaithPage.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 43,
+        "column": 9,
+        "message": "The 'allTerms' logical expression could make the dependencies of useEffect Hook (at line 75) change on every render. To fix this, wrap the initialization of 'allTerms' in its own useMemo() Hook."
+      },
+      {
+        "file": "src/components/cathedra/AZFaithPage.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 43,
+        "column": 9,
+        "message": "The 'allTerms' logical expression could make the dependencies of useMemo Hook (at line 91) change on every render. To fix this, wrap the initialization of 'allTerms' in its own useMemo() Hook."
+      },
+      {
+        "file": "src/components/cathedra/AZFaithPage.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 53,
+        "column": 6,
+        "message": "React Hook useMemo has a missing dependency: 'alphabet'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/cathedra/AchievementsPage.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 22,
+        "column": 6,
+        "message": "React Hook useEffect has a missing dependency: 'loadAchievements'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/cathedra/AdminCrmRetention.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 394,
+        "column": 6,
+        "message": "React Hook useMemo has a missing dependency: 'MONTH_ABBR'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/cathedra/AdminDashboard.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 78,
+        "column": 9,
+        "message": "The 'users' logical expression could make the dependencies of useMemo Hook (at line 146) change on every render. To fix this, wrap the initialization of 'users' in its own useMemo() Hook."
+      },
+      {
+        "file": "src/components/cathedra/AdminGuard.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 37,
+        "column": 6,
+        "message": "React Hook useEffect has a missing dependency: 'user'. Either include it or remove the dependency array."
+      },
+      {
+        "file": "src/components/cathedra/AudioContentPlayer.tsx",
+        "rule": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "line": 70,
+        "column": 6,
+        "message": "React Hook useEffect has missing dependencies: 'isPlaying', 'lastPosition', and 'wasPlayingBeforeSilence'. Either include them or remove the dependency array."
+      }
+    ]
+  },
+  {
+    "rule": "prettier/prettier",
+    "count": 73,
+    "errors": 73,
+    "warnings": 0,
+    "files": 2,
+    "examples": [
+      {
+        "file": "public/sw-push.js",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 19,
+        "column": 19,
+        "message": "Replace `⏎····self.registration.showNotification(data.title·||·\"Cathedra\",·options)⏎··` with `self.registration.showNotification(data.title·||·\"Cathedra\",·options)`"
+      },
+      {
+        "file": "public/sw-push.js",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 33,
+        "column": 7,
+        "message": "Insert `,`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 5,
+        "column": 13,
+        "message": "Replace `\"./pages/**/*.{ts,tsx}\",·\"./components/**/*.{ts,tsx}\",·\"./app/**/*.{ts,tsx}\",·\"./src/**/*.{ts,tsx}\"` with `⏎····\"./pages/**/*.{ts,tsx}\",⏎····\"./components/**/*.{ts,tsx}\",⏎····\"./app/**/*.{ts,tsx}\",⏎····\"./src/**/*.{ts,tsx}\",⏎··`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 107,
+        "column": 9,
+        "message": "Replace `'spacing-0':·'0px'` with `\"spacing-0\":·\"0px\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 108,
+        "column": 9,
+        "message": "Replace `'spacing-px':·'1px'` with `\"spacing-px\":·\"1px\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 109,
+        "column": 9,
+        "message": "Replace `'spacing-3xs':·'var(--spacing-3xs)'` with `\"spacing-3xs\":·\"var(--spacing-3xs)\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 110,
+        "column": 9,
+        "message": "Replace `'spacing-2xs':·'var(--spacing-2xs)'` with `\"spacing-2xs\":·\"var(--spacing-2xs)\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 111,
+        "column": 9,
+        "message": "Replace `'spacing-xs':·'var(--spacing-xs)'` with `\"spacing-xs\":·\"var(--spacing-xs)\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 112,
+        "column": 9,
+        "message": "Replace `'spacing-sm':·'var(--spacing-sm)'` with `\"spacing-sm\":·\"var(--spacing-sm)\"`"
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "prettier/prettier",
+        "severity": 2,
+        "line": 113,
+        "column": 9,
+        "message": "Replace `'spacing-md':·'var(--spacing-md)'` with `\"spacing-md\":·\"var(--spacing-md)\"`"
+      }
+    ]
+  },
+  {
+    "rule": "react-refresh/only-export-components",
+    "count": 43,
+    "errors": 0,
+    "warnings": 43,
+    "files": 25,
+    "examples": [
+      {
+        "file": "src/components/PreviewRecoveryControls.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 33,
+        "column": 23,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/BubbleTag.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 62,
+        "column": 14,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/BubbleTag.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 67,
+        "column": 14,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/GlossaryPage.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 32,
+        "column": 17,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/NexusDebugPanel.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 23,
+        "column": 17,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/PricingPage.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 32,
+        "column": 14,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/SpiritualQuiz.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 36,
+        "column": 14,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/cathedra/StaggeredList.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 57,
+        "column": 33,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      },
+      {
+        "file": "src/components/editorial/index.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 20,
+        "column": 1,
+        "message": "This rule can't verify that `export *` only exports components."
+      },
+      {
+        "file": "src/components/landing/LandingFAQ.tsx",
+        "rule": "react-refresh/only-export-components",
+        "severity": 1,
+        "line": 16,
+        "column": 14,
+        "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+      }
+    ]
+  },
+  {
+    "rule": "no-empty",
+    "count": 34,
+    "errors": 34,
+    "warnings": 0,
+    "files": 11,
+    "examples": [
+      {
+        "file": "src/components/MaintenanceGate.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 28,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/MaintenanceGate.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 37,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/MaintenanceGate.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 41,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/PreviewRecoveryControls.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 18,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/PreviewRecoveryControls.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 37,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/PreviewRecoveryControls.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 41,
+        "column": 11,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/cathedra/Bible.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 306,
+        "column": 21,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/cathedra/Bible.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 2444,
+        "column": 63,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/cathedra/MissaContinuousReader.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 329,
+        "column": 15,
+        "message": "Empty block statement."
+      },
+      {
+        "file": "src/components/cathedra/MissaContinuousReader.tsx",
+        "rule": "no-empty",
+        "severity": 2,
+        "line": 338,
+        "column": 13,
+        "message": "Empty block statement."
+      }
+    ]
+  },
+  {
+    "rule": "unknown",
+    "count": 24,
+    "errors": 0,
+    "warnings": 24,
+    "files": 16,
+    "examples": [
+      {
+        "file": "src/components/cathedra/AppErrorBoundary.tsx",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 32,
+        "column": 5,
+        "message": "Unused eslint-disable directive (no problems were reported from 'no-console')."
+      },
+      {
+        "file": "src/components/cathedra/AppErrorBoundary.tsx",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 77,
+        "column": 7,
+        "message": "Unused eslint-disable directive (no problems were reported from 'no-console')."
+      },
+      {
+        "file": "src/components/cathedra/BibleCacheTimeseriesDashboard.tsx",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 241,
+        "column": 3,
+        "message": "Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')."
+      },
+      {
+        "file": "src/components/cathedra/SaintsFilters.tsx",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 89,
+        "column": 5,
+        "message": "Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')."
+      },
+      {
+        "file": "src/features/collections/adminHooks.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 148,
+        "column": 7,
+        "message": "Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')."
+      },
+      {
+        "file": "src/features/collections/collectionAnalytics.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 80,
+        "column": 7,
+        "message": "Unused eslint-disable directive (no problems were reported from 'no-console')."
+      },
+      {
+        "file": "src/features/collections/searchCollections.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 42,
+        "column": 5,
+        "message": "Unused eslint-disable directive (no problems were reported from 'no-console')."
+      },
+      {
+        "file": "src/hooks/useFuzzySearch.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 143,
+        "column": 5,
+        "message": "Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')."
+      },
+      {
+        "file": "src/hooks/useRenderPerf.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 32,
+        "column": 7,
+        "message": "Unused eslint-disable directive (no problems were reported from 'no-console')."
+      },
+      {
+        "file": "src/hooks/useRenderPerf.ts",
+        "rule": "unknown",
+        "severity": 1,
+        "line": 37,
+        "column": 5,
+        "message": "Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')."
+      }
+    ]
+  },
+  {
+    "rule": "react-hooks/rules-of-hooks",
+    "count": 8,
+    "errors": 8,
+    "warnings": 0,
+    "files": 5,
+    "examples": [
+      {
+        "file": "src/components/admin/SaintsAuditPanel.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 82,
+        "column": 17,
+        "message": "React Hook \"useMemo\" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?"
+      },
+      {
+        "file": "src/components/cathedra/MagisteriumDiagnosticPanel.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 175,
+        "column": 21,
+        "message": "React Hook \"useMemo\" is called conditionally. React Hooks must be called in the exact same order in every component render."
+      },
+      {
+        "file": "src/components/cathedra/PrayerEngineReader.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 1087,
+        "column": 23,
+        "message": "React Hook \"useMemo\" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?"
+      },
+      {
+        "file": "src/components/nexus/NexusMetricsOverlay.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 68,
+        "column": 27,
+        "message": "React Hook \"React.useState\" is called conditionally. React Hooks must be called in the exact same order in every component render."
+      },
+      {
+        "file": "src/components/nexus/NexusMetricsOverlay.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 69,
+        "column": 27,
+        "message": "React Hook \"React.useState\" is called conditionally. React Hooks must be called in the exact same order in every component render."
+      },
+      {
+        "file": "src/components/nexus/NexusMetricsOverlay.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 77,
+        "column": 3,
+        "message": "React Hook \"React.useEffect\" is called conditionally. React Hooks must be called in the exact same order in every component render."
+      },
+      {
+        "file": "src/components/nexus/NexusMetricsOverlay.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 79,
+        "column": 3,
+        "message": "React Hook \"React.useEffect\" is called conditionally. React Hooks must be called in the exact same order in every component render."
+      },
+      {
+        "file": "src/pages/admin/MissionControl.tsx",
+        "rule": "react-hooks/rules-of-hooks",
+        "severity": 2,
+        "line": 168,
+        "column": 59,
+        "message": "React Hook \"useEditorialSummary\" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function."
+      }
+    ]
+  },
+  {
+    "rule": "@typescript-eslint/no-unused-expressions",
+    "count": 4,
+    "errors": 4,
+    "warnings": 0,
+    "files": 4,
+    "examples": [
+      {
+        "file": "src/components/bible-perf/SqlBreakdownSection.tsx",
+        "rule": "@typescript-eslint/no-unused-expressions",
+        "severity": 2,
+        "line": 95,
+        "column": 5,
+        "message": "Expected an assignment or function call and instead saw an expression."
+      },
+      {
+        "file": "src/pages/admin/BibleGatePendencies.tsx",
+        "rule": "@typescript-eslint/no-unused-expressions",
+        "severity": 2,
+        "line": 206,
+        "column": 7,
+        "message": "Expected an assignment or function call and instead saw an expression."
+      },
+      {
+        "file": "src/pages/admin/BibleImportMissing.tsx",
+        "rule": "@typescript-eslint/no-unused-expressions",
+        "severity": 2,
+        "line": 155,
+        "column": 7,
+        "message": "Expected an assignment or function call and instead saw an expression."
+      },
+      {
+        "file": "src/pages/admin/IntegrationsStatus.tsx",
+        "rule": "@typescript-eslint/no-unused-expressions",
+        "severity": 2,
+        "line": 212,
+        "column": 5,
+        "message": "Expected an assignment or function call and instead saw an expression."
+      }
+    ]
+  },
+  {
+    "rule": "@typescript-eslint/no-empty-object-type",
+    "count": 3,
+    "errors": 3,
+    "warnings": 0,
+    "files": 3,
+    "examples": [
+      {
+        "file": "src/components/cathedra/AdminDashboard.tsx",
+        "rule": "@typescript-eslint/no-empty-object-type",
+        "severity": 2,
+        "line": 40,
+        "column": 11,
+        "message": "An interface declaring no members is equivalent to its supertype."
+      },
+      {
+        "file": "src/components/cathedra/BibleVersePopover.tsx",
+        "rule": "@typescript-eslint/no-empty-object-type",
+        "severity": 2,
+        "line": 46,
+        "column": 11,
+        "message": "An interface declaring no members is equivalent to its supertype."
+      },
+      {
+        "file": "src/components/editorial/primitives.tsx",
+        "rule": "@typescript-eslint/no-empty-object-type",
+        "severity": 2,
+        "line": 538,
+        "column": 18,
+        "message": "An interface declaring no members is equivalent to its supertype."
+      }
+    ]
+  },
+  {
+    "rule": "prefer-const",
+    "count": 3,
+    "errors": 3,
+    "warnings": 0,
+    "files": 3,
+    "examples": [
+      {
+        "file": "src/integrations/supabase/previewAuthStorage.ts",
+        "rule": "prefer-const",
+        "severity": 2,
+        "line": 54,
+        "column": 11,
+        "message": "'timer' is never reassigned. Use 'const' instead."
+      },
+      {
+        "file": "src/lib/design-system-audit.ts",
+        "rule": "prefer-const",
+        "severity": 2,
+        "line": 35,
+        "column": 7,
+        "message": "'colors' is never reassigned. Use 'const' instead."
+      },
+      {
+        "file": "src/scripts/generate-compliance-report.ts",
+        "rule": "prefer-const",
+        "severity": 2,
+        "line": 348,
+        "column": 5,
+        "message": "'html' is never reassigned. Use 'const' instead."
+      }
+    ]
+  },
+  {
+    "rule": "@typescript-eslint/no-require-imports",
+    "count": 2,
+    "errors": 2,
+    "warnings": 0,
+    "files": 2,
+    "examples": [
+      {
+        "file": "src/components/cathedra/BibleKnowledgeAudit.tsx",
+        "rule": "@typescript-eslint/no-require-imports",
+        "severity": 2,
+        "line": 2305,
+        "column": 63,
+        "message": "A `require()` style import is forbidden."
+      },
+      {
+        "file": "tailwind.config.legacy.ts",
+        "rule": "@typescript-eslint/no-require-imports",
+        "severity": 2,
+        "line": 231,
+        "column": 13,
+        "message": "A `require()` style import is forbidden."
+      }
+    ]
+  },
+  {
+    "rule": "no-control-regex",
+    "count": 2,
+    "errors": 2,
+    "warnings": 0,
+    "files": 1,
+    "examples": [
+      {
+        "file": "src/lib/glossary/sanitizeFaq.ts",
+        "rule": "no-control-regex",
+        "severity": 2,
+        "line": 295,
+        "column": 7,
+        "message": "Unexpected control character(s) in regular expression: \\x00, \\x08, \\x0b, \\x0c, \\x0e, \\x1f."
+      },
+      {
+        "file": "src/lib/glossary/sanitizeFaq.ts",
+        "rule": "no-control-regex",
+        "severity": 2,
+        "line": 345,
+        "column": 23,
+        "message": "Unexpected control character(s) in regular expression: \\x00, \\x08, \\x0b, \\x0c, \\x0e, \\x1f."
+      }
+    ]
+  },
+  {
+    "rule": "@typescript-eslint/ban-ts-comment",
+    "count": 1,
+    "errors": 1,
+    "warnings": 0,
+    "files": 1,
+    "examples": [
+      {
+        "file": "src/hooks/useWakeLock.ts",
+        "rule": "@typescript-eslint/ban-ts-comment",
+        "severity": 2,
+        "line": 24,
+        "column": 7,
+        "message": "Use \"@ts-expect-error\" instead of \"@ts-ignore\", as \"@ts-ignore\" will do nothing if the following line is error-free."
+      }
+    ]
+  },
+  {
+    "rule": "no-useless-escape",
+    "count": 1,
+    "errors": 1,
+    "warnings": 0,
+    "files": 1,
+    "examples": [
+      {
+        "file": "src/lib/nexusContent.ts",
+        "rule": "no-useless-escape",
+        "severity": 2,
+        "line": 51,
+        "column": 76,
+        "message": "Unnecessary escape character: \\-."
+      }
+    ]
+  }
+]

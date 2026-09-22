@@ -5,42 +5,38 @@
  * pipeline stage, checklist de certificação, ICE e status. Nenhum botão de
  * ação nesta versão: importação e certificação chegam em P0.2.2.2+.
  */
-import { useMemo } from 'react';
-import { Navigate } from '@/lib/rr-compat';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/db';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Check, X, Loader2 } from 'lucide-react';
+import { useMemo } from "react";
+import { Navigate } from "@/lib/rr-compat";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/db";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Check, X, Loader2 } from "lucide-react";
 
 type PhaseCode =
-  | 'A_pentateuco'
-  | 'B_historicos'
-  | 'C_sapienciais'
-  | 'D_profetas'
-  | 'E_novo_testamento';
+  "A_pentateuco" | "B_historicos" | "C_sapienciais" | "D_profetas" | "E_novo_testamento";
 
 const PHASE_LABEL: Record<PhaseCode, string> = {
-  A_pentateuco: 'A · Pentateuco',
-  B_historicos: 'B · Históricos',
-  C_sapienciais: 'C · Sapienciais',
-  D_profetas: 'D · Profetas',
-  E_novo_testamento: 'E · Novo Testamento',
+  A_pentateuco: "A · Pentateuco",
+  B_historicos: "B · Históricos",
+  C_sapienciais: "C · Sapienciais",
+  D_profetas: "D · Profetas",
+  E_novo_testamento: "E · Novo Testamento",
 };
 
 type PipelineStage =
-  | 'draft'
-  | 'importing'
-  | 'integrity_check'
-  | 'editorial_review'
-  | 'ice'
-  | 'certified'
-  | 'primary'
-  | 'archived';
+  | "draft"
+  | "importing"
+  | "integrity_check"
+  | "editorial_review"
+  | "ice"
+  | "certified"
+  | "primary"
+  | "archived";
 
-type PhaseStatus = 'pending' | 'importing' | 'imported' | 'certified' | 'rejected';
+type PhaseStatus = "pending" | "importing" | "imported" | "certified" | "rejected";
 
 interface PhaseRow {
   translation_id: string;
@@ -69,30 +65,30 @@ interface PhaseRow {
 }
 
 const PIPELINE_LABEL: Record<PipelineStage, string> = {
-  draft: 'Draft',
-  importing: 'Em Importação',
-  integrity_check: 'Integridade',
-  editorial_review: 'Em Revisão',
-  ice: 'ICE',
-  certified: 'Certificada',
-  primary: 'Primária',
-  archived: 'Arquivada',
+  draft: "Draft",
+  importing: "Em Importação",
+  integrity_check: "Integridade",
+  editorial_review: "Em Revisão",
+  ice: "ICE",
+  certified: "Certificada",
+  primary: "Primária",
+  archived: "Arquivada",
 };
 
 const STATUS_LABEL: Record<PhaseStatus, string> = {
-  pending: 'Pendente',
-  importing: 'Importando',
-  imported: 'Importada',
-  certified: 'Certificada',
-  rejected: 'Reprovada',
+  pending: "Pendente",
+  importing: "Importando",
+  imported: "Importada",
+  certified: "Certificada",
+  rejected: "Reprovada",
 };
 
-const STATUS_VARIANT: Record<PhaseStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  pending: 'outline',
-  importing: 'secondary',
-  imported: 'secondary',
-  certified: 'default',
-  rejected: 'destructive',
+const STATUS_VARIANT: Record<PhaseStatus, "default" | "secondary" | "destructive" | "outline"> = {
+  pending: "outline",
+  importing: "secondary",
+  imported: "secondary",
+  certified: "default",
+  rejected: "destructive",
 };
 
 function pct(n: number, total: number): number {
@@ -101,19 +97,21 @@ function pct(n: number, total: number): number {
 }
 
 function CheckIcon({ ok }: { ok: boolean }) {
-  return ok
-    ? <Check className="h-3.5 w-3.5 text-emerald-600" aria-label="ok" />
-    : <X className="h-3.5 w-3.5 text-muted-foreground" aria-label="pendente" />;
+  return ok ? (
+    <Check className="h-3.5 w-3.5 text-emerald-600" aria-label="ok" />
+  ) : (
+    <X className="h-3.5 w-3.5 text-muted-foreground" aria-label="pendente" />
+  );
 }
 
 export default function BiblePhasesAdmin() {
   const { isAdmin, isLoading: adminLoading } = useIsAdmin();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['bible-phase-summary'],
+    queryKey: ["bible-phase-summary"],
     enabled: isAdmin,
     queryFn: async (): Promise<PhaseRow[]> => {
-      const { data, error } = await supabase.rpc('get_bible_phase_summary');
+      const { data, error } = await supabase.rpc("get_bible_phase_summary");
       if (error) throw error;
       return (data ?? []) as PhaseRow[];
     },
@@ -144,8 +142,8 @@ export default function BiblePhasesAdmin() {
         <h1 className="text-3xl font-serif tracking-tight">Bíblia · Torre de Controle</h1>
         <p className="text-sm text-muted-foreground mt-2 max-w-3xl">
           Painel somente-leitura de importação certificada. Cada tradução avança pelo pipeline
-          editorial (<em>draft → importing → integrity → review → ICE → certified → primary</em>)
-          e só é promovida quando as 5 fases canônicas passam nos gates.
+          editorial (<em>draft → importing → integrity → review → ICE → certified → primary</em>) e
+          só é promovida quando as 5 fases canônicas passam nos gates.
         </p>
       </header>
 
@@ -177,7 +175,9 @@ export default function BiblePhasesAdmin() {
                     <span>·</span>
                     <span>status: {head.translation_status}</span>
                     {head.is_primary && (
-                      <Badge variant="default" className="ml-2">primária</Badge>
+                      <Badge variant="default" className="ml-2">
+                        primária
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -220,22 +220,42 @@ export default function BiblePhasesAdmin() {
                             <td className="py-3 pr-3 tabular-nums">
                               {r.actual_chapters}/{r.expected_chapters}
                             </td>
-                            <td className="py-3 pr-3 tabular-nums">{Number(r.actual_verses).toLocaleString('pt-BR')}</td>
+                            <td className="py-3 pr-3 tabular-nums">
+                              {Number(r.actual_verses).toLocaleString("pt-BR")}
+                            </td>
                             <td className="py-3 pr-3">
                               <div className="grid grid-cols-3 gap-x-3 gap-y-1 text-xs">
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_reader} /> Reader</div>
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_popovers} /> Popovers</div>
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_nexus} /> Nexus</div>
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_navigation} /> Navegação</div>
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_continuity} /> Continuidade</div>
-                                <div className="flex items-center gap-1"><CheckIcon ok={r.check_search} /> Busca</div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_reader} /> Reader
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_popovers} /> Popovers
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_nexus} /> Nexus
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_navigation} /> Navegação
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_continuity} /> Continuidade
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <CheckIcon ok={r.check_search} /> Busca
+                                </div>
                               </div>
                             </td>
                             <td className="py-3 pr-3 tabular-nums">
-                              {r.ice_score != null ? r.ice_score : <span className="text-muted-foreground">—</span>}
+                              {r.ice_score != null ? (
+                                r.ice_score
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
                             </td>
                             <td className="py-3 pr-3">
-                              <Badge variant={STATUS_VARIANT[r.status]}>{STATUS_LABEL[r.status]}</Badge>
+                              <Badge variant={STATUS_VARIANT[r.status]}>
+                                {STATUS_LABEL[r.status]}
+                              </Badge>
                             </td>
                           </tr>
                         );
@@ -243,10 +263,14 @@ export default function BiblePhasesAdmin() {
                     </tbody>
                     <tfoot>
                       <tr className="text-xs text-muted-foreground">
-                        <td className="pt-3" colSpan={4}>Total versículos importados nesta tradução</td>
+                        <td className="pt-3" colSpan={4}>
+                          Total versículos importados nesta tradução
+                        </td>
                         <td className="pt-3 tabular-nums" colSpan={4}>
-                          {totalActualVerses.toLocaleString('pt-BR')}
-                          <span className="ml-1 opacity-60">(aprox. esperado: {totalExpectedVerses.toLocaleString('pt-BR')})</span>
+                          {totalActualVerses.toLocaleString("pt-BR")}
+                          <span className="ml-1 opacity-60">
+                            (aprox. esperado: {totalExpectedVerses.toLocaleString("pt-BR")})
+                          </span>
                         </td>
                       </tr>
                     </tfoot>

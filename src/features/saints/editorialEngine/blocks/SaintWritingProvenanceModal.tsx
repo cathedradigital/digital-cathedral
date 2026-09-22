@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   BookOpen,
   ExternalLink,
@@ -7,15 +7,15 @@ import {
   Check,
   X,
   AlertTriangle,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import type { SaintWritingRef } from '../types';
+} from "@/components/ui/dialog";
+import type { SaintWritingRef } from "../types";
 
 interface Props {
   writing: SaintWritingRef | null;
@@ -25,7 +25,7 @@ interface Props {
 
 interface UsageScope {
   label: string;
-  allowed: 'yes' | 'no' | 'conditional';
+  allowed: "yes" | "no" | "conditional";
   note?: string;
 }
 
@@ -34,7 +34,7 @@ interface UsageScope {
  * Heurística editorial — não substitui parecer jurídico, mas orienta o leitor.
  */
 function deriveUsageScope(w: SaintWritingRef): UsageScope[] {
-  const license = (w.license ?? '').toLowerCase();
+  const license = (w.license ?? "").toLowerCase();
   const isCC0 = /cc0|public domain dedication/.test(license);
   const isCCBy = /cc[\s-]?by(?![\s-]?nc|[\s-]?nd|[\s-]?sa)/.test(license);
   const isCCBySa = /cc[\s-]?by[\s-]?sa/.test(license);
@@ -44,59 +44,61 @@ function deriveUsageScope(w: SaintWritingRef): UsageScope[] {
 
   if (pd) {
     return [
-      { label: 'Leitura pessoal', allowed: 'yes' },
-      { label: 'Citação em estudos', allowed: 'yes' },
-      { label: 'Redistribuição', allowed: 'yes' },
-      { label: 'Uso comercial', allowed: 'yes' },
-      { label: 'Obras derivadas', allowed: 'yes' },
+      { label: "Leitura pessoal", allowed: "yes" },
+      { label: "Citação em estudos", allowed: "yes" },
+      { label: "Redistribuição", allowed: "yes" },
+      { label: "Uso comercial", allowed: "yes" },
+      { label: "Obras derivadas", allowed: "yes" },
       {
-        label: 'Atribuição',
-        allowed: 'conditional',
-        note: 'Recomendada por cortesia editorial, ainda que não exigida.',
+        label: "Atribuição",
+        allowed: "conditional",
+        note: "Recomendada por cortesia editorial, ainda que não exigida.",
       },
     ];
   }
   if (isCCBy || isCCBySa) {
     return [
-      { label: 'Leitura pessoal', allowed: 'yes' },
-      { label: 'Redistribuição com crédito', allowed: 'yes' },
-      { label: 'Uso comercial', allowed: 'yes' },
+      { label: "Leitura pessoal", allowed: "yes" },
+      { label: "Redistribuição com crédito", allowed: "yes" },
+      { label: "Uso comercial", allowed: "yes" },
       {
-        label: 'Obras derivadas',
-        allowed: isCCBySa ? 'conditional' : 'yes',
-        note: isCCBySa ? 'Compartilhar sob a mesma licença (SA).' : undefined,
+        label: "Obras derivadas",
+        allowed: isCCBySa ? "conditional" : "yes",
+        note: isCCBySa ? "Compartilhar sob a mesma licença (SA)." : undefined,
       },
-      { label: 'Atribuição obrigatória', allowed: 'yes' },
+      { label: "Atribuição obrigatória", allowed: "yes" },
     ];
   }
   if (isCCByNc) {
     return [
-      { label: 'Leitura pessoal', allowed: 'yes' },
-      { label: 'Uso educacional sem fins lucrativos', allowed: 'yes' },
-      { label: 'Uso comercial', allowed: 'no' },
-      { label: 'Atribuição obrigatória', allowed: 'yes' },
+      { label: "Leitura pessoal", allowed: "yes" },
+      { label: "Uso educacional sem fins lucrativos", allowed: "yes" },
+      { label: "Uso comercial", allowed: "no" },
+      { label: "Atribuição obrigatória", allowed: "yes" },
     ];
   }
   if (isCCByNd) {
     return [
-      { label: 'Leitura pessoal', allowed: 'yes' },
-      { label: 'Redistribuição integral', allowed: 'yes' },
-      { label: 'Obras derivadas', allowed: 'no' },
-      { label: 'Atribuição obrigatória', allowed: 'yes' },
+      { label: "Leitura pessoal", allowed: "yes" },
+      { label: "Redistribuição integral", allowed: "yes" },
+      { label: "Obras derivadas", allowed: "no" },
+      { label: "Atribuição obrigatória", allowed: "yes" },
     ];
   }
   return [
-    { label: 'Leitura pessoal no Cathedra', allowed: 'yes' },
+    { label: "Leitura pessoal no Cathedra", allowed: "yes" },
     {
-      label: 'Redistribuição / uso comercial',
-      allowed: 'conditional',
-      note: 'Verifique os termos da fonte oficial antes de reutilizar.',
+      label: "Redistribuição / uso comercial",
+      allowed: "conditional",
+      note: "Verifique os termos da fonte oficial antes de reutilizar.",
     },
   ];
 }
 
-const SCOPE_ICON: Record<UsageScope['allowed'], React.ReactNode> = {
-  yes: <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-label="Permitido" />,
+const SCOPE_ICON: Record<UsageScope["allowed"], React.ReactNode> = {
+  yes: (
+    <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-label="Permitido" />
+  ),
   no: <X className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" aria-label="Não permitido" />,
   conditional: (
     <AlertTriangle
@@ -114,11 +116,7 @@ const SCOPE_ICON: Record<UsageScope['allowed'], React.ReactNode> = {
  * foco inicial no primeiro elemento focável, retorno ao gatilho ao fechar,
  * fechamento por Escape e navegação por Tab.
  */
-export const SaintWritingProvenanceModal: React.FC<Props> = ({
-  writing,
-  open,
-  onOpenChange,
-}) => {
+export const SaintWritingProvenanceModal: React.FC<Props> = ({ writing, open, onOpenChange }) => {
   if (!writing) return null;
   const isInternal = Boolean(writing.slug);
   const canonical = writing.canonicalUrl ?? writing.externalUrl;
@@ -138,8 +136,8 @@ export const SaintWritingProvenanceModal: React.FC<Props> = ({
           </DialogTitle>
           <DialogDescription>
             {isInternal
-              ? 'Hospedado no Cathedra — texto editado e revisado internamente.'
-              : `Conteúdo linkado${writing.externalSourceLabel ? ` · ${writing.externalSourceLabel}` : ''}.`}
+              ? "Hospedado no Cathedra — texto editado e revisado internamente."
+              : `Conteúdo linkado${writing.externalSourceLabel ? ` · ${writing.externalSourceLabel}` : ""}.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -161,8 +159,8 @@ export const SaintWritingProvenanceModal: React.FC<Props> = ({
               <ShieldCheck className="w-4 h-4 mt-0.5 text-primary/70 flex-shrink-0" aria-hidden />
               <span>
                 {writing.isPublicDomain
-                  ? `Domínio público${writing.license ? ` · ${writing.license}` : ''}`
-                  : writing.license ?? 'Licença não informada.'}
+                  ? `Domínio público${writing.license ? ` · ${writing.license}` : ""}`
+                  : (writing.license ?? "Licença não informada.")}
               </span>
             </dd>
           </div>
@@ -174,10 +172,7 @@ export const SaintWritingProvenanceModal: React.FC<Props> = ({
             <dd className="mt-1">
               <ul className="grid grid-cols-1 gap-1.5" aria-label="Escopo de uso">
                 {scopes.map((s) => (
-                  <li
-                    key={s.label}
-                    className="flex items-start gap-2 text-foreground/90"
-                  >
+                  <li key={s.label} className="flex items-start gap-2 text-foreground/90">
                     <span className="mt-0.5 flex-shrink-0">{SCOPE_ICON[s.allowed]}</span>
                     <span>
                       <span className="font-medium">{s.label}</span>
@@ -230,4 +225,3 @@ export const SaintWritingProvenanceModal: React.FC<Props> = ({
     </Dialog>
   );
 };
-

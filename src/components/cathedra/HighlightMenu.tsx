@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Icons } from '@/constants';
-import { cn } from '@/lib/utils';
-import PassageActions from '@/components/shared/PassageActions';
-import type { PassageDescriptor } from '@/lib/passageUrl';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icons } from "@/constants";
+import { cn } from "@/lib/utils";
+import PassageActions from "@/components/shared/PassageActions";
+import type { PassageDescriptor } from "@/lib/passageUrl";
 
 interface HighlightMenuProps {
   isOpen: boolean;
@@ -19,10 +19,10 @@ interface HighlightMenuProps {
 }
 
 const COLORS = [
-  { name: 'yellow', bg: 'bg-yellow-200', label: 'Amarelo' },
-  { name: 'green', bg: 'bg-green-200', label: 'Verde' },
-  { name: 'blue', bg: 'bg-blue-200', label: 'Azul' },
-  { name: 'red', bg: 'bg-red-200', label: 'Vermelho' },
+  { name: "yellow", bg: "bg-yellow-200", label: "Amarelo" },
+  { name: "green", bg: "bg-green-200", label: "Verde" },
+  { name: "blue", bg: "bg-blue-200", label: "Azul" },
+  { name: "red", bg: "bg-red-200", label: "Vermelho" },
 ];
 
 export const HighlightMenu: React.FC<HighlightMenuProps> = ({
@@ -77,7 +77,7 @@ export const HighlightMenu: React.FC<HighlightMenuProps> = ({
                   >
                     <div
                       className={cn(
-                        'w-12 h-12 rounded-full shadow-sm border border-primary/5 transition-transform group-active:scale-90',
+                        "w-12 h-12 rounded-full shadow-sm border border-primary/5 transition-transform group-active:scale-90",
                         color.bg,
                       )}
                     />

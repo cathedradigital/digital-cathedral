@@ -1,17 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, useSearchParams, Link, Navigate } from '@/lib/rr-compat';
-import { Icons } from '@/constants';
-import { EditorialHero } from '@/components/editorial/harmony/EditorialHero';
-import { NexusPanel, ReaderShell } from '@/components/reader';
-import { resolvePrayerAutoNexus } from '@/core/knowledge/adapters/prayerAutoNexus';
-import { ReaderContinuation } from '@/components/shared/ReaderContinuation';
-import { EditorialCard } from '@/components/editorial/harmony/EditorialCard';
-import { Button } from '@/components/ui/button';
-import { getNovenaBySlug } from '@/data/novenas';
-import { loadProgress, saveProgress, type NovenaProgress } from '@/lib/novenas/progress';
-import { generateNovenaProgressPdf } from '@/lib/novenas/pdf';
-import { toast } from 'sonner';
-
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams, Link, Navigate } from "@/lib/rr-compat";
+import { Icons } from "@/constants";
+import { EditorialHero } from "@/components/editorial/harmony/EditorialHero";
+import { NexusPanel, ReaderShell } from "@/components/reader";
+import { resolvePrayerAutoNexus } from "@/core/knowledge/adapters/prayerAutoNexus";
+import { ReaderContinuation } from "@/components/shared/ReaderContinuation";
+import { EditorialCard } from "@/components/editorial/harmony/EditorialCard";
+import { Button } from "@/components/ui/button";
+import { getNovenaBySlug } from "@/data/novenas";
+import { loadProgress, saveProgress, type NovenaProgress } from "@/lib/novenas/progress";
+import { generateNovenaProgressPdf } from "@/lib/novenas/pdf";
+import { toast } from "sonner";
 
 const NovenaDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -22,7 +21,7 @@ const NovenaDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (!slug) return;
-    const requestedDay = Number(searchParams.get('dia'));
+    const requestedDay = Number(searchParams.get("dia"));
     const total = novena?.days.length ?? 9;
     const clampDay = (d: number) => Math.min(Math.max(1, d), total);
     const existing = loadProgress(slug);
@@ -43,7 +42,6 @@ const NovenaDetailPage: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
-
 
   const currentDay = progress?.currentDay ?? 1;
   const completedSet = useMemo(() => new Set(progress?.completedDays ?? []), [progress]);
@@ -80,7 +78,11 @@ const NovenaDetailPage: React.FC = () => {
 
   const resetProgress = () => {
     if (!progress) return;
-    const next: NovenaProgress = { startedAt: new Date().toISOString(), completedDays: [], currentDay: 1 };
+    const next: NovenaProgress = {
+      startedAt: new Date().toISOString(),
+      completedDays: [],
+      currentDay: 1,
+    };
     setProgress(next);
     saveProgress(novena.slug, next);
   };
@@ -99,22 +101,20 @@ const NovenaDetailPage: React.FC = () => {
     }
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      toast.success('Link copiado para a área de transferência.');
+      toast.success("Link copiado para a área de transferência.");
     } catch {
-      toast.error('Não foi possível compartilhar.');
+      toast.error("Não foi possível compartilhar.");
     }
   };
   const handleDownloadPdf = () => {
     if (!progress) return;
     try {
       generateNovenaProgressPdf(novena, progress);
-      toast.success('PDF gerado com seu progresso.');
+      toast.success("PDF gerado com seu progresso.");
     } catch {
-      toast.error('Não foi possível gerar o PDF.');
+      toast.error("Não foi possível gerar o PDF.");
     }
   };
-
-
 
   // Reader Template Master: hero no slot `hero`, corpo em children,
   // continuidade no slot `continuation` — mesmo esqueleto dos demais leitores.
@@ -124,7 +124,9 @@ const NovenaDetailPage: React.FC = () => {
       ariaLabel={`Novena — ${novena.title}`}
       hero={
         <EditorialHero align="center" density="balanced">
-          <EditorialHero.Eyebrow>Dia {currentDay} de {totalDays}</EditorialHero.Eyebrow>
+          <EditorialHero.Eyebrow>
+            Dia {currentDay} de {totalDays}
+          </EditorialHero.Eyebrow>
           <EditorialHero.Title>{novena.title}</EditorialHero.Title>
           {novena.latin && (
             <EditorialHero.Subtitle>
@@ -138,7 +140,7 @@ const NovenaDetailPage: React.FC = () => {
           output={resolvePrayerAutoNexus({
             slug: novena.slug,
             title: novena.title,
-            category: 'novena',
+            category: "novena",
           })}
           kicker={`Conexões · ${novena.title}`}
         />
@@ -146,9 +148,9 @@ const NovenaDetailPage: React.FC = () => {
       continuation={
         <ReaderContinuation
           context={{
-            kind: 'prayer',
+            kind: "prayer",
             id: novena.slug,
-            meta: { prayerCategory: 'novena' },
+            meta: { prayerCategory: "novena" },
           }}
         />
       }
@@ -165,7 +167,9 @@ const NovenaDetailPage: React.FC = () => {
       {/* Progresso */}
       <div className="max-w-3xl mx-auto space-y-[var(--sp-s)]">
         <div className="flex items-center justify-between type-caption text-muted-foreground">
-          <span>{completedCount}/{totalDays} dias completos</span>
+          <span>
+            {completedCount}/{totalDays} dias completos
+          </span>
           <span>{percent}%</span>
         </div>
         <div className="h-1.5 rounded-full bg-muted overflow-hidden">
@@ -183,15 +187,15 @@ const NovenaDetailPage: React.FC = () => {
                 key={d.day}
                 onClick={() => goToDay(d.day)}
                 aria-label={`Ir para o dia ${d.day}`}
-                aria-current={active ? 'true' : undefined}
+                aria-current={active ? "true" : undefined}
                 className={[
-                  'w-8 h-8 rounded-full type-caption font-medium transition-all',
+                  "w-8 h-8 rounded-full type-caption font-medium transition-all",
                   active
-                    ? 'bg-primary text-primary-foreground scale-110'
+                    ? "bg-primary text-primary-foreground scale-110"
                     : done
-                    ? 'bg-[hsl(var(--rule-gold))]/20 text-foreground border border-[hsl(var(--rule-gold))]/40'
-                    : 'bg-card text-muted-foreground border border-border hover:border-primary/40',
-                ].join(' ')}
+                      ? "bg-[hsl(var(--rule-gold))]/20 text-foreground border border-[hsl(var(--rule-gold))]/40"
+                      : "bg-card text-muted-foreground border border-border hover:border-primary/40",
+                ].join(" ")}
               >
                 {d.day}
               </button>
@@ -212,11 +216,11 @@ const NovenaDetailPage: React.FC = () => {
 
       {/* Dia atual */}
       <EditorialCard density="balanced" className="max-w-3xl mx-auto">
-        <EditorialCard.Eyebrow>Dia {day.day} · {day.title}</EditorialCard.Eyebrow>
+        <EditorialCard.Eyebrow>
+          Dia {day.day} · {day.title}
+        </EditorialCard.Eyebrow>
         <EditorialCard.Title>{day.title}</EditorialCard.Title>
-        {day.scripture && (
-          <p className="type-rubrica text-primary">{day.scripture}</p>
-        )}
+        {day.scripture && <p className="type-rubrica text-primary">{day.scripture}</p>}
         <EditorialCard.Description>
           <span className="font-serif text-premium-lg leading-relaxed text-foreground/85 block">
             {day.meditation}
@@ -237,7 +241,9 @@ const NovenaDetailPage: React.FC = () => {
           </span>
         </EditorialCard.Description>
         <div className="pt-[var(--sp-s)] border-t border-border/40 mt-[var(--sp-s)]">
-          <p className="font-serif italic text-foreground/70 whitespace-pre-line">{novena.closing}</p>
+          <p className="font-serif italic text-foreground/70 whitespace-pre-line">
+            {novena.closing}
+          </p>
         </div>
       </EditorialCard>
 

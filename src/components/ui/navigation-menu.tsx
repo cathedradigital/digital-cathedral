@@ -1,8 +1,7 @@
-import { Icons } from '@/constants';
+import { Icons } from "@/constants";
 import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { cva } from "class-variance-authority";
-
 
 import { cn } from "@/lib/utils";
 
@@ -27,7 +26,10 @@ const NavigationMenuList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
     ref={ref}
-    className={cn("group flex flex-1 list-none items-center justify-center space-x-spacing-2xs", className)}
+    className={cn(
+      "group flex flex-1 list-none items-center justify-center space-x-spacing-2xs",
+      className,
+    )}
     {...props}
   />
 ));

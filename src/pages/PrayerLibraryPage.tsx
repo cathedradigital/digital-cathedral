@@ -5,11 +5,11 @@
  * Renderiza o catálogo agrupado por categoria litúrgica com busca por
  * título/tag, chip de categoria e navegação para /oracao/:slug.
  */
-import React, { useMemo, useState, useEffect } from 'react';
-import { Link } from '@/lib/rr-compat';
-import { Search, Clock, ChevronRight, Loader2 } from 'lucide-react';
-import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
-import { EditorialHero } from '@/components/editorial/harmony';
+import React, { useMemo, useState, useEffect } from "react";
+import { Link } from "@/lib/rr-compat";
+import { Search, Clock, ChevronRight, Loader2 } from "lucide-react";
+import { MobileBottomNav } from "@/components/mobile/MobileBottomNav";
+import { EditorialHero } from "@/components/editorial/harmony";
 
 import {
   usePrayers,
@@ -17,10 +17,9 @@ import {
   PRAYER_CATEGORY_ORDER,
   type PrayerCategory,
   type Prayer,
-} from '@/hooks/usePrayers';
-import { cn } from '@/lib/utils';
-import { SpaceHeader, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
-
+} from "@/hooks/usePrayers";
+import { cn } from "@/lib/utils";
+import { SpaceHeader, SpaceFooter } from "@/components/cathedra/space/SpaceLayout";
 
 function formatDuration(sec: number): string {
   if (sec < 60) return `${sec}s`;
@@ -30,22 +29,28 @@ function formatDuration(sec: number): string {
 
 const PrayerLibraryPage: React.FC = () => {
   const { prayers, grouped, loading, error } = usePrayers();
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [selectedCat, setSelectedCat] = useState<PrayerCategory | 'all'>('all');
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [selectedCat, setSelectedCat] = useState<PrayerCategory | "all">("all");
   const [metrics, setMetrics] = useState<{ p50: number; p95: number; last: number } | null>(null);
 
   // Latency monitoring with percentiles P50/P95
   useEffect(() => {
     if (loading || prayers.length === 0) return;
 
-    const entries = performance.getEntriesByType("measure").filter(e => e.name.startsWith("prayer_"));
-    const durations = entries.map(e => e.duration).sort((a, b) => a - b);
-    
+    const entries = performance
+      .getEntriesByType("measure")
+      .filter((e) => e.name.startsWith("prayer_"));
+    const durations = entries.map((e) => e.duration).sort((a, b) => a - b);
+
     if (durations.length > 0) {
       const p50 = durations[Math.floor(durations.length * 0.5)];
       const p95 = durations[Math.floor(durations.length * 0.95)];
-      setMetrics({ p50: Math.round(p50), p95: Math.round(p95), last: Math.round(durations[durations.length - 1]) });
+      setMetrics({
+        p50: Math.round(p50),
+        p95: Math.round(p95),
+        last: Math.round(durations[durations.length - 1]),
+      });
     }
   }, [loading, prayers]);
 
@@ -60,41 +65,38 @@ const PrayerLibraryPage: React.FC = () => {
   // Prefetching mechanism for individual prayers
   useEffect(() => {
     if (!prayers.length) return;
-    
+
     const prefetchPrayers = async () => {
       // Use logic to determine high-priority prayers for prefetching
       // For now, Supabase client handles caching once queried
     };
-    
+
     prefetchPrayers();
   }, [prayers]);
 
   const filtered = useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
-    const base = selectedCat === 'all' ? prayers : (grouped.get(selectedCat) ?? []);
+    const base = selectedCat === "all" ? prayers : (grouped.get(selectedCat) ?? []);
     if (!q) return base;
     return base.filter(
       (p) =>
         p.title.toLowerCase().includes(q) ||
-        (p.subtitle ?? '').toLowerCase().includes(q) ||
+        (p.subtitle ?? "").toLowerCase().includes(q) ||
         p.tags.some((t) => t.toLowerCase().includes(q)),
     );
   }, [prayers, grouped, selectedCat, debouncedQuery]);
 
   // Quando não há filtro nem busca, mostramos agrupado. Caso contrário, lista plana.
-  const showGrouped = selectedCat === 'all' && !debouncedQuery.trim();
+  const showGrouped = selectedCat === "all" && !debouncedQuery.trim();
 
   return (
     <>
-
-
       <section className="mx-auto w-full max-w-[880px] px-4 pb-24 pt-8 md:px-8 md:pt-12">
         <EditorialHero density="minimal" align="center">
           <EditorialHero.Eyebrow>Um espaço para parar, silenciar e rezar.</EditorialHero.Eyebrow>
           <EditorialHero.Title>Sacrário</EditorialHero.Title>
           <EditorialHero.Subtitle>Livro de Orações e Liturgia</EditorialHero.Subtitle>
         </EditorialHero>
-
 
         {/* Busca */}
         <div className="mb-6">
@@ -124,15 +126,15 @@ const PrayerLibraryPage: React.FC = () => {
           className="mb-14 flex flex-wrap justify-center gap-3"
         >
           <CategoryChip
-            active={selectedCat === 'all'}
+            active={selectedCat === "all"}
             label="Todas"
-            onClick={() => setSelectedCat('all')}
+            onClick={() => setSelectedCat("all")}
           />
-          {['devocional', 'rosario', 'liturgia'].map((cat) => {
+          {["devocional", "rosario", "liturgia"].map((cat) => {
             const labelMap: Record<string, string> = {
-              'devocional': 'Orações',
-              'rosario': 'Rosário',
-              'liturgia': 'Liturgia'
+              devocional: "Orações",
+              rosario: "Rosário",
+              liturgia: "Liturgia",
             };
             return (
               <CategoryChip
@@ -151,16 +153,22 @@ const PrayerLibraryPage: React.FC = () => {
             <div className="space-y-4">
               <div className="h-8 w-48 rounded bg-stitch-outline-variant/20 cathedra-shimmer" />
               <div className="space-y-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-16 w-full rounded-lg bg-stitch-outline-variant/10 cathedra-shimmer" />
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-16 w-full rounded-lg bg-stitch-outline-variant/10 cathedra-shimmer"
+                  />
                 ))}
               </div>
             </div>
             <div className="space-y-4">
               <div className="h-8 w-32 rounded bg-stitch-outline-variant/20 cathedra-shimmer" />
               <div className="space-y-2">
-                {[1, 2, 4].map(i => (
-                  <div key={i} className="h-16 w-full rounded-lg bg-stitch-outline-variant/10 cathedra-shimmer" />
+                {[1, 2, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="h-16 w-full rounded-lg bg-stitch-outline-variant/10 cathedra-shimmer"
+                  />
                 ))}
               </div>
             </div>
@@ -168,7 +176,10 @@ const PrayerLibraryPage: React.FC = () => {
         )}
 
         {error && !loading && (
-          <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+          <p
+            role="alert"
+            className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
+          >
             Não foi possível carregar as orações: {error}
           </p>
         )}
@@ -180,8 +191,10 @@ const PrayerLibraryPage: React.FC = () => {
         )}
 
         {/* Conteúdo */}
-        {!loading && !error && filtered.length > 0 && (
-          showGrouped ? (
+        {!loading &&
+          !error &&
+          filtered.length > 0 &&
+          (showGrouped ? (
             <div className="space-y-14">
               {PRAYER_CATEGORY_ORDER.map((cat) => {
                 const items = grouped.get(cat) ?? [];
@@ -199,17 +212,17 @@ const PrayerLibraryPage: React.FC = () => {
                         <PrayerRow key={p.id} prayer={p} />
                       ))}
                     </ul>
-        {!loading && metrics && (
-          <div className="mt-8 text-center space-x-4">
-            <span className="font-stitch-body text-[9px] uppercase tracking-widest text-stitch-on-surface-variant/40">
-              P50: {metrics.p50}ms
-            </span>
-            <span className="font-stitch-body text-[9px] uppercase tracking-widest text-stitch-on-surface-variant/40">
-              P95: {metrics.p95}ms
-            </span>
-          </div>
-        )}
-      </section>
+                    {!loading && metrics && (
+                      <div className="mt-8 text-center space-x-4">
+                        <span className="font-stitch-body text-[9px] uppercase tracking-widest text-stitch-on-surface-variant/40">
+                          P50: {metrics.p50}ms
+                        </span>
+                        <span className="font-stitch-body text-[9px] uppercase tracking-widest text-stitch-on-surface-variant/40">
+                          P95: {metrics.p95}ms
+                        </span>
+                      </div>
+                    )}
+                  </section>
                 );
               })}
             </div>
@@ -219,20 +232,18 @@ const PrayerLibraryPage: React.FC = () => {
                 <PrayerRow key={p.id} prayer={p} />
               ))}
             </ul>
-          )
-        )}
+          ))}
 
         {/* 5. Footer do espaço */}
         <SpaceFooter
           note="Toda oração conduz de volta à Palavra e à vida da Igreja."
           links={[
-            { label: 'Átrio', to: '/', hint: 'Voltar à entrada do Mosteiro' },
-            { label: 'Biblioteca', to: '/biblioteca', hint: 'Ler a Escritura e os Padres' },
-            { label: 'Rosário', to: '/oracao/rosario', hint: 'Contemplar os mistérios' },
+            { label: "Átrio", to: "/", hint: "Voltar à entrada do Mosteiro" },
+            { label: "Biblioteca", to: "/biblioteca", hint: "Ler a Escritura e os Padres" },
+            { label: "Rosário", to: "/oracao/rosario", hint: "Contemplar os mistérios" },
           ]}
         />
       </section>
-
 
       <MobileBottomNav />
     </>
@@ -250,10 +261,10 @@ const CategoryChip: React.FC<{ active: boolean; label: string; onClick: () => vo
     aria-selected={active}
     onClick={onClick}
     className={cn(
-      'min-h-[44px] rounded-full border px-4 font-stitch-body text-xs font-semibold uppercase tracking-widest transition-colors',
+      "min-h-[44px] rounded-full border px-4 font-stitch-body text-xs font-semibold uppercase tracking-widest transition-colors",
       active
-        ? 'border-stitch-secondary bg-stitch-secondary text-stitch-secondary-foreground'
-        : 'border-stitch-outline-variant/40 text-stitch-on-surface-variant hover:border-stitch-secondary/50 hover:text-stitch-on-surface',
+        ? "border-stitch-secondary bg-stitch-secondary text-stitch-secondary-foreground"
+        : "border-stitch-outline-variant/40 text-stitch-on-surface-variant hover:border-stitch-secondary/50 hover:text-stitch-on-surface",
     )}
   >
     {label}

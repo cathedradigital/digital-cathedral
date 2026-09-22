@@ -8,9 +8,9 @@
  *  - Versão anterior (filtros, busca fuzzy, categorias) segue em /jornadas-legacy.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { Helmet } from '@/lib/helmet-compat';
-import { Link } from '@/lib/rr-compat';
+import React, { useEffect, useMemo, useState } from "react";
+import { Helmet } from "@/lib/helmet-compat";
+import { Link } from "@/lib/rr-compat";
 import {
   ArrowRight,
   Sparkles,
@@ -22,12 +22,18 @@ import {
   Stethoscope,
   Zap,
   Flame,
-} from 'lucide-react';
-import { EditorialHero } from '@/components/editorial/harmony';
-import { supabase } from '@/lib/db';
-import { useAuth } from '@/hooks/useAuth';
-import { AppRoute } from '@/types';
-import { SpaceLayout, SpaceHeader, SpaceDoors, type SpaceDoor, SpaceFooter } from '@/components/cathedra/space/SpaceLayout';
+} from "lucide-react";
+import { EditorialHero } from "@/components/editorial/harmony";
+import { supabase } from "@/lib/db";
+import { useAuth } from "@/hooks/useAuth";
+import { AppRoute } from "@/types";
+import {
+  SpaceLayout,
+  SpaceHeader,
+  SpaceDoors,
+  type SpaceDoor,
+  SpaceFooter,
+} from "@/components/cathedra/space/SpaceLayout";
 
 type JourneyRow = {
   id: string;
@@ -45,20 +51,20 @@ const CATEGORY_META: Record<
   string,
   { label: string; Icon: React.ComponentType<{ className?: string }> }
 > = {
-  fundamentos: { label: 'Fundamentos', Icon: Sparkles },
-  formacao: { label: 'Formação', Icon: BookOpen },
-  rotina: { label: 'Rotina', Icon: Calendar },
-  oracao: { label: 'Oração', Icon: Heart },
-  mistico: { label: 'Místico', Icon: Sun },
-  cura: { label: 'Cura', Icon: Stethoscope },
-  transformacao: { label: 'Transformação', Icon: Zap },
+  fundamentos: { label: "Fundamentos", Icon: Sparkles },
+  formacao: { label: "Formação", Icon: BookOpen },
+  rotina: { label: "Rotina", Icon: Calendar },
+  oracao: { label: "Oração", Icon: Heart },
+  mistico: { label: "Místico", Icon: Sun },
+  cura: { label: "Cura", Icon: Stethoscope },
+  transformacao: { label: "Transformação", Icon: Zap },
 };
 
 const DIFFICULTY_LABELS: Record<string, string> = {
-  iniciante: 'Iniciante',
-  intermediario: 'Intermediário',
-  avancado: 'Avançado',
-  'avançado': 'Avançado',
+  iniciante: "Iniciante",
+  intermediario: "Intermediário",
+  avancado: "Avançado",
+  avançado: "Avançado",
 };
 
 const AtriumJornadasPage: React.FC = () => {
@@ -66,26 +72,26 @@ const AtriumJornadasPage: React.FC = () => {
   const [journeys, setJourneys] = useState<JourneyRow[]>([]);
   const [progressMap, setProgressMap] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string>("all");
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
       const { data, error } = await supabase
-        .from('view_journeys_with_stats')
-        .select('*')
-        .order('sort_order', { ascending: true });
+        .from("view_journeys_with_stats")
+        .select("*")
+        .order("sort_order", { ascending: true });
       if (error) {
-        console.error('AtriumJornadas load error:', error);
+        console.error("AtriumJornadas load error:", error);
       }
       if (!cancelled && data) setJourneys(data as JourneyRow[]);
 
       if (user) {
         const { data: prog } = await supabase
-          .from('journey_progress')
-          .select('journey_id')
-          .eq('user_id', user.id);
+          .from("journey_progress")
+          .select("journey_id")
+          .eq("user_id", user.id);
         if (!cancelled && prog) {
           const m: Record<string, number> = {};
           prog.forEach((p: any) => {
@@ -104,11 +110,11 @@ const AtriumJornadasPage: React.FC = () => {
   const categories = useMemo(() => {
     const set = new Set<string>();
     journeys.forEach((j) => set.add(j.category));
-    return ['all', ...Array.from(set)];
+    return ["all", ...Array.from(set)];
   }, [journeys]);
 
   const visible = useMemo(() => {
-    if (activeCategory === 'all') return journeys;
+    if (activeCategory === "all") return journeys;
     return journeys.filter((j) => j.category === activeCategory);
   }, [journeys, activeCategory]);
 
@@ -121,8 +127,7 @@ const AtriumJornadasPage: React.FC = () => {
     <div
       className="min-h-screen w-full bg-background text-foreground"
       style={{
-        backgroundImage:
-          'url("https://www.transparenttextures.com/patterns/p6.png")',
+        backgroundImage: 'url("https://www.transparenttextures.com/patterns/p6.png")',
       }}
     >
       <Helmet>
@@ -138,7 +143,10 @@ const AtriumJornadasPage: React.FC = () => {
         <EditorialHero density="minimal">
           <EditorialHero.Eyebrow>Itinerarium Mentis</EditorialHero.Eyebrow>
           <EditorialHero.Title>Claustro</EditorialHero.Title>
-          <EditorialHero.Subtitle>Trilhas guiadas para caminhar da inquietação à contemplação. Um passo por vez, um dia por vez — na cadência do silêncio.</EditorialHero.Subtitle>
+          <EditorialHero.Subtitle>
+            Trilhas guiadas para caminhar da inquietação à contemplação. Um passo por vez, um dia
+            por vez — na cadência do silêncio.
+          </EditorialHero.Subtitle>
         </EditorialHero>
 
         {/* ─── Claustro: Prioridade de continuidade ─── */}
@@ -194,10 +202,18 @@ const AtriumJornadasPage: React.FC = () => {
         {/* ─── Outras áreas ─── */}
         <div className="mt-8 space-y-12 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
           <div className="flex flex-wrap gap-8 py-6 border-y border-border/10 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-            <span className="flex items-center gap-2"><BookOpen className="w-3 h-3" /> Leituras recentes</span>
-            <span className="flex items-center gap-2"><Compass className="w-3 h-3" /> Progresso</span>
-            <span className="flex items-center gap-2"><Heart className="w-3 h-3" /> Favoritos</span>
-            <span className="flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Recomendações Nexus</span>
+            <span className="flex items-center gap-2">
+              <BookOpen className="w-3 h-3" /> Leituras recentes
+            </span>
+            <span className="flex items-center gap-2">
+              <Compass className="w-3 h-3" /> Progresso
+            </span>
+            <span className="flex items-center gap-2">
+              <Heart className="w-3 h-3" /> Favoritos
+            </span>
+            <span className="flex items-center gap-2">
+              <ArrowRight className="w-3 h-3" /> Recomendações Nexus
+            </span>
           </div>
         </div>
 
@@ -250,17 +266,20 @@ const AtriumJornadasPage: React.FC = () => {
             </h2>
             <div className="flex flex-wrap gap-2">
               {categories.map((c) => {
-                const meta = c === 'all' ? { label: 'Todas', Icon: Compass } : CATEGORY_META[c] ?? { label: c, Icon: Compass };
+                const meta =
+                  c === "all"
+                    ? { label: "Todas", Icon: Compass }
+                    : (CATEGORY_META[c] ?? { label: c, Icon: Compass });
                 const active = activeCategory === c;
                 return (
                   <button
                     key={c}
                     onClick={() => setActiveCategory(c)}
                     className={
-                      'inline-flex items-center gap-2 rounded-full border px-3 py-1 font-stitch-body text-[13px] transition-colors ' +
+                      "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-stitch-body text-[13px] transition-colors " +
                       (active
-                        ? 'border-stitch-secondary bg-stitch-secondary/10 text-stitch-primary'
-                        : 'border-stitch-outline-variant/40 bg-stitch-surface-container-low text-stitch-on-surface-variant hover:border-stitch-secondary hover:text-stitch-primary')
+                        ? "border-stitch-secondary bg-stitch-secondary/10 text-stitch-primary"
+                        : "border-stitch-outline-variant/40 bg-stitch-surface-container-low text-stitch-on-surface-variant hover:border-stitch-secondary hover:text-stitch-primary")
                     }
                   >
                     <meta.Icon className="h-3.5 w-3.5" />
@@ -299,7 +318,7 @@ const AtriumJornadasPage: React.FC = () => {
                     <div className="mb-4 flex items-center justify-between">
                       <meta.Icon className="h-6 w-6 text-stitch-secondary" />
                       <span className="font-stitch-display text-[32px] italic text-stitch-secondary/75">
-                        {String(i + 1).padStart(2, '0')}
+                        {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>
                     <span className="font-stitch-body text-[12px] font-bold uppercase tracking-[0.15em] text-stitch-secondary">
@@ -323,7 +342,9 @@ const AtriumJornadasPage: React.FC = () => {
                       <div className="mt-4 h-1 overflow-hidden rounded-full bg-stitch-surface-container-highest">
                         <div
                           className="h-full bg-stitch-secondary"
-                          style={{ width: `${Math.round((done / Math.max(j.steps_count, 1)) * 100)}%` }}
+                          style={{
+                            width: `${Math.round((done / Math.max(j.steps_count, 1)) * 100)}%`,
+                          }}
                         />
                       </div>
                     )}
@@ -342,12 +363,12 @@ const AtriumJornadasPage: React.FC = () => {
             </Link>
           </div>
 
-          <SpaceFooter 
+          <SpaceFooter
             note='"Ensina-me, Senhor, o teu caminho, e guia-me por vereda plana." — Sl 27,11'
             links={[
-              { label: 'Átrio', to: '/', hint: 'Voltar à entrada do Mosteiro' },
-              { label: 'Biblioteca', to: '/biblioteca', hint: 'Estudar a Tradição' },
-              { label: 'Rezar', to: '/rezar', hint: 'Levar a formação à oração' },
+              { label: "Átrio", to: "/", hint: "Voltar à entrada do Mosteiro" },
+              { label: "Biblioteca", to: "/biblioteca", hint: "Estudar a Tradição" },
+              { label: "Rezar", to: "/rezar", hint: "Levar a formação à oração" },
             ]}
           />
         </section>

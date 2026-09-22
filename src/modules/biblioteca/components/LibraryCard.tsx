@@ -7,12 +7,24 @@
  * da Biblioteca; auditoria bloqueia usos alternativos.
  */
 
-import React from 'react';
-import { Link } from '@/lib/rr-compat';
-import { EditorialCard } from '@/components/editorial/harmony';
-import { BookOpen, BookMarked, Church, Users, Sparkles, Library, Compass, ScrollText, Feather, Clock3, ArrowRight } from 'lucide-react';
-import IceBadge from './IceBadge';
-import type { LibraryItem, LibraryModule } from '../types';
+import React from "react";
+import { Link } from "@/lib/rr-compat";
+import { EditorialCard } from "@/components/editorial/harmony";
+import {
+  BookOpen,
+  BookMarked,
+  Church,
+  Users,
+  Sparkles,
+  Library,
+  Compass,
+  ScrollText,
+  Feather,
+  Clock3,
+  ArrowRight,
+} from "lucide-react";
+import IceBadge from "./IceBadge";
+import type { LibraryItem, LibraryModule } from "../types";
 
 const MODULE_ICON: Record<LibraryModule, typeof BookOpen> = {
   glossary: Feather,
@@ -28,21 +40,21 @@ const MODULE_ICON: Record<LibraryModule, typeof BookOpen> = {
 };
 
 const MODULE_LABEL: Record<LibraryModule, string> = {
-  glossary: 'Glossário',
-  bible: 'Bíblia',
-  catechism: 'Catecismo',
-  saints: 'Santos',
-  prayers: 'Orações',
-  collections: 'Coleções',
-  journeys: 'Jornadas',
-  magisterium: 'Magistério',
-  patristics: 'Patrística',
-  liturgy: 'Liturgia',
+  glossary: "Glossário",
+  bible: "Bíblia",
+  catechism: "Catecismo",
+  saints: "Santos",
+  prayers: "Orações",
+  collections: "Coleções",
+  journeys: "Jornadas",
+  magisterium: "Magistério",
+  patristics: "Patrística",
+  liturgy: "Liturgia",
 };
 
 export interface LibraryCardProps {
   item: LibraryItem;
-  density?: 'dense' | 'balanced' | 'minimal';
+  density?: "dense" | "balanced" | "minimal";
   className?: string;
 }
 
@@ -52,7 +64,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({ item, density, classNa
 
   return (
     <EditorialCard
-      density={density ?? 'dense'}
+      density={density ?? "dense"}
       as="div"
       className={className}
       data-library-card=""
@@ -75,9 +87,7 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({ item, density, classNa
         </Link>
       </EditorialCard.Title>
 
-      {item.summary ? (
-        <EditorialCard.Description>{item.summary}</EditorialCard.Description>
-      ) : null}
+      {item.summary ? <EditorialCard.Description>{item.summary}</EditorialCard.Description> : null}
 
       <EditorialCard.References>
         {item.themes?.slice(0, 2).map((theme) => (
@@ -89,13 +99,13 @@ export const LibraryCard: React.FC<LibraryCardProps> = ({ item, density, classNa
           </span>
         ))}
         {item.ice ? <IceBadge level={item.ice} /> : null}
-        {typeof item.nexusCount === 'number' && item.nexusCount > 0 ? (
+        {typeof item.nexusCount === "number" && item.nexusCount > 0 ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-xs text-muted-foreground">
             <Sparkles className="h-3 w-3" aria-hidden="true" />
             {item.nexusCount} nexus
           </span>
         ) : null}
-        {typeof item.readingMinutes === 'number' && item.readingMinutes > 0 ? (
+        {typeof item.readingMinutes === "number" && item.readingMinutes > 0 ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-border/60 px-2 py-0.5 text-xs text-muted-foreground">
             <Clock3 className="h-3 w-3" aria-hidden="true" />
             {item.readingMinutes} min

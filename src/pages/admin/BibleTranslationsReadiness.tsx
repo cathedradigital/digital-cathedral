@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { supabase } from '@/lib/db';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
-import { Icons } from '@/constants';
+import React, { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/lib/db";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { Icons } from "@/constants";
 
 interface ReadinessRow {
   id: string;
@@ -40,21 +40,23 @@ const BibleTranslationsReadiness: React.FC = () => {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('bible_translations_readiness' as any);
+      const { data, error } = await supabase.rpc("bible_translations_readiness" as any);
       if (error) throw error;
       setRows((data ?? []) as ReadinessRow[]);
       setLastChecked(new Date());
     } catch (e: any) {
-      toast.error('Falha ao consultar prontidão', { description: e?.message ?? String(e) });
+      toast.error("Falha ao consultar prontidão", { description: e?.message ?? String(e) });
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const readyCount = rows.filter(r => r.ready).length;
-  const blockedCount = rows.filter(r => !r.ready).length;
+  const readyCount = rows.filter((r) => r.ready).length;
+  const blockedCount = rows.filter((r) => !r.ready).length;
 
   return (
     <div className="container max-w-6xl mx-auto p-6 space-y-6">
@@ -62,37 +64,56 @@ const BibleTranslationsReadiness: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold">Prontidão das Traduções Bíblicas</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Avalia em tempo real o gate <code className="text-xs">bible_translation_ready</code> para cada tradução cadastrada.
+            Avalia em tempo real o gate <code className="text-xs">bible_translation_ready</code>{" "}
+            para cada tradução cadastrada.
           </p>
           {lastChecked && (
             <p className="text-xs text-muted-foreground mt-1">
-              Última verificação: {lastChecked.toLocaleString('pt-BR')}
+              Última verificação: {lastChecked.toLocaleString("pt-BR")}
             </p>
           )}
         </div>
         <Button onClick={load} disabled={loading} variant="default">
-          {loading ? <Icons.Loader className="w-4 h-4 mr-2 animate-spin" /> : <Icons.RefreshCw className="w-4 h-4 mr-2" />}
+          {loading ? (
+            <Icons.Loader className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Icons.RefreshCw className="w-4 h-4 mr-2" />
+          )}
           Reverificar
         </Button>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold">{rows.length}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{rows.length}</p>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Prontas</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold text-emerald-600">{readyCount}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Prontas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-emerald-600">{readyCount}</p>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Bloqueadas</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-bold text-destructive">{blockedCount}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Bloqueadas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-destructive">{blockedCount}</p>
+          </CardContent>
         </Card>
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Traduções</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Traduções</CardTitle>
+        </CardHeader>
         <CardContent>
           {rows.length === 0 && !loading && (
             <p className="text-sm text-muted-foreground">Nenhuma tradução cadastrada.</p>
@@ -117,18 +138,27 @@ const BibleTranslationsReadiness: React.FC = () => {
                   <tr key={r.id} className="border-b align-top">
                     <td className="py-2 pr-4 font-mono text-xs">
                       {r.code}
-                      {r.is_primary && <span className="ml-2 text-[10px] text-primary font-semibold">PRIMÁRIA</span>}
+                      {r.is_primary && (
+                        <span className="ml-2 text-[10px] text-primary font-semibold">
+                          PRIMÁRIA
+                        </span>
+                      )}
                     </td>
                     <td className="py-2 pr-4">{r.name}</td>
                     <td className="py-2 pr-4 text-xs text-muted-foreground">
-                      {r.author ?? '—'}{r.year_published ? ` · ${r.year_published}` : ''}
+                      {r.author ?? "—"}
+                      {r.year_published ? ` · ${r.year_published}` : ""}
                     </td>
                     <td className="py-2 pr-4">
-                      <Badge variant="outline" className="text-xs">{r.status}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {r.status}
+                      </Badge>
                     </td>
-                    <td className="py-2 pr-4"><StatusBadge row={r} /></td>
+                    <td className="py-2 pr-4">
+                      <StatusBadge row={r} />
+                    </td>
                     <td className="py-2 pr-4 text-xs text-muted-foreground max-w-md">
-                      {r.reason ?? '—'}
+                      {r.reason ?? "—"}
                     </td>
                     <td className="py-2 pr-4 text-right tabular-nums">{r.books_count}</td>
                     <td className="py-2 pr-4 text-right tabular-nums">{r.chapters_count}</td>

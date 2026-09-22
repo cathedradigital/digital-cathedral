@@ -5,12 +5,12 @@
  * Oração, Bíblia, Liturgia e Catequese. Marca a exibição por usuário para
  * nunca reaparecer.
  */
-import React, { useEffect } from 'react';
-import { useNavigate } from '@/lib/rr-compat';
-import { GraduationCap, Heart, BookOpen, Sun, ScrollText, X } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { hasSeenFirstAccess, markFirstAccessSeen } from '@/lib/firstAccess';
-import { trackEvent } from '@/lib/analytics';
+import React, { useEffect } from "react";
+import { useNavigate } from "@/lib/rr-compat";
+import { GraduationCap, Heart, BookOpen, Sun, ScrollText, X } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { hasSeenFirstAccess, markFirstAccessSeen } from "@/lib/firstAccess";
+import { trackEvent } from "@/lib/analytics";
 
 interface Option {
   key: string;
@@ -22,11 +22,46 @@ interface Option {
 }
 
 const OPTIONS: Option[] = [
-  { key: 'formacao', label: 'Formação', latin: 'Formatio', hint: 'Trilhas guiadas', to: '/jornadas', Icon: GraduationCap },
-  { key: 'oracao', label: 'Oração', latin: 'Oratio', hint: 'Rosário, Ofício, Lectio', to: '/oracao', Icon: Heart },
-  { key: 'biblia', label: 'Bíblia', latin: 'Scriptura', hint: 'Sagrada Escritura', to: '/bible', Icon: BookOpen },
-  { key: 'liturgia', label: 'Liturgia', latin: 'Liturgia', hint: 'Missal e Horas', to: '/liturgia', Icon: Sun },
-  { key: 'catequese', label: 'Catequese', latin: 'Catechesis', hint: 'Catecismo da Igreja', to: '/catechism', Icon: ScrollText },
+  {
+    key: "formacao",
+    label: "Formação",
+    latin: "Formatio",
+    hint: "Trilhas guiadas",
+    to: "/jornadas",
+    Icon: GraduationCap,
+  },
+  {
+    key: "oracao",
+    label: "Oração",
+    latin: "Oratio",
+    hint: "Rosário, Ofício, Lectio",
+    to: "/oracao",
+    Icon: Heart,
+  },
+  {
+    key: "biblia",
+    label: "Bíblia",
+    latin: "Scriptura",
+    hint: "Sagrada Escritura",
+    to: "/bible",
+    Icon: BookOpen,
+  },
+  {
+    key: "liturgia",
+    label: "Liturgia",
+    latin: "Liturgia",
+    hint: "Missal e Horas",
+    to: "/liturgia",
+    Icon: Sun,
+  },
+  {
+    key: "catequese",
+    label: "Catequese",
+    latin: "Catechesis",
+    hint: "Catecismo da Igreja",
+    to: "/catechism",
+    Icon: ScrollText,
+  },
 ];
 
 const WelcomeFirstAccess: React.FC = () => {
@@ -38,17 +73,19 @@ const WelcomeFirstAccess: React.FC = () => {
     if (loading || !user) return;
     if (hasSeenFirstAccess(user.id)) return;
     setOpen(true);
-    trackEvent('first_access_view', { userId: user.id });
+    trackEvent("first_access_view", { userId: user.id });
   }, [loading, user]);
 
   const dismiss = React.useCallback(
-    (reason: 'close' | 'completed', target?: string) => {
+    (reason: "close" | "completed", target?: string) => {
       if (user) markFirstAccessSeen(user.id);
       setOpen(false);
-      trackEvent(reason === 'completed' ? 'first_access_completed' : 'first_access_dismissed', { target });
+      trackEvent(reason === "completed" ? "first_access_completed" : "first_access_dismissed", {
+        target,
+      });
       if (target) navigate(target);
     },
-    [user, navigate]
+    [user, navigate],
   );
 
   if (!open) return null;
@@ -64,7 +101,7 @@ const WelcomeFirstAccess: React.FC = () => {
         <button
           type="button"
           aria-label="Fechar boas-vindas"
-          onClick={() => dismiss('close')}
+          onClick={() => dismiss("close")}
           className="absolute top-spacing-sm right-spacing-sm p-spacing-2xs min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-premium hover:bg-muted focus-visible:outline-2 focus-visible:outline-secondary"
         >
           <X className="w-5 h-5" aria-hidden="true" />
@@ -80,7 +117,8 @@ const WelcomeFirstAccess: React.FC = () => {
           Bem-vindo à Cathedra
         </h1>
         <p className="text-muted-foreground mb-spacing-lg">
-          Escolha por onde deseja começar. Você poderá navegar livremente entre todos os caminhos depois.
+          Escolha por onde deseja começar. Você poderá navegar livremente entre todos os caminhos
+          depois.
         </p>
 
         <ul className="grid gap-spacing-sm sm:grid-cols-2">
@@ -88,16 +126,14 @@ const WelcomeFirstAccess: React.FC = () => {
             <li key={opt.key}>
               <button
                 type="button"
-                onClick={() => dismiss('completed', opt.to)}
+                onClick={() => dismiss("completed", opt.to)}
                 className="w-full flex items-start gap-spacing-sm rounded-premium border border-border p-spacing-sm text-left transition-colors hover:border-secondary hover:bg-muted focus-visible:outline-2 focus-visible:outline-secondary"
               >
                 <span className="mt-spacing-3xs shrink-0 rounded-premium bg-muted p-spacing-2xs text-secondary">
                   <opt.Icon className="w-5 h-5" aria-hidden="true" />
                 </span>
                 <span className="flex-1">
-                  <h2 className="block font-serif text-lg text-foreground">
-                    {opt.label}
-                  </h2>
+                  <h2 className="block font-serif text-lg text-foreground">{opt.label}</h2>
                   <h3 className="block text-xs uppercase tracking-widest text-secondary">
                     {opt.latin}
                   </h3>
@@ -113,7 +149,7 @@ const WelcomeFirstAccess: React.FC = () => {
         <div className="mt-spacing-lg flex justify-end">
           <button
             type="button"
-            onClick={() => dismiss('close')}
+            onClick={() => dismiss("close")}
             className="inline-flex min-h-[44px] items-center text-sm text-muted-foreground hover:text-foreground"
           >
             Explorar por conta própria

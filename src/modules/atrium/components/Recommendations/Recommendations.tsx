@@ -1,13 +1,13 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { useRecommendations } from '../../hooks';
+import React from "react";
+import { ArrowRight } from "lucide-react";
+import { useRecommendations } from "../../hooks";
 
 const KIND_LABEL: Record<string, string> = {
-  reading: 'Leitura',
-  formation: 'Formação',
-  lectio: 'Lectio',
-  saint: 'Santo',
-  magisterium: 'Magistério',
+  reading: "Leitura",
+  formation: "Formação",
+  lectio: "Lectio",
+  saint: "Santo",
+  magisterium: "Magistério",
 };
 
 const Recommendations: React.FC = () => {
@@ -16,7 +16,10 @@ const Recommendations: React.FC = () => {
 
   return (
     <section data-atrium-block="P5" aria-labelledby="atrium-recs">
-      <h2 id="atrium-recs" className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+      <h2
+        id="atrium-recs"
+        className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2"
+      >
         Recomendações
       </h2>
       <ul className="flex flex-col gap-2">

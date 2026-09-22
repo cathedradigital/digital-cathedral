@@ -20,5 +20,5 @@ export function getCanonicalQueryParam(
 
 /** Catecismo: canônico `p`, alias `paragraph`. */
 export function getParagraphParam(searchParams: URLSearchParams): string | null {
-  return getCanonicalQueryParam(searchParams, ['p', 'paragraph']);
+  return getCanonicalQueryParam(searchParams, ["p", "paragraph"]);
 }

@@ -9,12 +9,12 @@
  *   import { EditorialHero, EditorialCard } from '@/components/editorial/harmony';
  */
 
-export { EditorialHero } from './EditorialHero';
-export type { EditorialHeroProps } from './EditorialHero';
+export { EditorialHero } from "./EditorialHero";
+export type { EditorialHeroProps } from "./EditorialHero";
 
-export { EditorialCard } from './EditorialCard';
-export type { EditorialCardProps, EditorialCardDensity } from './EditorialCard';
+export { EditorialCard } from "./EditorialCard";
+export type { EditorialCardProps, EditorialCardDensity } from "./EditorialCard";
 
 // Primitivas re-exportadas para manter a coesão do barrel harmonizado
-export { EditorialDivider } from '../index';
-export { EditorialKicker } from '../primitives';
+export { EditorialDivider } from "../index";
+export { EditorialKicker } from "../primitives";
